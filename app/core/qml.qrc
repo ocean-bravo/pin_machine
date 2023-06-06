@@ -1,0 +1,78 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SettingsPage.qml</file>
+        <file>ManualPage.qml</file>
+        <file>TransparentImageButton.qml</file>
+        <file>images/crimpillustration.png</file>
+        <file>images/help.png</file>
+        <file>images/left.png</file>
+        <file>images/manual_orange.png</file>
+        <file>images/processing.png</file>
+        <file>images/right.png</file>
+        <file>images/settings.png</file>
+        <file>images/smcontactlogo.png</file>
+        <file>images/wifi.png</file>
+        <file>images/manual.png</file>
+        <file>images/processing_orange.png</file>
+        <file>images/settings_orange.png</file>
+        <file>images/bluetooth_icon.png</file>
+        <file>images/camera_green_icon.png</file>
+        <file>images/cfm_icon.png</file>
+        <file>images/crimpcentering_icon.png</file>
+        <file>images/crimpinitialposition_icon.png</file>
+        <file>images/triangle_bottom.png</file>
+        <file>images/triangle_top.png</file>
+        <file>images/savenewheight_icon.png</file>
+        <file>images/triangle_bottom_pressed.png</file>
+        <file>images/triangle_top_pressed.png</file>
+        <file>CustomSwitch.qml</file>
+        <file>SoftwareSettingsTab.qml</file>
+        <file>images/wifi_gray.png</file>
+        <file>images/clincherpunchcenteringwizard.png</file>
+        <file>images/clincherpunchcenteringwizard_selected.png</file>
+        <file>ProcessingPage.qml</file>
+        <file>images/tooling w line.png</file>
+        <file>images/left_pressed.png</file>
+        <file>images/right_pressed.png</file>
+        <file>PalexComboBox.qml</file>
+        <file>images/crimpHeight_minus.png</file>
+        <file>images/crimpHeight_minus_pressed.png</file>
+        <file>images/crimpHeight_plus.png</file>
+        <file>images/crimpHeight_plus_pressed.png</file>
+        <file>TableControl.qml</file>
+        <file>images/connection_big_view.jpg</file>
+        <file>CheckableButton.qml</file>
+        <file>Camcfmfixture.qml</file>
+        <file>TabButtonCustomized.qml</file>
+        <file>PopupNoSpliceBand.qml</file>
+        <file>PopupCasseteStatus.qml</file>
+        <file>PopupSpliceBandOK.qml</file>
+        <file>images/return_punch_pressed.png</file>
+        <file>images/return_punch.png</file>
+        <file>PopupPedalDisconnected.qml</file>
+        <file>images/main_motor_pos.png</file>
+        <file>images/save_new_height.png</file>
+        <file>images/save_new_height_pressed.png</file>
+        <file>RadialGauge.qml</file>
+        <file>AdvancedSettingsTab.qml</file>
+        <file>CasseteInfoTab.qml</file>
+        <file>CasseteInfoItem.qml</file>
+        <file>images/Cutting block_without background.png</file>
+        <file>images/Anvil_without background.png</file>
+        <file>images/Centering plate_without background.png</file>
+        <file>images/Punch_without background.png</file>
+        <file>images/Punch guide_without background.png</file>
+        <file>images/Clincher_without background.png</file>
+        <file>ConnectionInfoItem.qml</file>
+        <file>ConnectionInfo.qml</file>
+        <file>design/manual_page/arrow.png</file>
+        <file>DialogYesNo.qml</file>
+        <file>settings.ini</file>
+        <file>TimePicker.qml</file>
+        <file>Pass_popup.qml</file>
+        <file>FixtureSelectDialog.qml</file>
+        <file>Pass_rectangle.qml</file>
+        <file>images/upload_sign.png</file>
+    </qresource>
+</RCC>

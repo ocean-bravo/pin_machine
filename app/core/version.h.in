@@ -1,0 +1,11 @@
+#pragma once
+
+#include <QString>
+
+namespace Version {
+
+const QString number = QString::number(uint($$GIT_CURRENT_VERSION));
+const QString date = '"$$LAST_COMMIT_DATE"';
+const QString sha = '"$$LAST_COMMIT_SHA"';
+
+}
