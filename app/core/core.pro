@@ -9,14 +9,9 @@ TRANSLATIONS += core_language_de.ts core_language_pl.ts core_language_fr.ts
 CURRENT_BRANCH = $$system(git rev-parse --abbrev-ref HEAD)
 unix:  GIT_CURRENT_VERSION = $$system(git log start..$${CURRENT_BRANCH} --oneline --first-parent | wc -l)
 win32: GIT_CURRENT_VERSION = $$system(git log start..$${CURRENT_BRANCH} --oneline --first-parent | find /c /v \"\")
-LAST_COMMIT_DATE = $$system("git --no-pager log -1 --pretty=format:'%ad' --date=format:'%Y-%m-%d %H:%M:%S'")
-LAST_COMMIT_SHA = $$system(git rev-parse HEAD)
 
 DEFINES += CURRENT_BRANCH=$${CURRENT_BRANCH}
 DEFINES += GIT_CURRENT_VERSION=$${GIT_CURRENT_VERSION}
-# такая запись нужна, т.к. строка LAST_COMMIT_DATE выглядит так 2020-05-20 17:24:07 +0300 (c пробелами)
-# в выводе компилятора выглядит так: -DLAST_COMMIT_DATE="\"2020-05-20 17:24:07 +0300\""
-DEFINES += LAST_COMMIT_DATE=\"\\\""$${LAST_COMMIT_DATE}"\\\"\"
 
 message(current branch: $${CURRENT_BRANCH})
 message(commits to reference_version: $${GIT_CURRENT_VERSION})
