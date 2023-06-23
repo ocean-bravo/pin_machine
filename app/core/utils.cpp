@@ -12,23 +12,31 @@
 #include <chrono>
 #include <cmath>
 
-ScopedMeasure::ScopedMeasure(const QString& msg)
-    : _start(std::chrono::high_resolution_clock::now())
+
+ScopedMeasure::ScopedMeasure(const QString& msg, Units units)
+    : _start(std::chrono::steady_clock::now())
     , _msg(msg)
+    , _units(units)
 {
 }
 
 ScopedMeasure::~ScopedMeasure()
 {
-    const auto finish = std::chrono::high_resolution_clock::now();
-    const std::chrono::duration<double> elapsed = finish - _start;
+    const auto finish = std::chrono::steady_clock::now();
 
-    qDebug().noquote() << _msg << elapsed.count();
+    if (_units == Units::Milli)
+    {
+        const std::chrono::duration<double, std::milli> elapsed = finish - _start;
+        qd() << _msg << elapsed.count() << "ms";
+        return;
+    }
+    const std::chrono::duration<double, std::micro> elapsed = finish - _start;
+    qd() << _msg << elapsed.count() << "us";
 }
 
 
 Measure::Measure(const QString& msg)
-    : _start(std::chrono::high_resolution_clock::now())
+    : _start(std::chrono::steady_clock::now())
     , _msg(msg)
 {
 
@@ -36,12 +44,12 @@ Measure::Measure(const QString& msg)
 
 void Measure::start()
 {
-    _start = std::chrono::high_resolution_clock::now();
+    _start = std::chrono::steady_clock::now();
 }
 
 void Measure::stop()
 {
-    const auto finish = std::chrono::high_resolution_clock::now();
+    const auto finish = std::chrono::steady_clock::now();
     const std::chrono::duration<double> elapsed = finish - _start;
 
     qd() << _msg << elapsed.count();

@@ -1,22 +1,13 @@
 QT += quick serialport widgets network gui printsupport concurrent quickcontrols2
 
-CONFIG += console qtquickcompiler
+CONFIG += console qtquickcompiler qml_debug
 
 TRANSLATIONS += core_language_de.ts core_language_pl.ts core_language_fr.ts
 
-# Версия ПО вычислятся как число коммитов в текущей ветке между меткой reference_version и последним коммитом
-# Ветка и дата последнего коммита записывается в переменные, откуда записывается в лог
-CURRENT_BRANCH = $$system(git rev-parse --abbrev-ref HEAD)
-unix:  GIT_CURRENT_VERSION = $$system(git log start..$${CURRENT_BRANCH} --oneline --first-parent | wc -l)
-win32: GIT_CURRENT_VERSION = $$system(git log start..$${CURRENT_BRANCH} --oneline --first-parent | find /c /v \"\")
-LAST_COMMIT_DATE = $$system("git --no-pager log -1 --pretty=format:'%ad' --date=format:'%Y-%m-%d %H:%M:%S'")
-LAST_COMMIT_SHA = $$system(git rev-parse HEAD)
+
 
 DEFINES += CURRENT_BRANCH=$${CURRENT_BRANCH}
 DEFINES += GIT_CURRENT_VERSION=$${GIT_CURRENT_VERSION}
-# такая запись нужна, т.к. строка LAST_COMMIT_DATE выглядит так 2020-05-20 17:24:07 +0300 (c пробелами)
-# в выводе компилятора выглядит так: -DLAST_COMMIT_DATE="\"2020-05-20 17:24:07 +0300\""
-DEFINES += LAST_COMMIT_DATE=\"\\\""$${LAST_COMMIT_DATE}"\\\"\"
 
 message(current branch: $${CURRENT_BRANCH})
 message(commits to reference_version: $${GIT_CURRENT_VERSION})
@@ -32,17 +23,29 @@ TARGET = pin_machine
 
 include($$PWD/log/log.pri)
 
-HEADERS += \
-    serial.h \
-    engine.h \
-    utils.h \
-    singleton.h \
+INCLUDEPATH += /usr/include/opencv4/
+LIBS += -L/usr/lib/x86_64-linux-gnu/ \
+-lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired \
+-lopencv_calib3d -lopencv_ccalib -lopencv_core -lopencv_datasets \
+-lopencv_dnn_objdetect -lopencv_dnn -lopencv_dpm -lopencv_face \
+-lopencv_features2d -lopencv_flann -lopencv_freetype -lopencv_fuzzy \
+-lopencv_hfs -lopencv_highgui -lopencv_imgcodecs \
+-lopencv_img_hash -lopencv_imgproc -lopencv_line_descriptor \
+-lopencv_ml -lopencv_objdetect -lopencv_optflow -lopencv_phase_unwrapping \
+-lopencv_photo -lopencv_plot -lopencv_quality -lopencv_reg -lopencv_rgbd \
+-lopencv_saliency -lopencv_shape -lopencv_stereo -lopencv_stitching \
+-lopencv_structured_light -lopencv_superres -lopencv_surface_matching -lopencv_text \
+-lopencv_tracking -lopencv_videoio -lopencv_video -lopencv_videostab \
+-lopencv_ximgproc -lopencv_xobjdetect -lopencv_xphoto \
+-lturbojpeg # libturbojpeg0-dev
 
-SOURCES += \
-    main.cpp \
-    engine.cpp \
-    serial.cpp \
-    utils.cpp \
+OTHER_FILES += ../../opencv/main.py
+
+HEADERS += *.h
+
+SOURCES += *.cpp
+
+FORMS += *.ui
 
 target.path = $${INSTALL_PATH}
 

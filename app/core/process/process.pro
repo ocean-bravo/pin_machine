@@ -3,6 +3,7 @@ TEMPLATE = lib
 CONFIG += plugin c++17 release
 TARGET = process
 
+
 HEADERS += \
     process_plugin.h \
     process.h \

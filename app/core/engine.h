@@ -3,28 +3,41 @@
 #include <QObject>
 #include <QScopedPointer>
 
+#include "video.h"
+#include "video3.h"
+#include "video4.h"
+
+
 class QQmlApplicationEngine;
-class Settings;
 class Serial;
 
 class Engine : public QObject
 {
     Q_OBJECT
+    //Q_PROPERTY(type name READ name WRITE setName NOTIFY nameChanged)
 
 public:
     explicit Engine(QObject* parent = nullptr);
     ~Engine();
 
+    Q_INVOKABLE QStringList camerasInfo();
+
+    //Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
+
 signals:
-    void readyToCreateQmlEngine();
-    void usbPortFound();
+    void imageChanged(QString id);
 
 private:
     void createQmlEngine();
-    void findUsbSerialPort();
+
 
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
-    QScopedPointer<Serial> _serial;
 
-    QString _usbSerialPortName;
+    V4L2 _videoDriver;
+    Video3* _videoDriver3;
+    Video4* _videoDriver4;
+    QImage _image;
+
+    QByteArray _imgPpm;
+    QStringList _info;
 };

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScanView</class>
+ <widget class="QMainWindow" name="ScanView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>960</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout">
+    <item>
+     <widget class="GraphicsView" name="graphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>960</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>graphics_view.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>graphicsView</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

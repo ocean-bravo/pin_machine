@@ -1,4 +1,5 @@
 HEADERS += \
+    $$PWD/common.h \
         $$PWD/logger.h \
         $$PWD/appender.h \
         $$PWD/file_appender.h \

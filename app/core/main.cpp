@@ -13,6 +13,11 @@
 #include <exception>      // std::set_terminate
 
 
+#include "mainwindow.h"
+#include <QApplication>
+
+#include "scan_view.h"
+
 void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     switch (type)
@@ -46,26 +51,30 @@ void myterminate()
 
 int main(int argc, char* argv[])
 {
-    std::set_terminate(myterminate);
+    //std::set_terminate(myterminate);
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    qd() << "begin";
+    Logger::instance();
 
-
-//    Logger::instance();
-
-//    QEventLoop loop;
-//    QTimer::singleShot(1000, &loop, &QEventLoop::quit);
-//    QObject::connect(&Logger::instance(), &Logger::inited, &loop, &QEventLoop::quit);
-//    loop.exec();
+    QEventLoop loop;
+    QTimer::singleShot(1000, &loop, &QEventLoop::quit);
+    QObject::connect(&Logger::instance(), &Logger::inited, &loop, &QEventLoop::quit);
+    loop.exec();
 
 
     QScopedPointer<Engine> engine(new Engine());
 
     // Engine должен быть удален до разрушения главного цикла обработки событий.
     QObject::connect(&app, &QApplication::aboutToQuit, engine.data(), [&engine]() { engine.reset(); });
+
+// Test 1
+    //MainWindow w;
+    //w.show();
+
+    ScanView scene;
+    scene.show();
 
     return app.exec();
 }

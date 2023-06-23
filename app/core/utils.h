@@ -11,15 +11,29 @@
 
 class QJsonObject;
 
+const QString csi("\033[");
+const QString up("1A");
+const QString fwd10("10C");
+const QString beginprevline(csi + "F");
+inline const QString setpos(int column) { return csi + QString("%1C").arg(column); }
+
+
+inline QString toReal3(double value)
+{
+    return QString::number(value, 'f', 3);
+}
+
 class ScopedMeasure
 {
 public:
-    ScopedMeasure(const QString& msg);
+    enum Units { Micro, Milli };
+    ScopedMeasure(const QString& msg, Units = Units::Micro);
     ~ScopedMeasure();
 
 private:
-    std::chrono::system_clock::time_point _start;
+    std::chrono::steady_clock::time_point _start;
     QString _msg;
+    Units _units = Units::Micro;
 };
 
 class Measure
@@ -31,7 +45,7 @@ public:
     void stop();
 
 private:
-    std::chrono::system_clock::time_point _start;
+    std::chrono::steady_clock::time_point _start;
     QString _msg;
 };
 
