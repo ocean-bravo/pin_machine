@@ -27,6 +27,9 @@ Engine::~Engine()
 void Engine::createQmlEngine()
 {
     _qmlEngine.reset(new QQmlApplicationEngine());
+
+    _qmlEngine->addImportPath(appDir() + "libs");
+
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
