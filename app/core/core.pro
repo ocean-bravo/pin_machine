@@ -1,6 +1,6 @@
 QT += quick serialport widgets network gui printsupport concurrent quickcontrols2
 
-CONFIG += console qtquickcompiler
+CONFIG += console qtquickcompiler qml_debug
 
 TRANSLATIONS += core_language_de.ts core_language_pl.ts core_language_fr.ts
 

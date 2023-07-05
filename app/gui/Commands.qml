@@ -71,7 +71,7 @@ Item {
                     id: findUsbProcess
                     onReadyRead: {
                         const result = readAll()
-                        serialPortName.text = "/dev/" + result
+                        serialPortName.text = ("/dev/" + result).replace(/\s/g, "")
                     }
                 }
                 Timer {

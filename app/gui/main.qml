@@ -11,10 +11,29 @@ ApplicationWindow {
     height: 480
     flags: Qt.Window
 
-    MainWindow {
+    Commands {
+        id: commands
+        anchors.fill: parent
+    }
+    MyCamera {
+        id: camera
         anchors.fill: parent
     }
 
-
-
+    Shortcut {
+        sequence: "F1"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            commands.visible = true
+            camera.visible = false
+        }
+    }
+    Shortcut {
+        sequence: "F2"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            commands.visible = false
+            camera.visible = true
+        }
+    }
 }
