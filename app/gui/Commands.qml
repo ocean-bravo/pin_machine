@@ -166,7 +166,7 @@ Item {
 
             SmButton { text: qsTr("Status(?)");  onClicked: { write("?\n" )      } }
             SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
-            SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x24\n" )       } }
+            SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
             Item { height: 30; width: 10}
 
             Item { height: 30; width: 10}
