@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.12
 
 Button {
     id: root
-    width: 100
+    width: 120
     height: 30
 
 }

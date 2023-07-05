@@ -10,7 +10,7 @@ Rectangle {
     border.width: 1
     border.color: "grey"
     radius: 5
-    width: 100
+    width: 120
     height: 30
     property alias text: sendText.text
 

@@ -43,6 +43,55 @@ Item {
         18: ""
     }
 
+    property variant settings :  {
+        0:	"Step pulse, microseconds",
+        1:	"Step idle delay, milliseconds",
+        2:	"Step port invert, mask",
+        3:	"Direction port invert, mask",
+        4:	"Step enable invert, boolean",
+        5:	"Limit pins invert, boolean",
+        6:	"Probe pin invert, boolean",
+        10:	"Status report, mask",
+        11:	"Junction deviation, mm",
+        12:	"Arc tolerance, mm",
+        13:	"Report inches, boolean",
+        20:	"Soft limits, boolean",
+        21:	"Hard limits, boolean",
+        22:	"Homing cycle, boolean",
+        23:	"Homing dir invert, mask",
+        24:	"Homing feed, mm/min",
+        25:	"Homing seek, mm/min",
+        26:	"Homing debounce, milliseconds",
+        27:	"Homing pull-off, mm",
+        30:	"Max spindle speed, RPM",
+        31:	"Min spindle speed, RPM",
+        32:	"Laser mode, boolean",
+        100:	"Axis 1 (X) steps/unit (mm or deg)",
+        101:	"Axis 2 (Y) steps/unit",
+        102:	"Axis 3 (Z) steps/unit",
+        103:	"Axis 4 (A) steps/unit",
+        104:	"Axis 5 (B) steps/unit",
+        105:	"Axis 6 (C) steps/unit",
+        110:	"Axis 1 (X) Max rate, unit/min",
+        111:	"Axis 2 (Y) Max rate, unit/min",
+        112:	"Axis 3 (Z) Max rate, unit/min",
+        113:	"Axis 4 (A) Max rate, unit/min",
+        114:	"Axis 5 (B) Max rate, unit/min",
+        115:	"Axis 6 (C) Max rate, unit/min",
+        120:	"Axis 1 (X) Acceleration, unit/sec^2",
+        121:	"Axis 2 (Y) Acceleration, unit/sec^2",
+        122:	"Axis 3 (Z) Acceleration, unit/sec^2",
+        123:	"Axis 4 (A) Acceleration, unit/sec^2",
+        124:	"Axis 5 (B) Acceleration, unit/sec^2",
+        125:	"Axis 6 (c) Acceleration, unit/sec^2",
+        130:	"Axis 1 (X) Max travel, unit",
+        131:	"Axis 2 (Y) Max travel, unit",
+        132:	"Axis 3 (Z) Max travel, unit",
+        133:	"Axis 4 (A) Max travel, unit",
+        134:	"Axis 5 (B) Max travel, unit",
+        135:	"Axis 6 (C) Max travel, unit"
+    }
+
     function write(msg) {
         Serial.write(msg)
         msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
@@ -108,19 +157,6 @@ Item {
             Item { height: 30; width: 10}
             Item { height: 30; width: 10}
 
-            SmTextEdit { id: moveX; width: 100; height: 30 }
-            SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
-
-            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
-            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
-
-            SmButton { text: qsTr("Z-");     onClicked: { write("G1 Z1 F100\n" ) } }
-            SmButton { text: qsTr("Z+");     onClicked: { write("G1 Z2 F100\n" ) } }
-
-            SmButton { text: qsTr("Home X"); onClicked: { write("G28 X0 F100\n" ) } }
-            SmButton { text: qsTr("Home Y"); onClicked: { write("G28 Y0 F100\n" ) } }
-            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
-
             SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
             SmButton { text: qsTr("Homing($H)"); onClicked: { write("$H\n" )     } }
             SmButton { text: qsTr("Info($I)");   onClicked: { write("$I\n" )     } }
@@ -130,9 +166,30 @@ Item {
 
             SmButton { text: qsTr("Status(?)");  onClicked: { write("?\n" )      } }
             SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
-            SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 p1 X0 Y0 Z0 A0 B0\n" )      } }
 
-            SmTextEdit { id: sendText; width: 100; height: 30 }
+            Item { height: 30; width: 10}
+            Item { height: 30; width: 10}
+
+            SmTextEdit { id: moveX}
+            SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
+
+            SmTextEdit { id: moveY}
+            SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveX.text + "\n") } }
+//            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
+//            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
+
+//            SmButton { text: qsTr("Z-");     onClicked: { write("G1 Z1 F100\n" ) } }
+//            SmButton { text: qsTr("Z+");     onClicked: { write("G1 Z2 F100\n" ) } }
+
+//            SmButton { text: qsTr("Home X"); onClicked: { write("G28 X0 F100\n" ) } }
+//            SmButton { text: qsTr("Home Y"); onClicked: { write("G28 Y0 F100\n" ) } }
+//            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
+
+
+            SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
+            SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
+
+            SmTextEdit { id: sendText }
             SmButton { text: qsTr("Send");       onClicked: { write(sendText.text + "\n") } }
 
             Item { height: 30; width: 10}
