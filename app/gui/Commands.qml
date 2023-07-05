@@ -177,6 +177,10 @@ Item {
 
             SmTextEdit { id: moveY}
             SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveX.text + "\n") } }
+
+            SmTextEdit { id: moveZ}
+            SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveX.text + "\n") } }
+
 //            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
 //            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
 
