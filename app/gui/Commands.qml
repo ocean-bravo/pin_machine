@@ -260,5 +260,11 @@ Item {
             }
         }
     }
+
+    Shortcut {
+        sequence: "F5"
+        context: Qt.ApplicationShortcut
+        onActivated: write("?\n")
+    }
 }
 
