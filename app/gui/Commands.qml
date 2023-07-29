@@ -101,13 +101,14 @@ Item {
     RowLayout {
         anchors.fill: parent
 
-        Grid {
+        GridLayout {
             id: grid
-            spacing: 3
+            //spacing: 3
 
             Layout.fillHeight: true
 
-            columns: 2 //parent.width / 100
+            columns: 3
+            columnSpacing: 3 //parent.width / 100
 
             //rows: 4
 
@@ -151,11 +152,11 @@ Item {
                 }
             }
 
-            Item { height: 30; width: 10}
             SmButton { text: qsTr("Close");  onClicked: { Serial.close() } }
 
-            Item { height: 30; width: 10}
-            Item { height: 30; width: 10}
+            Item { height: 20; width: 10}
+            Item { height: 20; width: 10}
+            Item { height: 20; width: 10}
 
             SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
             SmButton { text: qsTr("Homing($H)"); onClicked: { write("$H\n" )     } }
@@ -164,22 +165,26 @@ Item {
             SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
             SmButton { text: qsTr("Reset($RST=#)");   onClicked: { write("$RST=#\n" )     } }
 
-            SmButton { text: qsTr("Status(?)");  onClicked: { write("?\n" )      } }
+            SmButton { text: qsTr("Status(?)"); tooltipText: "F5"; onClicked: { write("?\n")}  }
             SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
             SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
-            Item { height: 30; width: 10}
 
-            Item { height: 30; width: 10}
-            Item { height: 30; width: 10}
+            Item { height: 20; width: 10}
+            Item { height: 20; width: 10}
+            Item { height: 20; width: 10}
 
             SmTextEdit { id: moveX}
             SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
+            SmButton {  }
+
 
             SmTextEdit { id: moveY}
             SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text + "\n") } }
+            Item { height: 20; width: 10}
 
             SmTextEdit { id: moveZ}
             SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text + "\n") } }
+            Item { height: 20; width: 10}
 
 //            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
 //            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
@@ -192,10 +197,10 @@ Item {
 //            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
 
 
-            SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
-            SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
+            //SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
+            //SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
 
-            SmTextEdit { id: sendText }
+            SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
             SmButton { text: qsTr("Send");       onClicked: { write(sendText.text + "\n") } }
 
             Item { height: 30; width: 10}

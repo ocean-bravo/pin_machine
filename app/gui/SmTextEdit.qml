@@ -10,7 +10,7 @@ Rectangle {
     border.width: 1
     border.color: "grey"
     radius: 5
-    width: 120
+    //width: 120
     height: 30
     property alias text: sendText.text
 
@@ -20,4 +20,6 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 4
     }
+    Layout.preferredWidth: 120
+    Layout.preferredHeight: 30
 }
