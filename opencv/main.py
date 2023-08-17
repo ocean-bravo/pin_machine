@@ -1,3 +1,6 @@
+#https://github.com/shimat/opencvsharp/issues/1060
+#https://stackoverflow.com/questions/72175685/choosing-parameters-for-hough-gradient-alt
+
 import numpy as np
 import argparse
 import cv2
