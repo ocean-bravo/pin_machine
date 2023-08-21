@@ -9,6 +9,28 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+
+namespace {
+
+void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
+{
+    for (size_t i = 0; i < circles.size(); i++ )
+    {
+        cv::Vec3i c = circles[i];
+        cv::Point center = cv::Point(c[0], c[1]);
+        // circle center
+        cv::circle(image, center, 1, cv::Scalar(255,0,255), 4, cv::LINE_AA);
+        // circle outline
+        int radius = c[2];
+        cv::circle(image, center, radius, cv::Scalar(255,0,0), 4, cv::LINE_AA);
+    }
+}
+
+
+}
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
@@ -32,5 +54,37 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+
+    cv::Mat image = cv::imread("/home/mint/devel/pin_machine/opencv/img.jpg");
+
+    cv::Mat grey;
+    {
+        ScopedMeasure m("color");
+        cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+    }
+
+    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::imshow("grey", grey);
+    //cv::resizeWindow("grey", cv::Size(grey.size().width / 4, grey.size().height / 4));
+
+    cv::Mat blur;
+    medianBlur(grey, blur, 5);
+
+    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::imshow("blur", blur);
+    //cv::resizeWindow("blur", cv::Size(blur.size().width / 4, blur.size().height / 4));
+
+    std::vector<cv::Vec3f> circles;
+    {
+        ScopedMeasure m("circles");
+        cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, 1.2, 70, 168, 29, 80, 110);
+    }
+
+    drawCircles(image, circles);
+
+    cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::imshow("main", image);
+    cv::resizeWindow("main", cv::Size(image.size().width / 4, image.size().height / 4));
 }
+
 

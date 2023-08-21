@@ -21,9 +21,9 @@ ScopedMeasure::ScopedMeasure(const QString& msg)
 ScopedMeasure::~ScopedMeasure()
 {
     const auto finish = std::chrono::high_resolution_clock::now();
-    const std::chrono::duration<double> elapsed = finish - _start;
+    const std::chrono::duration<double, std::milli> elapsed = finish - _start;
 
-    qDebug().noquote() << _msg << elapsed.count();
+    qd() << _msg << elapsed.count() << "ms";
 }
 
 

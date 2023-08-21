@@ -17,6 +17,8 @@ public:
 private:
     void createQmlEngine();
 
+
+
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
     QScopedPointer<Serial> _serial;
 };
