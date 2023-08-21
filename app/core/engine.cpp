@@ -55,6 +55,17 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
+    cv::namedWindow("cam", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    while (true)
+    {
+        auto cam = cv::VideoCapture(2);
+
+        cv::Mat img;
+        cam.read(img);
+
+        cv::imshow("cam", img);
+    }
+
     cv::Mat image = cv::imread("/home/mint/devel/pin_machine/opencv/img.jpg");
 
     cv::Mat grey;
@@ -68,7 +79,7 @@ void Engine::createQmlEngine()
     //cv::resizeWindow("grey", cv::Size(grey.size().width / 4, grey.size().height / 4));
 
     cv::Mat blur;
-    medianBlur(grey, blur, 5);
+    medianBlur(grey, blur, 3);
 
     cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::imshow("blur", blur);
