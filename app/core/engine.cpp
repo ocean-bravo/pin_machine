@@ -8,6 +8,7 @@
 #include <QQmlContext>
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QProcess>
 
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
@@ -52,21 +53,25 @@ void Engine::createQmlEngine()
 
     _qmlEngine->addImportPath(appDir() + "libs");
 
+    _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
-    cv::namedWindow("cam", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
-    while (true)
-    {
-        auto cam = cv::VideoCapture(2);
 
-        cv::Mat img;
-        cam.read(img);
+    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+}
 
-        cv::imshow("cam", img);
-    }
+void Engine::update()
+{
+    QProcess process;
+    process.start("/bin/sh", {"-c", _photoCommand});
+    process.waitForFinished();
+    qd() << process.readAllStandardOutput().trimmed();
+    qd() << process.readAllStandardError().trimmed();
 
-    cv::Mat image = cv::imread("/home/mint/devel/pin_machine/opencv/img.jpg");
+    cv::Mat image = cv::imread("~/deploy/pin_machine/img.png");
 
     cv::Mat grey;
     {
@@ -74,14 +79,14 @@ void Engine::createQmlEngine()
         cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
     }
 
-    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+
     cv::imshow("grey", grey);
     //cv::resizeWindow("grey", cv::Size(grey.size().width / 4, grey.size().height / 4));
 
     cv::Mat blur;
     medianBlur(grey, blur, 3);
 
-    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+
     cv::imshow("blur", blur);
     //cv::resizeWindow("blur", cv::Size(blur.size().width / 4, blur.size().height / 4));
 
@@ -93,9 +98,14 @@ void Engine::createQmlEngine()
 
     drawCircles(image, circles);
 
-    cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+
     cv::imshow("main", image);
     cv::resizeWindow("main", cv::Size(image.size().width / 4, image.size().height / 4));
+}
+
+void Engine::setPhotoCommand(QString cmd)
+{
+    _photoCommand = cmd;
 }
 
 

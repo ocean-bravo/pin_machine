@@ -19,6 +19,10 @@ ApplicationWindow {
         id: camera
         anchors.fill: parent
     }
+    OpenCV {
+        id: opencv
+        anchors.fill: parent
+    }
 
     Shortcut {
         sequence: "F1"
@@ -26,6 +30,7 @@ ApplicationWindow {
         onActivated: {
             commands.visible = true
             camera.visible = false
+            opencv.visible = false
         }
     }
     Shortcut {
@@ -34,6 +39,17 @@ ApplicationWindow {
         onActivated: {
             commands.visible = false
             camera.visible = true
+            opencv.visible = false
+        }
+    }
+
+    Shortcut {
+        sequence: "F3"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            commands.visible = false
+            camera.visible = false
+            opencv.visible = true
         }
     }
 }
