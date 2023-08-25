@@ -95,11 +95,11 @@ Item {
     function write(msg) {
         Serial.write(msg)
         msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
-        log.insert(log.length, "<font color='red'>" + msg + "</font>")
+        log.append("<font color='red'>" + msg + "</font>")
     }
 
 
-    Row {
+    RowLayout {
         anchors.fill: parent
         Column {
             width: 400
@@ -219,6 +219,12 @@ Item {
 
             }
 
+            JogControl {
+                width: parent.width
+                height: width
+
+            }
+
         }
 
 
@@ -237,42 +243,54 @@ Item {
         //SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
 
 
+        ColumnLayout {
 
+            TabBar {
+                id: bar
+                Layout.fillWidth: true
+                height: 20
 
-        Item {
-            width: parent.width
-            height: parent.height
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-
-
-            ScrollView {
-                id: view
-                anchors.fill: parent
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-
-                background: Rectangle {
-                    implicitWidth: 200
-                    implicitHeight: 200
-                    border.color: "#444"
-                    color: "#F4F4F4"
+                TabButton {
+                    text: "Console"
+                    width: 100
                 }
-
-                clip: true
-                TextArea {
-                    id: log
-                    textFormat: Text.RichText
-                    width: 500
+                TabButton {
+                    text: "Camera"
+                    width: 100
                 }
             }
+
+            StackLayout {
+                //            anchors.left: parent.left
+                //            anchors.right: parent.right
+                //            anchors.top: barRow.bottom
+                //            anchors.bottom: parent.bottom
+
+                currentIndex: bar.currentIndex
+
+                Log {
+                    id: log
+                }
+                MyCamera {}
+            }
         }
+        //        Item {
+        //            width: parent.width
+        //            height: parent.height
+        //            //            Layout.fillWidth: true
+        //            //            Layout.fillHeight: true
+
+
+
+        //        }
     }
+
 
 
     Connections {
         target: Serial
         function onMessage(msg) {
-            log.insert(log.length, "<font color='darkgrey'>" + msg + "</font><br>")
+            log.append("<font color='darkgrey'>" + msg + "</font><br>")
         }
     }
 

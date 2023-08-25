@@ -2,6 +2,8 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    JogControl.qml \
+    Log.qml \
     OpenCV.qml
 
 TRANSLATIONS += gui_language_de.ts \
