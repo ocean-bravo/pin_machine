@@ -98,150 +98,152 @@ Item {
         log.insert(log.length, "<font color='red'>" + msg + "</font>")
     }
 
-    RowLayout {
+
+    Row {
         anchors.fill: parent
+        Column {
+            width: 400
+            Grid {
+                width:parent.width
+                columns: 4
+                columnSpacing: 5
+                rowSpacing: 5
 
-        GridLayout {
-            id: grid
-            //spacing: 3
+                SmTextEdit {
+                    id: serialPortName
+                    span: 2
 
-            Layout.fillHeight: true
-
-            columns: 3
-            columnSpacing: 3 //parent.width / 100
-
-            //rows: 4
-
-            //width: parent.width
-
-            SmTextEdit {
-                id: serialPortName
-
-                Process {
-                    id: findUsbProcess
-                    onReadyRead: {
-                        const result = readAll()
-                        serialPortName.text = ("/dev/" + result).replace(/\s/g, "")
+                    Process {
+                        id: findUsbProcess
+                        onReadyRead: {
+                            const result = readAll()
+                            serialPortName.text = ("/dev/" + result).replace(/\s/g, "")
+                        }
+                    }
+                    Timer {
+                        interval: 1000
+                        repeat: true
+                        triggeredOnStart: true
+                        running: true
+                        onTriggered: {
+                            serialPortName.text = ""
+                            findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+                        }
                     }
                 }
-                Timer {
-                    interval: 1000
-                    repeat: true
-                    triggeredOnStart: true
-                    running: true
-                    onTriggered: {
-                        serialPortName.text = ""
-                        findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+
+                SmButton {
+                    id: openPort
+                    text: qsTr("Open")
+                    onClicked: {
+                        Serial.close()
+                        let serPort = serialPortName.text
+                        console.log(serPort)
+                        Serial.setPortName(serPort)
+                        Serial.setBaudRate("115200")
+                        Serial.setDataBits("8")
+                        Serial.setParity("N")
+                        Serial.setStopBits("1")
+                        Serial.open()
                     }
                 }
+
+                SmButton { text: qsTr("Close");  onClicked: { Serial.close() } }
             }
-
-            SmButton {
-                id: openPort
-                text: qsTr("Open")
-                onClicked: {
-                    Serial.close()
-                    let serPort = serialPortName.text
-                    console.log(serPort)
-                    Serial.setPortName(serPort)
-                    Serial.setBaudRate("115200")
-                    Serial.setDataBits("8")
-                    Serial.setParity("N")
-                    Serial.setStopBits("1")
-                    Serial.open()
-                }
-            }
-
-            SmButton { text: qsTr("Close");  onClicked: { Serial.close() } }
-
-            Item { height: 20; width: 10}
-            Item { height: 20; width: 10}
-            Item { height: 20; width: 10}
-
-            SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
-            SmButton { text: qsTr("Homing($H)"); onClicked: { write("$H\n" )     } }
-            SmButton { text: qsTr("Info($I)");   onClicked: { write("$I\n" )     } }
-            SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!\n" )     } }
-            SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
-            SmButton { text: qsTr("Reset($RST=#)");   onClicked: { write("$RST=#\n" )     } }
-
-            SmButton { text: qsTr("Status(?)"); tooltipText: "F5"; onClicked: { write("?\n")}  }
-            SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
-            SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
-
-            Item { height: 20; width: 10}
-            Item { height: 20; width: 10}
-            Item { height: 20; width: 10}
-
-            SmTextEdit { id: moveX}
-            SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
-            SmButton {  }
-
-
-            SmTextEdit { id: moveY}
-            SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text + "\n") } }
-            Item { height: 20; width: 10}
-
-            SmTextEdit { id: moveZ}
-            SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text + "\n") } }
-            Item { height: 20; width: 10}
-
-//            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
-//            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
-
-//            SmButton { text: qsTr("Z-");     onClicked: { write("G1 Z1 F100\n" ) } }
-//            SmButton { text: qsTr("Z+");     onClicked: { write("G1 Z2 F100\n" ) } }
-
-//            SmButton { text: qsTr("Home X"); onClicked: { write("G28 X0 F100\n" ) } }
-//            SmButton { text: qsTr("Home Y"); onClicked: { write("G28 Y0 F100\n" ) } }
-//            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
-
-
-            //SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
-            //SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
-
-            SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
-            SmButton { text: qsTr("Send");       onClicked: { write(sendText.text + "\n") } }
 
             Item { height: 30; width: 10}
-            Item { height: 30; width: 10}
 
-            Item { height: 30; width: 10}
-            SmButton { text: qsTr("Clear log");  onClicked: { log.clear() } }
+            Grid {
+                width: parent.width
+                columns: 4
+                columnSpacing: 5
+                rowSpacing: 5
 
-            Connections {
-                target: Serial
-                function onMessage(msg) {
-                    log.insert(log.length, "<font color='darkgrey'>" + msg + "</font><br>")
-                }
+                SmButton { text: qsTr("$H");  onClicked: { write("$H\n" )} }
+                SmButton { text: qsTr("$HX"); onClicked: { write("$HX\n" ) } }
+                SmButton { text: qsTr("$HY"); onClicked: { write("$HY\n" ) } }
+                SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ\n" ) } }
             }
 
-            Connections {
-                target: Serial
-                function onData(msg) {
-                    // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-                    msg = msg.replace(new RegExp('<','g'), '[')
-                    msg = msg.replace(new RegExp('>','g'), ']')
-                    msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
+            Item { height: 30; width: 10}
 
-                    for (let i = 1; i < 11; ++i) {
-                        let alrm = "ALARM:" + i
-                        if (msg.includes(alrm))
-                            msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
-                    }
-                    for (let j = 1; j < 100; ++j) {
-                        let err = "error:" + j
-                        if (msg.includes(err))
-                            msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-                    }
-                    log.insert(log.length, "<font color='darkblue'>" + msg + "</font>")
-                }
+            Grid {
+                width: parent.width
+                columns: 3
+                columnSpacing: 5
+                rowSpacing: 5
+
+                SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
+                SmButton { text: qsTr("Info($I)");   onClicked: { write("$I\n" )     } }
+                SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!\n" )     } }
+                SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
+                SmButton { text: qsTr("Reset($RST=#)");   onClicked: { write("$RST=#\n" )     } }
+
+                SmButton { text: qsTr("Status(?)"); tooltipText: "F5"; onClicked: { write("?\n")}  }
+                SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
+                SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
+
+
+                Item { height: 20; width: 10}
+                Item { height: 20; width: 10}
+                Item { height: 20; width: 10}
+
+
+
+                Item { height: 20; width: 10}
+                Item { height: 20; width: 10}
+                Item { height: 20; width: 10}
+
+                SmTextEdit { id: moveX}
+                SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
+                SmButton {  }
+
+
+                SmTextEdit { id: moveY}
+                SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text + "\n") } }
+                Item { height: 20; width: 10}
+
+                SmTextEdit { id: moveZ}
+                SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text + "\n") } }
+                Item { height: 20; width: 10}
+
+
+                SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
+                SmButton { text: qsTr("Send");       onClicked: { write(sendText.text + "\n") } }
+
+                Item { height: 30; width: 10}
+                Item { height: 30; width: 10}
+
+                Item { height: 30; width: 10}
+                SmButton { text: qsTr("Clear log");  onClicked: { log.clear() } }
+
             }
+
         }
 
+
+        //            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
+        //            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
+
+        //            SmButton { text: qsTr("Z-");     onClicked: { write("G1 Z1 F100\n" ) } }
+        //            SmButton { text: qsTr("Z+");     onClicked: { write("G1 Z2 F100\n" ) } }
+
+        //            SmButton { text: qsTr("Home X"); onClicked: { write("G28 X0 F100\n" ) } }
+        //            SmButton { text: qsTr("Home Y"); onClicked: { write("G28 Y0 F100\n" ) } }
+        //            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
+
+
+        //SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
+        //SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
+
+
+
+
         Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            width: parent.width
+            height: parent.height
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
 
 
             ScrollView {
@@ -263,6 +265,36 @@ Item {
                     width: 500
                 }
             }
+        }
+    }
+
+
+    Connections {
+        target: Serial
+        function onMessage(msg) {
+            log.insert(log.length, "<font color='darkgrey'>" + msg + "</font><br>")
+        }
+    }
+
+    Connections {
+        target: Serial
+        function onData(msg) {
+            // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
+            msg = msg.replace(new RegExp('<','g'), '[')
+            msg = msg.replace(new RegExp('>','g'), ']')
+            msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
+
+            for (let i = 1; i < 11; ++i) {
+                let alrm = "ALARM:" + i
+                if (msg.includes(alrm))
+                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
+            }
+            for (let j = 1; j < 100; ++j) {
+                let err = "error:" + j
+                if (msg.includes(err))
+                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+            }
+            log.insert(log.length, "<font color='darkblue'>" + msg + "</font>")
         }
     }
 
