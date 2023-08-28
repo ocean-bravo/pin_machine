@@ -245,121 +245,102 @@ Item {
                 height: width
 
             }
-
         }
 
+        Log {
+            id: log
+            Layout.preferredWidth: parent.width / 3
+            Layout.fillHeight: true
+        }
 
-        //            SmButton { text: qsTr("Y-");     onClicked: { write("G1 Y1\n" ) } }
-        //            SmButton { text: qsTr("Y+");     onClicked: { write("G1 Y2\n" ) } }
+        Item {
+            Layout.preferredWidth: parent.width / 3
+            Layout.fillHeight: true
+            Process {
+                id: cameraCapture
 
-        //            SmButton { text: qsTr("Z-");     onClicked: { write("G1 Z1 F100\n" ) } }
-        //            SmButton { text: qsTr("Z+");     onClicked: { write("G1 Z2 F100\n" ) } }
-
-        //            SmButton { text: qsTr("Home X"); onClicked: { write("G28 X0 F100\n" ) } }
-        //            SmButton { text: qsTr("Home Y"); onClicked: { write("G28 Y0 F100\n" ) } }
-        //            SmButton { text: qsTr("Home Z"); onClicked: { write("G28 Z0 F100\n" ) } }
-
-
-        //SmButton { text: qsTr("Init");       onClicked: { write("G10 L20 P1 X0 Y0 Z0 A0 B0\n" )      } }
-        //SmButton { text: qsTr("Set Offset"); onClicked: { write("G10 L2 P1 X-525 Y-400\n" )      } }
-
-
-        ColumnLayout {
-
-            TabBar {
-                id: bar
-                Layout.fillWidth: true
-                height: 20
-
-                TabButton {
-                    text: "Console"
-                    width: 100
+                function startCamera() {
+                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
                 }
-                TabButton {
-                    text: "Camera"
-                    width: 100
+
+                property string script:
+                    "ffmpeg -y -f v4l2 \
+                           -framerate 30 \
+                           -video_size 640x480 \
+                           -input_format yuyv422 \
+                           -i /dev/video2 \
+                           -vf fps=3 \
+                           -update 1 \
+                           /dev/shm/cap.png"
+
+                onStandardErrorChanged: {
+                    console.log("error: ", standardError)
+                }
+                onStandardOutputChanged: {
+                    console.log("output: ", standardOutput)
                 }
             }
 
-            StackLayout {
-                //            anchors.left: parent.left
-                //            anchors.right: parent.right
-                //            anchors.top: barRow.bottom
-                //            anchors.bottom: parent.bottom
-
-                currentIndex: bar.currentIndex
-
-                Log {
-                    id: log
+            Process {
+                id: capChanged
+                onReadyRead: {
+                    image.source = ""
+                    image.source = "/dev/shm/cap.png"
                 }
-                Item {
-                    Process {
-                        id: cameraCapture
 
-                        function startCamera() {
-                            cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
-                        }
-
-                        property string script:
-                            "ffmpeg -y -f v4l2 \
-                                   -framerate 30 \
-                                   -video_size 640x480 \
-                                   -input_format yuyv422 \
-                                   -i /dev/video2 \
-                                   -vf fps=3 \
-                                   -update 1 \
-                                   /dev/shm/cap.png"
-
-                        onStandardErrorChanged: {
-                            console.log("error: ", standardError)
-                        }
-                        onStandardOutputChanged: {
-                            console.log("output: ", standardOutput)
-                        }
-                    }
-
-                    Process {
-                        id: capChanged
-                        onReadyRead: {
-                            image.source = ""
-                            image.source = "/dev/shm/cap.png"
-                        }
-
-                        function startWatch() {
-                            start("/bin/sh", ["-c", "inotifywait --monitor --event modify /dev/shm/cap.png"]);
-                        }
-                    }
-
-                    Button {
-                        text: "play"
-
-                        onClicked: {
-                            image.source = "/dev/shm/cap.png"
-                            cameraCapture.startCamera()
-                            capChanged.startWatch()
-                        }
-                    }
-
-                    Image {
-                        id: image
-                        x: 0
-                        y: 0
-                        cache: false
-                        width: 300 //parent.width
-                        height: 300//parent.height
-                    }
+                function startWatch() {
+                    start("/bin/sh", ["-c", "inotifywait --monitor --event modify /dev/shm/cap.png"]);
                 }
             }
+
+            Button {
+                text: "play"
+
+                onClicked: {
+                    image.source = "/dev/shm/cap.png"
+                    cameraCapture.startCamera()
+                    capChanged.startWatch()
+                }
+            }
+
+            Image {
+                id: image
+                cache: false
+                width: 300 //parent.width
+                height: 300//parent.height
+            }
         }
-        //        Item {
-        //            width: parent.width
-        //            height: parent.height
-        //            //            Layout.fillWidth: true
-        //            //            Layout.fillHeight: true
 
 
+//        ColumnLayout {
 
-        //        }
+//            TabBar {
+//                id: bar
+//                Layout.fillWidth: true
+//                height: 20
+
+//                TabButton {
+//                    text: "Console"
+//                    width: 100
+//                }
+//                TabButton {
+//                    text: "Camera"
+//                    width: 100
+//                }
+//            }
+
+//            StackLayout {
+//                //            anchors.left: parent.left
+//                //            anchors.right: parent.right
+//                //            anchors.top: barRow.bottom
+//                //            anchors.bottom: parent.bottom
+
+//                currentIndex: bar.currentIndex
+
+
+//            }
+//        }
+
     }
 
 
