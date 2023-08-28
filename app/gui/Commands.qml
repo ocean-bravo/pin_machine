@@ -179,7 +179,29 @@ Item {
                 SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
                 SmButton { text: qsTr("Reset($RST=#)");   onClicked: { write("$RST=#\n" )     } }
 
-                SmButton { text: qsTr("Status(?)"); tooltipText: "F5"; onClicked: { write("?\n")}  }
+                SmButton {
+                    text: qsTr("Status(?)")
+                    tooltipText: "F5";
+                    checkable: true
+                    onCheckedChanged: {
+                        if (checked)
+                            statusTimer.start()
+                        else
+                            statusTimer.stop()
+                    }
+
+                    Timer {
+                        id: statusTimer
+                        interval: 500
+                        repeat: true
+                        triggeredOnStart: true
+                        running: false
+                        onTriggered: {
+                            write("?\n")
+                        }
+                    }
+
+                }
                 SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
                 SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
 
