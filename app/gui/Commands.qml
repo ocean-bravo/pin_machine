@@ -306,7 +306,8 @@ Item {
                                    -video_size 640x480 \
                                    -input_format yuyv422 \
                                    -i /dev/video2 \
-                                   -vframes 1 \
+                                   -vf fps=3 \
+                                   -update 1 \
                                    /dev/shm/cap.png"
 
                         onStandardErrorChanged: {
