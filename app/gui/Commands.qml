@@ -312,7 +312,7 @@ Item {
                 if (msg.includes(err))
                     msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
             }
-            log.insert(log.length, "<font color='darkblue'>" + msg + "</font>")
+            log.append("<font color='darkblue'>" + msg + "</font>")
         }
     }
 
