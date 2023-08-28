@@ -309,7 +309,7 @@ Item {
                 x: 0
                 y: 0
                 fillMode:Image.PreserveAspectFit
-                //anchors.fill: parent
+                anchors.fill: parent
 
                 //cache: false
 //                width: 300 //parent.width
