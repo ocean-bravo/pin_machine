@@ -253,8 +253,9 @@ Item {
             Layout.fillHeight: true
         }
 
-        Item {
-            Layout.preferredWidth: parent.width / 3
+        Rectangle {
+            color: "yellow"
+            Layout.fillWidth: true
             Layout.fillHeight: true
             Process {
                 id: cameraCapture
