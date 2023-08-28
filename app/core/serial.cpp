@@ -18,7 +18,7 @@ SerialPrivate::~SerialPrivate()
 void SerialPrivate::read()
 {
     const QByteArray a = _port->readAll();
-    qd() << a;
+    //qd() << a;
 
     if (!a.isEmpty())
     {
