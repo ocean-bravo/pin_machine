@@ -270,7 +270,7 @@ Item {
                            -video_size 640x480 \
                            -input_format yuyv422 \
                            -i /dev/video2 \
-                           -vf fps=3 \
+                           -vf fps=10 \
                            -update 1 \
                            /dev/shm/cap.png"
 
@@ -295,7 +295,9 @@ Item {
             }
 
             Button {
-                text: "play"
+                x: 0
+                y: 0
+                text: "start"
 
                 onClicked: {
                     image.source = "/dev/shm/cap.png"
