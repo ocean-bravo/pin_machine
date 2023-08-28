@@ -306,8 +306,8 @@ Item {
             Image {
                 id: image
                 cache: false
-                width: 300 //parent.width
-                height: 300//parent.height
+//                width: 300 //parent.width
+//                height: 300//parent.height
             }
         }
 
