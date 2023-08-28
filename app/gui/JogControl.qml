@@ -37,27 +37,27 @@ Rectangle {
         columnSpacing: 5
         rowSpacing: 5
 
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+50");  onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");  onClicked: { write("$H\n" )} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+10");  onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.1");  onClicked: { write("$H\n" )} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");   onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.01");  onClicked: { write("$H\n" )} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+50");  onClicked: { write("$J=G91 Y50 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");  onClicked: { write("$J=G91 Z1 F100\n")} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+10");  onClicked: { write("$J=G91 Y10 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.1");  onClicked: { write("$J=G91 Z0.1 F100\n")} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");   onClicked: { write("$J=G91 Y1 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.01");  onClicked: { write("$J=G91 Z0.01 F100\n")} }
 
 
-        MyButton { text: qsTr("-50");   onClicked: { write("$H\n" )} }
-        MyButton { text: qsTr("-10");   onClicked: { write("$H\n" )} }
-        MyButton { text: qsTr("-1");    onClicked: { write("$H\n" )} }
+        MyButton { text: qsTr("-50");   onClicked: { write("$J=G91 X-50 F100\n")} }
+        MyButton { text: qsTr("-10");   onClicked: { write("$J=G91 X-10 F100\n")} }
+        MyButton { text: qsTr("-1");    onClicked: { write("$J=G91 X-1 F100\n")} }
 
         MyButton { text: "X/Y"; }
 
-        MyButton { text: qsTr("+1");   onClicked: { write("$H\n" )} }
-        MyButton { text: qsTr("+10");   onClicked: { write("$H\n" )} }
-        MyButton { text: qsTr("+50");    onClicked: { write("$H\n" )} }
+        MyButton { text: qsTr("+1");   onClicked: { write("$J=G91 X1 F100\n")} }
+        MyButton { text: qsTr("+10");   onClicked: { write("$J=G91 X10 F100\n")} }
+        MyButton { text: qsTr("+50");    onClicked: { write("$J=G91 X50 F100\n")} }
 
         Spacer {}
         MyButton { text: "Z"; }
 
 
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.01");  onClicked: { write("$H\n" )} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-10");  onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.1");  onClicked: { write("$H\n" )} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-50");   onClicked: { write("$H\n" )} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { write("$H\n" )} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { write("$J=G91 Y-1 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.01");  onClicked: { write("$J=G91 Z-0.01 F100\n")} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-10");  onClicked: { write("$J=G91 Y-10 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.1");  onClicked: { write("$J=G91 Z-0.1 F100\n")} }
+        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-50");   onClicked: { write("$J=G91 Y-50 F100\n")} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { write("$J=G91 Z-1 F100\n")} }
     }
 }
