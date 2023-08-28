@@ -305,7 +305,9 @@ Item {
 
             Image {
                 id: image
-                anchors.fill: parent
+                x: 0
+                y: 0
+                //anchors.fill: parent
                 //cache: false
 //                width: 300 //parent.width
 //                height: 300//parent.height
