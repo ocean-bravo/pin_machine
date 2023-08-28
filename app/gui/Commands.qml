@@ -301,7 +301,7 @@ Item {
                         }
 
                         property string script:
-                            "rm /dev/shm/cap.png; \
+                            "rm /dev/shm/cap.png
                              ffmpeg -f v4l2 \
                                    -framerate 30 \
                                    -video_size 640x480 \
