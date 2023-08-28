@@ -68,7 +68,7 @@ Item {
                    -framerate 30 \
                    -video_size 640x480 \
                    -input_format yuyv422 \
-                   -i /dev/video0 \
+                   -i /dev/video2 \
                    -vf fps=1 \
                    /dev/shm/cap.png"
 
