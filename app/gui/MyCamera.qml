@@ -5,6 +5,7 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtMultimedia 5.12
 
+import Process 1.0
 
 Item {
     id: root
@@ -46,17 +47,85 @@ Item {
         }
     }
 
-    VideoOutput {
-        visible: true
+//    MediaPlayer {
+//        id: player
+//        source: "/dev/shm/cap.png"
+//        Component.onCompleted: {
+//            play()
+//        }
+//    }
 
+    Process {
+        id: cameraCapture
+
+        function startCamera() {
+            cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
+        }
+
+        property string script:
+            "ffmpeg -f v4l2 \
+                   -framerate 30 \
+                   -video_size 640x480 \
+                   -input_format yuyv422 \
+                   -i /dev/video0 \
+                   -vf fps=1 \
+                   /dev/shm/cap.png"
+
+
+        onStandardErrorChanged: {
+            console.log("error: ", standardError)
+        }
+        onStandardOutputChanged: {
+            console.log("output: ", standardOutput)
+        }
+
+
+
+    }
+
+    Process {
+        id: capChanged
+        onReadyRead: {
+            image.source = ""
+            image.source = "/dev/shm/cap.png"
+        }
+
+        function startWatch() {
+            start("/bin/sh", ["-c", "inotifywait --monitor /dev/shm/cap.png"]);
+        }
+
+    }
+
+    Button {
+        text: "play"
+
+        onClicked: {
+            image.source = "/dev/shm/cap.png"
+            cameraCapture.startCamera()
+            capChanged.startWatch()
+        }
+    }
+
+    Image {
+        id: image
         x: 0
         y: 0
+        cache: false
         width: 300 //parent.width
         height: 300//parent.height
-
-        source: camera
-        autoOrientation: true
     }
+
+//    VideoOutput {
+//        visible: true
+
+//        x: 0
+//        y: 0
+//        width: 300 //parent.width
+//        height: 300//parent.height
+
+//        source: player//camera
+//        autoOrientation: true
+//    }
 
     Text {
         x: 120
