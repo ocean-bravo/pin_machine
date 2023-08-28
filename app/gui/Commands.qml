@@ -98,7 +98,6 @@ Item {
         log.append("<font color='red'>" + msg + "</font>")
     }
 
-
     RowLayout {
         anchors.fill: parent
         Column {
