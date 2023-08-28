@@ -101,7 +101,8 @@ Item {
     RowLayout {
         anchors.fill: parent
         Column {
-            width: 400
+            Layout.preferredWidth: 400
+            Layout.fillHeight: true
             Grid {
                 width:parent.width
                 columns: 4
@@ -253,8 +254,7 @@ Item {
             Layout.fillHeight: true
         }
 
-        Rectangle {
-            color: "yellow"
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Process {
