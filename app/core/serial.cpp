@@ -180,7 +180,7 @@ bool SerialPrivate::isOpen() const
 
 void SerialPrivate::write(const QByteArray& msg)
 {
-    qd() << "write " << msg;
+    //qd() << "write " << msg;
     _port->write(msg);
 }
 

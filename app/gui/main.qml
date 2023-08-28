@@ -15,41 +15,41 @@ ApplicationWindow {
         id: commands
         anchors.fill: parent
     }
-    MyCamera {
-        id: camera
-        anchors.fill: parent
-    }
-    OpenCV {
-        id: opencv
-        anchors.fill: parent
-    }
+//    MyCamera {
+//        id: camera
+//        anchors.fill: parent
+//    }
+//    OpenCV {
+//        id: opencv
+//        anchors.fill: parent
+//    }
 
-    Shortcut {
-        sequence: "F1"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            commands.visible = true
-            camera.visible = false
-            opencv.visible = false
-        }
-    }
-    Shortcut {
-        sequence: "F2"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            commands.visible = false
-            camera.visible = true
-            opencv.visible = false
-        }
-    }
+//    Shortcut {
+//        sequence: "F1"
+//        context: Qt.ApplicationShortcut
+//        onActivated: {
+//            commands.visible = true
+//            camera.visible = false
+//            opencv.visible = false
+//        }
+//    }
+//    Shortcut {
+//        sequence: "F2"
+//        context: Qt.ApplicationShortcut
+//        onActivated: {
+//            commands.visible = false
+//            camera.visible = true
+//            opencv.visible = false
+//        }
+//    }
 
-    Shortcut {
-        sequence: "F3"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            commands.visible = false
-            camera.visible = false
-            opencv.visible = true
-        }
-    }
+//    Shortcut {
+//        sequence: "F3"
+//        context: Qt.ApplicationShortcut
+//        onActivated: {
+//            commands.visible = false
+//            camera.visible = false
+//            opencv.visible = true
+//        }
+//    }
 }
