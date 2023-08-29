@@ -4,8 +4,27 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 
-Item {
+Rectangle {
+    id: root
+    color: "yellow"
     property int imageVisible: 1
+
+    component MyImage :
+        Image {
+            property real zoom: 0.0
+            property real zoomStep: 0.1
+
+            asynchronous: true
+            cache: false
+            smooth: false
+            antialiasing: false
+            mipmap: false
+
+            anchors.centerIn: parent
+            fillMode: Image.PreserveAspectFit
+            transformOrigin: Item.Center
+            scale: Math.min(root.width / width, root.height / height, 1) + zoom
+        }
 
     Flickable {
         anchors.fill: parent
@@ -14,44 +33,14 @@ Item {
         contentHeight: Math.max(image.height * image.scale, root.height)
         clip: true
 
-        Image {
+        MyImage {
             id: image
-
-            property real zoom: 0.0
-            property real zoomStep: 0.1
-
-            asynchronous: true
-            cache: false
-            smooth: false
-            antialiasing: false
-            mipmap: false
-
             visible: imageVisible === 1
-
-            anchors.centerIn: parent
-            fillMode: Image.PreserveAspectFit
-            transformOrigin: Item.Center
-            scale: Math.min(root.width / width, root.height / height, 1) + zoom
         }
 
-        Image {
+        MyImage {
             id: image2
-
-            property real zoom: 0.0
-            property real zoomStep: 0.1
-
-            asynchronous: true
-            cache: false
-            smooth: false
-            antialiasing: false
-            mipmap: false
-
             visible: imageVisible === 2
-
-            anchors.centerIn: parent
-            fillMode: Image.PreserveAspectFit
-            transformOrigin: Item.Center
-            scale: Math.min(root.width / width, root.height / height, 1) + zoom
         }
     }
 
@@ -76,7 +65,7 @@ Item {
         var imageNew = imageVisible === 1 ? image2 : image;
         var imageOld = imageVisible === 2 ? image2 : image;
 
-        imageNew.source = ""
+        //imageNew.source = ""
 
         imageNew.source = source;
 

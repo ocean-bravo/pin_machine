@@ -300,21 +300,21 @@ Item {
             }
 
 
-//            Timer {
-//                interval: 500
-//                repeat: true
-//                triggeredOnStart: true
-//                running: true
-//                property bool soft: false
-//                onTriggered: {
-//                    if (soft)
-//                        image.setSource("/dev/shm/cap_soft.png")
-//                    else
-//                        image.setSource("/dev/shm/cap.png")
+            Timer {
+                interval: 500
+                repeat: true
+                triggeredOnStart: true
+                running: true
+                property bool soft: false
+                onTriggered: {
+                    if (soft)
+                        image.setSource("/dev/shm/cap_soft.png")
+                    else
+                        image.setSource("/dev/shm/cap.png")
 
-//                    soft = !soft
-//                }
-//            }
+                    soft = !soft
+                }
+            }
 
 //            Image {
 //                id: image
@@ -326,7 +326,8 @@ Item {
 
             ImageDoubleBuff {
                 id: image
-                anchors.fill: parent
+                width: parent.width
+                height: parent.height
             }
 
             Button {
@@ -336,8 +337,8 @@ Item {
 
                 onClicked: {
                     image.setSource("/dev/shm/cap.png")
-                    cameraCapture.startCamera()
-                    capChanged.startWatch()
+                    //cameraCapture.startCamera()
+                    //capChanged.startWatch()
                 }
             }
 
