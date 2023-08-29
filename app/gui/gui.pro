@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    ImageDoubleBuff.qml \
     JogControl.qml \
     Log.qml \
     OpenCV.qml
