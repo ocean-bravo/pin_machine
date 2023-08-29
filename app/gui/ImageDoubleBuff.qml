@@ -61,23 +61,23 @@ Rectangle {
     }
 
     function setSource(source){
-        var imageNew = image.visible ? image2 : image;
-        var imageOld = image.visible ? image : image2;
+        var imageNotVis = image.visible ? image2 : image;
+        var imageVis = image.visible ? image : image2;
 
-        //imageNew.source = ""
+        imageNotVis.source = ""
 
-        imageNew.source = source;
+        imageNotVis.source = source
 
         function finishImage(){
-            if(imageNew.status === Component.Ready) {
-                imageNew.statusChanged.disconnect(finishImage);
+            if(imageNotVis.status === Component.Ready) {
+                imageNotVis.statusChanged.disconnect(finishImage);
                 image.visible = !image.visible
                 image2.visible =!image2.visible
             }
         }
 
-        if (imageNew.status === Component.Loading){
-            imageNew.statusChanged.connect(finishImage)
+        if (imageNotVis.status === Component.Loading){
+            imageNotVis.statusChanged.connect(finishImage)
         }
         else {
             finishImage()
