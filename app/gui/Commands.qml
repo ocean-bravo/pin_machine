@@ -300,28 +300,20 @@ Item {
             }
 
 
-            Timer {
-                interval: 500
-                repeat: true
-                triggeredOnStart: true
-                running: true
-                property bool soft: false
-                onTriggered: {
-                    if (soft)
-                        image.setSource("/dev/shm/cap_soft.png")
-                    else
-                        image.setSource("/dev/shm/cap.png")
+//            Timer {
+//                interval: 500
+//                repeat: true
+//                triggeredOnStart: true
+//                running: true
+//                property bool soft: false
+//                onTriggered: {
+//                    if (soft)
+//                        image.setSource("/dev/shm/cap_soft.png")
+//                    else
+//                        image.setSource("/dev/shm/cap.png")
 
-                    soft = !soft
-                }
-            }
-
-//            Image {
-//                id: image
-//                x: 0
-//                y: 0
-//                fillMode:Image.PreserveAspectFit
-//                anchors.fill: parent
+//                    soft = !soft
+//                }
 //            }
 
             ImageDoubleBuff {
@@ -337,12 +329,10 @@ Item {
 
                 onClicked: {
                     image.setSource("/dev/shm/cap.png")
-                    //cameraCapture.startCamera()
-                    //capChanged.startWatch()
+                    cameraCapture.startCamera()
+                    capChanged.startWatch()
                 }
             }
-
-
         }
 
 
