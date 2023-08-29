@@ -20,15 +20,15 @@ Item {
             height: 30
             text: qsTr("update")
             onPressed: {
-                Engine.setPhotoCommand(getPhotoCommand.text)
+                //Engine.setPhotoCommand(getPhotoCommand.text)
                 Engine.update()
             }
         }
-        SmTextEdit {
-            width: 1000
-            height: 30
-            id: getPhotoCommand
-            text: "ffmpeg -f v4l2 -i /dev/video0  -vf \"drawtext=text=%{localtime}:fontcolor=white@1.0:fontsize=26:borderw=1:x=980:y=25\" -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
-        }
+//        SmTextEdit {
+//            width: 1000
+//            height: 30
+//            id: getPhotoCommand
+//            text: "ffmpeg -f v4l2 -i /dev/video0  -vf \"drawtext=text=%{localtime}:fontcolor=white@1.0:fontsize=26:borderw=1:x=980:y=25\" -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
+//        }
     }
 }

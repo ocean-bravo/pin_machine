@@ -274,6 +274,9 @@ Item {
                            -update 1 \
                            /dev/shm/cap.png"
 
+                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
+                //  Разобрать разницу в командах pix_fmt
+
                 onStandardErrorChanged: {
                     console.log("error: ", standardError)
                 }

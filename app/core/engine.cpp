@@ -65,17 +65,7 @@ void Engine::createQmlEngine()
 
 void Engine::update()
 {
-    QProcess process;
-
-    process.start("/bin/sh", {"-c", "rm /dev/shm/img.png"});
-    process.waitForFinished();
-
-    process.start("/bin/sh", {"-c", _photoCommand});
-    process.waitForFinished();
-    qd() << process.readAllStandardOutput().trimmed();
-    qd() << process.readAllStandardError().trimmed();
-
-    cv::Mat image = cv::imread("/dev/shm/img.png");
+    cv::Mat image = cv::imread("/dev/shm/cap.png");
 
     cv::Mat grey;
     {
