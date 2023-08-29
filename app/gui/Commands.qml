@@ -328,6 +328,11 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     transformOrigin: Item.Center
                     scale: Math.min(root.width / width, root.height / height, 1) + zoom
+                    onStatusChanged: {
+                        console.log(image.status, new Date())
+
+
+                    }
                 }
             }
 
