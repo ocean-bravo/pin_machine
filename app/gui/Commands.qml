@@ -294,17 +294,7 @@ Item {
                 }
             }
 
-            Button {
-                x: 0
-                y: 0
-                text: "start"
 
-                onClicked: {
-                    image.source = "/dev/shm/cap.png"
-                    cameraCapture.startCamera()
-                    capChanged.startWatch()
-                }
-            }
 
 //            Image {
 //                id: image
@@ -338,8 +328,6 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     transformOrigin: Item.Center
                     scale: Math.min(root.width / width, root.height / height, 1) + zoom
-
-                    //source: openDialog.fileUrl
                 }
             }
 
@@ -355,6 +343,17 @@ Item {
                         if (image.zoom > 0) image.zoom = Number((image.zoom - image.zoomStep).toFixed(1))
 
                     wheel.accepted=true
+                }
+            }
+            Button {
+                x: 0
+                y: 0
+                text: "start"
+
+                onClicked: {
+                    image.source = "/dev/shm/cap.png"
+                    cameraCapture.startCamera()
+                    capChanged.startWatch()
                 }
             }
 
