@@ -290,7 +290,7 @@ Item {
                 }
 
                 function startWatch() {
-                    start("/bin/sh", ["-c", "inotifywait --monitor --event modify /dev/shm/cap.png"]);
+                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.png"]);
                 }
             }
 
