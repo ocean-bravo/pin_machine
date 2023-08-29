@@ -285,7 +285,7 @@ Item {
             Process {
                 id: capChanged
                 onReadyRead: {
-                    //image.source = ""
+                    image.source = ""
                     image.source = "/dev/shm/cap.png"
                 }
 
