@@ -266,8 +266,8 @@ Item {
 
                 property string script:
                     "ffmpeg -y -f v4l2 \
-                           -framerate 30 \
-                           -video_size 640x480 \
+                           -framerate 2 \
+                           -video_size 3264x2448 \
                            -input_format yuyv422 \
                            -i /dev/video2 \
                            -vf fps=2 \
