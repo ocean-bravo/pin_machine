@@ -7,7 +7,6 @@ import QtQuick.Layouts 1.15
 Rectangle {
     id: root
     color: "yellow"
-    property int imageVisible: 1
 
     component MyImage :
         Image {
@@ -35,12 +34,12 @@ Rectangle {
 
         MyImage {
             id: image
-            visible: imageVisible === 1
+            visible: true
         }
 
         MyImage {
             id: image2
-            visible: imageVisible === 2
+            visible: false
         }
     }
 
@@ -62,8 +61,8 @@ Rectangle {
     }
 
     function setSource(source){
-        var imageNew = imageVisible === 1 ? image2 : image;
-        var imageOld = imageVisible === 2 ? image2 : image;
+        var imageNew = image.visible ? image2 : image;
+        var imageOld = image.visible ? image : image2;
 
         //imageNew.source = ""
 
@@ -72,15 +71,16 @@ Rectangle {
         function finishImage(){
             if(imageNew.status === Component.Ready) {
                 imageNew.statusChanged.disconnect(finishImage);
-                imageVisible = imageVisible === 1 ? 2 : 1;
+                image.visible = !image.visible
+                image2.visible =!image2.visible
             }
         }
 
         if (imageNew.status === Component.Loading){
-            imageNew.statusChanged.connect(finishImage);
+            imageNew.statusChanged.connect(finishImage)
         }
         else {
-            finishImage();
+            finishImage()
         }
     }
 }
