@@ -320,9 +320,9 @@ Item {
 
                     asynchronous: true
                     cache: false
-                    smooth: true
-                    antialiasing: true
-                    mipmap: true
+                    smooth: false
+                    antialiasing: false
+                    mipmap: false
 
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
