@@ -76,6 +76,8 @@ Item {
         var imageNew = imageVisible === 1 ? image2 : image;
         var imageOld = imageVisible === 2 ? image2 : image;
 
+        imageNew.source = ""
+
         imageNew.source = source;
 
         function finishImage(){
