@@ -270,7 +270,7 @@ Item {
                            -video_size 640x480 \
                            -input_format yuyv422 \
                            -i /dev/video2 \
-                           -vf fps=10 \
+                           -vf fps=2 \
                            -update 1 \
                            /dev/shm/cap.png"
 
