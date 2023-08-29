@@ -323,19 +323,31 @@ Item {
                 id: image
                 width: parent.width
                 height: parent.height
-            }
 
-            Button {
-                x: 0
-                y: 0
-                text: "start"
 
-                onClicked: {
-                    image.setSource("/dev/shm/cap.png")
-                    cameraCapture.startCamera()
-                    capChanged.startWatch()
+                Button {
+                    x: 0
+                    y: 0
+                    text: "start"
+
+                    onClicked: {
+                        image.setSource("/dev/shm/cap.png")
+                        cameraCapture.startCamera()
+                        capChanged.startWatch()
+                    }
+                }
+
+                Button {
+                    x: 0
+                    y: 30
+                    text: qsTr("update")
+                    onPressed: {
+                        //Engine.setPhotoCommand(getPhotoCommand.text)
+                        Engine.update()
+                    }
                 }
             }
+
         }
 
 
