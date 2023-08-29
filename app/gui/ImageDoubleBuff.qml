@@ -4,9 +4,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 
-Rectangle {
+Item {
     id: root
-    color: "yellow"
 
     component MyImage :
         Image {
@@ -61,8 +60,8 @@ Rectangle {
     }
 
     function setSource(source){
-        var imageNotVis = image.visible ? image2 : image;
-        var imageVis = image.visible ? image : image2;
+        var imageNotVis = image.visible ? image2 : image
+        var imageVis = image.visible ? image : image2
 
         imageNotVis.source = ""
 
@@ -70,7 +69,7 @@ Rectangle {
 
         function finishImage(){
             if(imageNotVis.status === Component.Ready) {
-                imageNotVis.statusChanged.disconnect(finishImage);
+                imageNotVis.statusChanged.disconnect(finishImage)
                 image.visible = !image.visible
                 image2.visible =!image2.visible
             }
