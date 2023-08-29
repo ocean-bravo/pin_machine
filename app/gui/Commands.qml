@@ -306,17 +306,59 @@ Item {
                 }
             }
 
-            Image {
-                id: image
-                x: 0
-                y: 0
-                fillMode:Image.PreserveAspectFit
+//            Image {
+//                id: image
+//                x: 0
+//                y: 0
+//                fillMode:Image.PreserveAspectFit
+//                anchors.fill: parent
+//            }
+
+            // Important things!
+            Flickable {
                 anchors.fill: parent
 
-                //cache: false
-//                width: 300 //parent.width
-//                height: 300//parent.height
+                contentWidth: Math.max(image.width * image.scale, root.width)
+                contentHeight: Math.max(image.height * image.scale, root.height)
+                clip: true
+
+                Image {
+                    id: image
+
+                    property real zoom: 0.0
+                    property real zoomStep: 0.1
+
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    antialiasing: true
+                    mipmap: true
+
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    transformOrigin: Item.Center
+                    scale: Math.min(root.width / width, root.height / height, 1) + zoom
+
+                    //source: openDialog.fileUrl
+                }
             }
+
+            // Mouse zoom
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+
+                onWheel: {
+                    if (wheel.angleDelta.y > 0)
+                        image.zoom = Number((image.zoom + image.zoomStep).toFixed(1))
+                    else
+                        if (image.zoom > 0) image.zoom = Number((image.zoom - image.zoomStep).toFixed(1))
+
+                    wheel.accepted=true
+                }
+            }
+
+
         }
 
 
