@@ -284,9 +284,14 @@ Item {
 
             Process {
                 id: capChanged
+                property bool soft: false
                 onReadyRead: {
-                    image.source = ""
-                    image.source = "/dev/shm/cap.png"
+                    if (soft)
+                        image.source = "/dev/shm/cap_soft.png"
+                    else
+                        image.source = "/dev/shm/cap.png"
+
+                    soft = !soft
                 }
 
                 function startWatch() {
@@ -328,11 +333,6 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     transformOrigin: Item.Center
                     scale: Math.min(root.width / width, root.height / height, 1) + zoom
-                    onStatusChanged: {
-                        console.log(image.status, Date.now())
-
-
-                    }
                 }
             }
 
