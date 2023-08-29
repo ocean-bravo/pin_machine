@@ -287,9 +287,9 @@ Item {
                 property bool soft: false
                 onReadyRead: {
                     if (soft)
-                        image.source = "/dev/shm/cap_soft.png"
+                        image.setSource("/dev/shm/cap_soft.png")
                     else
-                        image.source = "/dev/shm/cap.png"
+                        image.setSource("/dev/shm/cap.png")
 
                     soft = !soft
                 }
@@ -300,21 +300,21 @@ Item {
             }
 
 
-            Timer {
-                interval: 500
-                repeat: true
-                triggeredOnStart: true
-                running: true
-                property bool soft: false
-                onTriggered: {
-                    if (soft)
-                        image.setSource("/dev/shm/cap_soft.png")
-                    else
-                        image.setSource("/dev/shm/cap.png")
+//            Timer {
+//                interval: 500
+//                repeat: true
+//                triggeredOnStart: true
+//                running: true
+//                property bool soft: false
+//                onTriggered: {
+//                    if (soft)
+//                        image.setSource("/dev/shm/cap_soft.png")
+//                    else
+//                        image.setSource("/dev/shm/cap.png")
 
-                    soft = !soft
-                }
-            }
+//                    soft = !soft
+//                }
+//            }
 
 //            Image {
 //                id: image
