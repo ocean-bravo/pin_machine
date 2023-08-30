@@ -288,17 +288,17 @@ Item {
                 id: capChanged
                 property bool soft: false
                 onReadyRead: {
+                    if (updateButton.update) {
+                        updateButton.update  = !updateButton.update
+                        Engine.update()
+                    }
+
                     if (soft)
                         image.setSource("/dev/shm/cap_soft.bmp")
                     else
                         image.setSource("/dev/shm/cap.bmp")
 
                     soft = !soft
-
-                    if (updateButton.update) {
-                        updateButton.update  = !updateButton.update
-                        Engine.update()
-                    }
                 }
 
                 function startWatch() {
