@@ -65,7 +65,7 @@ void Engine::createQmlEngine()
 
 void Engine::update()
 {
-    cv::Mat image = cv::imread("/dev/shm/cap.png");
+    cv::Mat image = cv::imread("/dev/shm/cap.bmp");
 
     cv::Mat grey;
     {
