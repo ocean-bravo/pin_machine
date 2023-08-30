@@ -266,7 +266,6 @@ Item {
 
                 property string script:
                     "ffmpeg -y -f v4l2 \
-                           -framerate 2 \
                            -video_size 3264x2448 \
                            -input_format yuyv422 \
                            -i /dev/video2 \
@@ -295,6 +294,11 @@ Item {
                         image.setSource("/dev/shm/cap.bmp")
 
                     soft = !soft
+
+                    if (updateButton.update) {
+                        updateButton.update  = !updateButton.update
+                        Engine.update()
+                    }
                 }
 
                 function startWatch() {
@@ -338,12 +342,14 @@ Item {
                 }
 
                 Button {
+                    id: updateButton
                     x: 0
                     y: 30
                     text: qsTr("update")
+                    property bool update: false
                     onPressed: {
                         //Engine.setPhotoCommand(getPhotoCommand.text)
-                        Engine.update()
+                        update = !update
                     }
                 }
             }
