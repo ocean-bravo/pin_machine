@@ -272,7 +272,7 @@ Item {
                            -i /dev/video2 \
                            -vf fps=2 \
                            -update 1 \
-                           /dev/shm/cap.png"
+                           /dev/shm/cap.bmp"
 
                 //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
                 //  Разобрать разницу в командах pix_fmt
@@ -290,15 +290,15 @@ Item {
                 property bool soft: false
                 onReadyRead: {
                     if (soft)
-                        image.setSource("/dev/shm/cap_soft.png")
+                        image.setSource("/dev/shm/cap_soft.bmp")
                     else
-                        image.setSource("/dev/shm/cap.png")
+                        image.setSource("/dev/shm/cap.bmp")
 
                     soft = !soft
                 }
 
                 function startWatch() {
-                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.png"]);
+                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
                 }
             }
 
@@ -331,7 +331,7 @@ Item {
                     text: "start"
 
                     onClicked: {
-                        image.setSource("/dev/shm/cap.png")
+                        image.setSource("/dev/shm/cap.bmp")
                         cameraCapture.startCamera()
                         capChanged.startWatch()
                     }
