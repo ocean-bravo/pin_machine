@@ -22,34 +22,35 @@
 #include <QDebug>
 #include <QImage>
 
-#define Video_count    3                            // Буферизованные кадры
-
 class V4L2
 {
 public:
     V4L2();
     ~V4L2();
-    bool init(QString cameraPath, quint32 fps, quint32 width, quint32 height);// Функция инициализации камеры должна передать путь установки камеры и частоту кадров на выходе и возвращает true, если инициализация прошла успешно.
+    bool init(QString cameraPath, quint32 fps, quint32 width, quint32 height, QString pixelformat);// Функция инициализации камеры должна передать путь установки камеры и частоту кадров на выходе и возвращает true, если инициализация прошла успешно.
     QImage getImage();                         // Получите изображение: возвращаемое значение — это переменная типа QImage.
     bool closeCamera(void);                        // Закройте камеру, верните true, если закрытие прошло успешно.
     int n = 0;                                          // Используется в функции getImage для управления тем, какой кеш используется при получении изображений.
 
     bool setFps(quint32 fps);
-    bool setFormat(quint32 width, quint32 height);
+    bool setFormat(quint32 width, quint32 height, QString pixelformat);
     void getFormatInfo();
 
 private:
     int                           i;
     int                           fd;               // ручка камеры
-    int                           length[Video_count];// Размер кеша, используемого для хранения запросов
-    QImage                        image;
-    unsigned char *               start[Video_count];// Используется для сохранения данных изображения.
+    int                           length;// Размер кеша, используемого для хранения запросов
 
-    struct v4l2_buffer            buffer[Video_count];// Эта структура используется при запросе кеша из ядра, и каждая структура v4l2_buffer соответствует кешу в драйвере камеры ядра.
+    unsigned char *               start;// Используется для сохранения данных изображения.
+
+    struct v4l2_buffer            buffer;// Эта структура используется при запросе кеша из ядра, и каждая структура v4l2_buffer соответствует кешу в драйвере камеры ядра.
 
 
     struct v4l2_capability        cap;               // Эта структура необходима при проверке информации о камере.
         struct v4l2_requestbuffers    req;               // Эта структура используется при подаче запроса на кеш из ядра.
     struct v4l2_buffer            v4lbuf;            // Эта структура используется, когда кэш выводится из очереди и ставится в очередь.
     enum   v4l2_buf_type          type;              // Эта структура используется при открытии потока ввода-вывода.
+
+    quint32 _width = 0;
+    quint32 _height = 0;
 };

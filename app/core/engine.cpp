@@ -42,7 +42,7 @@ Engine::Engine(QObject* parent)
 
     createQmlEngine();
 
-    _videoDriver.init("/dev/video0", 15, 640, 480);
+    _videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 }
 
 Engine::~Engine()
@@ -119,9 +119,9 @@ QString Engine::getImage()
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
         buffer.open(QIODevice::WriteOnly);
-        img.save(&buffer,"JPEG");
+        img.save(&buffer,"BMP");
         //save image data in string
-        image = "data:image/jpg;base64,";
+        image = "data:image/bmp;base64,";
         image.append(QString::fromLatin1(byteArray.toBase64().data()));
     }
     return image;
