@@ -42,7 +42,7 @@ Engine::Engine(QObject* parent)
 
     createQmlEngine();
 
-    _videoDriver.init("/dev/video2", 30);
+    _videoDriver.init("/dev/video0", 15, 640, 480);
 }
 
 Engine::~Engine()
