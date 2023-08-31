@@ -41,7 +41,7 @@ Engine::Engine(QObject* parent)
 
     createQmlEngine();
 
-    _videoDriver.init("/dev/video0", 1);
+    _videoDriver.init("/dev/video2", 30);
 }
 
 Engine::~Engine()
@@ -60,10 +60,14 @@ void Engine::createQmlEngine()
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 
+    //_videoDriver.getImage();
+
     cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
 }
+
+
 
 void Engine::update()
 {

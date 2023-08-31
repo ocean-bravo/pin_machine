@@ -1,6 +1,8 @@
 #include "video.h"
 #include "utils.h"
 
+#include <string>
+
 /**
  * 功能：使用V4L2采集UVC摄像头数据
  * 日期：2018.3.26
@@ -27,16 +29,21 @@ V4L2::~V4L2()
 }
 
 // Чтобы инициализировать камеру, вам необходимо передать путь монтирования камеры и частоту кадров на выходе и вернуть true, если инициализация прошла успешно.
-bool V4L2::init(char* camera_path, unsigned int frame)
+bool V4L2::init(QString cameraPath, unsigned int frame)
 {
-    if((fd=open(camera_path, O_RDWR)) == -1){          // Режим чтения и записи для открытия камеры
+    if ((fd=open(cameraPath.toStdString().c_str(), O_RDWR)) == -1)           // Режим чтения и записи для открытия камеры
+    {
         qd()<<"Error opening V4L interface";
         return false;
     }
-    if (ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1){       // Проверьте информацию о камере
-        qd()<<"Error opening device "<<camera_path<<": unable to query device.";
+
+    if (ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1)        // Проверьте информацию о камере
+    {
+        qd()<<"Error opening device " << cameraPath << ": unable to query device.";
         return false;
-    }else{                                             // Распечатать информацию о камере
+    }
+    else                                              // Распечатать информацию о камере
+    {
         qd()<<"driver:\t\t"<<QString::fromLatin1((char *)cap.driver);     // имя водителя
         qd()<<"card:\t\t"<<QString::fromLatin1((char *)cap.card);         // Имя устройства
         qd()<<"bus_info:\t\t"<<QString::fromLatin1((char *)cap.bus_info); // Расположение магазина в системе Bus
@@ -47,7 +54,8 @@ bool V4L2::init(char* camera_path, unsigned int frame)
     fmtdesc.index=0;
     fmtdesc.type=V4L2_BUF_TYPE_VIDEO_CAPTURE;          // Соответствует типу в структуре v4l2_format.
     qd()<<"Support format:";
-    while(ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)!=-1){     // Получите формат, поддерживаемый выходным изображением камеры.
+    while(ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)!=-1)      // Получите формат, поддерживаемый выходным изображением камеры.
+    {
         qd()<<"\t\t"<<fmtdesc.index+1<<QString::fromLatin1((char *)fmtdesc.description);
         fmtdesc.index++;
     }
@@ -61,10 +69,13 @@ bool V4L2::init(char* camera_path, unsigned int frame)
         qd()<<"Unable to set format";
         return false;
     }
-    if(ioctl(fd, VIDIOC_G_FMT, &fmt) == -1){           // Перечитайте структуру, чтобы убедиться, что настройка завершена.
+    if(ioctl(fd, VIDIOC_G_FMT, &fmt) == -1)            // Перечитайте структуру, чтобы убедиться, что настройка завершена.
+    {
         qd()<<"Unable to get format";
         return false;
-    }else{
+    }
+    else
+    {
         qd()<<"fmt.type:\t\t"<<fmt.type;            // формат выходных пикселей
         qd()<<"pix.height:\t"<<fmt.fmt.pix.height;// размер выходного изображения
         qd()<<"pix.width:\t\t"<<fmt.fmt.pix.width;
@@ -74,25 +85,32 @@ bool V4L2::init(char* camera_path, unsigned int frame)
     setfps.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     setfps.parm.capture.timeperframe.denominator = frame;// ожидаемая частота кадров
     setfps.parm.capture.timeperframe.numerator = 1;     // fps=frame/1
-    if(ioctl(fd, VIDIOC_S_PARM, &setfps)==-1){          // Установите количество кадров
+    if(ioctl(fd, VIDIOC_S_PARM, &setfps)==-1)           // Установите количество кадров
+    {
         qd()<<"Unable to set fps";
         return false;
     }
-    if(ioctl(fd, VIDIOC_G_PARM, &setfps)==-1){          // Перечитайте структуру, чтобы убедиться, что настройка завершена.
+    if(ioctl(fd, VIDIOC_G_PARM, &setfps)==-1)           // Перечитайте структуру, чтобы убедиться, что настройка завершена.
+    {
         qd()<<"Unable to get fps";
         return false;
-    }else{
+    }
+    else
+    {
         qd()<<"fps:\t\t"<<setfps.parm.capture.timeperframe.denominator/setfps.parm.capture.timeperframe.numerator;// частота кадров на выходе
     }
 
     req.count=Video_count;                              // 3 тайника
     req.type=V4L2_BUF_TYPE_VIDEO_CAPTURE;               // Соответствует типу в структуре v4l2_format.
     req.memory=V4L2_MEMORY_MMAP;                        // В режиме отображения памяти поле счетчика действительно только в том случае, если для него установлено значение V4L2_MEMORY_MMAP.
-    if(ioctl(fd,VIDIOC_REQBUFS,&req)==-1){              // Применить видеокэш к ядру
+    if(ioctl(fd,VIDIOC_REQBUFS,&req)==-1)               // Применить видеокэш к ядру
+    {
         qd()<<"request for buffers error";
         return false;
     }
-    for (i=0; i<Video_count; i++){                      // mmap четыре буфера
+
+    for (i=0; i<Video_count; i++)                       // mmap четыре буфера
+    {
         bzero(&buffer[i], sizeof(buffer[i]));
         buffer[i].type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buffer[i].memory = V4L2_MEMORY_MMAP;
