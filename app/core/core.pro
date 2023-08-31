@@ -45,12 +45,14 @@ HEADERS += \
     engine.h \
     utils.h \
     singleton.h \
+    video.h
 
 SOURCES += \
     main.cpp \
     engine.cpp \
     serial.cpp \
     utils.cpp \
+    video.cpp
 
 target.path = $${INSTALL_PATH}
 

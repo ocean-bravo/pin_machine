@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QScopedPointer>
 
+#include "video.h"
+
 class QQmlApplicationEngine;
 class Serial;
 
@@ -26,4 +28,6 @@ private:
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
     QScopedPointer<Serial> _serial;
     QString _photoCommand;
+
+    V4L2 _videoDriver;
 };

@@ -40,6 +40,8 @@ Engine::Engine(QObject* parent)
     _serial.reset(new Serial);
 
     createQmlEngine();
+
+    _videoDriver.init("/dev/video0", 1);
 }
 
 Engine::~Engine()
