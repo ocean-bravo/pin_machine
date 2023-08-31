@@ -20,6 +20,8 @@ public:
     Q_INVOKABLE void update();
     Q_INVOKABLE void setPhotoCommand(QString);
 
+    Q_INVOKABLE QString getImage();
+
 private:
     void createQmlEngine();
 

@@ -352,6 +352,19 @@ Item {
                         update = !update
                     }
                 }
+
+                Button {
+                    id: getImage
+                    x: 0
+                    y: 60
+                    text: qsTr("get image")
+                    property bool update: false
+                    onPressed: {
+                        image.setSource(Engine.getImage())
+
+                    }
+                }
+
             }
 
         }

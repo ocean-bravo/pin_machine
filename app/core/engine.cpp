@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QProcess>
+#include <QBuffer>
 
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
@@ -59,9 +60,6 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
-
-    //_videoDriver.getImage();
-
     cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
@@ -106,6 +104,27 @@ void Engine::update()
 void Engine::setPhotoCommand(QString cmd)
 {
     _photoCommand = cmd;
+}
+
+QString Engine::getImage()
+{
+    QImage img;
+    {
+        ScopedMeasure mes("get image");
+        img = _videoDriver.getImage();
+    }
+    QString image;
+    {
+        ScopedMeasure mes("convert image");
+        QByteArray byteArray;
+        QBuffer buffer(&byteArray);
+        buffer.open(QIODevice::WriteOnly);
+        img.save(&buffer,"JPEG");
+        //save image data in string
+        image = "data:image/jpg;base64,";
+        image.append(QString::fromLatin1(byteArray.toBase64().data()));
+    }
+    return image;
 }
 
 
