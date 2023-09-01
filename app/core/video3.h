@@ -50,15 +50,15 @@ public:
 //    void onColorEnableSlider(int value);
 
 signals:
-    void newImage(QImage, QString);
+    void newImage(QImage, QString, QByteArray);
     void newSize(quint32 width, quint32 height);
 
 
 private:
-    CapContext  m_ctx;
-    int32_t     m_streamID;
-    CapFormatInfo           m_finfo;
-    std::vector<uint8_t>    m_frameData;
+    CapContext  _ctx;
+    int32_t     _streamId;
+    CapFormatInfo           _finfo;
+    std::vector<uint8_t>    _frameData;
 
     std::vector<DeviceInfo> _deviceInfo;
 };

@@ -1,7 +1,24 @@
 #include "video3.h"
 #include "utils.h"
 
+namespace {
 
+QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *bufferPtr, size_t bytes)
+{
+    QByteArray pgmImage;
+    {
+        QTextStream textStream(&pgmImage);
+        textStream << "P6" <<  ' ' << width << ' ' << height << ' ' <<  255 << '\n'; // PGM header
+    }
+    {
+        QDataStream dataStream(&pgmImage, QIODevice::WriteOnly | QIODevice::Append);
+        dataStream.writeRawData((const char *)bufferPtr, bytes);
+    }
+
+    return pgmImage;
+}
+
+}
 
 Video3::Video3()
 {
@@ -10,34 +27,34 @@ Video3::Video3()
 
 Video3::~Video3()
 {
-    Cap_closeStream(m_ctx, m_streamID);
-    Cap_releaseContext(m_ctx);
+    Cap_closeStream(_ctx, _streamId);
+    Cap_releaseContext(_ctx);
 }
 
 void Video3::init()
 {
     qd() << Cap_getLibraryVersion();
 
-    m_ctx = Cap_createContext();
-    qd() << "Context = " << m_ctx;
+    _ctx = Cap_createContext();
+    qd() << "Context = " << _ctx;
 
     CapDeviceID deviceID = 0;
     CapFormatID formatID = 0;
 
-    m_streamID = Cap_openStream(m_ctx, deviceID, formatID);
-    Cap_getFormatInfo(m_ctx, deviceID, formatID, &m_finfo);
+    _streamId = Cap_openStream(_ctx, deviceID, formatID);
+    Cap_getFormatInfo(_ctx, deviceID, formatID, &_finfo);
 
-    m_frameData.resize(m_finfo.width*m_finfo.height*3);
+    _frameData.resize(_finfo.width*_finfo.height*3);
 
-    qd() << "Frame size:" << m_finfo.width << m_finfo.height;
+    qd() << "Frame size:" << _finfo.width << _finfo.height;
 
-    for(uint32_t device=0; device<Cap_getDeviceCount(m_ctx); device++)
+    for(uint32_t device=0; device<Cap_getDeviceCount(_ctx); device++)
     {
-        QString deviceName = Cap_getDeviceName(m_ctx, device);
-        for(int32_t format=0; format<Cap_getNumFormats(m_ctx, device); format++)
+        QString deviceName = Cap_getDeviceName(_ctx, device);
+        for(int32_t format=0; format<Cap_getNumFormats(_ctx, device); format++)
         {
             CapFormatInfo finfo;
-            Cap_getFormatInfo(m_ctx, device, format, &finfo);
+            Cap_getFormatInfo(_ctx, device, format, &finfo);
 
             QString fourcc;
             for(uint32_t i=0; i<4; i++)
@@ -54,14 +71,18 @@ void Video3::init()
 
 void Video3::update()
 {
-    if (Cap_hasNewFrame(m_ctx, m_streamID))
+    if (Cap_hasNewFrame(_ctx, _streamId))
     {
-        Cap_captureFrame(m_ctx, m_streamID, &m_frameData[0], m_frameData.size());
-        QImage img((const uint8_t*)&m_frameData[0],
-                m_finfo.width,
-                m_finfo.height,
+        Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
+
+
+        QImage img((const uint8_t*)&_frameData[0],
+                _finfo.width,
+                _finfo.height,
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
+
+        QByteArray imgPpm = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
 
         if (img.isNull())
         {
@@ -70,32 +91,32 @@ void Video3::update()
         }
 
         QString frameInfo = QString::asprintf("%d x %d frames:%d",
-                                              m_finfo.width,
-                                              m_finfo.height,
-                                              Cap_getStreamFrameCount(m_ctx, m_streamID));
+                                              _finfo.width,
+                                              _finfo.height,
+                                              Cap_getStreamFrameCount(_ctx, _streamId));
 
 
-        emit newImage(img, frameInfo);
+        emit newImage(img, frameInfo, imgPpm);
     }
 }
 
 void Video3::changeCamera(quint32 device, quint32 format)
 {
     // kill currently running stream
-    Cap_closeStream(m_ctx, m_streamID);
+    Cap_closeStream(_ctx, _streamId);
 
     qd() << "Opening new device/format: " << device << format;
 
     // open new stream
-    m_streamID = Cap_openStream(m_ctx, device, format);
+    _streamId = Cap_openStream(_ctx, device, format);
 
-    qd() << "New stream ID" << m_streamID;
+    qd() << "New stream ID" << _streamId;
 
     // resize the display window
-    Cap_getFormatInfo(m_ctx, device, format, &m_finfo);
-    m_frameData.resize(m_finfo.width*m_finfo.height*3);
+    Cap_getFormatInfo(_ctx, device, format, &_finfo);
+    _frameData.resize(_finfo.width*_finfo.height*3);
 
-    emit newSize(m_finfo.width, m_finfo.height);
+    emit newSize(_finfo.width, _finfo.height);
 }
 
 std::vector<DeviceInfo> Video3::devicesInfo()

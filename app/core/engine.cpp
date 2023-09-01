@@ -56,12 +56,11 @@ Engine::Engine(QObject* parent)
     QThread* thr = new QThread(this);
     _videoDriver3->moveToThread(thr);
     thr->start();
-    connect(_videoDriver3, &Video3::newImage, this, [this](QImage img, QString str)
+    connect(_videoDriver3, &Video3::newImage, this, [this](QImage img, QString str, QByteArray imgPpm)
     {
         _image = img;
+        _imgPpm = imgPpm;
     });
-
-
 }
 
 
@@ -138,14 +137,14 @@ QString Engine::getImage()
     QString image;
     {
         ScopedMeasure mes("convert image");
-        QByteArray byteArray;
-        QBuffer buffer(&byteArray);
-        buffer.open(QIODevice::WriteOnly);
-        _image.save(&buffer,"PNG");
+        //QByteArray byteArray;
+        //QBuffer buffer(&byteArray);
+        //buffer.open(QIODevice::WriteOnly);
+        //_image.save(&buffer,"PNG");
         //save image data in string
-        image = "data:image/png;base64,";
-        //image = "data:image/x-portable-pixmap;base64,";
-        image.append(QString::fromLatin1(byteArray.toBase64().data()));
+        //image = "data:image/png;base64,";
+        image = "data:image/x-portable-pixmap;base64,";
+        image.append(QString::fromLatin1(_imgPpm.toBase64().data()));
     }
     return image;
 }
