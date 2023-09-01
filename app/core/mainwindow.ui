@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>540</height>
+    <width>959</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -299,6 +299,19 @@
       </layout>
      </widget>
     </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -306,8 +319,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>846</width>
-     <height>21</height>
+     <width>959</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
