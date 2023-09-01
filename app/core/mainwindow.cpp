@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QBoxLayout>
 #include <QPixmap>
+#include <QThread>
 
 struct CustomComboBoxData
 {
@@ -21,6 +22,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     _video3 = new Video3();
+
+    connect(_video3, &Video3::newImage, this, &MainWindow::update);
+    connect(_video3, &Video3::newSize, this, [this](quint32 width, quint32 height)
+    {
+        ui->frameDisplay->setFixedSize(QSize(width, height));
+        ui->frameDisplay->setStyleSheet("border: 1px solid red");
+    });
+
+
     _video3->init();
 
     std::vector<DeviceInfo> info = _video3->devicesInfo();
@@ -35,26 +45,32 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->cameraChooser->addItem(i.deviceName + " " + i.formatName, v);
     }
 
+
+    QThread* thr = new QThread(this);
+    _video3->moveToThread(thr);
+    thr->start();
+
+
     connect(ui->cameraChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCamera()));
 
     // add exposure and white balance checkboxes
-    connect(ui->autoExposure, SIGNAL(toggled(bool)), this, SLOT(onAutoExposure(bool)));
-    connect(ui->autoWhiteBalance, SIGNAL(toggled(bool)),this, SLOT(onAutoWhiteBalance(bool)));
-    connect(ui->exposureSlider, SIGNAL(valueChanged(int)),this, SLOT(onExposureSlider(int)));
-    connect(ui->whitebalanceSlider, SIGNAL(valueChanged(int)),this, SLOT(onWhiteBalanceSlider(int)));
-    connect(ui->autoGain, SIGNAL(toggled(bool)), this, SLOT(onAutoGain(bool)));
-    connect(ui->autoFocus, SIGNAL(toggled(bool)), this, SLOT(onAutoFocus(bool)));
-    connect(ui->gainSlider, SIGNAL(valueChanged(int)), this, SLOT(onGainSlider(int)));
-    connect(ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(onContrastSlider(int)));
-    connect(ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(onBrightnessSlider(int)));
-    connect(ui->gammaSlider, SIGNAL(valueChanged(int)), this, SLOT(onGammaSlider(int)));
-    connect(ui->focusSlider, SIGNAL(valueChanged(int)), this, SLOT(onFocusSlider(int)));
-    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(onZoomSlider(int)));
-    connect(ui->hueSlider, SIGNAL(valueChanged(int)), this, SLOT(onHueSlider(int)));
-    connect(ui->backlightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBacklightSlider(int)));
-    connect(ui->sharpnessSlider, SIGNAL(valueChanged(int)), this, SLOT(onSharpnessSlider(int)));
-    connect(ui->powerlineFreqSlider, SIGNAL(valueChanged(int)), this, SLOT(onColorEnableSlider(int)));
-    connect(ui->saturationSlider, SIGNAL(valueChanged(int)), this, SLOT(onSaturationSlider(int)));
+//    connect(ui->autoExposure, SIGNAL(toggled(bool)), this, SLOT(onAutoExposure(bool)));
+//    connect(ui->autoWhiteBalance, SIGNAL(toggled(bool)),this, SLOT(onAutoWhiteBalance(bool)));
+//    connect(ui->exposureSlider, SIGNAL(valueChanged(int)),this, SLOT(onExposureSlider(int)));
+//    connect(ui->whitebalanceSlider, SIGNAL(valueChanged(int)),this, SLOT(onWhiteBalanceSlider(int)));
+//    connect(ui->autoGain, SIGNAL(toggled(bool)), this, SLOT(onAutoGain(bool)));
+//    connect(ui->autoFocus, SIGNAL(toggled(bool)), this, SLOT(onAutoFocus(bool)));
+//    connect(ui->gainSlider, SIGNAL(valueChanged(int)), this, SLOT(onGainSlider(int)));
+//    connect(ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(onContrastSlider(int)));
+//    connect(ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(onBrightnessSlider(int)));
+//    connect(ui->gammaSlider, SIGNAL(valueChanged(int)), this, SLOT(onGammaSlider(int)));
+//    connect(ui->focusSlider, SIGNAL(valueChanged(int)), this, SLOT(onFocusSlider(int)));
+//    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(onZoomSlider(int)));
+//    connect(ui->hueSlider, SIGNAL(valueChanged(int)), this, SLOT(onHueSlider(int)));
+//    connect(ui->backlightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBacklightSlider(int)));
+//    connect(ui->sharpnessSlider, SIGNAL(valueChanged(int)), this, SLOT(onSharpnessSlider(int)));
+//    connect(ui->powerlineFreqSlider, SIGNAL(valueChanged(int)), this, SLOT(onColorEnableSlider(int)));
+//    connect(ui->saturationSlider, SIGNAL(valueChanged(int)), this, SLOT(onSaturationSlider(int)));
 
     // add timer to refresh the frame display
     m_refreshTimer = new QTimer(this);
@@ -64,12 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // update GUI to reflect the actual camera settings
     //readCameraSettings();
 
-    connect(_video3, &Video3::newImage, this, &MainWindow::update);
-    connect(_video3, &Video3::newSize, this, [this](quint32 width, quint32 height)
-    {
-        ui->frameDisplay->setFixedSize(QSize(width, height));
-        ui->frameDisplay->setStyleSheet("border: 1px solid red");
-    });
+
 }
 
 MainWindow::~MainWindow()
