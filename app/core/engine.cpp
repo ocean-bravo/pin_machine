@@ -42,7 +42,7 @@ Engine::Engine(QObject* parent)
 
     createQmlEngine();
 
-    _videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
+    //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 }
 
 Engine::~Engine()
@@ -106,25 +106,28 @@ void Engine::setPhotoCommand(QString cmd)
     _photoCommand = cmd;
 }
 
+//QString Engine::getImage()
+//{
+//    QImage img;
+//    {
+//        ScopedMeasure mes("get image");
+//        img = _videoDriver.getImage();
+//    }
+//    QString image;
+//    {
+//        ScopedMeasure mes("convert image");
+//        QByteArray byteArray;
+//        QBuffer buffer(&byteArray);
+//        buffer.open(QIODevice::WriteOnly);
+//        img.save(&buffer,"BMP");
+//        //save image data in string
+//        image = "data:image/bmp;base64,";
+//        image.append(QString::fromLatin1(byteArray.toBase64().data()));
+//    }
+//    return image;
+//}
+
 QString Engine::getImage()
 {
-    QImage img;
-    {
-        ScopedMeasure mes("get image");
-        img = _videoDriver.getImage();
-    }
-    QString image;
-    {
-        ScopedMeasure mes("convert image");
-        QByteArray byteArray;
-        QBuffer buffer(&byteArray);
-        buffer.open(QIODevice::WriteOnly);
-        img.save(&buffer,"BMP");
-        //save image data in string
-        image = "data:image/bmp;base64,";
-        image.append(QString::fromLatin1(byteArray.toBase64().data()));
-    }
-    return image;
+
 }
-
-

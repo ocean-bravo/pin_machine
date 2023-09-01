@@ -13,6 +13,9 @@
 #include <exception>      // std::set_terminate
 
 
+#include "mainwindow.h"
+#include <QApplication>
+
 void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     switch (type)
@@ -66,6 +69,10 @@ int main(int argc, char* argv[])
 
     // Engine должен быть удален до разрушения главного цикла обработки событий.
     QObject::connect(&app, &QApplication::aboutToQuit, engine.data(), [&engine]() { engine.reset(); });
+
+
+    MainWindow w;
+    w.show();
 
     return app.exec();
 }

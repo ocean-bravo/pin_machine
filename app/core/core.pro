@@ -36,23 +36,37 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 -lopencv_saliency -lopencv_shape -lopencv_stereo -lopencv_stitching \
 -lopencv_structured_light -lopencv_superres -lopencv_surface_matching -lopencv_text \
 -lopencv_tracking -lopencv_videoio -lopencv_video -lopencv_videostab \
--lopencv_ximgproc -lopencv_xobjdetect -lopencv_xphoto
+-lopencv_ximgproc -lopencv_xobjdetect -lopencv_xphoto \
+-lturbojpeg # libturbojpeg0-dev
 
 OTHER_FILES += ../../opencv/main.py
 
-HEADERS += \
-    serial.h \
-    engine.h \
-    utils.h \
-    singleton.h \
-    video.h
+HEADERS += *.h
+#    serial.h \
+#    engine.h \
+#    utils.h \
+#    singleton.h \
+#    video.h \
+#    video2.h \
+#    context.h \
+#    deviceinfo.h \
+#    logging.h \
+#    stream.h \
 
-SOURCES += \
-    main.cpp \
-    engine.cpp \
-    serial.cpp \
-    utils.cpp \
-    video.cpp
+SOURCES += *.cpp
+#    main.cpp \
+#    engine.cpp \
+#    serial.cpp \
+#    utils.cpp \
+#    video.cpp \
+#    video2.cpp \
+#    context.cpp \
+#    libmain.cpp \
+#    logging.cpp \
+#    stream.cpp \
+
+
+FORMS += *.ui
 
 target.path = $${INSTALL_PATH}
 
