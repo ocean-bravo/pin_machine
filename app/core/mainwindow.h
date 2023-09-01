@@ -7,7 +7,9 @@
 #include <QSlider>
 #include <QMutex>
 #include <vector>
-#include "openpnp-capture.h"
+
+#include "video3.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -21,7 +23,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void readCameraSettings();
+    //void readCameraSettings();
 
     /** custom logging function to capture all
         messages/errors from the library.
@@ -33,35 +35,29 @@ public:
     void logMessage(uint32_t level, const char *message);
 
 public slots:
-    void doFrameUpdate();
+    void update(QImage img, QString frameInfo);
     void updateLogMessages();
     void changeCamera();
 
-    void onAutoExposure(bool state);
-    void onAutoWhiteBalance(bool state);
-    void onAutoGain(bool state);
-    void onAutoFocus(bool state);
-    void onExposureSlider(int value);
-    void onWhiteBalanceSlider(int value);
-    void onGainSlider(int value);
-    void onContrastSlider(int value);
-    void onBrightnessSlider(int value);
-    void onSaturationSlider(int value);
-    void onFocusSlider(int value);
-    void onZoomSlider(int value);
-    void onGammaSlider(int value);
-    void onHueSlider(int value);
-    void onBacklightSlider(int value);
-    void onSharpnessSlider(int value);
-    void onColorEnableSlider(int value);
+//    void onAutoExposure(bool state);
+//    void onAutoWhiteBalance(bool state);
+//    void onAutoGain(bool state);
+//    void onAutoFocus(bool state);
+//    void onExposureSlider(int value);
+//    void onWhiteBalanceSlider(int value);
+//    void onGainSlider(int value);
+//    void onContrastSlider(int value);
+//    void onBrightnessSlider(int value);
+//    void onSaturationSlider(int value);
+//    void onFocusSlider(int value);
+//    void onZoomSlider(int value);
+//    void onGammaSlider(int value);
+//    void onHueSlider(int value);
+//    void onBacklightSlider(int value);
+//    void onSharpnessSlider(int value);
+//    void onColorEnableSlider(int value);
 
 private:
-    QMutex                   m_logMutex;
-    std::vector<std::string> m_logMessages;
-
-    CapFormatInfo           m_finfo;
-    std::vector<uint8_t>    m_frameData;
-
     bool        m_hasBrightness;
     bool        m_hasExposure;
     bool        m_hasGamma;
@@ -77,9 +73,9 @@ private:
     bool        m_hasColorEnable;
 
     QTimer*     m_refreshTimer;
-    CapContext  m_ctx;
-    int32_t     m_streamID;
 
+
+    Video3* _video3;
     Ui::MainWindow *ui;
 };
 
