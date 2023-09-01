@@ -43,6 +43,31 @@ Engine::Engine(QObject* parent)
     createQmlEngine();
 
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
+
+    _videoDriver3 = new Video3();
+    _videoDriver3->init();
+    std::vector<DeviceInfo> info = _videoDriver3->devicesInfo();
+
+    for (const DeviceInfo& i : info)
+    {
+        _info.append(i.deviceName + " " + i.formatName);
+    }
+
+    QThread* thr = new QThread(this);
+    _videoDriver3->moveToThread(thr);
+    thr->start();
+    connect(_videoDriver3, &Video3::newImage, this, [this](QImage img, QString str)
+    {
+        _image = img;
+    });
+
+
+}
+
+
+QStringList Engine::camerasInfo()
+{
+    return _info;
 }
 
 Engine::~Engine()
@@ -106,28 +131,22 @@ void Engine::setPhotoCommand(QString cmd)
     _photoCommand = cmd;
 }
 
-//QString Engine::getImage()
-//{
-//    QImage img;
-//    {
-//        ScopedMeasure mes("get image");
-//        img = _videoDriver.getImage();
-//    }
-//    QString image;
-//    {
-//        ScopedMeasure mes("convert image");
-//        QByteArray byteArray;
-//        QBuffer buffer(&byteArray);
-//        buffer.open(QIODevice::WriteOnly);
-//        img.save(&buffer,"BMP");
-//        //save image data in string
-//        image = "data:image/bmp;base64,";
-//        image.append(QString::fromLatin1(byteArray.toBase64().data()));
-//    }
-//    return image;
-//}
-
 QString Engine::getImage()
 {
+    _videoDriver3->update();
 
+    QString image;
+    {
+        ScopedMeasure mes("convert image");
+        QByteArray byteArray;
+        QBuffer buffer(&byteArray);
+        buffer.open(QIODevice::WriteOnly);
+        _image.save(&buffer,"PNG");
+        //save image data in string
+        image = "data:image/png;base64,";
+        //image = "data:image/x-portable-pixmap;base64,";
+        image.append(QString::fromLatin1(byteArray.toBase64().data()));
+    }
+    return image;
 }
+

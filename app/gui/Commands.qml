@@ -365,6 +365,54 @@ Item {
                     }
                 }
 
+                Button {
+                    x: 0
+                    y: 90
+                    text: "Cameras Reload"
+                    onClicked: {
+                        var cameras = Engine.camerasInfo()
+                        cameraList.model = cameras
+
+                        for (var i = 0; i < cameras.length; ++i) {
+                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
+                            console.log(cameras[i])
+                        }
+                        console.log("\n")
+                    }
+                }
+
+                Item {
+                    x: 0
+                    y: 120
+                    height: {
+                        if (typeof cameraList.model === "undefined")
+                            return 30
+
+                        return cameraList.model.length * 30
+                    }
+                    width: parent.width
+
+                    ListView {
+                        id: cameraList
+                        anchors.fill: parent
+
+                        currentIndex: 0
+
+                        model: Engine.camerasInfo()
+
+                        delegate: Button {
+                            width: 120
+                            height: 30
+                            text: modelData
+
+                            onClicked: {
+                            }
+                        }
+                    }
+                }
+
+
+
             }
 
         }

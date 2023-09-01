@@ -4,6 +4,7 @@
 #include <QScopedPointer>
 
 #include "video.h"
+#include "video3.h"
 
 class QQmlApplicationEngine;
 class Serial;
@@ -22,6 +23,9 @@ public:
 
     Q_INVOKABLE QString getImage();
 
+    Q_INVOKABLE QStringList camerasInfo();
+
+
 private:
     void createQmlEngine();
 
@@ -32,4 +36,7 @@ private:
     QString _photoCommand;
 
     V4L2 _videoDriver;
+    Video3* _videoDriver3;
+    QImage _image;
+    QStringList _info;
 };

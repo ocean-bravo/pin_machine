@@ -70,9 +70,9 @@ int main(int argc, char* argv[])
     // Engine должен быть удален до разрушения главного цикла обработки событий.
     QObject::connect(&app, &QApplication::aboutToQuit, engine.data(), [&engine]() { engine.reset(); });
 
-
-    MainWindow w;
-    w.show();
+// Test 1
+//    MainWindow w;
+//    w.show();
 
     return app.exec();
 }
