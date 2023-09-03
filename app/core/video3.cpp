@@ -102,6 +102,10 @@ void Video3::update()
         qd() << " new image ready";
         emit newImage(img, frameInfo, imgPpm);
     }
+    else
+    {
+        qd() << "no new frame";
+    }
 }
 
 void Video3::changeCamera(quint32 device, quint32 format)

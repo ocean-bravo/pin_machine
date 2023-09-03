@@ -105,7 +105,7 @@ void Engine::createQmlEngine()
 
 
 
-void Engine::update()
+void Engine::searchCircles()
 {
     cv::Mat image = cv::imread("/dev/shm/cap.bmp");
 
@@ -144,7 +144,7 @@ void Engine::setPhotoCommand(QString cmd)
     _photoCommand = cmd;
 }
 
-void Engine::getImage()
+void Engine::update()
 {
      QMetaObject::invokeMethod(_videoDriver3, "update", Qt::QueuedConnection);
 

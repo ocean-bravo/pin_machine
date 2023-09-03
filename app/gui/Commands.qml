@@ -307,21 +307,15 @@ Item {
 //            }
 
 
-//            Timer {
-//                interval: 500
-//                repeat: true
-//                triggeredOnStart: true
-//                running: true
-//                property bool soft: false
-//                onTriggered: {
-//                    if (soft)
-//                        image.setSource("/dev/shm/cap_soft.png")
-//                    else
-//                        image.setSource("/dev/shm/cap.png")
-
-//                    soft = !soft
-//                }
-//            }
+            Timer {
+                interval: 50
+                repeat: true
+                triggeredOnStart: true
+                running: true
+                onTriggered: {
+                    Engine.update()
+                }
+            }
 
 //            ImageDoubleBuff {
             Image {
@@ -330,7 +324,7 @@ Item {
                 height: parent.height
 
 
-                source: "image://camera/newImg.ppm"
+                source: "image://camera/newImg"
 
                 cache: false
 
@@ -353,9 +347,7 @@ Item {
                     text: "start"
 
                     onClicked: {
-                        //image.setSource("/dev/shm/cap.bmp")
-//                        cameraCapture.startCamera()
-//                        capChanged.startWatch()
+
                     }
                 }
 
@@ -366,23 +358,7 @@ Item {
                     text: qsTr("update")
                     property bool update: false
                     onPressed: {
-                        //Engine.setPhotoCommand(getPhotoCommand.text)
-                        //update = !update
-                        image.reload()
-                    }
-                }
-
-                Button {
-                    id: getImage
-                    x: 0
-                    y: 60
-                    text: qsTr("get image")
-                    property bool update: false
-                    onPressed: {
-                        //image.setSource()
-                        Engine.getImage()
-                        //image.reload()
-
+                        Engine.update()
                     }
                 }
 
