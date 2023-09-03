@@ -131,14 +131,14 @@ void Engine::searchCircles(const QImage & img)
     }
 
 
-    cv::imshow("grey", grey);
+    //cv::imshow("grey", grey);
     //cv::resizeWindow("grey", cv::Size(grey.size().width / 4, grey.size().height / 4));
 
     cv::Mat blur;
     medianBlur(grey, blur, 3);
 
 
-    cv::imshow("blur", blur);
+    //cv::imshow("blur", blur);
     //cv::resizeWindow("blur", cv::Size(blur.size().width / 4, blur.size().height / 4));
 
     std::vector<cv::Vec3f> circles;
