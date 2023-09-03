@@ -23,6 +23,8 @@ public:
     Video3();
     ~Video3();
     void init();
+
+public slots:
     void update();
 
     void changeCamera(quint32 device, quint32 format);

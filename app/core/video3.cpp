@@ -39,7 +39,7 @@ void Video3::init()
     qd() << "Context = " << _ctx;
 
     CapDeviceID deviceID = 1;
-    CapFormatID formatID = 3; //
+    CapFormatID formatID = 3; //11
 
     _streamId = Cap_openStream(_ctx, deviceID, formatID);
     Cap_getFormatInfo(_ctx, deviceID, formatID, &_finfo);
@@ -71,6 +71,9 @@ void Video3::init()
 
 void Video3::update()
 {
+
+    qd() << "video update";
+
     if (Cap_hasNewFrame(_ctx, _streamId))
     {
         Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
@@ -96,6 +99,7 @@ void Video3::update()
                                               Cap_getStreamFrameCount(_ctx, _streamId));
 
 
+        qd() << " new image ready";
         emit newImage(img, frameInfo, imgPpm);
     }
 }

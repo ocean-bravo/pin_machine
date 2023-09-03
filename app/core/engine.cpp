@@ -146,7 +146,8 @@ void Engine::setPhotoCommand(QString cmd)
 
 void Engine::getImage()
 {
-    _videoDriver3->update();
+     QMetaObject::invokeMethod(_videoDriver3, "update", Qt::QueuedConnection);
+
 
 //    QString image;
 //    {

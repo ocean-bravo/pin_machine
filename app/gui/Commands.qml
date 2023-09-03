@@ -257,54 +257,54 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Process {
-                id: cameraCapture
+//            Process {
+//                id: cameraCapture
 
-                function startCamera() {
-                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
-                }
+//                function startCamera() {
+//                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
+//                }
 
-                property string script:
-                    "ffmpeg -y -f v4l2 \
-                           -video_size 3264x2448 \
-                           -input_format yuyv422 \
-                           -i /dev/video2 \
-                           -vf fps=2 \
-                           -update 1 \
-                           /dev/shm/cap.bmp"
+//                property string script:
+//                    "ffmpeg -y -f v4l2 \
+//                           -video_size 3264x2448 \
+//                           -input_format yuyv422 \
+//                           -i /dev/video2 \
+//                           -vf fps=2 \
+//                           -update 1 \
+//                           /dev/shm/cap.bmp"
 
-                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
-                //  Разобрать разницу в командах pix_fmt
+//                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
+//                //  Разобрать разницу в командах pix_fmt
 
-                onStandardErrorChanged: {
-                    console.log("error: ", standardError)
-                }
-                onStandardOutputChanged: {
-                    console.log("output: ", standardOutput)
-                }
-            }
+//                onStandardErrorChanged: {
+//                    console.log("error: ", standardError)
+//                }
+//                onStandardOutputChanged: {
+//                    console.log("output: ", standardOutput)
+//                }
+//            }
 
-            Process {
-                id: capChanged
-                property bool soft: false
-                onReadyRead: {
-                    if (updateButton.update) {
-                        updateButton.update  = !updateButton.update
-                        Engine.update()
-                    }
+//            Process {
+//                id: capChanged
+//                property bool soft: false
+//                onReadyRead: {
+//                    if (updateButton.update) {
+//                        updateButton.update  = !updateButton.update
+//                        Engine.update()
+//                    }
 
-                    if (soft)
-                        image.setSource("/dev/shm/cap_soft.bmp")
-                    else
-                        image.setSource("/dev/shm/cap.bmp")
+//                    if (soft)
+//                        image.setSource("/dev/shm/cap_soft.bmp")
+//                    else
+//                        image.setSource("/dev/shm/cap.bmp")
 
-                    soft = !soft
-                }
+//                    soft = !soft
+//                }
 
-                function startWatch() {
-                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
-                }
-            }
+//                function startWatch() {
+//                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
+//                }
+//            }
 
 
 //            Timer {
@@ -330,7 +330,7 @@ Item {
                 height: parent.height
 
 
-                source: "image://camera/newImg.png"
+                source: "image://camera/newImg.ppm"
 
                 cache: false
 
@@ -354,8 +354,8 @@ Item {
 
                     onClicked: {
                         //image.setSource("/dev/shm/cap.bmp")
-                        cameraCapture.startCamera()
-                        capChanged.startWatch()
+//                        cameraCapture.startCamera()
+//                        capChanged.startWatch()
                     }
                 }
 
@@ -367,7 +367,8 @@ Item {
                     property bool update: false
                     onPressed: {
                         //Engine.setPhotoCommand(getPhotoCommand.text)
-                        update = !update
+                        //update = !update
+                        image.reload()
                     }
                 }
 
@@ -378,7 +379,9 @@ Item {
                     text: qsTr("get image")
                     property bool update: false
                     onPressed: {
-                        //image.setSource(Engine.getImage())
+                        //image.setSource()
+                        Engine.getImage()
+                        //image.reload()
 
                     }
                 }
