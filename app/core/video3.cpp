@@ -92,7 +92,7 @@ void Video3::update()
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
 
-        QByteArray imgPpm = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
+        QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
 
         if (img.isNull())
         {
