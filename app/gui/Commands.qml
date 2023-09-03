@@ -341,15 +341,15 @@ Item {
                     }
                 }
 
-                Button {
-                    x: 0
-                    y: 0
-                    text: "start"
+//                Button {
+//                    x: 0
+//                    y: 0
+//                    text: "start"
 
-                    onClicked: {
+//                    onClicked: {
 
-                    }
-                }
+//                    }
+//                }
 
                 Button {
                     id: updateButton

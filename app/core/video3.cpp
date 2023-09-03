@@ -39,7 +39,7 @@ void Video3::init()
     qd() << "Context = " << _ctx;
 
     CapDeviceID deviceID = 1;
-    CapFormatID formatID = 3; //11
+    CapFormatID formatID = 11; //11
 
     _streamId = Cap_openStream(_ctx, deviceID, formatID);
     Cap_getFormatInfo(_ctx, deviceID, formatID, &_finfo);
