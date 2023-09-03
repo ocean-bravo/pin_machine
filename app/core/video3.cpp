@@ -74,10 +74,10 @@ void Video3::update()
 
     //qd() << "video update";
 
-    bool hasNewFrame = false;
+    bool hasNewFrame = true;
     {
-        ScopedMeasure mes("has new frame");
-        hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
+//        ScopedMeasure mes("has new frame");
+//        hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
     }
 
 
@@ -86,7 +86,8 @@ void Video3::update()
     if (hasNewFrame)
     {
         ScopedMeasure mes("capture and convert frame");
-        Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
+        if (Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size()) == CAPRESULT_ERR)
+            return;
 
 
         QImage img((const uint8_t*)&_frameData[0],
