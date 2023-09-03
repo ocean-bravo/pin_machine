@@ -72,10 +72,20 @@ void Video3::init()
 void Video3::update()
 {
 
-    qd() << "video update";
+    //qd() << "video update";
 
-    if (Cap_hasNewFrame(_ctx, _streamId))
+    bool hasNewFrame = false;
     {
+        ScopedMeasure mes("has new frame");
+        hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
+    }
+
+
+
+
+    if (hasNewFrame)
+    {
+        ScopedMeasure mes("capture and convert frame");
         Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
 
 
@@ -104,7 +114,7 @@ void Video3::update()
     }
     else
     {
-        qd() << "no new frame";
+        //qd() << "no new frame";
     }
 }
 
