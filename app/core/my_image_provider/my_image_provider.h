@@ -28,7 +28,7 @@ public:
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override
     {
-        qd() << " request image " << id <<  size << requestedSize;
+        //qd() << " request image " << id <<  size << requestedSize;
 
 
 //            int width = 100;

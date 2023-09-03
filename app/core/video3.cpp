@@ -76,6 +76,7 @@ void Video3::update()
 
     bool hasNewFrame = false;
     {
+        // Когда есть новый фрейм, почему то время запроса очень долгое 60 мс примерно. Когда нет фрейма - 0,001 мс
         ScopedMeasure mes("has new frame");
         hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
     }
