@@ -20,7 +20,7 @@ public:
     explicit Engine(QObject* parent = nullptr);
     ~Engine();
 
-    Q_INVOKABLE void searchCircles();
+    Q_INVOKABLE void searchCircles(const QImage &img);
     Q_INVOKABLE void setPhotoCommand(QString);
 
     Q_INVOKABLE void update();

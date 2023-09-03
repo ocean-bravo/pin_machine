@@ -33,6 +33,13 @@ void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
     }
 }
 
+cv::Mat qimage_to_mat_cpy(const QImage& img, int format)
+{
+    return cv::Mat(img.height(), img.width(), format,
+                   const_cast<uchar*>(img.bits()),
+                   img.bytesPerLine()).clone();
+}
+
 
 }
 
@@ -86,8 +93,8 @@ void Engine::createQmlEngine()
         //_image = img;
         //qd() << "new image";
         myImageProvider->setImage(img);
-        _imgPpm = imgPpm;
         emit imageCaptured();
+        searchCircles(img);
     });
 
 
@@ -98,17 +105,18 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
-//    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
-//    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
-//    cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+    cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
 }
 
 
 
-void Engine::searchCircles()
+void Engine::searchCircles(const QImage & img)
 {
-    cv::Mat image = cv::imread("/dev/shm/cap.bmp");
+    //cv::Mat image = cv::imread("/dev/shm/cap.bmp");
 
+    cv::Mat image = qimage_to_mat_cpy(img, CV_8U);
     cv::Mat grey;
     {
         ScopedMeasure m("color");
