@@ -7,6 +7,6 @@ SUBDIRS += \
     core \
     gui \
     core/process \
-    core/my_image_provider \
+    #core/my_image_provider \
 
 $$type(SUBDIRS)

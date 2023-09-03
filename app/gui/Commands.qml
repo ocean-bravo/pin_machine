@@ -4,7 +4,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import Process 1.0
-import MyImageProvider 1.0
 
 
 Item {
@@ -330,9 +329,11 @@ Item {
                 width: parent.width
                 height: parent.height
 
-                source: "image://myImages/newImg"
+
+                source: "image://camera/newImg.png"
 
                 cache: false
+
                 function reload() {
                     var oldSource = source;
                     source = "";
@@ -341,7 +342,9 @@ Item {
 
                 Connections {
                     target: Engine
-                    onImageReady: image.reload()
+                    function onImageCaptured() {
+                        image.reload()
+                    }
                 }
 
                 Button {
@@ -350,7 +353,7 @@ Item {
                     text: "start"
 
                     onClicked: {
-                        image.setSource("/dev/shm/cap.bmp")
+                        //image.setSource("/dev/shm/cap.bmp")
                         cameraCapture.startCamera()
                         capChanged.startWatch()
                     }
@@ -375,7 +378,7 @@ Item {
                     text: qsTr("get image")
                     property bool update: false
                     onPressed: {
-                        image.setSource(Engine.getImage())
+                        //image.setSource(Engine.getImage())
 
                     }
                 }

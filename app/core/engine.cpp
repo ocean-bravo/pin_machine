@@ -15,6 +15,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
+
+
 namespace {
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
@@ -40,7 +42,7 @@ Engine::Engine(QObject* parent)
 {
     _serial.reset(new Serial);
 
-    createQmlEngine();
+
 
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
@@ -53,14 +55,7 @@ Engine::Engine(QObject* parent)
         _info.append(i.deviceName + " " + i.formatName);
     }
 
-    QThread* thr = new QThread(this);
-    _videoDriver3->moveToThread(thr);
-    thr->start();
-    connect(_videoDriver3, &Video3::newImage, this, [this](QImage img, QString str, QByteArray imgPpm)
-    {
-        _image = img;
-        _imgPpm = imgPpm;
-    });
+    createQmlEngine();
 }
 
 
@@ -77,8 +72,27 @@ Engine::~Engine()
 void Engine::createQmlEngine()
 {
     _qmlEngine.reset(new QQmlApplicationEngine());
-
     _qmlEngine->addImportPath(appDir() + "libs");
+
+
+
+    QThread* thr = new QThread(this);
+    _videoDriver3->moveToThread(thr);
+    thr->start();
+
+    MyImageProvider*    myImageProvider = new MyImageProvider;
+    connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray imgPpm)
+    {
+        //_image = img;
+        qd() << "new image";
+        myImageProvider->setImage(img);
+        _imgPpm = imgPpm;
+        emit imageCaptured();
+    });
+
+
+    _qmlEngine->addImageProvider("camera", myImageProvider);
+
 
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
@@ -130,22 +144,22 @@ void Engine::setPhotoCommand(QString cmd)
     _photoCommand = cmd;
 }
 
-QString Engine::getImage()
+void Engine::getImage()
 {
     _videoDriver3->update();
 
-    QString image;
-    {
-        ScopedMeasure mes("convert image");
-        //QByteArray byteArray;
-        //QBuffer buffer(&byteArray);
-        //buffer.open(QIODevice::WriteOnly);
-        //_image.save(&buffer,"PNG");
-        //save image data in string
-        //image = "data:image/png;base64,";
-        image = "data:image/x-portable-pixmap;base64,";
-        image.append(QString::fromLatin1(_imgPpm.toBase64().data()));
-    }
-    return image;
+//    QString image;
+//    {
+//        ScopedMeasure mes("convert image");
+//        //QByteArray byteArray;
+//        //QBuffer buffer(&byteArray);
+//        //buffer.open(QIODevice::WriteOnly);
+//        //_image.save(&buffer,"PNG");
+//        //save image data in string
+//        //image = "data:image/png;base64,";
+//        image = "data:image/x-portable-pixmap;base64,";
+//        image.append(QString::fromLatin1(_imgPpm.toBase64().data()));
+//    }
+//    return image;
 }
 
