@@ -94,7 +94,12 @@ void Engine::createQmlEngine()
         //qd() << "new image";
         myImageProvider->setImage(img);
         emit imageCaptured();
-        searchCircles(img);
+        try
+        {
+            searchCircles(img);
+        }
+        catch (...)
+        {}
     });
 
 
