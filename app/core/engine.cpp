@@ -121,7 +121,7 @@ void Engine::searchCircles(const QImage & img)
 {
     //cv::Mat image = cv::imread("/dev/shm/cap.bmp");
 
-    cv::Mat image = qimage_to_mat_cpy(img, CV_8U);
+    cv::Mat image = qimage_to_mat_cpy(img, CV_16U);
     cv::Mat grey;
     {
         ScopedMeasure m("color");
