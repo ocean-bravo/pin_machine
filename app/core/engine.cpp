@@ -33,11 +33,13 @@ void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
     }
 }
 
-cv::Mat qimage_to_mat_cpy(const QImage& img, int format)
+cv::Mat qimage_to_mat_cpy( QImage img, int format)
 {
-    return cv::Mat(img.height(), img.width(), format,
-                   const_cast<uchar*>(img.bits()),
-                   img.bytesPerLine()).clone();
+
+
+        img = img.convertToFormat(QImage::Format_RGB888, Qt::ColorOnly).rgbSwapped();
+        return cv::Mat(img.height(), img.width(), CV_8UC3, img.bits(), img.bytesPerLine()).clone();
+
 }
 
 
