@@ -112,8 +112,8 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
-    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
-    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+//    cv::namedWindow("grey", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
+//    cv::namedWindow("blur", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
     cv::namedWindow("main", cv::WINDOW_NORMAL | cv::WINDOW_GUI_EXPANDED);
 }
 
