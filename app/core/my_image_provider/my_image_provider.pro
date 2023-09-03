@@ -1,7 +1,7 @@
 QT += core qml quick
 TEMPLATE = lib
 CONFIG += plugin c++17 release
-TARGET = process
+TARGET = my_image_provider
 
 
 HEADERS += \

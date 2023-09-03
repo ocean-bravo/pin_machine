@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import Process 1.0
+import MyImageProvider 1.0
 
 
 Item {
@@ -323,11 +324,25 @@ Item {
 //                }
 //            }
 
-            ImageDoubleBuff {
+//            ImageDoubleBuff {
+            Image {
                 id: image
                 width: parent.width
                 height: parent.height
 
+                source: "image://myImages/newImg"
+
+                cache: false
+                function reload() {
+                    var oldSource = source;
+                    source = "";
+                    source = oldSource;
+                }
+
+                Connections {
+                    target: Engine
+                    onImageReady: image.reload()
+                }
 
                 Button {
                     x: 0

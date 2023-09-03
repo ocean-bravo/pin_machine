@@ -1,1 +1,2 @@
+module MyImageProvider
 plugin my_image_provider
