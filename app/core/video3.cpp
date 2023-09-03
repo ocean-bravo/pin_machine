@@ -77,7 +77,7 @@ void Video3::update()
     bool hasNewFrame = false;
     {
         // Когда есть новый фрейм, почему то время запроса очень долгое 60 мс примерно. Когда нет фрейма - 0,001 мс
-        ScopedMeasure mes("has new frame");
+        //ScopedMeasure mes("has new frame");
         hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
     }
 
@@ -106,7 +106,7 @@ void Video3::update()
                                               Cap_getStreamFrameCount(_ctx, _streamId));
 
 
-        qd() << " new image ready";
+        //qd() << " new image ready";
         emit newImage(img, frameInfo, imgPpm);
     }
     else

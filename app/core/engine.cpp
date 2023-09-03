@@ -84,7 +84,7 @@ void Engine::createQmlEngine()
     connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray imgPpm)
     {
         //_image = img;
-        qd() << "new image";
+        //qd() << "new image";
         myImageProvider->setImage(img);
         _imgPpm = imgPpm;
         emit imageCaptured();
