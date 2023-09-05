@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
 
-    _video3->init();
+    _video3->reloadDevices();
 
     //std::vector<DeviceInfo> info = _video3->devicesInfo();
 

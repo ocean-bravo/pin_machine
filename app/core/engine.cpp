@@ -57,8 +57,8 @@ Engine::Engine(QObject* parent)
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
     _videoDriver3 = new Video3();
-    _videoDriver3->init();
-    _videoDriver3->init2();
+    _videoDriver3->reloadDevices();
+    _videoDriver3->changeCamera(0, 0);
 //    std::vector<DeviceInfo> info = _videoDriver3->devicesInfo();
 
 //    for (const DeviceInfo& i : info)

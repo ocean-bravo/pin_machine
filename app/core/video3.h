@@ -22,13 +22,12 @@ class Video3 : public QObject
 public:
     Video3();
     ~Video3();
-    void init();
-    void init2();
+    void reloadDevices();
 
 public slots:
     void update();
 
-    void changeCamera(quint32 device, quint32 format);
+    void changeCamera(quint32 deviceId, quint32 formatId);
 
     //std::vector<DeviceInfo> devicesInfo();
 
@@ -58,7 +57,7 @@ signals:
 
 private:
     CapContext  _ctx;
-    int32_t     _streamId;
+    int32_t     _streamId = -1;
     CapFormatInfo           _finfo;
     std::vector<uint8_t>    _frameData;
 

@@ -341,16 +341,6 @@ Item {
                     }
                 }
 
-//                Button {
-//                    x: 0
-//                    y: 0
-//                    text: "start"
-
-//                    onClicked: {
-
-//                    }
-//                }
-
                 Button {
                     id: updateButton
                     x: 0
@@ -362,32 +352,32 @@ Item {
                     }
                 }
 
-                Button {
-                    x: 0
-                    y: 90
-                    text: "Cameras Reload"
-                    onClicked: {
-                        var cameras = Engine.camerasInfo()
-                        cameraList.model = cameras
+//                Button {
+//                    x: 0
+//                    y: 90
+//                    text: "Cameras Reload"
+//                    onClicked: {
+//                        var cameras = Engine.camerasInfo()
+//                        cameraList.model = cameras
 
-                        for (var i = 0; i < cameras.length; ++i) {
-                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
-                            console.log(cameras[i])
-                        }
-                        console.log("\n")
-                    }
-                }
+//                        for (var i = 0; i < cameras.length; ++i) {
+//                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
+//                            console.log(cameras[i])
+//                        }
+//                        console.log("\n")
+//                    }
+//                }
 
                 Item {
                     x: 0
-                    y: 120
+                    y: 60
                     height: {
                         if (typeof cameraList.model === "undefined")
                             return 30
 
                         return cameraList.model.length * 30
                     }
-                    width: parent.width
+                    width: 120
 
                     ListView {
                         id: cameraList
@@ -396,9 +386,6 @@ Item {
                         currentIndex: 0
 
                         model: DataBus.cameras
-                        onModelChanged : {
-
-                        }
 
                         delegate: Button {
                             width: 120
@@ -406,13 +393,38 @@ Item {
                             text: modelData
 
                             onClicked: {
+                                resList.model = DataBus["camera" + index]
                             }
                         }
                     }
                 }
 
+                Item {
+                    x: 0
+                    y: 120
+                    height: {
+                        if (typeof resList.model === "undefined")
+                            return 30
 
+                        return resList.model.length * 30
+                    }
+                    width: 250
 
+                    ListView {
+                        id: resList
+                        anchors.fill: parent
+
+                        currentIndex: 0
+
+                        //model: ["adf", "df "]
+
+                        delegate: Button {
+                            width: 180
+                            height: 30
+                            text: modelData
+                        }
+                    }
+                }
             }
 
         }
