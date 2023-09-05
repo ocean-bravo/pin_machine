@@ -1,6 +1,8 @@
 #include "video3.h"
 #include "utils.h"
 
+#include "data_bus.h"
+
 namespace {
 
 QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *bufferPtr, size_t bytes)
@@ -16,6 +18,17 @@ QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *buff
     }
 
     return pgmImage;
+}
+
+QString fourccToString (quint32 fourcc)
+{
+    QString str;
+    for(uint32_t i=0; i<4; i++)
+    {
+        str += (char)(fourcc & 0xFF);
+        fourcc >>= 8;
+    }
+    return str;
 }
 
 }
@@ -38,8 +51,34 @@ void Video3::init()
     _ctx = Cap_createContext();
     qd() << "Context = " << _ctx;
 
+    QStringList deviceNames;
+    for(uint32_t device=0; device<Cap_getDeviceCount(_ctx); device++)
+    {
+        const QString devName = Cap_getDeviceName(_ctx, device);
+        deviceNames.append(devName);
+
+        for(int32_t format=0; format<Cap_getNumFormats(_ctx, device); format++)
+        {
+            CapFormatInfo finfo;
+            Cap_getFormatInfo(_ctx, device, format, &finfo);
+
+            const QString fourcc = fourccToString(finfo.fourcc);
+
+            //QString formatName = QString::asprintf("%dx%d %s", finfo.width, finfo.height, fourcc.toLatin1().data());
+            //_deviceInfo.push_back({device, format, deviceName, formatName});
+
+            db().insert("camera" + device, QString("[%1x%2] %3 %4fps").arg(finfo.width, finfo.height).arg(fourcc).arg(finfo.fps));
+        }
+    }
+
+    db().insert("cameras", deviceNames);
+    //qd() << "cameras " << deviceNames;
+}
+
+void Video3::init2()
+{
     CapDeviceID deviceID = 1;
-    CapFormatID formatID = 11; //11
+    CapFormatID formatID = 3; //11
 
     _streamId = Cap_openStream(_ctx, deviceID, formatID);
     Cap_getFormatInfo(_ctx, deviceID, formatID, &_finfo);
@@ -47,31 +86,10 @@ void Video3::init()
     _frameData.resize(_finfo.width*_finfo.height*3);
 
     qd() << "Frame size:" << _finfo.width << _finfo.height;
-
-    for(uint32_t device=0; device<Cap_getDeviceCount(_ctx); device++)
-    {
-        QString deviceName = Cap_getDeviceName(_ctx, device);
-        for(int32_t format=0; format<Cap_getNumFormats(_ctx, device); format++)
-        {
-            CapFormatInfo finfo;
-            Cap_getFormatInfo(_ctx, device, format, &finfo);
-
-            QString fourcc;
-            for(uint32_t i=0; i<4; i++)
-            {
-                fourcc += (char)(finfo.fourcc & 0xFF);
-                finfo.fourcc >>= 8;
-            }
-
-            QString formatName = QString::asprintf("%dx%d %s", finfo.width, finfo.height, fourcc.toLatin1().data());
-            _deviceInfo.push_back({device, format, deviceName, formatName});
-        }
-    }
 }
 
 void Video3::update()
 {
-
     //qd() << "video update";
 
     bool hasNewFrame = false;
@@ -83,7 +101,7 @@ void Video3::update()
 
     if (hasNewFrame)
     {
-        ScopedMeasure mes("capture and convert frame");
+        //ScopedMeasure mes("capture and convert frame");
         Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
 
         QImage img((const uint8_t*)&_frameData[0],
@@ -134,7 +152,7 @@ void Video3::changeCamera(quint32 device, quint32 format)
     emit newSize(_finfo.width, _finfo.height);
 }
 
-std::vector<DeviceInfo> Video3::devicesInfo()
-{
-    return _deviceInfo;
-}
+//std::vector<DeviceInfo> Video3::devicesInfo()
+//{
+//    return _deviceInfo;
+//}

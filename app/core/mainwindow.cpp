@@ -33,17 +33,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _video3->init();
 
-    std::vector<DeviceInfo> info = _video3->devicesInfo();
+    //std::vector<DeviceInfo> info = _video3->devicesInfo();
 
-    for (const DeviceInfo& i : info)
-    {
-        CustomComboBoxData customData;
-        customData.m_device = i.device;
-        customData.m_format = i.format;
-        QVariant v;
-        v.setValue(customData);
-        ui->cameraChooser->addItem(i.deviceName + " " + i.formatName, v);
-    }
+//    for (const DeviceInfo& i : info)
+//    {
+//        CustomComboBoxData customData;
+//        customData.m_device = i.device;
+//        customData.m_format = i.format;
+//        QVariant v;
+//        v.setValue(customData);
+//        ui->cameraChooser->addItem(i.deviceName + " " + i.formatName, v);
+//    }
 
 
     QThread* thr = new QThread(this);

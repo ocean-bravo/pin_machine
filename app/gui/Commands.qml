@@ -395,7 +395,10 @@ Item {
 
                         currentIndex: 0
 
-                        model: Engine.camerasInfo()
+                        model: DataBus.cameras
+                        onModelChanged : {
+
+                        }
 
                         delegate: Button {
                             width: 120

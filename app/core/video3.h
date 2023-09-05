@@ -23,13 +23,14 @@ public:
     Video3();
     ~Video3();
     void init();
+    void init2();
 
 public slots:
     void update();
 
     void changeCamera(quint32 device, quint32 format);
 
-    std::vector<DeviceInfo> devicesInfo();
+    //std::vector<DeviceInfo> devicesInfo();
 
 //    void onAutoExposure(bool state);
 //    void onAutoWhiteBalance(bool state);
@@ -54,7 +55,6 @@ public slots:
 signals:
     void newImage(QImage, QString, QByteArray);
     void newSize(quint32 width, quint32 height);
-
 
 private:
     CapContext  _ctx;

@@ -15,7 +15,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
-
+#include "data_bus.h"
 
 namespace {
 
@@ -51,18 +51,22 @@ Engine::Engine(QObject* parent)
 {
     _serial.reset(new Serial);
 
+    DataBus& db = DataBus::instance();
 
 
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
     _videoDriver3 = new Video3();
     _videoDriver3->init();
-    std::vector<DeviceInfo> info = _videoDriver3->devicesInfo();
+    _videoDriver3->init2();
+//    std::vector<DeviceInfo> info = _videoDriver3->devicesInfo();
 
-    for (const DeviceInfo& i : info)
-    {
-        _info.append(i.deviceName + " " + i.formatName);
-    }
+//    for (const DeviceInfo& i : info)
+//    {
+//        _info.append(i.deviceName + " " + i.formatName);
+
+
+//    }
 
     createQmlEngine();
 }
@@ -107,6 +111,12 @@ void Engine::createQmlEngine()
 
     _qmlEngine->addImageProvider("camera", myImageProvider);
 
+
+
+
+
+
+    _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
 
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
