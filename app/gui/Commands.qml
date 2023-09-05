@@ -307,16 +307,6 @@ Item {
 //            }
 
 
-            Timer {
-                interval: 50
-                repeat: true
-                triggeredOnStart: true
-                running: true
-                onTriggered: {
-                    Engine.update()
-                }
-            }
-
 //            ImageDoubleBuff {
             Image {
                 id: image
@@ -341,14 +331,35 @@ Item {
                     }
                 }
 
+                Timer {
+                    id: updateTimer
+                    interval: 50
+                    repeat: true
+                    triggeredOnStart: true
+                    running: false
+                    onTriggered: {
+                        Video.update()
+                    }
+                }
+
                 Button {
-                    id: updateButton
                     x: 0
-                    y: 30
-                    text: qsTr("update")
-                    property bool update: false
+                    y: 0
+                    text: qsTr("Start/Stop update")
+                    //property bool update: false
+                    onClicked: {
+                        updateTimer.running = !updateTimer.running
+                    }
+                }
+
+                Button {
+                    id: reloadDevices
+                    x: 0
+                    y: 35
+                    text: qsTr("Reload devices")
+                    //property bool update: false
                     onPressed: {
-                        Engine.update()
+                        Video.reloadDevices()
                     }
                 }
 
@@ -368,9 +379,11 @@ Item {
 //                    }
 //                }
 
+
+
                 Item {
                     x: 0
-                    y: 60
+                    y: 70
                     height: {
                         if (typeof cameraList.model === "undefined")
                             return 30
@@ -394,6 +407,7 @@ Item {
 
                             onClicked: {
                                 resList.model = DataBus["camera" + index]
+                                Video.changeCamera(index, 0)
                             }
                         }
                     }
@@ -422,6 +436,9 @@ Item {
                             width: 180
                             height: 30
                             text: modelData
+                            onClicked: {
+                                Video.changeCamera(0, index)
+                            }
                         }
                     }
                 }

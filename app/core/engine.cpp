@@ -57,8 +57,8 @@ Engine::Engine(QObject* parent)
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
     _videoDriver3 = new Video3();
-    _videoDriver3->reloadDevices();
-    _videoDriver3->changeCamera(0, 0);
+    //_videoDriver3->reloadDevices();
+    //_videoDriver3->changeCamera(0, 0);
 //    std::vector<DeviceInfo> info = _videoDriver3->devicesInfo();
 
 //    for (const DeviceInfo& i : info)
@@ -89,9 +89,9 @@ void Engine::createQmlEngine()
 
 
 
-    QThread* thr = new QThread(this);
-    _videoDriver3->moveToThread(thr);
-    thr->start();
+//    QThread* thr = new QThread(this);
+//    _videoDriver3->moveToThread(thr);
+//    thr->start();
 
     MyImageProvider*    myImageProvider = new MyImageProvider;
     connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray imgPpm)
@@ -119,6 +119,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
 
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
+    _qmlEngine->rootContext()->setContextProperty("Video", _videoDriver3);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
@@ -171,7 +172,7 @@ void Engine::setPhotoCommand(QString cmd)
 
 void Engine::update()
 {
-     QMetaObject::invokeMethod(_videoDriver3, "update", Qt::QueuedConnection);
+     //QMetaObject::invokeMethod(_videoDriver3, "update", Qt::QueuedConnection);
 
 
 //    QString image;

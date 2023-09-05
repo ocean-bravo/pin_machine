@@ -15,6 +15,8 @@ struct DeviceInfo
     QString formatName;
 };
 
+class Video3Private;
+
 class Video3 : public QObject
 {
     Q_OBJECT
@@ -22,9 +24,34 @@ class Video3 : public QObject
 public:
     Video3();
     ~Video3();
-    void reloadDevices();
+
+    Q_INVOKABLE void reloadDevices();
+    Q_INVOKABLE void changeCamera(quint32 deviceId, quint32 formatId);
+    Q_INVOKABLE void update();
+
+signals:
+    void newImage(QImage, QString, QByteArray);
+
+private:
+
+
+    Video3Private* const _impl;
+    QScopedPointer<QThread> _thread;
+};
+
+class Video3Private : public QObject
+{
+    Q_OBJECT
+
+public:
+    Video3Private();
+    ~Video3Private();
+
+
 
 public slots:
+    void reloadDevices();
+    void init();
     void update();
 
     void changeCamera(quint32 deviceId, quint32 formatId);
@@ -56,7 +83,7 @@ signals:
     void newSize(quint32 width, quint32 height);
 
 private:
-    CapContext  _ctx;
+    CapContext  _ctx = nullptr;
     int32_t     _streamId = -1;
     CapFormatInfo           _finfo;
     std::vector<uint8_t>    _frameData;

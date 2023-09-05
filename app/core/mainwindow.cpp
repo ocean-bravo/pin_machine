@@ -23,15 +23,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     _video3 = new Video3();
 
-    connect(_video3, &Video3::newImage, this, &MainWindow::update);
-    connect(_video3, &Video3::newSize, this, [this](quint32 width, quint32 height)
-    {
-        ui->frameDisplay->setFixedSize(QSize(width, height));
-        ui->frameDisplay->setStyleSheet("border: 1px solid red");
-    });
+//    connect(_video3, &Video3::newImage, this, &MainWindow::update);
+//    connect(_video3, &Video3::newSize, this, [this](quint32 width, quint32 height)
+//    {
+//        ui->frameDisplay->setFixedSize(QSize(width, height));
+//        ui->frameDisplay->setStyleSheet("border: 1px solid red");
+//    });
 
 
-    _video3->reloadDevices();
+    //_video3->reloadDevices();
 
     //std::vector<DeviceInfo> info = _video3->devicesInfo();
 
@@ -44,11 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //        v.setValue(customData);
 //        ui->cameraChooser->addItem(i.deviceName + " " + i.formatName, v);
 //    }
-
-
-    QThread* thr = new QThread(this);
-    _video3->moveToThread(thr);
-    thr->start();
 
 
     connect(ui->cameraChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCamera()));
@@ -73,9 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(ui->saturationSlider, SIGNAL(valueChanged(int)), this, SLOT(onSaturationSlider(int)));
 
     // add timer to refresh the frame display
-    m_refreshTimer = new QTimer(this);
-    connect(m_refreshTimer, &QTimer::timeout, _video3, &Video3::update);
-    m_refreshTimer->start(50);
+//    m_refreshTimer = new QTimer(this);
+//    connect(m_refreshTimer, &QTimer::timeout, _video3, &Video3::update);
+//    m_refreshTimer->start(50);
 
     // update GUI to reflect the actual camera settings
     //readCameraSettings();
@@ -111,7 +106,7 @@ void MainWindow::changeCamera()
     QVariant v = ui->cameraChooser->currentData();
     CustomComboBoxData data = v.value<CustomComboBoxData>();
 
-    _video3->changeCamera(data.m_device, data.m_format);
+//    _video3->changeCamera(data.m_device, data.m_format);
 
     //readCameraSettings();
 }

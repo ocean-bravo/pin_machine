@@ -33,20 +33,58 @@ QString fourccToString (quint32 fourcc)
 
 }
 
+
 Video3::Video3()
+    : _impl(new Video3Private)
+    , _thread(new QThread)
 {
-    qd() << Cap_getLibraryVersion();
-    _ctx = Cap_createContext();
-    qd() << "Context = " << _ctx;
+    connect(_impl, &Video3Private::newImage,   this, &Video3::newImage, Qt::QueuedConnection);
+//    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
+
+//    connect(_impl, &LoggerPrivate::logToFileChanged, this, &Logger::logToFileChanged, Qt::QueuedConnection);
+//    connect(_impl, &LoggerPrivate::inited,           this, &Logger::inited, Qt::QueuedConnection);
+
+    connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
+    connect(_thread.data(), &QThread::started,  _impl, &Video3Private::init, Qt::QueuedConnection);
+
+    _impl->moveToThread(_thread.data());
+    _thread->start();
 }
 
 Video3::~Video3()
+{
+    _thread->quit();
+    _thread->wait(1000);
+}
+
+void Video3::reloadDevices()
+{
+    QMetaObject::invokeMethod(_impl, "reloadDevices", Qt::QueuedConnection);
+}
+
+void Video3::changeCamera(quint32 deviceId, quint32 formatId)
+{
+    QMetaObject::invokeMethod(_impl, "changeCamera", Qt::QueuedConnection, Q_ARG(quint32, deviceId), Q_ARG(quint32, formatId));
+}
+
+void Video3::update()
+{
+    QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
+}
+
+
+Video3Private::Video3Private()
+{
+
+}
+
+Video3Private::~Video3Private()
 {
     Cap_closeStream(_ctx, _streamId);
     Cap_releaseContext(_ctx);
 }
 
-void Video3::reloadDevices()
+void Video3Private::reloadDevices()
 {
     QStringList devices;
     for(uint32_t deviceId = 0; deviceId < Cap_getDeviceCount(_ctx); deviceId++)
@@ -62,9 +100,6 @@ void Video3::reloadDevices()
 
             const QString fourcc = fourccToString(finfo.fourcc);
 
-            //QString formatName = QString::asprintf("%dx%d %s", finfo.width, finfo.height, fourcc.toLatin1().data());
-            //_deviceInfo.push_back({device, format, deviceName, formatName});
-
             const QString format = QString("[%1x%2] %3 %4fps").arg(finfo.width).arg(finfo.height).arg(fourcc).arg(finfo.fps);
 
             formats.append(format);
@@ -75,7 +110,14 @@ void Video3::reloadDevices()
     db().insert("cameras", devices);
 }
 
-void Video3::update()
+void Video3Private::init()
+{
+    qd() << Cap_getLibraryVersion();
+    _ctx = Cap_createContext();
+    qd() << "Context = " << _ctx;
+}
+
+void Video3Private::update()
 {
     //qd() << "video update";
 
@@ -120,9 +162,10 @@ void Video3::update()
     }
 }
 
-void Video3::changeCamera(quint32 deviceId, quint32 formatId)
+void Video3Private::changeCamera(quint32 deviceId, quint32 formatId)
 {
-    Cap_closeStream(_ctx, _streamId); // kill currently running stream
+    if (_streamId != -1)
+        Cap_closeStream(_ctx, _streamId); // kill currently running stream
 
     qd() << "Opening new device/format: " << deviceId << formatId;
 
