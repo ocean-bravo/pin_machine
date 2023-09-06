@@ -343,12 +343,19 @@ Item {
                 }
 
                 Button {
+                    id: startStopUpdate
                     x: 0
                     y: 0
                     text: qsTr("Start/Stop update")
                     //property bool update: false
                     onClicked: {
                         updateTimer.running = !updateTimer.running
+                    }
+                    background: Rectangle {
+                        gradient: Gradient {
+                            GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
+                            GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
+                        }
                     }
                 }
 
@@ -360,6 +367,12 @@ Item {
                     //property bool update: false
                     onPressed: {
                         Video.reloadDevices()
+                    }
+                    background: Rectangle {
+                        gradient: Gradient {
+                            GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
+                            GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
+                        }
                     }
                 }
 
@@ -397,7 +410,7 @@ Item {
                         anchors.fill: parent
 
                         currentIndex: 0
-
+                        property int selectedIndex: 0
                         model: DataBus.cameras
 
                         delegate: Button {
@@ -405,8 +418,13 @@ Item {
                             height: 30
                             text: modelData
 
+                            background: Rectangle {
+                                border.width: index === cameraList.selectedIndex ? 2 : 0
+                                border.color: index === cameraList.selectedIndex ? "red" : "transparent"
+                            }
                             onClicked: {
                                 resList.model = DataBus["camera" + index]
+                                cameraList.selectedIndex = index
                                 Video.changeCamera(index, 0)
                             }
                         }
@@ -429,6 +447,7 @@ Item {
                         anchors.fill: parent
 
                         currentIndex: 0
+                        property int selectedIndex: 0
 
                         //model: ["adf", "df "]
 
@@ -437,7 +456,12 @@ Item {
                             height: 30
                             text: modelData
                             onClicked: {
-                                Video.changeCamera(0, index)
+                                Video.changeCamera(cameraList.selectedIndex, index)
+                                resList.selectedIndex = index
+                            }
+                            background: Rectangle {
+                                border.width: index === resList.selectedIndex ? 2 : 0
+                                border.color: index === resList.selectedIndex ? "red" : "transparent"
                             }
                         }
                     }
