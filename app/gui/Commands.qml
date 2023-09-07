@@ -262,7 +262,6 @@ Item {
 //                    int minRadius = db().value("minRadius").toInt();
 //                    int maxRadius = db().value("maxRadius").toInt();
 
-
                     SpinBox {
                         from: 0
                         to: 500
@@ -270,7 +269,6 @@ Item {
                         value: DataBus.minDist
                         onValueChanged: DataBus.minDist = value
                     }
-
                     SpinBox {
                         from: 0
                         to: 500
@@ -293,6 +291,43 @@ Item {
                         onValueChanged: DataBus.minRadius = value
                     }
                     SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.maxRadius
+                        onValueChanged: DataBus.maxRadius = value
+                    }
+
+
+                    Slider {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.minDist
+                        onValueChanged: DataBus.minDist = value
+                    }
+                    Slider {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.param1
+                        onValueChanged: DataBus.param1 = value
+                    }
+                    Slider {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.param2
+                        onValueChanged: DataBus.param2 = value
+                    }
+                    Slider {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.minRadius
+                        onValueChanged: DataBus.minRadius = value
+                    }
+                    Slider {
                         from: 0
                         to: 500
                         stepSize: 1

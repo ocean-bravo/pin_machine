@@ -73,7 +73,7 @@ void Engine::createQmlEngine()
     });
 
     qd() << "styles" << QQuickStyle::availableStyles();
-    QQuickStyle::setStyle("Universal");
+    QQuickStyle::setStyle("Fusion");
 
     _qmlEngine->addImageProvider("camera", myImageProvider);
 
