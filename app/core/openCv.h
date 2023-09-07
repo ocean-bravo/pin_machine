@@ -17,7 +17,7 @@ public:
     OpenCv();
     ~OpenCv();
 
-    void searchCircles(const QImage &img);
+    void searchCircles(QImage img);
 
 signals:
         void imageChanged(QImage);
@@ -39,7 +39,7 @@ public:
     void init();
 
 public slots:
-    void searchCircles(const QImage &img);
+    void searchCircles(QImage img);
 
 signals:
     void imageChanged(QImage);

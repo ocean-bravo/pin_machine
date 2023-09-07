@@ -62,7 +62,7 @@ OpenCv::~OpenCv()
     _thread->wait(1000);
 }
 
-void OpenCv::searchCircles(const QImage& img)
+void OpenCv::searchCircles(QImage img)
 {
     QMetaObject::invokeMethod(_impl, "searchCircles", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
@@ -88,7 +88,7 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(const QImage& img)
+void OpenCvPrivate::searchCircles(QImage img)
 {
     if (_done)
     {

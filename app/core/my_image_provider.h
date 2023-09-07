@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QObject>
 #include <QPainter>
+#include <QMutex>
 #include <QQuickImageProvider>
 
 #include "utils.h"
@@ -22,8 +23,10 @@ public:
 
     void setImage(const QImage& image, const QString& id)
     {
+        _mutex.lock();
         _images.insert(id, image);
         emit imageChanged(id);
+        _mutex.unlock();
     }
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override
@@ -51,7 +54,11 @@ public:
 //            painter.drawText(QRectF(0, 0, width, height), Qt::AlignCenter, id);
 
 
-        return _images.value(id);
+        _mutex.lock();
+        QImage img = _images.value(id);
+        _mutex.unlock();
+
+        return img;
     }
 
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override
@@ -89,6 +96,8 @@ signals:
 private:
     QPixmap _pixmap;
     QImage _image;
+
+    QMutex _mutex;
 
     QMap<QString, QImage> _images;
 };
