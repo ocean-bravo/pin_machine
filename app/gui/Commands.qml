@@ -254,6 +254,51 @@ Item {
                             Video.changeCamera(cameraList.currentIndex, index)
                         }
                     }
+
+//                    double dp = db().value("dp").toDouble();
+//                    double minDist = db().value("minDist").toDouble();
+//                    double param1 = db().value("param1").toDouble();
+//                    double param2 = db().value("param2").toDouble();
+//                    int minRadius = db().value("minRadius").toInt();
+//                    int maxRadius = db().value("maxRadius").toInt();
+
+
+                    SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.minDist
+                        onValueChanged: DataBus.minDist = value
+                    }
+
+                    SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.param1
+                        onValueChanged: DataBus.param1 = value
+                    }
+                    SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.param2
+                        onValueChanged: DataBus.param2 = value
+                    }
+                    SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.minRadius
+                        onValueChanged: DataBus.minRadius = value
+                    }
+                    SpinBox {
+                        from: 0
+                        to: 500
+                        stepSize: 1
+                        value: DataBus.maxRadius
+                        onValueChanged: DataBus.maxRadius = value
+                    }
                 }
             }
         }
