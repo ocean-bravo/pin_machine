@@ -313,23 +313,22 @@ Item {
                 width: parent.width
                 height: parent.height
 
-
                 source: "image://camera/raw"
 
                 cache: false
 
-                function reload() {
-                    var oldSource = source;
-                    source = "";
-                    source = oldSource;
-                }
+//                function reload() {
+//                    var oldSource = source;
+//                    source = "";
+//                    source = oldSource;
+//                }
 
-                Connections {
-                    target: Engine
-                    function onImageCaptured() {
-                        image.reload()
-                    }
-                }
+//                Connections {
+//                    target: Engine
+//                    function onImageCaptured() {
+//                        image.reload()
+//                    }
+//                }
 
                 Timer {
                     id: updateTimer
@@ -352,12 +351,12 @@ Item {
                         onClicked: {
                             updateTimer.running = !updateTimer.running
                         }
-                        background: Rectangle {
-                            gradient: Gradient {
-                                GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
-                                GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
-                            }
-                        }
+                        //                        background: Rectangle {
+                        //                            gradient: Gradient {
+                        //                                GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
+                        //                                GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
+                        //                            }
+                        //                        }
                     }
 
                     Button {
@@ -368,12 +367,12 @@ Item {
                         onPressed: {
                             Video.reloadDevices()
                         }
-//                        background: Rectangle {
-//                            gradient: Gradient {
-//                                GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
-//                                GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
-//                            }
-//                        }
+                        //                        background: Rectangle {
+                        //                            gradient: Gradient {
+                        //                                GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
+                        //                                GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
+                        //                            }
+                        //                        }
                     }
 
                     //                Button {
@@ -395,89 +394,31 @@ Item {
 
                     ComboBox {
                         model: ListModel {
-                            id: model
-                            ListElement { text: "main" }
                             ListElement { text: "raw" }
+                            ListElement { text: "main" }
                         }
                         onActivated: {
                             image.source = "image://camera/" + textAt(index)
                         }
                     }
 
-
-                    Item {
-
-                        height: {
-                            if (typeof cameraList.model === "undefined")
-                                return 30
-
-                            return cameraList.model.length * 30
-                        }
-                        width: 120
-
-                        ListView {
-                            id: cameraList
-                            anchors.fill: parent
-
-                            currentIndex: 0
-                            property int selectedIndex: 0
-                            model: DataBus.cameras
-
-                            delegate: Button {
-                                width: 120
-                                height: 30
-                                text: modelData
-
-                                background: Rectangle {
-                                    border.width: index === cameraList.selectedIndex ? 2 : 0
-                                    border.color: index === cameraList.selectedIndex ? "red" : "transparent"
-                                }
-                                onClicked: {
-                                    resList.model = DataBus["camera" + index]
-                                    cameraList.selectedIndex = index
-                                    Video.changeCamera(index, 0)
-                                }
-                            }
+                    ComboBox {
+                        id: cameraList
+                        model: DataBus.cameras
+                        onActivated: {
+                            resList.model = DataBus["camera" + index]
+                            Video.changeCamera(index, 0)
                         }
                     }
 
-                    Item {
-
-                        height: {
-                            if (typeof resList.model === "undefined")
-                                return 30
-
-                            return resList.model.length * 30
-                        }
-                        width: 250
-
-                        ListView {
-                            id: resList
-                            anchors.fill: parent
-
-                            currentIndex: 0
-                            property int selectedIndex: 0
-
-                            //model: ["adf", "df "]
-
-                            delegate: Button {
-                                width: 180
-                                height: 30
-                                text: modelData
-                                onClicked: {
-                                    Video.changeCamera(cameraList.selectedIndex, index)
-                                    resList.selectedIndex = index
-                                }
-                                background: Rectangle {
-                                    border.width: index === resList.selectedIndex ? 2 : 0
-                                    border.color: index === resList.selectedIndex ? "red" : "transparent"
-                                }
-                            }
+                    ComboBox {
+                        id: resList
+                        onActivated: {
+                            Video.changeCamera(cameraList.currentIndex, index)
                         }
                     }
                 }
             }
-
         }
 
 
