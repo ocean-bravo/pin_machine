@@ -10,6 +10,7 @@
 
 class QQmlApplicationEngine;
 class Serial;
+class OpenCv;
 
 class Engine : public QObject
 {
@@ -20,7 +21,6 @@ public:
     explicit Engine(QObject* parent = nullptr);
     ~Engine();
 
-    Q_INVOKABLE void searchCircles(const QImage &img);
     Q_INVOKABLE void setPhotoCommand(QString);
 
     Q_INVOKABLE void update();
@@ -46,4 +46,6 @@ private:
 
     QByteArray _imgPpm;
     QStringList _info;
+
+    OpenCv* _openCv;
 };

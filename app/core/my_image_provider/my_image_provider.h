@@ -21,9 +21,9 @@ public:
         _pixmap = pixmap;
     }
 
-    void setImage(const QImage& image)
+    void setImage(const QImage& image, const QString& id)
     {
-        _image = image;
+        _images.insert(id, image);
     }
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override
@@ -51,7 +51,7 @@ public:
 //            painter.drawText(QRectF(0, 0, width, height), Qt::AlignCenter, id);
 
 
-        return _image;
+        return _images.value(id);
     }
 
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override
@@ -84,4 +84,6 @@ public:
 private:
     QPixmap _pixmap;
     QImage _image;
+
+    QMap<QString, QImage> _images;
 };

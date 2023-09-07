@@ -257,64 +257,64 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-//            Process {
-//                id: cameraCapture
+            //            Process {
+            //                id: cameraCapture
 
-//                function startCamera() {
-//                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
-//                }
+            //                function startCamera() {
+            //                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
+            //                }
 
-//                property string script:
-//                    "ffmpeg -y -f v4l2 \
-//                           -video_size 3264x2448 \
-//                           -input_format yuyv422 \
-//                           -i /dev/video2 \
-//                           -vf fps=2 \
-//                           -update 1 \
-//                           /dev/shm/cap.bmp"
+            //                property string script:
+            //                    "ffmpeg -y -f v4l2 \
+            //                           -video_size 3264x2448 \
+            //                           -input_format yuyv422 \
+            //                           -i /dev/video2 \
+            //                           -vf fps=2 \
+            //                           -update 1 \
+            //                           /dev/shm/cap.bmp"
 
-//                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
-//                //  Разобрать разницу в командах pix_fmt
+            //                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
+            //                //  Разобрать разницу в командах pix_fmt
 
-//                onStandardErrorChanged: {
-//                    console.log("error: ", standardError)
-//                }
-//                onStandardOutputChanged: {
-//                    console.log("output: ", standardOutput)
-//                }
-//            }
+            //                onStandardErrorChanged: {
+            //                    console.log("error: ", standardError)
+            //                }
+            //                onStandardOutputChanged: {
+            //                    console.log("output: ", standardOutput)
+            //                }
+            //            }
 
-//            Process {
-//                id: capChanged
-//                property bool soft: false
-//                onReadyRead: {
-//                    if (updateButton.update) {
-//                        updateButton.update  = !updateButton.update
-//                        Engine.update()
-//                    }
+            //            Process {
+            //                id: capChanged
+            //                property bool soft: false
+            //                onReadyRead: {
+            //                    if (updateButton.update) {
+            //                        updateButton.update  = !updateButton.update
+            //                        Engine.update()
+            //                    }
 
-//                    if (soft)
-//                        image.setSource("/dev/shm/cap_soft.bmp")
-//                    else
-//                        image.setSource("/dev/shm/cap.bmp")
+            //                    if (soft)
+            //                        image.setSource("/dev/shm/cap_soft.bmp")
+            //                    else
+            //                        image.setSource("/dev/shm/cap.bmp")
 
-//                    soft = !soft
-//                }
+            //                    soft = !soft
+            //                }
 
-//                function startWatch() {
-//                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
-//                }
-//            }
+            //                function startWatch() {
+            //                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
+            //                }
+            //            }
 
 
-//            ImageDoubleBuff {
+            //            ImageDoubleBuff {
             Image {
                 id: image
                 width: parent.width
                 height: parent.height
 
 
-                source: "image://camera/newImg"
+                source: "image://camera/raw"
 
                 cache: false
 
@@ -333,7 +333,7 @@ Item {
 
                 Timer {
                     id: updateTimer
-                    interval: 50
+                    interval: 300
                     repeat: true
                     triggeredOnStart: true
                     running: false
@@ -342,126 +342,136 @@ Item {
                     }
                 }
 
-                Button {
-                    id: startStopUpdate
-                    x: 0
-                    y: 0
-                    text: qsTr("Start/Stop update")
-                    //property bool update: false
-                    onClicked: {
-                        updateTimer.running = !updateTimer.running
-                    }
-                    background: Rectangle {
-                        gradient: Gradient {
-                            GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
-                            GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
+                Column {
+                    spacing: 5
+                    Button {
+                        id: startStopUpdate
+
+                        text: qsTr("Start/Stop update")
+                        //property bool update: false
+                        onClicked: {
+                            updateTimer.running = !updateTimer.running
+                        }
+                        background: Rectangle {
+                            gradient: Gradient {
+                                GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
+                                GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
+                            }
                         }
                     }
-                }
 
-                Button {
-                    id: reloadDevices
-                    x: 0
-                    y: 35
-                    text: qsTr("Reload devices")
-                    //property bool update: false
-                    onPressed: {
-                        Video.reloadDevices()
-                    }
-                    background: Rectangle {
-                        gradient: Gradient {
-                            GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
-                            GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
+                    Button {
+                        id: reloadDevices
+
+                        text: qsTr("Reload devices")
+                        //property bool update: false
+                        onPressed: {
+                            Video.reloadDevices()
                         }
-                    }
-                }
-
-//                Button {
-//                    x: 0
-//                    y: 90
-//                    text: "Cameras Reload"
-//                    onClicked: {
-//                        var cameras = Engine.camerasInfo()
-//                        cameraList.model = cameras
-
-//                        for (var i = 0; i < cameras.length; ++i) {
-//                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
-//                            console.log(cameras[i])
+//                        background: Rectangle {
+//                            gradient: Gradient {
+//                                GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
+//                                GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
+//                            }
 //                        }
-//                        console.log("\n")
-//                    }
-//                }
-
-
-
-                Item {
-                    x: 0
-                    y: 70
-                    height: {
-                        if (typeof cameraList.model === "undefined")
-                            return 30
-
-                        return cameraList.model.length * 30
                     }
-                    width: 120
 
-                    ListView {
-                        id: cameraList
-                        anchors.fill: parent
+                    //                Button {
+                    //                    x: 0
+                    //                    y: 90
+                    //                    text: "Cameras Reload"
+                    //                    onClicked: {
+                    //                        var cameras = Engine.camerasInfo()
+                    //                        cameraList.model = cameras
 
-                        currentIndex: 0
-                        property int selectedIndex: 0
-                        model: DataBus.cameras
+                    //                        for (var i = 0; i < cameras.length; ++i) {
+                    //                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
+                    //                            console.log(cameras[i])
+                    //                        }
+                    //                        console.log("\n")
+                    //                    }
+                    //                }
 
-                        delegate: Button {
-                            width: 120
-                            height: 30
-                            text: modelData
 
-                            background: Rectangle {
-                                border.width: index === cameraList.selectedIndex ? 2 : 0
-                                border.color: index === cameraList.selectedIndex ? "red" : "transparent"
-                            }
-                            onClicked: {
-                                resList.model = DataBus["camera" + index]
-                                cameraList.selectedIndex = index
-                                Video.changeCamera(index, 0)
+                    ComboBox {
+                        model: ListModel {
+                            id: model
+                            ListElement { text: "main" }
+                            ListElement { text: "raw" }
+                        }
+                        onActivated: {
+                            image.source = "image://camera/" + textAt(index)
+                        }
+                    }
+
+
+                    Item {
+
+                        height: {
+                            if (typeof cameraList.model === "undefined")
+                                return 30
+
+                            return cameraList.model.length * 30
+                        }
+                        width: 120
+
+                        ListView {
+                            id: cameraList
+                            anchors.fill: parent
+
+                            currentIndex: 0
+                            property int selectedIndex: 0
+                            model: DataBus.cameras
+
+                            delegate: Button {
+                                width: 120
+                                height: 30
+                                text: modelData
+
+                                background: Rectangle {
+                                    border.width: index === cameraList.selectedIndex ? 2 : 0
+                                    border.color: index === cameraList.selectedIndex ? "red" : "transparent"
+                                }
+                                onClicked: {
+                                    resList.model = DataBus["camera" + index]
+                                    cameraList.selectedIndex = index
+                                    Video.changeCamera(index, 0)
+                                }
                             }
                         }
                     }
-                }
 
-                Item {
-                    x: 0
-                    y: 120
-                    height: {
-                        if (typeof resList.model === "undefined")
-                            return 30
+                    Item {
 
-                        return resList.model.length * 30
-                    }
-                    width: 250
+                        height: {
+                            if (typeof resList.model === "undefined")
+                                return 30
 
-                    ListView {
-                        id: resList
-                        anchors.fill: parent
+                            return resList.model.length * 30
+                        }
+                        width: 250
 
-                        currentIndex: 0
-                        property int selectedIndex: 0
+                        ListView {
+                            id: resList
+                            anchors.fill: parent
 
-                        //model: ["adf", "df "]
+                            currentIndex: 0
+                            property int selectedIndex: 0
 
-                        delegate: Button {
-                            width: 180
-                            height: 30
-                            text: modelData
-                            onClicked: {
-                                Video.changeCamera(cameraList.selectedIndex, index)
-                                resList.selectedIndex = index
-                            }
-                            background: Rectangle {
-                                border.width: index === resList.selectedIndex ? 2 : 0
-                                border.color: index === resList.selectedIndex ? "red" : "transparent"
+                            //model: ["adf", "df "]
+
+                            delegate: Button {
+                                width: 180
+                                height: 30
+                                text: modelData
+                                onClicked: {
+                                    Video.changeCamera(cameraList.selectedIndex, index)
+                                    resList.selectedIndex = index
+                                }
+                                background: Rectangle {
+                                    border.width: index === resList.selectedIndex ? 2 : 0
+                                    border.color: index === resList.selectedIndex ? "red" : "transparent"
+                                }
                             }
                         }
                     }
@@ -472,34 +482,34 @@ Item {
 
 
 
-//        ColumnLayout {
+        //        ColumnLayout {
 
-//            TabBar {
-//                id: bar
-//                Layout.fillWidth: true
-//                height: 20
+        //            TabBar {
+        //                id: bar
+        //                Layout.fillWidth: true
+        //                height: 20
 
-//                TabButton {
-//                    text: "Console"
-//                    width: 100
-//                }
-//                TabButton {
-//                    text: "Camera"
-//                    width: 100
-//                }
-//            }
+        //                TabButton {
+        //                    text: "Console"
+        //                    width: 100
+        //                }
+        //                TabButton {
+        //                    text: "Camera"
+        //                    width: 100
+        //                }
+        //            }
 
-//            StackLayout {
-//                //            anchors.left: parent.left
-//                //            anchors.right: parent.right
-//                //            anchors.top: barRow.bottom
-//                //            anchors.bottom: parent.bottom
+        //            StackLayout {
+        //                //            anchors.left: parent.left
+        //                //            anchors.right: parent.right
+        //                //            anchors.top: barRow.bottom
+        //                //            anchors.bottom: parent.bottom
 
-//                currentIndex: bar.currentIndex
+        //                currentIndex: bar.currentIndex
 
 
-//            }
-//        }
+        //            }
+        //        }
 
     }
 
