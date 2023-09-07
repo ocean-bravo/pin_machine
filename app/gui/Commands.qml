@@ -257,75 +257,21 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            //            Process {
-            //                id: cameraCapture
 
-            //                function startCamera() {
-            //                    cameraCapture.start("/bin/sh", ["-c", cameraCapture.script]);
-            //                }
-
-            //                property string script:
-            //                    "ffmpeg -y -f v4l2 \
-            //                           -video_size 3264x2448 \
-            //                           -input_format yuyv422 \
-            //                           -i /dev/video2 \
-            //                           -vf fps=2 \
-            //                           -update 1 \
-            //                           /dev/shm/cap.bmp"
-
-            //                //            text: "ffmpeg -f v4l2 -i /dev/video0  -pix_fmt yuyv422 -s 3264x2448 -frames:v 1  /dev/shm/img.png"
-            //                //  Разобрать разницу в командах pix_fmt
-
-            //                onStandardErrorChanged: {
-            //                    console.log("error: ", standardError)
-            //                }
-            //                onStandardOutputChanged: {
-            //                    console.log("output: ", standardOutput)
-            //                }
-            //            }
-
-            //            Process {
-            //                id: capChanged
-            //                property bool soft: false
-            //                onReadyRead: {
-            //                    if (updateButton.update) {
-            //                        updateButton.update  = !updateButton.update
-            //                        Engine.update()
-            //                    }
-
-            //                    if (soft)
-            //                        image.setSource("/dev/shm/cap_soft.bmp")
-            //                    else
-            //                        image.setSource("/dev/shm/cap.bmp")
-
-            //                    soft = !soft
-            //                }
-
-            //                function startWatch() {
-            //                    start("/bin/sh", ["-c", "inotifywait --monitor --event close_write /dev/shm/cap.bmp"]);
-            //                }
-            //            }
-
-
-            //            ImageDoubleBuff {
             ImageDoubleBuff {
                 id: image
                 width: parent.width
                 height: parent.height
 
-                source: "image://camera/raw"
-
-
-                //cache: false
-
-                function reload() {
-                    var oldSource = source;
-                    source = oldSource;
-                }
+                property string source :  "image://camera/raw"
+                //source: "image://camera/raw"
 
                 Connections {
                     target: Engine
-                    function onImageChanged() {
+                    function onImageChanged(id) {
+                        console.log("image changed")
+                        if (id !== "main")
+                            return
                         image.setSource(image.source)
                     }
                 }
@@ -345,18 +291,10 @@ Item {
                     spacing: 5
                     Button {
                         id: startStopUpdate
-
                         text: qsTr("Start/Stop update")
-                        //property bool update: false
                         onClicked: {
                             updateTimer.running = !updateTimer.running
                         }
-                        //                        background: Rectangle {
-                        //                            gradient: Gradient {
-                        //                                GradientStop { position: 0 ; color: startStopUpdate.pressed ? "#ccc" : "#eee" }
-                        //                                GradientStop { position: 1 ; color: startStopUpdate.pressed ? "#aaa" : "#ccc" }
-                        //                            }
-                        //                        }
                     }
 
                     Button {
@@ -367,30 +305,8 @@ Item {
                         onPressed: {
                             Video.reloadDevices()
                         }
-                        //                        background: Rectangle {
-                        //                            gradient: Gradient {
-                        //                                GradientStop { position: 0 ; color: reloadDevices.down ? "#ccc" : "#eee" }
-                        //                                GradientStop { position: 1 ; color: reloadDevices.down ? "#aaa" : "#ccc" }
-                        //                            }
-                        //                        }
+
                     }
-
-                    //                Button {
-                    //                    x: 0
-                    //                    y: 90
-                    //                    text: "Cameras Reload"
-                    //                    onClicked: {
-                    //                        var cameras = Engine.camerasInfo()
-                    //                        cameraList.model = cameras
-
-                    //                        for (var i = 0; i < cameras.length; ++i) {
-                    //                            //console.log(cameras[i].displayName + "\t" + cameras[i].deviceId)
-                    //                            console.log(cameras[i])
-                    //                        }
-                    //                        console.log("\n")
-                    //                    }
-                    //                }
-
 
                     ComboBox {
                         model: ListModel {
@@ -420,41 +336,7 @@ Item {
                 }
             }
         }
-
-
-
-        //        ColumnLayout {
-
-        //            TabBar {
-        //                id: bar
-        //                Layout.fillWidth: true
-        //                height: 20
-
-        //                TabButton {
-        //                    text: "Console"
-        //                    width: 100
-        //                }
-        //                TabButton {
-        //                    text: "Camera"
-        //                    width: 100
-        //                }
-        //            }
-
-        //            StackLayout {
-        //                //            anchors.left: parent.left
-        //                //            anchors.right: parent.right
-        //                //            anchors.top: barRow.bottom
-        //                //            anchors.bottom: parent.bottom
-
-        //                currentIndex: bar.currentIndex
-
-
-        //            }
-        //        }
-
     }
-
-
 
     Connections {
         target: Serial

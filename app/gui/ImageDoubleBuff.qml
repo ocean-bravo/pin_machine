@@ -7,11 +7,11 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
-    property string source
+//    property string source
 
-    onSourceChanged: {
-        setSource(source)
-    }
+//    onSourceChanged: {
+//        setSource(source)
+//    }
 
     component MyImage :
         Image {
@@ -40,11 +40,17 @@ Item {
         MyImage {
             id: image
             visible: true
+            onStatusChanged: {
+                //console.log("im 1 " , status, source)
+            }
         }
 
         MyImage {
             id: image2
             visible: false
+            onStatusChanged: {
+                //console.log("im 2 " , status, source)
+            }
         }
     }
 
@@ -66,6 +72,7 @@ Item {
     }
 
     function setSource(source){
+        //console.log("set source ", source)
         var imageNotVis = image.visible ? image2 : image
         var imageVis = image.visible ? image : image2
 
