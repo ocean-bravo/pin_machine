@@ -1,8 +1,8 @@
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.12
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 import Process 1.0
 
 
@@ -165,15 +165,21 @@ Item {
             }
         }
 
-        Log {
-            id: log
-            Layout.preferredWidth: parent.width / 3
-            Layout.fillHeight: true
-        }
-
-        Item {
+        SplitView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            Log {
+                id: log
+//                Layout.preferredWidth: parent.width / 3
+//                Layout.fillHeight: true
+
+                SplitView.minimumWidth: 50
+                SplitView.preferredWidth: root.width / 3
+                SplitView.maximumWidth: 800
+            }
+
+
 
             ImageDoubleBuff {
                 id: image
