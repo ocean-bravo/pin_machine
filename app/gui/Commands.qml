@@ -9,89 +9,6 @@ import Process 1.0
 Item {
     id: root
 
-    property variant alarms :  {
-        1: "Hard limit triggered. Machine position is likely lost due to sudden and immediate halt. Re-homing is highly recommended.",
-        2: "G-code motion target exceeds machine travel. Machine position safely retained. Alarm may be unlocked.",
-        3: "Reset while in motion. Grbl cannot guarantee position. Lost steps are likely. Re-homing is highly recommended.",
-        4: "Probe fail. The probe is not in the expected initial state before starting probe cycle, where G38.2 and G38.3 is not triggered and G38.4 and G38.5 is triggered.",
-        5: "Probe fail. Probe did not contact the workpiece within the programmed travel for G38.2 and G38.4.",
-        6: "Homing fail. Reset during active homing cycle.",
-        7: "Homing fail. Safety door was opened during active homing cycle.",
-        8: "Homing fail. Cycle failed to clear limit switch when pulling off. Try increasing pull-off setting or check wiring.",
-        9: "Homing fail. Could not find limit switch within search distance. Defined as 1.5 * max_travel on search and 5 * pulloff on locate phases",
-        10: "Homing fail. On dual axis machines, could not find the second limit switch for self-squaring."
-    }
-
-    property variant errors :  {
-        1: "G-code words consist of a letter and a value. Letter was not found.",
-        2: "Numeric value format is not valid or missing an expected value.",
-        3: "",
-        4: "",
-        5: "",
-        6: "",
-        7: "",
-        8: "Grbl '$' command cannot be used unless Grbl is IDLE. Ensures smooth operation during a job.",
-        9: "G-code locked out during alarm or jog state",
-        10: "",
-        11: "",
-        12: "",
-        13: "",
-        14: "",
-        15: "",
-        16: "",
-        17: "",
-        18: ""
-    }
-
-    property variant settings :  {
-        0:	"Step pulse, microseconds",
-        1:	"Step idle delay, milliseconds",
-        2:	"Step port invert, mask",
-        3:	"Direction port invert, mask",
-        4:	"Step enable invert, boolean",
-        5:	"Limit pins invert, boolean",
-        6:	"Probe pin invert, boolean",
-        10:	"Status report, mask",
-        11:	"Junction deviation, mm",
-        12:	"Arc tolerance, mm",
-        13:	"Report inches, boolean",
-        20:	"Soft limits, boolean",
-        21:	"Hard limits, boolean",
-        22:	"Homing cycle, boolean",
-        23:	"Homing dir invert, mask",
-        24:	"Homing feed, mm/min",
-        25:	"Homing seek, mm/min",
-        26:	"Homing debounce, milliseconds",
-        27:	"Homing pull-off, mm",
-        30:	"Max spindle speed, RPM",
-        31:	"Min spindle speed, RPM",
-        32:	"Laser mode, boolean",
-        100:	"Axis 1 (X) steps/unit (mm or deg)",
-        101:	"Axis 2 (Y) steps/unit",
-        102:	"Axis 3 (Z) steps/unit",
-        103:	"Axis 4 (A) steps/unit",
-        104:	"Axis 5 (B) steps/unit",
-        105:	"Axis 6 (C) steps/unit",
-        110:	"Axis 1 (X) Max rate, unit/min",
-        111:	"Axis 2 (Y) Max rate, unit/min",
-        112:	"Axis 3 (Z) Max rate, unit/min",
-        113:	"Axis 4 (A) Max rate, unit/min",
-        114:	"Axis 5 (B) Max rate, unit/min",
-        115:	"Axis 6 (C) Max rate, unit/min",
-        120:	"Axis 1 (X) Acceleration, unit/sec^2",
-        121:	"Axis 2 (Y) Acceleration, unit/sec^2",
-        122:	"Axis 3 (Z) Acceleration, unit/sec^2",
-        123:	"Axis 4 (A) Acceleration, unit/sec^2",
-        124:	"Axis 5 (B) Acceleration, unit/sec^2",
-        125:	"Axis 6 (c) Acceleration, unit/sec^2",
-        130:	"Axis 1 (X) Max travel, unit",
-        131:	"Axis 2 (Y) Max travel, unit",
-        132:	"Axis 3 (Z) Max travel, unit",
-        133:	"Axis 4 (A) Max travel, unit",
-        134:	"Axis 5 (B) Max travel, unit",
-        135:	"Axis 6 (C) Max travel, unit"
-    }
-
     function write(msg) {
         Serial.write(msg)
         msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
@@ -269,7 +186,7 @@ Item {
                 Connections {
                     target: Engine
                     function onImageChanged(id) {
-                        console.log("image changed")
+                        //console.log("image changed")
                         if (id !== "main")
                             return
                         image.setSource(image.source)
@@ -278,7 +195,7 @@ Item {
 
                 Timer {
                     id: updateTimer
-                    interval: 300
+                    interval: 100
                     repeat: true
                     triggeredOnStart: true
                     running: false
@@ -291,6 +208,7 @@ Item {
                     spacing: 5
                     Button {
                         id: startStopUpdate
+                        width: 200
                         text: qsTr("Start/Stop update")
                         onClicked: {
                             updateTimer.running = !updateTimer.running
@@ -299,7 +217,7 @@ Item {
 
                     Button {
                         id: reloadDevices
-
+                        width: 200
                         text: qsTr("Reload devices")
                         //property bool update: false
                         onPressed: {
@@ -309,6 +227,7 @@ Item {
                     }
 
                     ComboBox {
+                        width: 200
                         model: ListModel {
                             ListElement { text: "raw" }
                             ListElement { text: "main" }
@@ -319,6 +238,7 @@ Item {
                     }
 
                     ComboBox {
+                        width: 200
                         id: cameraList
                         model: DataBus.cameras
                         onActivated: {
@@ -328,6 +248,7 @@ Item {
                     }
 
                     ComboBox {
+                        width: 200
                         id: resList
                         onActivated: {
                             Video.changeCamera(cameraList.currentIndex, index)
@@ -372,5 +293,87 @@ Item {
         context: Qt.ApplicationShortcut
         onActivated: write("?\n")
     }
-}
 
+    property variant alarms :  {
+        1: "Hard limit triggered. Machine position is likely lost due to sudden and immediate halt. Re-homing is highly recommended.",
+        2: "G-code motion target exceeds machine travel. Machine position safely retained. Alarm may be unlocked.",
+        3: "Reset while in motion. Grbl cannot guarantee position. Lost steps are likely. Re-homing is highly recommended.",
+        4: "Probe fail. The probe is not in the expected initial state before starting probe cycle, where G38.2 and G38.3 is not triggered and G38.4 and G38.5 is triggered.",
+        5: "Probe fail. Probe did not contact the workpiece within the programmed travel for G38.2 and G38.4.",
+        6: "Homing fail. Reset during active homing cycle.",
+        7: "Homing fail. Safety door was opened during active homing cycle.",
+        8: "Homing fail. Cycle failed to clear limit switch when pulling off. Try increasing pull-off setting or check wiring.",
+        9: "Homing fail. Could not find limit switch within search distance. Defined as 1.5 * max_travel on search and 5 * pulloff on locate phases",
+        10: "Homing fail. On dual axis machines, could not find the second limit switch for self-squaring."
+    }
+
+    property variant errors :  {
+        1: "G-code words consist of a letter and a value. Letter was not found.",
+        2: "Numeric value format is not valid or missing an expected value.",
+        3: "",
+        4: "",
+        5: "",
+        6: "",
+        7: "",
+        8: "Grbl '$' command cannot be used unless Grbl is IDLE. Ensures smooth operation during a job.",
+        9: "G-code locked out during alarm or jog state",
+        10: "",
+        11: "",
+        12: "",
+        13: "",
+        14: "",
+        15: "",
+        16: "",
+        17: "",
+        18: ""
+    }
+
+    property variant settings :  {
+        0:	"Step pulse, microseconds",
+        1:	"Step idle delay, milliseconds",
+        2:	"Step port invert, mask",
+        3:	"Direction port invert, mask",
+        4:	"Step enable invert, boolean",
+        5:	"Limit pins invert, boolean",
+        6:	"Probe pin invert, boolean",
+        10:	"Status report, mask",
+        11:	"Junction deviation, mm",
+        12:	"Arc tolerance, mm",
+        13:	"Report inches, boolean",
+        20:	"Soft limits, boolean",
+        21:	"Hard limits, boolean",
+        22:	"Homing cycle, boolean",
+        23:	"Homing dir invert, mask",
+        24:	"Homing feed, mm/min",
+        25:	"Homing seek, mm/min",
+        26:	"Homing debounce, milliseconds",
+        27:	"Homing pull-off, mm",
+        30:	"Max spindle speed, RPM",
+        31:	"Min spindle speed, RPM",
+        32:	"Laser mode, boolean",
+        100:	"Axis 1 (X) steps/unit (mm or deg)",
+        101:	"Axis 2 (Y) steps/unit",
+        102:	"Axis 3 (Z) steps/unit",
+        103:	"Axis 4 (A) steps/unit",
+        104:	"Axis 5 (B) steps/unit",
+        105:	"Axis 6 (C) steps/unit",
+        110:	"Axis 1 (X) Max rate, unit/min",
+        111:	"Axis 2 (Y) Max rate, unit/min",
+        112:	"Axis 3 (Z) Max rate, unit/min",
+        113:	"Axis 4 (A) Max rate, unit/min",
+        114:	"Axis 5 (B) Max rate, unit/min",
+        115:	"Axis 6 (C) Max rate, unit/min",
+        120:	"Axis 1 (X) Acceleration, unit/sec^2",
+        121:	"Axis 2 (Y) Acceleration, unit/sec^2",
+        122:	"Axis 3 (Z) Acceleration, unit/sec^2",
+        123:	"Axis 4 (A) Acceleration, unit/sec^2",
+        124:	"Axis 5 (B) Acceleration, unit/sec^2",
+        125:	"Axis 6 (c) Acceleration, unit/sec^2",
+        130:	"Axis 1 (X) Max travel, unit",
+        131:	"Axis 2 (Y) Max travel, unit",
+        132:	"Axis 3 (Z) Max travel, unit",
+        133:	"Axis 4 (A) Max travel, unit",
+        134:	"Axis 5 (B) Max travel, unit",
+        135:	"Axis 6 (C) Max travel, unit"
+    }
+}
