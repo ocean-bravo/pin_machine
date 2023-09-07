@@ -5,10 +5,10 @@
 #include <QPainter>
 #include <QQuickImageProvider>
 
-#include "../utils.h"
+#include "utils.h"
 
 
-class MyImageProvider : private QObject, public QQuickImageProvider
+class MyImageProvider : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
 
@@ -83,7 +83,7 @@ public:
     }
 
 signals:
-    void imageChanged(QString);
+    void imageChanged(QString id);
 
 
 private:

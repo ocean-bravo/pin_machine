@@ -6,7 +6,7 @@
 #include "video.h"
 #include "video3.h"
 
-#include "my_image_provider/my_image_provider.h"
+#include "my_image_provider.h"
 
 class QQmlApplicationEngine;
 class Serial;
@@ -29,7 +29,7 @@ public:
 
 
 signals:
-    void imageCaptured();
+    void imageChanged(QString id);
 
 private:
     void createQmlEngine();

@@ -61,10 +61,11 @@ void Engine::createQmlEngine()
         //_image = img;
         //qd() << "new image";
         myImageProvider->setImage(img, "raw");
-        emit imageCaptured();
+        //emit imageCaptured();
         _openCv->searchCircles(img);
     });
 
+    connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
     connect(_openCv, &OpenCv::imageChanged, this, [this, myImageProvider](QImage img)
     {

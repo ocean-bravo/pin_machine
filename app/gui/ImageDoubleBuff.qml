@@ -7,6 +7,12 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
+    property string source
+
+    onSourceChanged: {
+        setSource(source)
+    }
+
     component MyImage :
         Image {
             property real zoom: 0.0

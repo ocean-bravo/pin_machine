@@ -308,27 +308,27 @@ Item {
 
 
             //            ImageDoubleBuff {
-            Image {
+            ImageDoubleBuff {
                 id: image
                 width: parent.width
                 height: parent.height
 
                 source: "image://camera/raw"
 
-                cache: false
 
-//                function reload() {
-//                    var oldSource = source;
-//                    source = "";
-//                    source = oldSource;
-//                }
+                //cache: false
 
-//                Connections {
-//                    target: Engine
-//                    function onImageCaptured() {
-//                        image.reload()
-//                    }
-//                }
+                function reload() {
+                    var oldSource = source;
+                    source = oldSource;
+                }
+
+                Connections {
+                    target: Engine
+                    function onImageChanged() {
+                        image.setSource(image.source)
+                    }
+                }
 
                 Timer {
                     id: updateTimer
