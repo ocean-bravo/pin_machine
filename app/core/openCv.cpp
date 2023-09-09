@@ -10,6 +10,26 @@
 
 namespace {
 
+//In the header file add:
+
+class Color
+{
+    public:
+    static cv::Scalar ColorBlue;
+    static cv::Scalar ColorRed;
+    static cv::Scalar ColorGreen;
+    static cv::Scalar ColorWhite;
+    static cv::Scalar ColorBlack;
+};
+
+//In the cpp file add:
+
+cv::Scalar Color::ColorBlue(0, 0, 255, 255); //rgb 0 0 255
+cv::Scalar Color::ColorRed(255, 0, 0, 255); // rgb 255 0 0
+cv::Scalar Color::ColorGreen(0, 255, 0, 255);
+cv::Scalar Color::ColorWhite(255, 255, 255);
+cv::Scalar Color::ColorBlack(0, 0, 0, 0);
+
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
 {
     for (size_t i = 0; i < circles.size(); i++ )
@@ -17,10 +37,14 @@ void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
         cv::Vec3i c = circles[i];
         cv::Point center = cv::Point(c[0], c[1]);
         // circle center
-        cv::circle(image, center, 1, cv::Scalar(255,0,255), 3, cv::LINE_AA);
+        cv::circle(image, center, 1, Color::ColorBlue, 3, cv::LINE_AA);
         // circle outline
         int radius = c[2];
-        cv::circle(image, center, radius, cv::Scalar(255,0,0), 1, cv::LINE_AA);
+        cv::circle(image, center, radius, Color::ColorGreen, 1, cv::LINE_AA);
+
+
+        cv::circle(image, center, radius/2, Color::ColorRed, 1, cv::LINE_AA);
+
     }
 }
 
@@ -39,11 +63,12 @@ QImage mat_to_qimage_ref(cv::Mat &mat, QImage::Format format)
 cv::Mat qimage2mat(const QImage& qimage)
 {
     cv::Mat mat = cv::Mat(qimage.height(), qimage.width(), CV_8UC3, (uchar*)qimage.bits(), qimage.bytesPerLine());
-    cv::Mat mat2 = cv::Mat(mat.rows, mat.cols, CV_8UC3 );
-    int from_to[] = { 0,0,  1,1,  2,2 };
-    cv::mixChannels( &mat, 1, &mat2, 1, from_to, 3 );
-    return mat2;
-};
+//    cv::Mat mat2 = cv::Mat(mat.rows, mat.cols, CV_8UC3 );
+//    int from_to[] = { 0,0,  1,1,  2,2 };
+//    cv::mixChannels( &mat, 1, &mat2, 1, from_to, 3 );
+//    return mat2;
+    return mat;
+}
 
 }
 
@@ -144,8 +169,11 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
     try
     {
+        ScopedMeasure m("all");
+
         //cv::Mat rgbimg = qimage_to_mat_cpy(img, cv::COLOR_RGB2BGR);
         cv::Mat rgbimg = qimage2mat(img);
+        //cv::cvtColor(rgbimg, rgbimg, cv::COLOR_RGB2BGR);
 
         //cv::Mat raw = cv::Mat(cv::Size(img.width(),img.height()), CV_16UC1 , ba.data());
         //cv::Mat rgbimg;
@@ -153,48 +181,44 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
         {
             ScopedMeasure m("color");
 //            cv::cvtColor(image, rgbimg, cv::COLOR_YUV2RGB_UYVY);
-//            cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+            cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
             //cv::cvtColor(raw, rgbimg, cv::COLOR_YUV2BGR_Y422); //cv::COLOR_YUV2BGR_YUY2
             //cv::cvtColor(rgbimg, grey, cv::COLOR_BGR2GRAY);
         }
 
-        //cv::imshow("grey", grey);
-        //cv::resizeWindow("grey", cv::Size(grey.size().width / 4, grey.size().height / 4));
+        cv::Mat blur;
+        cv::medianBlur(grey, blur, 3);
 
-//        cv::Mat blur;
-//        cv::medianBlur(grey, blur, 3);
+        std::vector<cv::Vec3f> circles;
+        {
+            ScopedMeasure m("circles");
 
-//        //cv::imshow("blur", blur);
-//        //cv::resizeWindow("blur", cv::Size(blur.size().width / 4, blur.size().height / 4));
-
-//        std::vector<cv::Vec3f> circles;
-//        {
-//            ScopedMeasure m("circles");
-
-//            double dp = db().value("dp").toDouble();
-//            double minDist = db().value("minDist").toDouble();
-//            double param1 = db().value("param1").toDouble();
-//            double param2 = db().value("param2").toDouble();
-//            int minRadius = db().value("minRadius").toInt();
-//            int maxRadius = db().value("maxRadius").toInt();
+            double dp = db().value("dp").toDouble();
+            double minDist = db().value("minDist").toDouble();
+            double param1 = db().value("param1").toDouble();
+            double param2 = db().value("param2").toDouble();
+            int minRadius = db().value("minRadius").toInt();
+            int maxRadius = db().value("maxRadius").toInt();
 
 
-//            cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius);
-//            //cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, 70, 168, 29, 80, 110);
-//        }
+            cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius);
+            //cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, 70, 168, 29, 80, 110);
+        }
 
-        //drawCircles(rgbimg, circles);
-
-        //cv::imshow("main", image);
-        //cv::resizeWindow("main", cv::Size(image.size().width / 4, image.size().height / 4));
+        drawCircles(rgbimg, circles);
 
 //        cv::Mat image;
 //        cv::cvtColor(rgbimg, image, cv::COLOR_BGR2YUV);
 
         //emit imageChanged(mat_to_qimage_ref(rgbimg, QImage::Format_RGB888));
 
-        emit imageChanged(QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888));
+
+
+        QImage im1 = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+
+
+        emit imageChanged(im1);
     }
     catch (...)
     {
