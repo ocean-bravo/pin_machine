@@ -147,6 +147,8 @@ void Video3Private::update()
 
     if (hasNewFrame)
     {
+
+        std::fill(_frameData.begin(), _frameData.end(), 0);
         //ScopedMeasure mes("capture and convert frame");
         Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
 
@@ -157,6 +159,7 @@ void Video3Private::update()
                 _finfo.height,
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
+
 
         //QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
 

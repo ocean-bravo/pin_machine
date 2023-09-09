@@ -245,7 +245,7 @@ Item {
                             ListElement { text: "blob" }
                         }
                         onActivated: {
-                            image.source = "image://camera/" + textAt(index)
+                            image.setSource("image://camera/" + textAt(index))
                         }
                     }
 
