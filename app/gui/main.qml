@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.12
 ApplicationWindow {
     id: appWin
     visible: true
-    width: 800
+    width: 1800
     height: 480
     flags: Qt.Window
 

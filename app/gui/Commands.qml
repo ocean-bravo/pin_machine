@@ -181,21 +181,25 @@ Item {
 
 
 
-            ImageDoubleBuff {
+            ImageDoubleBuff2 {
                 id: image
                 width: parent.width
                 height: parent.height
 
-                property string source :  "image://camera/raw"
+                //property string source :  "image://camera/raw"
                 //source: "image://camera/raw"
 
                 Connections {
                     target: Engine
                     function onImageChanged(id) {
-                        //console.log("image changed")
-                        if (id !== "main")
+                        //console.log("image changed " , id)
+                        if (id !== imgType.currentText)
                             return
-                        image.setSource(image.source)
+
+                        //console.log("get image " , id)
+                        image.setSource("image://camera/" +  id)
+//                        image.source = ""
+//                        image.source = "image://camera/" +  id
                     }
                 }
 
@@ -233,10 +237,12 @@ Item {
                     }
 
                     ComboBox {
+                        id: imgType
                         width: 200
                         model: ListModel {
                             ListElement { text: "raw" }
                             ListElement { text: "main" }
+                            ListElement { text: "blob" }
                         }
                         onActivated: {
                             image.source = "image://camera/" + textAt(index)
@@ -250,6 +256,10 @@ Item {
                         onActivated: {
                             resList.model = DataBus["camera" + index]
                             Video.changeCamera(index, 0)
+                        }
+                        onModelChanged: {
+                            resList.model = DataBus["camera" + 0]
+                            Video.changeCamera(0, 0)
                         }
                     }
 

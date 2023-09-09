@@ -44,6 +44,7 @@ OpenCv::OpenCv()
     , _thread(new QThread)
 {
     connect(_impl, &OpenCvPrivate::imageChanged,   this, &OpenCv::imageChanged, Qt::QueuedConnection);
+    connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
     //    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
 
     //    connect(_impl, &LoggerPrivate::logToFileChanged, this, &Logger::logToFileChanged, Qt::QueuedConnection);
@@ -62,9 +63,14 @@ OpenCv::~OpenCv()
     _thread->wait(1000);
 }
 
-void OpenCv::searchCircles(QImage img)
+void OpenCv::searchCircles(QImage img, QByteArray ba)
 {
-    QMetaObject::invokeMethod(_impl, "searchCircles", Qt::QueuedConnection, Q_ARG(QImage, img));
+    QMetaObject::invokeMethod(_impl, "searchCircles", Qt::QueuedConnection, Q_ARG(QImage, img), Q_ARG(QByteArray, ba));
+}
+
+void OpenCv::blobDetector(QImage img, QByteArray ba)
+{
+    QMetaObject::invokeMethod(_impl, "blobDetector", Qt::QueuedConnection, Q_ARG(QImage, img), Q_ARG(QByteArray, ba));
 }
 
 
@@ -88,7 +94,7 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(QImage img)
+void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 {
     if (_done)
     {
@@ -99,13 +105,48 @@ void OpenCvPrivate::searchCircles(QImage img)
         return;
     }
 
+    static int i = 0;
+    static int fmtOut = 0;
+    static int fmtIn = 0;
+    static std::vector<int> formatsIn = {CV_16UC1, CV_16UC2, CV_16UC3,CV_16UC4};
+//    ,
+//                                     CV_8SC1, CV_8SC2, CV_8SC3, CV_8SC4,   CV_8UC1, CV_8UC2, CV_8UC3, CV_8UC4
+//                                     CV_16UC1, CV_16UC2, CV_16UC3,CV_16UC4};
+
+    ++i;
+
+    if (i % 20 == 0)
+        ++fmtOut;
+
+    if (fmtOut == 30)
+        fmtOut = 0;
+
+
+//    if (i % 5 == 0)
+//        ++fmtIn;
+
+//    if (fmtIn == 4)
+//        fmtIn = 0;
+
+
+    qd() << "in format " << fmtIn;
+    qd() << "out format " << fmtOut;
+
+
     try
     {
-        cv::Mat image = qimage_to_mat_cpy(img,  CV_8UC3);
+        //cv::Mat image = qimage_to_mat_cpy(img,  CV_8UC3);CV_8UC2
+
+        cv::Mat image = cv::Mat(cv::Size(img.width(),img.height()), CV_8UC2 , ba.data());
+        cv::Mat rgbimg;
         cv::Mat grey;
         {
             ScopedMeasure m("color");
-            cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+//            cv::cvtColor(image, rgbimg, cv::COLOR_YUV2RGB_UYVY);
+//            cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+
+            cv::cvtColor(image, rgbimg, cv::COLOR_YUV2BGR_YUY2);
+            cv::cvtColor(rgbimg, grey, cv::COLOR_BGR2GRAY);
         }
 
         //cv::imshow("grey", grey);
@@ -133,12 +174,12 @@ void OpenCvPrivate::searchCircles(QImage img)
             //cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, 70, 168, 29, 80, 110);
         }
 
-        drawCircles(image, circles);
+        drawCircles(rgbimg, circles);
 
         //cv::imshow("main", image);
         //cv::resizeWindow("main", cv::Size(image.size().width / 4, image.size().height / 4));
 
-        emit imageChanged(mat_to_qimage_ref(image, QImage::Format_BGR888));
+        emit imageChanged(mat_to_qimage_ref(rgbimg, QImage::Format_BGR888));
     }
     catch (...)
     {
@@ -146,4 +187,76 @@ void OpenCvPrivate::searchCircles(QImage img)
     }
 
     _done = true;
+}
+
+void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)
+{
+    return;
+    // Setup BlobDetector
+    cv::SimpleBlobDetector::Params params;
+
+    // Filter by Area.
+    params.filterByArea = true;
+    params.minArea = 20000;
+    params.maxArea = 40000;
+
+    // Filter by Circularity
+    params.filterByCircularity = true;
+    params.minCircularity = 0.5;
+
+    // Filter by Convexity
+    params.filterByConvexity = false;
+    //params.minConvexity = 0.87
+
+    // Filter by Inertia
+    params.filterByInertia = true;
+    params.minInertiaRatio = 0.8;
+
+    // Distance Between Blobs
+    params.minDistBetweenBlobs = 200;
+
+    // Create a detector with the parameters
+    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+
+    // Storage for blobs
+    std::vector<cv::KeyPoint> keypoints;
+
+    // Detect blobs
+    //
+    cv::Mat image = qimage_to_mat_cpy(img,  CV_8UC3);
+    cv::Mat grey;
+    cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+    detector->detect(grey, keypoints);
+
+    // Draw detected blobs as red circles.
+        // DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
+        // the size of the circle corresponds to the size of blob
+
+    cv::Mat im_with_keypoints;
+    cv::drawKeypoints(grey, keypoints, im_with_keypoints, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    emit blobChanged(mat_to_qimage_ref(im_with_keypoints, QImage::Format_BGR888));
+
+//while camera.isOpened():
+
+//    retval, im = camera.read()
+//    overlay = im.copy()
+
+//    keypoints = detector.detect(im)
+//    for k in keypoints:
+//        cv2.circle(overlay, (int(k.pt[0]), int(k.pt[1])), int(k.size/2), (0, 0, 255), -1)
+//        cv2.line(overlay, (int(k.pt[0])-20, int(k.pt[1])), (int(k.pt[0])+20, int(k.pt[1])), (0,0,0), 3)
+//        cv2.line(overlay, (int(k.pt[0]), int(k.pt[1])-20), (int(k.pt[0]), int(k.pt[1])+20), (0,0,0), 3)
+
+//    opacity = 0.5
+//    cv2.addWeighted(overlay, opacity, im, 1 - opacity, 0, im)
+
+//    # Uncomment to resize to fit output window if needed
+//    #im = cv2.resize(im, None,fx=0.5, fy=0.5, interpolation = cv2.INTER_CUBIC)
+//    cv2.imshow("Output", im)
+
+
+
+
+
 }

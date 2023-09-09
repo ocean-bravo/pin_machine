@@ -56,13 +56,14 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
 
     MyImageProvider*    myImageProvider = new MyImageProvider;
-    connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray imgPpm)
+    connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray ba)
     {
         //_image = img;
         //qd() << "new image";
         myImageProvider->setImage(img, "raw");
         //emit imageCaptured();
-        _openCv->searchCircles(img);
+        _openCv->searchCircles(img, ba);
+        _openCv->blobDetector(img, ba);
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
@@ -70,6 +71,12 @@ void Engine::createQmlEngine()
     connect(_openCv, &OpenCv::imageChanged, this, [this, myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "main");
+    });
+
+
+    connect(_openCv, &OpenCv::blobChanged, this, [this, myImageProvider](QImage img)
+    {
+        myImageProvider->setImage(img, "blob");
     });
 
     qd() << "styles" << QQuickStyle::availableStyles();

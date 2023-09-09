@@ -3,6 +3,8 @@
 
 #include "data_bus.h"
 
+#include <QBuffer>
+
 namespace {
 
 QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *bufferPtr, size_t bytes)
@@ -80,12 +82,24 @@ Video3Private::Video3Private()
 
 Video3Private::~Video3Private()
 {
-    Cap_closeStream(_ctx, _streamId);
-    Cap_releaseContext(_ctx);
+    if (_ctx != nullptr && _streamId > -1)
+        Cap_closeStream(_ctx, _streamId);
+
+    if (_ctx != nullptr)
+        Cap_releaseContext(_ctx);
 }
 
 void Video3Private::reloadDevices()
 {
+    if (_ctx != nullptr && _streamId > -1)
+        Cap_closeStream(_ctx, _streamId);
+
+    if (_ctx != nullptr)
+        Cap_releaseContext(_ctx);
+
+    _ctx = Cap_createContext();
+    qd() << "Context = " << _ctx;
+
     QStringList devices;
     for(uint32_t deviceId = 0; deviceId < Cap_getDeviceCount(_ctx); deviceId++)
     {
@@ -113,13 +127,16 @@ void Video3Private::reloadDevices()
 void Video3Private::init()
 {
     qd() << Cap_getLibraryVersion();
-    _ctx = Cap_createContext();
-    qd() << "Context = " << _ctx;
+
+    reloadDevices();
 }
 
 void Video3Private::update()
 {
     //qd() << "video update";
+
+    if (_streamId == -1)
+        return;
 
     bool hasNewFrame = false;
     {
@@ -133,13 +150,21 @@ void Video3Private::update()
         //ScopedMeasure mes("capture and convert frame");
         Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
 
+
+
         QImage img((const uint8_t*)&_frameData[0],
                 _finfo.width,
                 _finfo.height,
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
 
-        QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
+        //QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
+
+        QByteArray ba;
+        QBuffer buffer(&ba);
+        //buffer.open(QIODevice::WriteOnly);
+        buffer.setData((const char *)_frameData.data(), _frameData.size());
+        //buffer.close();
 
         if (img.isNull())
         {
@@ -154,7 +179,7 @@ void Video3Private::update()
 
 
         //qd() << " new image ready";
-        emit newImage(img, frameInfo, imgPpm);
+        emit newImage(img, frameInfo, ba);
     }
     else
     {

@@ -8,6 +8,8 @@
 
 #include "utils.h"
 
+#include <QReadWriteLock>
+
 
 class MyImageProvider : public QObject, public QQuickImageProvider
 {
@@ -23,10 +25,12 @@ public:
 
     void setImage(const QImage& image, const QString& id)
     {
-        _mutex.lock();
+        //qd() << "set image " << id;
+        _lock.lockForWrite();
         _images.insert(id, image);
+        _lock.unlock();
+
         emit imageChanged(id);
-        _mutex.unlock();
     }
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override
@@ -54,9 +58,10 @@ public:
 //            painter.drawText(QRectF(0, 0, width, height), Qt::AlignCenter, id);
 
 
-        _mutex.lock();
+        //qd() << "request image " << id;
+        _lock.lockForRead();
         QImage img = _images.value(id);
-        _mutex.unlock();
+        _lock.unlock();
 
         return img;
     }
@@ -97,7 +102,7 @@ private:
     QPixmap _pixmap;
     QImage _image;
 
-    QMutex _mutex;
+    QReadWriteLock _lock;
 
     QMap<QString, QImage> _images;
 };

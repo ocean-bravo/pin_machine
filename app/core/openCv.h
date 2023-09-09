@@ -17,10 +17,12 @@ public:
     OpenCv();
     ~OpenCv();
 
-    void searchCircles(QImage img);
+    void searchCircles(QImage img, QByteArray ba);
+    void blobDetector(QImage img, QByteArray ba);
 
 signals:
         void imageChanged(QImage);
+            void blobChanged(QImage);
 
 private:
     OpenCvPrivate* const _impl;
@@ -39,10 +41,12 @@ public:
     void init();
 
 public slots:
-    void searchCircles(QImage img);
+    void searchCircles(QImage img, QByteArray ba);
+    void blobDetector(QImage img, QByteArray ba);
 
 signals:
     void imageChanged(QImage);
+    void blobChanged(QImage);
 
 private:
 
