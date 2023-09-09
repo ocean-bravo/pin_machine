@@ -132,6 +132,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
     }
     else
     {
+        qd() << "NOT DONE";
         return;
     }
 
