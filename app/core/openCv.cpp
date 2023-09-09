@@ -160,8 +160,8 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
         fmtIn = 107;
 
 
-    qd() << "in format " << fmtIn;
-    qd() << "out format " << fmtOut;
+//    qd() << "in format " << fmtIn;
+//    qd() << "out format " << fmtOut;
 
 
     try
