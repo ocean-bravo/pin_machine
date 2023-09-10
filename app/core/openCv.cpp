@@ -126,6 +126,8 @@ void OpenCvPrivate::init()
 
 void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 {
+    img.detach();
+
     if (_done)
     {
         _done = false;
@@ -164,6 +166,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 //    qd() << "out format " << fmtOut;
 
 
+
     try
     {
         ScopedMeasure m("all");
@@ -196,6 +199,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
         QImage im1 = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
+        im1.detach();
         emit imageChanged(im1);
     }
     catch (...)

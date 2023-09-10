@@ -50,17 +50,14 @@ Stream::~Stream()
 
 bool Stream::hasNewFrame()
 {
-    m_bufferMutex.lock();
-    bool ok = m_newFrame;
-    m_bufferMutex.unlock();
-    return ok;
+    return m_newFrame;
 }
 
 bool Stream::captureFrame(uint8_t *RGBbufferPtr, uint32_t RGBbufferBytes)
 {
     if (!m_isOpen) return false;
 
-    m_bufferMutex.lock();    
+    m_bufferMutex.lock();
     size_t maxBytes = RGBbufferBytes <= m_frameBuffer.size() ? RGBbufferBytes : m_frameBuffer.size();
     if (maxBytes != 0)
     {

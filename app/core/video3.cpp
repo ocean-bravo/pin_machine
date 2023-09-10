@@ -141,16 +141,20 @@ void Video3Private::update()
     bool hasNewFrame = false;
     {
         // Когда есть новый фрейм, почему то время запроса очень долгое 60 мс примерно. Когда нет фрейма - 0,001 мс
-        //ScopedMeasure mes("has new frame");
+        ScopedMeasure mes("has new frame");
         hasNewFrame = Cap_hasNewFrame(_ctx, _streamId);
     }
 
     if (hasNewFrame)
     {
 
-        std::fill(_frameData.begin(), _frameData.end(), 0);
-        //ScopedMeasure mes("capture and convert frame");
-        Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
+        //std::fill(_frameData.begin(), _frameData.end(), 0);
+        {
+            ScopedMeasure mes("capture frame");
+            Cap_captureFrame(_ctx, _streamId, &_frameData[0], _frameData.size());
+
+        }
+        qd() << "\n";
 
 
 
@@ -160,13 +164,15 @@ void Video3Private::update()
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
 
+        img.detach();
+
 
         //QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
 
         QByteArray ba;
-        QBuffer buffer(&ba);
+        //QBuffer buffer(&ba);
         //buffer.open(QIODevice::WriteOnly);
-        buffer.setData((const char *)_frameData.data(), _frameData.size());
+        //buffer.setData((const char *)_frameData.data(), _frameData.size());
         //buffer.close();
 
         if (img.isNull())
