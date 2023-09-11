@@ -74,6 +74,7 @@ OpenCv::OpenCv()
     , _thread(new QThread)
 {
     connect(_impl, &OpenCvPrivate::imageChanged,   this, &OpenCv::imageChanged, Qt::QueuedConnection);
+
     connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
     //    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
 
@@ -126,17 +127,12 @@ void OpenCvPrivate::init()
 
 void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 {
+    if (!_jobDone.tryLock())
+        return;
+
     img.detach();
 
-    if (_done)
-    {
-        _done = false;
-    }
-    else
-    {
-        qd() << "NOT DONE";
-        return;
-    }
+
 
     static int i = 0;
     static int fmtOut = 0;
@@ -169,11 +165,11 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
     try
     {
-        ScopedMeasure m("all");
+        //ScopedMeasure m("all");
         cv::Mat rgbimg = qimage2mat(img);
         cv::Mat grey;
         {
-            ScopedMeasure m("color");
+            //ScopedMeasure m("color");
             cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
         }
 
@@ -182,7 +178,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
         std::vector<cv::Vec3f> circles;
         {
-            ScopedMeasure m("circles");
+            //ScopedMeasure m("circles");
 
             double dp = db().value("dp").toDouble();
             double minDist = db().value("minDist").toDouble();
@@ -207,7 +203,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
         qd() << "упало";
     }
 
-    _done = true;
+    _jobDone.unlock();
 }
 
 void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)

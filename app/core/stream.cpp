@@ -50,6 +50,7 @@ Stream::~Stream()
 
 bool Stream::hasNewFrame()
 {
+    // Не обязательно, что atomic решит все проблемы. Но стало быстрее работать.
     return m_newFrame;
 }
 

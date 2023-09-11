@@ -3,6 +3,7 @@
 #include <QString>
 #include <QObject>
 #include <QImage>
+#include <QMutex>
 
 #include <vector>
 #include <tuple>
@@ -50,7 +51,8 @@ signals:
 
 private:
 
-    QAtomicInteger<bool> _done = true;
+    //QAtomicInteger<bool> _done = true;
+    QMutex _jobDone;
 
 };
 

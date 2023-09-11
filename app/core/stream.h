@@ -123,7 +123,7 @@ protected:
     bool        m_isOpen;
 
     std::mutex  m_bufferMutex;              ///< mutex to protect m_frameBuffer and m_newFrame
-    std::atomic<bool>        m_newFrame;                 ///< new frame buffer flag
+    std::atomic<bool> m_newFrame;                 ///< new frame buffer flag
     std::vector<uint8_t> m_frameBuffer;     ///< raw frame buffer
     uint32_t    m_frames;                   ///< number of frames captured
 };

@@ -181,14 +181,14 @@ void Video3Private::update()
             return;
         }
 
-        QString frameInfo = QString::asprintf("%d x %d frames:%d",
-                                              _finfo.width,
-                                              _finfo.height,
-                                              Cap_getStreamFrameCount(_ctx, _streamId));
+//        QString frameInfo = QString::asprintf("%d x %d frames:%d",
+//                                              _finfo.width,
+//                                              _finfo.height,
+//                                              Cap_getStreamFrameCount(_ctx, _streamId));
 
 
-        //qd() << " new image ready";
-        emit newImage(img, frameInfo, ba);
+        //qd() << " stream frame count " << frameInfo;
+        emit newImage(img, "", ba);
     }
     else
     {

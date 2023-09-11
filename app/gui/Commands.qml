@@ -205,7 +205,7 @@ Item {
 
                 Timer {
                     id: updateTimer
-                    interval: 33
+                    interval: 1
                     repeat: true
                     triggeredOnStart: true
                     running: false
