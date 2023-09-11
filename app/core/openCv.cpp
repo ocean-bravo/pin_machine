@@ -165,7 +165,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
     try
     {
-        //ScopedMeasure m("all");
+        ScopedMeasure m("all");
         cv::Mat rgbimg = qimage2mat(img);
         cv::Mat grey;
         {
