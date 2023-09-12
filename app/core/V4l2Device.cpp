@@ -22,6 +22,8 @@
 
 #include "V4l2Device.h"
 
+#include "utils.h"
+
 std::string V4l2Device::fourcc(unsigned int format) {
 	char formatArray[] = { (char)(format&0xff), (char)((format>>8)&0xff), (char)((format>>16)&0xff), (char)((format>>24)&0xff), 0 };
 	return std::string(formatArray, strlen(formatArray));
@@ -46,7 +48,7 @@ V4l2Device::V4l2Device(const V4L2DeviceParameters&  params, v4l2_buf_type device
 
 V4l2Device::~V4l2Device() 
 {
-	this->close();
+    close();
 }
 
 void V4l2Device::close() 
@@ -60,9 +62,10 @@ void V4l2Device::close()
 // query current format
 void V4l2Device::queryFormat()
 {
-	struct v4l2_format     fmt;
-	memset(&fmt,0,sizeof(fmt));
+    v4l2_format fmt = {};
+
 	fmt.type  = m_deviceType;
+
 	if (0 == ioctl(m_fd,VIDIOC_G_FMT,&fmt)) 
 	{
 		m_format     = fmt.fmt.pix.pixelformat;
@@ -77,12 +80,12 @@ void V4l2Device::queryFormat()
 // intialize the V4L2 connection
 bool V4l2Device::init(unsigned int mandatoryCapabilities)
 {
-	struct stat sb;
+    struct stat sb;
 	if ( (stat(m_params.m_devName.c_str(), &sb)==0) && ((sb.st_mode & S_IFMT) == S_IFCHR) )
 	{
 		if (initdevice(m_params.m_devName.c_str(), mandatoryCapabilities) == -1)
 		{
-			LOG(ERROR) << "Cannot init device:" << m_params.m_devName;
+            qd() << "Cannot init device:" << m_params.m_devName.c_str();
 		}
 	}
 	else
@@ -155,7 +158,7 @@ int V4l2Device::checkCapabilities(int fd, unsigned int mandatoryCapabilities)
 int V4l2Device::configureFormat(int fd)
 {
 	// get current configuration
-	this->queryFormat();		
+    queryFormat();
 
 	unsigned int width = m_width;
 	unsigned int height = m_height;
@@ -176,7 +179,7 @@ int V4l2Device::configureFormat(int fd)
 		if (this->configureFormat(fd, format, width, height)==0) {
 			// format has been set
 			// get the format again because calling SET-FMT return a bad buffersize using v4l2loopback
-			this->queryFormat();		
+            queryFormat();
 			return 0;
 		}
 	}

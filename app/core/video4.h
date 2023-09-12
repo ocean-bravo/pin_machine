@@ -11,6 +11,7 @@
 #include "video4.h"
 
 class Video4Private;
+class V4l2MmapDevice;
 
 class Video4 : public QObject
 {
@@ -31,8 +32,6 @@ private:
     Video4Private* _impl = nullptr;
     QThread* _thread = nullptr;
 };
-
-class V4l2Capture;
 
 class Video4Private : public QObject
 {
@@ -76,8 +75,11 @@ public slots:
 signals:
     void newImage(QImage, QString, QByteArray);
     void newSize(quint32 width, quint32 height);
+    void stopped();
 
 private:
-    QScopedPointer<V4l2Capture> _videoCapture;
+    V4l2MmapDevice* _videoCapture = nullptr;
+
+    QAtomicInteger<bool> _running = false;
 };
 

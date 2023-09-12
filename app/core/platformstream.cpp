@@ -45,6 +45,8 @@
 #include "platformcontext.h"
 #include "yuvconverters.h"
 
+#include "utils.h"
+
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 Stream* createPlatformStream()
@@ -63,11 +65,6 @@ int xioctl(int fh, int request, void *arg)
 
     return r;
 }
-
-
-// **********************************************************************
-//   PlatformStreamHelper functions
-// **********************************************************************
 
 bool PlatformStreamHelper::createAndMapBuffers(uint32_t nBuffers)
 {
@@ -190,7 +187,7 @@ bool PlatformStreamHelper::streamOff()
         return false;
     }
 
-    LOG(LOG_DEBUG, "stream is Off\n");
+    qd()<< "stream is Off";
 
     return true;
 }
@@ -542,7 +539,7 @@ void PlatformStream::threadSubmitBuffer(void *ptr, size_t bytes)
             // so we can decode the 16-bit YUYV frames and copy the 24-bit
             // RGB pixels into m_frameBuffer
             m_bufferMutex.lock();
-            YUYV2RGB((const uint8_t*)ptr, &m_frameBuffer[0], bytes);
+            YUYV2RGB((const uint8_t *)ptr, (uint8_t *)m_frameBuffer.data(), bytes);
             m_newFrame = true;
             //m_frames++;
             m_bufferMutex.unlock();

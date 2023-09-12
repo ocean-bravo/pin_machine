@@ -1,50 +1,64 @@
-/* ---------------------------------------------------------------------------
-** This software is in the public domain, furnished "as is", without technical
-** support, and with no warranty, express or implied, as to its usefulness for
-** any purpose.
-**
-** V4l2MmapDevice.h
-** 
-** V4L2 source using mmap API
-**
-** -------------------------------------------------------------------------*/
+#pragma once
 
+#include <vector>
+#include <QString>
 
-#ifndef V4L2_MMAP_DEVICE
-#define V4L2_MMAP_DEVICE
- 
 #include "V4l2Device.h"
 
-#define V4L2MMAP_NBBUFFER 10
-
-class V4l2MmapDevice : public V4l2Device
+class V4l2MmapDevice
 {	
-	protected:	
-		size_t writeInternal(char* buffer, size_t bufferSize);
-		bool   startPartialWrite();
-		size_t writePartialInternal(char*, size_t);
-		bool   endPartialWrite();
-		size_t readInternal(char* buffer, size_t bufferSize);
-			
-	public:
-		V4l2MmapDevice(const V4L2DeviceParameters & params, v4l2_buf_type deviceType);		
-		virtual ~V4l2MmapDevice();
+public:
+    V4l2MmapDevice();
+    ~V4l2MmapDevice();
 
-		virtual bool init(unsigned int mandatoryCapabilities);
-		virtual bool isReady() { return  ((m_fd != -1)&& (n_buffers != 0)); }
-		virtual bool start();
-		virtual bool stop();
-	
-	protected:
-		unsigned int  n_buffers;
-	
-		struct buffer 
-		{
-			void *                  start;
-			size_t                  length;
-		};
-		buffer m_buffer[V4L2MMAP_NBBUFFER];
+    //virtual bool init(unsigned int mandatoryCapabilities);
+    bool init();
+    bool isReady();
+    bool start();
+    bool stop();
+
+
+    bool open(QString deviceName);
+    void close();
+
+    bool isReadable(int timeoutMs) const;
+
+    size_t bufSize() const;
+
+    size_t readInternal(char* buffer, size_t bufferSize);
+
+protected:
+
+
+    size_t _bufSize = 0;
+
+
+    unsigned int  n_buffers ;
+
+    struct buffer
+    {
+        void* start = nullptr;
+        size_t length = 0;
+    };
+    std::vector<buffer> m_buffers;
+
+    bool unmapAndDeleteBuffers();
+
+private:
+    bool streamOff(int fd);
+    bool request_buffer(int fd, int count);
+    bool queryBuffers(int fd, int count);
+    bool start_streaming(int fd);
+    bool queueBuffers(int fd, int count);
+    int set_format(int fd);
+
+
+
+    bool freeBuffers();
+
+
+    QString _deviceName;
+
+    int m_fd = -1;
 };
-
-#endif
 

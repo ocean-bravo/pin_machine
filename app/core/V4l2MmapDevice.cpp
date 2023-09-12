@@ -1,13 +1,6 @@
-/* ---------------------------------------------------------------------------
-** This software is in the public domain, furnished "as is", without technical
-** support, and with no warranty, express or implied, as to its usefulness for
-** any purpose.
-**
-** V4l2MmapDevice.cpp
-** 
-** V4L2 source using mmap API
-**
-** -------------------------------------------------------------------------*/
+#include "V4l2MmapDevice.h"
+
+#include <sys/poll.h>
 
 #include <string.h>
 #include <fcntl.h>
@@ -16,6 +9,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include "utils.h"
 // libv4l2
 #include <linux/videodev2.h>
 
@@ -24,287 +18,344 @@
 #include "iostream"
 #define LOG(a) std::cout
 
-#include "V4l2MmapDevice.h"
+#include <unistd.h>
 
-V4l2MmapDevice::V4l2MmapDevice(const V4L2DeviceParameters & params, v4l2_buf_type deviceType) : V4l2Device(params, deviceType), n_buffers(0) 
-{
-	memset(&m_buffer, 0, sizeof(m_buffer));
+namespace {
+
+const size_t V4L2MMAP_NBBUFFER = 2;
+
 }
 
-bool V4l2MmapDevice::init(unsigned int mandatoryCapabilities)
+V4l2MmapDevice::V4l2MmapDevice()
+    : n_buffers(V4L2MMAP_NBBUFFER)
 {
-	bool ret = V4l2Device::init(mandatoryCapabilities);
-	if (ret)
-	{
-		ret = this->start();
-	}
-	return ret;
+    m_buffers.resize(V4L2MMAP_NBBUFFER);
+    std::fill(m_buffers.begin(), m_buffers.end(), buffer());
+}
+
+//bool V4l2MmapDevice::init(unsigned int mandatoryCapabilities)
+//{
+//    qd() << "init device";
+
+//    bool ret = V4l2Device::init(mandatoryCapabilities);
+//    if (ret)
+//    {
+//        qd() << "inited OK";
+//        ret = start();
+//    }
+//    return ret;
+//}
+
+bool V4l2MmapDevice::init()
+{
+    qd() << "init device";
+
+    open("/dev/video0");
+    set_format(m_fd);
+
+    //int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
+
+    start();
+}
+
+bool V4l2MmapDevice::isReady()
+{
+    return  ((m_fd != -1)&& (n_buffers != 0));
 }
 
 V4l2MmapDevice::~V4l2MmapDevice()
 {
-	this->stop();
+    stop();
 }
 
 
+bool V4l2MmapDevice::request_buffer(int fd, int count)
+{
+    struct v4l2_requestbuffers req = {0};
+
+    req.count   = count;
+    req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.memory  = V4L2_MEMORY_MMAP;
+
+    if (ioctl(fd, VIDIOC_REQBUFS, &req) == -1)
+    {
+        qd() << "error VIDIOC_REQBUFS";
+        return false;
+    }
+    return true;
+}
+
+bool V4l2MmapDevice::queryBuffers(int fd, int count)
+{
+    for (int i = 0; i < count; ++i)
+    {
+        v4l2_buffer buf = {};
+
+        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index  = i;
+
+        int res = ioctl(fd, VIDIOC_QUERYBUF, &buf);
+
+        if (res == -1)
+        {
+            qd() << "error VIDIOC_QUERYBUF " << i;
+            return false;
+        }
+        auto bufff = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
+
+        if (bufff == MAP_FAILED)
+        {
+            qd() << "error mmap " << i;
+        }
+
+        // какая то проверка buf.bytesused могла бы быть
+
+        m_buffers[i].start = bufff;
+        m_buffers[i].length = buf.length;
+        _bufSize = buf.length;
+    }
+    return true;
+}
+
+bool V4l2MmapDevice::start_streaming(int fd)
+{
+    unsigned int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+    if (ioctl(fd, VIDIOC_STREAMON, &type) == -1)
+    {
+        qd() << "error VIDIOC_STREAMON";
+        return false;
+    }
+    return true;
+}
+
+bool V4l2MmapDevice::queueBuffers(int fd, int count)
+{
+    for (int i = 0; i < count; ++i)
+    {
+        v4l2_buffer buf = {};
+
+        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index  = i;
+
+        if (ioctl(fd, VIDIOC_QBUF, &buf) == -1)
+        {
+            qd() << "error VIDIOC_QBUF " << i;
+            return false;
+        }
+    }
+    return true;
+}
+
+int V4l2MmapDevice::set_format(int fd)
+{
+    qd() << "set format...";
+
+    v4l2_format format = {};
+    format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    format.fmt.pix.width = 640;
+    format.fmt.pix.height = 480;
+    format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    format.fmt.pix.field = V4L2_FIELD_NONE;
+
+    int res = ioctl(fd, VIDIOC_S_FMT, &format);
+    if(res == -1)
+    {
+        qd() << " error could not set format";
+        return false;
+    }
+
+    qd() << "set format OK";
+    return true;
+}
+
 bool V4l2MmapDevice::start() 
 {
-	LOG(NOTICE) << "Device " << m_params.m_devName;
+    qd() << "start device " << _deviceName;
 
-	bool success = true;
-	struct v4l2_requestbuffers req;
-	memset (&req, 0, sizeof(req));
-	req.count               = V4L2MMAP_NBBUFFER;
-	req.type                = m_deviceType;
-	req.memory              = V4L2_MEMORY_MMAP;
+    if (!request_buffer(m_fd, V4L2MMAP_NBBUFFER))
+        return false;
 
-	if (-1 == ioctl(m_fd, VIDIOC_REQBUFS, &req)) 
-	{
-		if (EINVAL == errno) 
-		{
-			LOG(ERROR) << "Device " << m_params.m_devName << " does not support memory mapping";
-			success = false;
-		} 
-		else 
-		{
-			perror("VIDIOC_REQBUFS");
-			success = false;
-		}
-	}
-	else
-	{
-		LOG(NOTICE) << "Device " << m_params.m_devName << " nb buffer:" << req.count;
-		
-		// allocate buffers
-		memset(&m_buffer,0, sizeof(m_buffer));
-		for (n_buffers = 0; n_buffers < req.count; ++n_buffers) 
-		{
-			struct v4l2_buffer buf;
-			memset (&buf, 0, sizeof(buf));
-			buf.type        = m_deviceType;
-			buf.memory      = V4L2_MEMORY_MMAP;
-			buf.index       = n_buffers;
+    if (!queryBuffers(m_fd, V4L2MMAP_NBBUFFER))
+        return false;
 
-			if (-1 == ioctl(m_fd, VIDIOC_QUERYBUF, &buf))
-			{
-				perror("VIDIOC_QUERYBUF");
-				success = false;
-			}
-			else
-			{
-				LOG(INFO) << "Device " << m_params.m_devName << " buffer idx:" << n_buffers << " size:" << buf.length << " offset:" << buf.m.offset;
-				m_buffer[n_buffers].length = buf.length;
-				if (!m_buffer[n_buffers].length) {
-					m_buffer[n_buffers].length = buf.bytesused;
-				}
-				m_buffer[n_buffers].start = mmap (   NULL /* start anywhere */, 
-											m_buffer[n_buffers].length, 
-											PROT_READ | PROT_WRITE /* required */, 
-											MAP_SHARED /* recommended */, 
-											m_fd, 
-											buf.m.offset);
+    if (!start_streaming(m_fd))
+        return false;
 
-				if (MAP_FAILED == m_buffer[n_buffers].start)
-				{
-					perror("mmap");
-					success = false;
-				}
-			}
-		}
+    if (!queueBuffers(m_fd, V4L2MMAP_NBBUFFER))
+        return false;
 
-		// queue buffers
-		for (unsigned int i = 0; i < n_buffers; ++i) 
-		{
-			struct v4l2_buffer buf;
-			memset (&buf, 0, sizeof(buf));
-			buf.type        = m_deviceType;
-			buf.memory      = V4L2_MEMORY_MMAP;
-			buf.index       = i;
 
-			if (-1 == ioctl(m_fd, VIDIOC_QBUF, &buf))
-			{
-				perror("VIDIOC_QBUF");
-				success = false;
-			}
-		}
+    qd() << "start device OK";
+    return true;
+}
 
-		// start stream
-		int type = m_deviceType;
-		if (-1 == ioctl(m_fd, VIDIOC_STREAMON, &type))
-		{
-			perror("VIDIOC_STREAMON");
-			success = false;
-		}
-	}
-	return success; 
+bool V4l2MmapDevice::unmapAndDeleteBuffers()
+{
+    qd() << "unmap and delete buffers";
+
+    bool result = true;
+    for(uint32_t i=0; i< m_buffers.size(); i++)
+    {
+        if (munmap(m_buffers[i].start, m_buffers[i].length) == -1)
+        {
+            qd() << "error munmap";
+            result = false;
+        }
+    }
+
+    m_buffers.clear();
+
+    qd() <<  "Mmap buffers deleted";
+    return result;
+}
+
+bool V4l2MmapDevice::freeBuffers()
+{
+    qd() << "free buffers";
+
+    n_buffers = 0;
+
+    v4l2_requestbuffers req = {};
+
+    req.count    = 0;
+    req.type     = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.memory   = V4L2_MEMORY_MMAP;
+
+    if (ioctl(m_fd, VIDIOC_REQBUFS, &req) == -1)
+    {
+        qd() << "error VIDIOC_REQBUFS";
+        return false;
+    }
+
+    return true;
 }
 
 bool V4l2MmapDevice::stop() 
 {
-	LOG(NOTICE) << "Device " << m_params.m_devName;
+    qd() << "stop device " << _deviceName;
 
-	bool success = true;
-	
-	int type = m_deviceType;
-	if (-1 == ioctl(m_fd, VIDIOC_STREAMOFF, &type))
-	{
-		perror("VIDIOC_STREAMOFF");      
-		success = false;
-	}
+    streamOff(m_fd);
+    unmapAndDeleteBuffers();
+    freeBuffers();
 
-	for (unsigned int i = 0; i < n_buffers; ++i)
-	{
-		if (-1 == munmap (m_buffer[i].start, m_buffer[i].length))
-		{
-			perror("munmap");
-			success = false;
-		}
-	}
-	
-	// free buffers
-	struct v4l2_requestbuffers req;
-	memset (&req, 0, sizeof(req));
-	req.count               = 0;
-	req.type                = m_deviceType;
-	req.memory              = V4L2_MEMORY_MMAP;
-	if (-1 == ioctl(m_fd, VIDIOC_REQBUFS, &req)) 
-	{
-		perror("VIDIOC_REQBUFS");
-		success = false;
-	}
-	
-	n_buffers = 0;
-	return success; 
+    return true;
 }
+
+bool V4l2MmapDevice::open(QString deviceName)
+{
+    qd() << "open device " << deviceName;
+
+    _deviceName = deviceName;
+
+    m_fd = ::open(deviceName.toStdString().c_str(),  O_RDWR);
+
+    if (m_fd < 0)
+    {
+        qd() <<  "error cannot open device:" << deviceName << " " << strerror(errno);
+        return false;
+    }
+
+    qd() << "open device OK";
+
+    return true;
+}
+
+void V4l2MmapDevice::close()
+{
+    if (m_fd != -1)
+        ::close(m_fd);
+
+    m_fd = -1;
+}
+
+bool V4l2MmapDevice::isReadable(int timeoutMs) const
+{
+    if (m_fd == -1)
+    {
+        qd() << "error fd = -1";
+    }
+    // Use poll to wait for video capture events
+    pollfd poll_fds[1];
+    poll_fds[0].fd = m_fd;
+    poll_fds[0].events = POLLIN;
+    const int ret = poll(poll_fds, 1, timeoutMs); // wait up to 1 second for events ( put -1 if it should wait forever )
+    return ret == 1;
+}
+
+size_t V4l2MmapDevice::bufSize() const
+{
+     return _bufSize;
+}
+
+bool V4l2MmapDevice::streamOff(int fd)
+{
+    qd() << "stream off";
+
+    v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+    if (ioctl(fd, VIDIOC_STREAMOFF, &type) == -1)
+    {
+        qd() << "error VIDIOC_STREAMOFF";
+        return false;
+    }
+
+    return true;
+}
+
+//void grab_yuyvframe() {
+//    queue_buffer(camera);
+//    //Wait for io operation
+//    fd_set fds;
+//    FD_ZERO(&fds);
+//    FD_SET(camera, &fds);
+//    struct timeval tv = {0};
+//    tv.tv_sec = 2; //set timeout to 2 second
+//    int r = select(camera+1, &fds, NULL, NULL, &tv);
+//    if(-1 == r){
+//        perror("Waiting for Frame");
+//        exit(1);
+//    }
+//    int file = open("output.yuy", O_WRONLY);
+//    write(file, buffer, size); //size is obtained from the query_buffer function
+//    dequeue_buffer(camera);
+//}
 
 size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
 {
-	size_t size = 0;
-	if (n_buffers > 0)
-	{
-		struct v4l2_buffer buf;	
-		memset (&buf, 0, sizeof(buf));
-		buf.type = m_deviceType;
-		buf.memory = V4L2_MEMORY_MMAP;
+    size_t size = 0;
+    if (n_buffers > 0)
+    {
+        v4l2_buffer buf = {};
+        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
 
-		if (-1 == ioctl(m_fd, VIDIOC_DQBUF, &buf)) 
-		{
-			perror("VIDIOC_DQBUF");
-			size = -1;
-		}
-		else if (buf.index < n_buffers)
-		{
-			size = buf.bytesused;
-			if (size > bufferSize)
-			{
-				size = bufferSize;
-				LOG(WARN) << "Device " << m_params.m_devName << " buffer truncated available:" << bufferSize << " needed:" << buf.bytesused;
-			}
-			memcpy(buffer, m_buffer[buf.index].start, size);
+        if (-1 == ioctl(m_fd, VIDIOC_DQBUF, &buf))
+        {
+            perror("VIDIOC_DQBUF");
+            size = -1;
+        }
+        else if (buf.index < n_buffers)
+        {
+            size = buf.bytesused;
+            if (size > bufferSize)
+            {
+                size = bufferSize;
+                qd() << " warn device " << _deviceName << " buffer truncated available:" << bufferSize << " needed:" << buf.bytesused;
+            }
+            memcpy(buffer, m_buffers[buf.index].start, size);
 
-			if (-1 == ioctl(m_fd, VIDIOC_QBUF, &buf))
-			{
-				perror("VIDIOC_QBUF");
-				size = -1;
-			}
-		}
-	}
-	return size;
+            if (-1 == ioctl(m_fd, VIDIOC_QBUF, &buf))
+            {
+                perror("VIDIOC_QBUF");
+                size = -1;
+            }
+        }
+    }
+    return size;
 }
 
-size_t V4l2MmapDevice::writeInternal(char* buffer, size_t bufferSize)
-{
-	size_t size = 0;
-	if (n_buffers > 0)
-	{
-		struct v4l2_buffer buf;	
-		memset (&buf, 0, sizeof(buf));
-		buf.type = m_deviceType;
-		buf.memory = V4L2_MEMORY_MMAP;
 
-		if (-1 == ioctl(m_fd, VIDIOC_DQBUF, &buf)) 
-		{
-			perror("VIDIOC_DQBUF");
-			size = -1;
-		}
-		else if (buf.index < n_buffers)
-		{
-			size = bufferSize;
-			if (size > buf.length)
-			{
-				LOG(WARN) << "Device " << m_params.m_devName << " buffer truncated available:" << buf.length << " needed:" << size;
-				size = buf.length;
-			}
-			memcpy(m_buffer[buf.index].start, buffer, size);
-			buf.bytesused = size;
 
-			if (-1 == ioctl(m_fd, VIDIOC_QBUF, &buf))
-			{
-				perror("VIDIOC_QBUF");
-				size = -1;
-			}
-		}
-	}
-	return size;
-}
-
-bool V4l2MmapDevice::startPartialWrite()
-{
-	if (n_buffers <= 0)
-		return false;
-	if (m_partialWriteInProgress)
-		return false;
-	memset(&m_partialWriteBuf, 0, sizeof(m_partialWriteBuf));
-	m_partialWriteBuf.type = m_deviceType;
-	m_partialWriteBuf.memory = V4L2_MEMORY_MMAP;
-	if (-1 == ioctl(m_fd, VIDIOC_DQBUF, &m_partialWriteBuf))
-	{
-		perror("VIDIOC_DQBUF");
-		return false;
-	}
-	m_partialWriteBuf.bytesused = 0;
-	m_partialWriteInProgress = true;
-	return true;
-}
-
-size_t V4l2MmapDevice::writePartialInternal(char* buffer, size_t bufferSize)
-{
-	size_t new_size = 0;
-	size_t size = 0;
-	if ((n_buffers > 0) && m_partialWriteInProgress)
-	{
-		if (m_partialWriteBuf.index < n_buffers)
-		{
-			new_size = m_partialWriteBuf.bytesused + bufferSize;
-			if (new_size > m_partialWriteBuf.length)
-			{
-				LOG(WARN) << "Device " << m_params.m_devName << " buffer truncated available:" << m_partialWriteBuf.length << " needed:" << new_size;
-				new_size = m_partialWriteBuf.length;
-			}
-			size = new_size - m_partialWriteBuf.bytesused;
-			memcpy(&((char *)m_buffer[m_partialWriteBuf.index].start)[m_partialWriteBuf.bytesused], buffer, size);
-
-			m_partialWriteBuf.bytesused += size;
-		}
-	}
-	return size;
-}
-
-bool V4l2MmapDevice::endPartialWrite()
-{
-	if (!m_partialWriteInProgress)
-		return false;
-	if (n_buffers <= 0)
-	{
-		m_partialWriteInProgress = false; // abort partial write
-		return true;
-	}
-	if (-1 == ioctl(m_fd, VIDIOC_QBUF, &m_partialWriteBuf))
-	{
-		perror("VIDIOC_QBUF");
-		m_partialWriteInProgress = false; // abort partial write
-		return true;
-	}
-	m_partialWriteInProgress = false;
-	return true;
-}
