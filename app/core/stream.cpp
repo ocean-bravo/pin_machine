@@ -37,14 +37,14 @@
 
 Stream::Stream() :
     m_owner(nullptr),
-    m_isOpen(false),
-    m_frames(0)
+    m_isOpen(false)
+    //, m_frames(0)
 {
 }
 
 Stream::~Stream()
 {
-    LOG(LOG_DEBUG,"Stream::~Stream reports %d frames captured.\n", m_frames);
+    //LOG(LOG_DEBUG,"Stream::~Stream reports %d frames captured.\n", m_frames);
     //Note: close() should be called/handled by the PlatformStream!
 }
 
@@ -88,16 +88,16 @@ void Stream::submitBuffer(const uint8_t *ptr, size_t bytes)
     // the expected size. 
     
     const uint32_t wantSize = m_width*m_height*3;
-    if ((bytes != wantSize) && ((m_frames % 100) == 0))
-    {
-        LOG(LOG_WARNING, "Warning: captureFrame received incorrect buffer size (got %d want %d)\n", bytes, wantSize);
-    }
+//    if ((bytes != wantSize) && ((m_frames % 100) == 0))
+//    {
+//        LOG(LOG_WARNING, "Warning: captureFrame received incorrect buffer size (got %d want %d)\n", bytes, wantSize);
+//    }
 
     if (m_frameBuffer.size() >= bytes)
     {
         memcpy(&m_frameBuffer[0], ptr, bytes);
         m_newFrame = true; 
-        m_frames++;
+        //m_frames++;
     }
     m_bufferMutex.unlock();
 }

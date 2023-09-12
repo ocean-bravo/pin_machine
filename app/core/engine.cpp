@@ -33,6 +33,7 @@ Engine::Engine(QObject* parent)
     //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
     _videoDriver3 = new Video3();
+    _videoDriver4 = new Video4();
     //_videoDriver3->reloadDevices();
     //_videoDriver3->changeCamera(0, 0);
 
@@ -56,7 +57,7 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
 
     MyImageProvider*    myImageProvider = new MyImageProvider;
-    connect(_videoDriver3, &Video3::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray ba)
+    connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray ba)
     {
         //_image = img;
         //qd() << "new image";
@@ -86,7 +87,8 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
-    _qmlEngine->rootContext()->setContextProperty("Video", _videoDriver3);
+    _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
+    _qmlEngine->rootContext()->setContextProperty("Video4", _videoDriver4);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

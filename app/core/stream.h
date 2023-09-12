@@ -86,7 +86,7 @@ public:
     */
     uint32_t getFrameCount() const
     {
-        return m_frames;
+        return 0;//m_frames;
     }
 
     /** get the limits of a camera/stream property (exposure, zoom etc) */
@@ -125,7 +125,7 @@ protected:
     std::mutex  m_bufferMutex;              ///< mutex to protect m_frameBuffer and m_newFrame
     std::atomic<bool> m_newFrame;                 ///< new frame buffer flag
     std::vector<uint8_t> m_frameBuffer;     ///< raw frame buffer
-    uint32_t    m_frames;                   ///< number of frames captured
+    //uint32_t    m_frames;                   ///< number of frames captured
 };
 
 #endif

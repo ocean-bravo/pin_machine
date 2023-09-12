@@ -5,6 +5,7 @@
 
 #include "video.h"
 #include "video3.h"
+#include "video4.h"
 
 #include "my_image_provider.h"
 
@@ -42,6 +43,7 @@ private:
 
     V4L2 _videoDriver;
     Video3* _videoDriver3;
+    Video4* _videoDriver4;
     QImage _image;
 
     QByteArray _imgPpm;

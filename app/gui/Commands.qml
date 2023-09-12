@@ -205,12 +205,12 @@ Item {
 
                 Timer {
                     id: updateTimer
-                    interval: 10
+                    interval: 1
                     repeat: true
                     triggeredOnStart: true
                     running: false
                     onTriggered: {
-                        Video.update()
+                        //Video4.update()
                     }
                 }
 
@@ -231,7 +231,7 @@ Item {
                         text: qsTr("Reload devices")
                         //property bool update: false
                         onPressed: {
-                            Video.reloadDevices()
+                            Video3.reloadDevices()
                         }
 
                     }
@@ -255,11 +255,11 @@ Item {
                         model: DataBus.cameras
                         onActivated: {
                             resList.model = DataBus["camera" + index]
-                            Video.changeCamera(index, 0)
+                            Video4  .changeCamera(index, 0)
                         }
                         onModelChanged: {
                             resList.model = DataBus["camera" + 0]
-                            Video.changeCamera(0, 0)
+                            Video4.changeCamera(0, 0)
                         }
                     }
 
@@ -267,7 +267,7 @@ Item {
                         width: 200
                         id: resList
                         onActivated: {
-                            Video.changeCamera(cameraList.currentIndex, index)
+                            Video4.changeCamera(cameraList.currentIndex, index)
                         }
                     }
 

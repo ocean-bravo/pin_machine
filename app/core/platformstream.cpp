@@ -412,7 +412,7 @@ bool PlatformStream::open(Context *owner, deviceInfo *device, uint32_t width, ui
     }
 
     m_owner = owner;
-    m_frames = 0;
+    //m_frames = 0;
     m_width = 0;
     m_height = 0;    
 
@@ -544,7 +544,7 @@ void PlatformStream::threadSubmitBuffer(void *ptr, size_t bytes)
             m_bufferMutex.lock();
             YUYV2RGB((const uint8_t*)ptr, &m_frameBuffer[0], bytes);
             m_newFrame = true;
-            m_frames++;
+            //m_frames++;
             m_bufferMutex.unlock();
             break;            
         case 0x47504A4D:    // MJPG
@@ -569,7 +569,7 @@ void PlatformStream::threadSubmitBuffer(void *ptr, size_t bytes)
             if (m_mjpegHelper.decompressFrame((uint8_t*)ptr, bytes, &m_frameBuffer[0], m_width, m_height))
             {
                 m_newFrame = true; 
-                m_frames++;
+                //m_frames++;
             }
             m_bufferMutex.unlock();
             break;

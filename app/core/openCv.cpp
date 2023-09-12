@@ -125,12 +125,12 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
+void OpenCvPrivate::searchCircles(QImage imag, QByteArray ba)
 {
     if (!_jobDone.tryLock())
         return;
 
-    img.detach();
+    QImage img = imag.copy();
 
 
 
@@ -165,7 +165,7 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
     try
     {
-        ScopedMeasure m("all");
+        //ScopedMeasure m("all");
         cv::Mat rgbimg = qimage2mat(img);
         cv::Mat grey;
         {

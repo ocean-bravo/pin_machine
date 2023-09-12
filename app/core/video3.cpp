@@ -158,13 +158,13 @@ void Video3Private::update()
 
 
 
-        QImage img((const uint8_t*)&_frameData[0],
+        QImage imag((const uint8_t*)&_frameData[0],
                 _finfo.width,
                 _finfo.height,
                 //m_finfo.width*3,
                 QImage::Format_RGB888);
 
-        img.detach();
+        QImage img = imag.copy();
 
 
         //QByteArray imgPpm;// = writeBufferAsPPM(_finfo.width, _finfo.height, &_frameData[0], _frameData.size());
