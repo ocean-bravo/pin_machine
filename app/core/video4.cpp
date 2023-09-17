@@ -151,7 +151,7 @@ void Video4Private::update()
 
         YUYV2RGB((const uint8_t *)inBuffer, (uint8_t *)rgbBuffer, buffSize);
 
-        QImage img((const uint8_t*)rgbBuffer, 640, 480, QImage::Format_RGB888);
+        QImage img((const uint8_t*)rgbBuffer, 1920, 1080, QImage::Format_RGB888);
 
         emit newImage(img, "", QByteArray());
 
@@ -169,8 +169,8 @@ void Video4Private::changeCamera(quint32 deviceId, quint32 formatId)
     const char* in_devname = "/dev/video0";
     V4l2IoType ioTypeIn  = IOTYPE_MMAP; // Или IOTYPE_READWRITE
     int format = V4l2Device::fourcc("YUYV");
-    int width = 640;
-    int height = 480;
+    int width = 1920;
+    int height = 1080;
     int fps = 30;
 
     //V4L2DeviceParameters param(in_devname, format, width, height, fps, ioTypeIn, verbose);

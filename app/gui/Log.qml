@@ -29,5 +29,7 @@ ScrollView {
         id: log
         textFormat: Text.RichText
         width: 500
+        selectByMouse: true
+        readOnly: true
     }
 }

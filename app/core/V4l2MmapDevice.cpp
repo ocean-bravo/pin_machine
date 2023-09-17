@@ -22,7 +22,7 @@
 
 namespace {
 
-const size_t V4L2MMAP_NBBUFFER = 2;
+const size_t V4L2MMAP_NBBUFFER = 10;
 
 }
 
@@ -114,6 +114,8 @@ bool V4l2MmapDevice::queryBuffers(int fd, int count)
         m_buffers[i].start = bufff;
         m_buffers[i].length = buf.length;
         _bufSize = buf.length;
+
+        qd() << "buff size " << _bufSize;
     }
     return true;
 }
@@ -155,8 +157,8 @@ int V4l2MmapDevice::set_format(int fd)
 
     v4l2_format format = {};
     format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    format.fmt.pix.width = 640;
-    format.fmt.pix.height = 480;
+    format.fmt.pix.width = 1920;
+    format.fmt.pix.height = 1080;
     format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
     format.fmt.pix.field = V4L2_FIELD_NONE;
 

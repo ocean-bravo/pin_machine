@@ -6,6 +6,11 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
     color: "azure"
+
+    height: width * 7 / 9
+    //implicitHeight: grid.implicitHeight
+    //implicitWidth: grid.implicitWidth
+
     component MyButton: Button {
         width: {
             var wi = parent.width
@@ -36,6 +41,7 @@ Rectangle {
     }
 
     Grid {
+        id: grid
         anchors.fill: parent
 
         columns: 9

@@ -11,8 +11,143 @@ Item {
 
     function write(msg) {
         Serial.write(msg)
-        msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
-        log.append("<font color='red'>" + msg + "</font>")
+        appendLog(msg)
+    }
+
+    function appendLog(msg) {
+        msg = msg.replace(/\r?\n/g, '<br>')
+        logViewer.append("<font color='red'>" + msg + "</font>")
+    }
+
+    property string status: "Idle"
+    property string fullStatus
+
+    Connections {
+        target: Serial
+        function onMessage(msg) {
+            logViewer.append("<font color='darkgrey'>" + msg + "</font><br>")
+        }
+    }
+
+    Connections {
+        target: Serial
+
+        property string prevMsg: ""
+
+        function onData(msg) {
+            msg = prevMsg + msg
+
+            // Нет перевода строки - копим сообщения дальше
+            if (!msg.match(/\r?\n/)) {
+                prevMsg = msg
+                return
+            }
+
+            // Перевод строки есть, разбираем сообщение
+            prevMsg = ""
+
+            var messages = msg.split(/\r?\n/)
+
+            // Если последняя стрка пустая - значит сообщение закончилось переводом строки.
+            // pop() модифицирует массив
+            var last = messages.pop()
+            // Если последняя стрка непустая - значит сообщение не закончилось (перевода строки не было). Сохраняем его.
+            if (last !== '') {
+                prevMsg = last
+            }
+
+            nextMessage: while (messages.length > 0) {
+                msg = messages.shift()
+
+                // Не выводим ответ ok
+                if (msg === 'ok')
+                    continue
+
+                // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
+                msg = msg.replace(/</g, '[')
+                msg = msg.replace(/>/g, ']')
+
+                for (let k = 0; k < modes.length; ++k) {
+                    let stat = modes[k]
+                    if (msg.includes(stat)) {
+                        status = stat
+                        fullStatus = msg
+                        //continue nextMessage
+                    }
+                }
+
+                //            for (let i = 1; i < 11; ++i) {
+                //                let alrm = "ALARM:" + i
+                //                if (msg.includes(alrm))
+                //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
+                //            }
+                //            for (let j = 1; j < 100; ++j) {
+                //                let err = "error:" + j
+                //                if (msg.includes(err))
+                //                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+                //            }
+                logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
+            }
+        }
+    }
+
+    Timer {
+        id: sendCodeTimer
+
+        repeat: true
+        property var codeLines: []
+        property int lineToSend: 0
+
+        onTriggered: {
+            //console.log("triggered")
+            if (lineToSend >= codeLines.length) {
+                stopProgram()
+                return
+            }
+
+            var line = codeLines[lineToSend]
+            console.log(line)
+
+            if (status === "Idle") {
+                Serial.write(line)
+                let lineNumber = lineToSend+1
+                var msg = "" + lineNumber + ": " + line + "\n"
+                appendLog(msg)
+                //color line
+                ++lineToSend
+                status = "wait for update"
+            }
+        }
+
+        function startResumeProgram() {
+            if (lineToSend === 0) {
+                status = "wait for update"
+                codeEditor.readOnly = true
+                sendCodeTimer.codeLines = codeEditor.text.split("\n")
+            }
+
+            sendCodeTimer.interval = 20 // Замедление программы
+            sendCodeTimer.start()
+
+            statusTimer.interval = 100
+            statusTimer.start()
+
+            playPauseProgram.text = qsTr("Pause program")
+        }
+
+        function pauseProgram() {
+            sendCodeTimer.stop()
+            statusTimer.stop()
+            playPauseProgram.text = qsTr("Resume program")
+        }
+
+        function stopProgram() {
+            pauseProgram()
+            lineToSend = 0
+            codeEditor.readOnly = false
+            playPauseProgram.checked = false
+            playPauseProgram.text = qsTr("Run program")
+        }
     }
 
     RowLayout {
@@ -83,6 +218,12 @@ Item {
             }
 
             Item { height: 30; width: 10}
+            Text {
+                text: fullStatus
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
 
             Grid {
                 width: parent.width
@@ -91,10 +232,10 @@ Item {
                 rowSpacing: 5
 
                 SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
-                SmButton { text: qsTr("Info($I)");   onClicked: { write("$I\n" )     } }
+                SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85\n" )    } }
                 SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!\n" )     } }
                 SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
-                SmButton { text: qsTr("Reset($RST=#)");   onClicked: { write("$RST=#\n" )     } }
+                SmButton { text: qsTr("");   onClicked: {      } }
 
                 SmButton {
                     text: qsTr("Status(?)")
@@ -105,6 +246,8 @@ Item {
                             statusTimer.start()
                         else
                             statusTimer.stop()
+
+                        codeEditor.highlightLine(10)
                     }
 
                     Timer {
@@ -114,18 +257,45 @@ Item {
                         triggeredOnStart: true
                         running: false
                         onTriggered: {
-                            write("?\n")
+                            Serial.write("?\n")
                         }
                     }
 
                 }
-                SmButton { text: qsTr("Params($$)"); onClicked: { write("$$\n" )      } }
+
+                ComboBox {
+                    height: 30
+                    model: ListModel {
+                        ListElement { text: "$Alarm/Disable" }
+                        ListElement { text: "$Alarms/List" }
+                        ListElement { text: "$Build/Info" }
+                        ListElement { text: "$Bye" }
+                        ListElement { text: "$Commands/List" }
+                        ListElement { text: "$Errors/List " }
+                        ListElement { text: "$Firmware/Info" }
+                        ListElement { text: "$GCode/Modes" }
+                        ListElement { text: "$Heap/Show" }
+                        ListElement { text: "$Help" }
+                        ListElement { text: "$Settings/List" }
+                        ListElement { text: "$Startup/Show" }
+                    }
+
+                    onActivated: {
+                        write(textAt(index) + "\n")
+                    }
+                }
+
                 SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
+                Text {
+                    text: status
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
 
 
-                Item { height: 20; width: 10}
-                Item { height: 20; width: 10}
-                Item { height: 20; width: 10}
+                //                Item { height: 20; width: 10}
+                //                Item { height: 20; width: 10}
+
 
 
 
@@ -154,14 +324,29 @@ Item {
                 Item { height: 30; width: 10}
 
                 Item { height: 30; width: 10}
-                SmButton { text: qsTr("Clear log");  onClicked: { log.clear() } }
-
+                SmButton { text: qsTr("Clear log");
+                    onClicked:
+                    {
+                        logViewer.clear()
+                    }
+                }
+                SmButton {
+                    id: playPauseProgram
+                    text: checked ? qsTr("Pause program") : qsTr("Run program")
+                    onCheckedChanged: checked ? sendCodeTimer.startResumeProgram() : sendCodeTimer.pauseProgram()
+                    checkable: true
+                }
+                SmButton {
+                    text: qsTr("Stop program")
+                    onClicked: {
+                        playPauseProgram.checked = false
+                        sendCodeTimer.stopProgram()
+                    }
+                }
             }
 
             JogControl {
                 width: parent.width
-                height: width
-
             }
         }
 
@@ -169,14 +354,21 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            Log {
-                id: log
-//                Layout.preferredWidth: parent.width / 3
-//                Layout.fillHeight: true
-
+            Column {
                 SplitView.minimumWidth: 50
                 SplitView.preferredWidth: root.width / 3
                 SplitView.maximumWidth: 800
+
+                Log {
+                    id: logViewer
+                    height: parent.height / 2
+                    width: parent.width
+                }
+                CodeEditor2 {
+                    id: codeEditor
+                    height: parent.height / 2
+                    width: parent.width
+                }
             }
 
 
@@ -198,8 +390,8 @@ Item {
 
                         //console.log("get image " , id)
                         image.setSource("image://camera/" +  id)
-//                        image.source = ""
-//                        image.source = "image://camera/" +  id
+                        //                        image.source = ""
+                        //                        image.source = "image://camera/" +  id
                     }
                 }
 
@@ -271,12 +463,12 @@ Item {
                         }
                     }
 
-//                    double dp = db().value("dp").toDouble();
-//                    double minDist = db().value("minDist").toDouble();
-//                    double param1 = db().value("param1").toDouble();
-//                    double param2 = db().value("param2").toDouble();
-//                    int minRadius = db().value("minRadius").toInt();
-//                    int maxRadius = db().value("maxRadius").toInt();
+                    //                    double dp = db().value("dp").toDouble();
+                    //                    double minDist = db().value("minDist").toDouble();
+                    //                    double param1 = db().value("param1").toDouble();
+                    //                    double param2 = db().value("param2").toDouble();
+                    //                    int minRadius = db().value("minRadius").toInt();
+                    //                    int maxRadius = db().value("maxRadius").toInt();
 
                     SpinBox {
                         from: 0
@@ -355,40 +547,17 @@ Item {
         }
     }
 
-    Connections {
-        target: Serial
-        function onMessage(msg) {
-            log.append("<font color='darkgrey'>" + msg + "</font><br>")
-        }
-    }
 
-    Connections {
-        target: Serial
-        function onData(msg) {
-            // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-            msg = msg.replace(new RegExp('<','g'), '[')
-            msg = msg.replace(new RegExp('>','g'), ']')
-            msg = msg.replace(new RegExp('\r?\n','g'), '<br />')
-
-            for (let i = 1; i < 11; ++i) {
-                let alrm = "ALARM:" + i
-                if (msg.includes(alrm))
-                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
-            }
-            for (let j = 1; j < 100; ++j) {
-                let err = "error:" + j
-                if (msg.includes(err))
-                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-            }
-            log.append("<font color='darkblue'>" + msg + "</font>")
-        }
-    }
 
     Shortcut {
         sequence: "F5"
         context: Qt.ApplicationShortcut
         onActivated: write("?\n")
     }
+
+    property variant modes: ["Idle", "Alarm", "Check", "Home", "Run", "Jog", "Hold:0", "Hold:1",
+        "Door", "Door:0", "Door:1", "Door:2", "Door:3", "Sleep" ]
+
 
     property variant alarms :  {
         1: "Hard limit triggered. Machine position is likely lost due to sudden and immediate halt. Re-homing is highly recommended.",

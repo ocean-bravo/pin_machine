@@ -125,12 +125,12 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(QImage imag, QByteArray ba)
+void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 {
     if (!_jobDone.tryLock())
         return;
 
-    QImage img = imag.copy();
+    //QImage img = imag.copy();
 
 
 
