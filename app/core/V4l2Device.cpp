@@ -29,7 +29,8 @@ std::string V4l2Device::fourcc(unsigned int format) {
 	return std::string(formatArray, strlen(formatArray));
 }
 
-unsigned int V4l2Device::fourcc(const char* format) {
+unsigned int V4l2Device::fourcc(const char* format)
+{
 	char fourcc[4];
 	memset(&fourcc, 0, sizeof(fourcc));
 	if (format != NULL)

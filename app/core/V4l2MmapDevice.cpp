@@ -46,12 +46,14 @@ V4l2MmapDevice::V4l2MmapDevice()
 //    return ret;
 //}
 
-bool V4l2MmapDevice::init()
+bool V4l2MmapDevice::init(int device, int width, int height, int fourcc)
 {
     qd() << "init device";
 
-    open("/dev/video0");
-    set_format(m_fd);
+    open(QString("/dev/video%1").arg(device));
+    this->width = width;
+    this->height = height;
+    set_format(m_fd, width, height, fourcc);
 
     //int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
@@ -151,15 +153,15 @@ bool V4l2MmapDevice::queueBuffers(int fd, int count)
     return true;
 }
 
-int V4l2MmapDevice::set_format(int fd)
+int V4l2MmapDevice::set_format(int fd, int width, int height, int fourcc)
 {
     qd() << "set format...";
 
     v4l2_format format = {};
     format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    format.fmt.pix.width = 1920;
-    format.fmt.pix.height = 1080;
-    format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    format.fmt.pix.width = width;
+    format.fmt.pix.height = height;
+    format.fmt.pix.pixelformat = fourcc;//V4L2_PIX_FMT_YUYV;
     format.fmt.pix.field = V4L2_FIELD_NONE;
 
     int res = ioctl(fd, VIDIOC_S_FMT, &format);

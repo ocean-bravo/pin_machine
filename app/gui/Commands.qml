@@ -5,6 +5,7 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import Process 1.0
 
+import "utils.js" as Utils
 
 Item {
     id: root
@@ -402,7 +403,7 @@ Item {
                     triggeredOnStart: true
                     running: false
                     onTriggered: {
-                        //Video4.update()
+
                     }
                 }
 
@@ -425,7 +426,6 @@ Item {
                         onPressed: {
                             Video3.reloadDevices()
                         }
-
                     }
 
                     ComboBox {
@@ -447,19 +447,22 @@ Item {
                         model: DataBus.cameras
                         onActivated: {
                             resList.model = DataBus["camera" + index]
-                            Video4  .changeCamera(index, 0)
+                            let md = resList.model[0]
+                            Video4.changeCamera(index*2, md.width, md.height, md.fourcc)
                         }
                         onModelChanged: {
                             resList.model = DataBus["camera" + 0]
-                            Video4.changeCamera(0, 0)
+                            //Video4.changeCamera(0, 640, 480, "YUYV")
                         }
                     }
 
                     ComboBox {
-                        width: 200
                         id: resList
+                        width: 200
+                        textRole: "display"
                         onActivated: {
-                            Video4.changeCamera(cameraList.currentIndex, index)
+                            let md = model[currentIndex]
+                            Video4.changeCamera(cameraList.currentIndex*2, md.width, md.height, md.fourcc)
                         }
                     }
 

@@ -12,7 +12,7 @@ public:
     ~V4l2MmapDevice();
 
     //virtual bool init(unsigned int mandatoryCapabilities);
-    bool init();
+    bool init(int device, int width, int height, int fourcc);
     bool isReady();
     bool start();
     bool stop();
@@ -26,6 +26,9 @@ public:
     size_t bufSize() const;
 
     size_t readInternal(char* buffer, size_t bufferSize);
+
+    int width = 640;
+    int height = 480;
 
 protected:
 
@@ -50,11 +53,12 @@ private:
     bool queryBuffers(int fd, int count);
     bool start_streaming(int fd);
     bool queueBuffers(int fd, int count);
-    int set_format(int fd);
+    int set_format(int fd, int width, int height, int fourcc);
 
 
 
     bool freeBuffers();
+
 
 
     QString _deviceName;

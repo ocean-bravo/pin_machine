@@ -4,6 +4,8 @@
 #include "data_bus.h"
 
 #include <QBuffer>
+#include <QJsonArray>
+#include <QJsonObject>
 
 namespace {
 
@@ -106,7 +108,7 @@ void Video3Private::reloadDevices()
         const QString devName = Cap_getDeviceName(_ctx, deviceId);
         devices.append(devName);
 
-        QStringList formats;
+        QJsonArray formats;
         for(int32_t formatId = 0; formatId < Cap_getNumFormats(_ctx, deviceId); formatId++)
         {
             CapFormatInfo finfo;
@@ -114,7 +116,15 @@ void Video3Private::reloadDevices()
 
             const QString fourcc = fourccToString(finfo.fourcc);
 
-            const QString format = QString("[%1x%2] %3 %4fps").arg(finfo.width).arg(finfo.height).arg(fourcc).arg(finfo.fps);
+            const QString display = QString("[%1x%2] %3 %4fps").arg(finfo.width).arg(finfo.height).arg(fourcc).arg(finfo.fps);
+
+            QJsonObject format {
+                {"width",  int(finfo.width)},
+                {"height", int(finfo.height)},
+                {"fourcc", fourcc},
+                {"fps", int(finfo.fps)},
+                {"display", display}
+            };
 
             formats.append(format);
         }

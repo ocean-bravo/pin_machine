@@ -67,9 +67,9 @@ void Video4::reloadDevices()
     //   QMetaObject::invokeMethod(_impl.data(), "reloadDevices", Qt::QueuedConnection);
 }
 
-void Video4::changeCamera(quint32 deviceId, quint32 formatId)
+void Video4::changeCamera(int device, int width, int height, QString fourcc)
 {
-    QMetaObject::invokeMethod(_impl, "changeCamera", Qt::QueuedConnection, Q_ARG(quint32, deviceId), Q_ARG(quint32, formatId));
+    QMetaObject::invokeMethod(_impl, "changeCamera", Qt::QueuedConnection, Q_ARG(int, device),Q_ARG(int, width),Q_ARG(int, height),Q_ARG(QString, fourcc));
 }
 
 //void Video4::update()
@@ -103,7 +103,7 @@ void Video4Private::init()
         loop.exec();
     }
 
-    changeCamera(0,0);
+    changeCamera(0,320,240, "YUYV");
 
     _running = true;
 
@@ -145,13 +145,13 @@ void Video4Private::update()
             break;
         }
 
-         qd() << "size:" << rsize;
+        //qd() << "size:" << rsize;
 
         char rgbBuffer[buffSize];
 
         YUYV2RGB((const uint8_t *)inBuffer, (uint8_t *)rgbBuffer, buffSize);
 
-        QImage img((const uint8_t*)rgbBuffer, 1920, 1080, QImage::Format_RGB888);
+        QImage img((const uint8_t*)rgbBuffer, _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
 
         emit newImage(img, "", QByteArray());
 
@@ -163,22 +163,23 @@ void Video4Private::update()
     emit stopped();
 }
 
-void Video4Private::changeCamera(quint32 deviceId, quint32 formatId)
+void Video4Private::changeCamera(int device, int width, int height, QString fourcc)
 {
-    int verbose = 2;
-    const char* in_devname = "/dev/video0";
-    V4l2IoType ioTypeIn  = IOTYPE_MMAP; // Или IOTYPE_READWRITE
-    int format = V4l2Device::fourcc("YUYV");
-    int width = 1920;
-    int height = 1080;
-    int fps = 30;
+//    int verbose = 2;
+//    const char* in_devname = "/dev/video0";
+//    V4l2IoType ioTypeIn  = IOTYPE_MMAP; // Или IOTYPE_READWRITE
+//    int format = V4l2Device::fourcc("YUYV");
+//    int width = 640;
+//    int height = 480;
+//    int fps = 30;
 
     //V4L2DeviceParameters param(in_devname, format, width, height, fps, ioTypeIn, verbose);
+
     if (_videoCapture)
         delete _videoCapture;
 
     _videoCapture = new V4l2MmapDevice;
-    _videoCapture->init();
+    _videoCapture->init(device, width, height, V4l2Device::fourcc(fourcc.toLatin1().toStdString().c_str()));
 
 //    int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
