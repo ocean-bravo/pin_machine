@@ -247,8 +247,6 @@ Item {
                             statusTimer.start()
                         else
                             statusTimer.stop()
-
-                        codeEditor.highlightLine(10)
                     }
 
                     Timer {
