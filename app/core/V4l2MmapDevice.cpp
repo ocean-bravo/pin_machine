@@ -22,7 +22,7 @@
 
 namespace {
 
-const size_t V4L2MMAP_NBBUFFER = 10;
+const size_t V4L2MMAP_NBBUFFER = 20;
 
 }
 

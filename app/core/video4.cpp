@@ -125,7 +125,7 @@ void Video4Private::update()
         //ScopedMeasure ("update");
 
         QEventLoop loop;
-        QTimer::singleShot(10, &loop, &QEventLoop::quit);
+        QTimer::singleShot(3, &loop, &QEventLoop::quit);
         loop.exec();
 
         if (!_running)
@@ -134,10 +134,11 @@ void Video4Private::update()
         if (!_videoCapture)
             break;
 
-        _videoCapture->isReady();
+        //_videoCapture->isReady();
 
         if (!_videoCapture->isReady())
             break;
+
 
         const bool hasFrame = _videoCapture->isReadable(100);
 
@@ -147,9 +148,11 @@ void Video4Private::update()
         const quint32 buffSize = _videoCapture->bufSize();
 
          //qd() << "buffSize:" << buffSize;
-
-
-        inBuffer.reserve(buffSize);
+        {
+            ScopedMeasure ("resize");
+            inBuffer.resize(buffSize);
+            rgbBuffer.resize(buffSize);
+        }
 
         int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
         if (rsize == -1)
@@ -160,14 +163,16 @@ void Video4Private::update()
 
         //qd() << "size:" << rsize;
 
-        rgbBuffer.resize(buffSize);
-
-        YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
-
-        QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
-
-        emit newImage(img, "", QByteArray());
-
+        {
+            ScopedMeasure ("YUYV2RGB");
+            YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
+        }
+        {
+            ScopedMeasure ("QImage ");
+            QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
+            emit newImage(img, "", QByteArray());
+            qd() << "\n";
+        }
 
     }
 
