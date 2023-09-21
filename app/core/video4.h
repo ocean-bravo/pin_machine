@@ -23,7 +23,7 @@ public:
 
     Q_INVOKABLE void reloadDevices();
     Q_INVOKABLE void changeCamera(int device, int width, int height, QString fourcc);
-    //Q_INVOKABLE void update();
+    Q_INVOKABLE void update();
 
 signals:
     void newImage(QImage, QString, QByteArray);

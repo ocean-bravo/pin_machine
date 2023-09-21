@@ -72,10 +72,10 @@ void Video4::changeCamera(int device, int width, int height, QString fourcc)
     QMetaObject::invokeMethod(_impl, "changeCamera", Qt::QueuedConnection, Q_ARG(int, device),Q_ARG(int, width),Q_ARG(int, height),Q_ARG(QString, fourcc));
 }
 
-//void Video4::update()
-//{
-//    QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
-//}
+void Video4::update()
+{
+    QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
+}
 
 
 Video4Private::Video4Private()
@@ -103,7 +103,7 @@ void Video4Private::init()
         loop.exec();
     }
 
-    changeCamera(0,320,240, "YUYV");
+    //changeCamera(0,320,240, "YUYV");
 
     _running = true;
 
@@ -118,7 +118,14 @@ void Video4Private::update()
     {
         //ScopedMeasure ("update");
 
+        QEventLoop loop;
+        QTimer::singleShot(10, &loop, &QEventLoop::quit);
+        loop.exec();
+
         if (!_running)
+            break;
+
+        if (!_videoCapture)
             break;
 
         _videoCapture->isReady();
@@ -155,9 +162,7 @@ void Video4Private::update()
 
         emit newImage(img, "", QByteArray());
 
-        QEventLoop loop;
-        QTimer::singleShot(10, &loop, &QEventLoop::quit);
-        loop.exec();
+
     }
 
     emit stopped();

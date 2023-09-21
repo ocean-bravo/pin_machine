@@ -414,7 +414,8 @@ Item {
                         width: 200
                         text: qsTr("Start/Stop update")
                         onClicked: {
-                            updateTimer.running = !updateTimer.running
+                            //updateTimer.running = !updateTimer.running
+                            Video4.update()
                         }
                     }
 
