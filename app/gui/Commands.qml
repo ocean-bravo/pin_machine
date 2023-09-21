@@ -170,16 +170,18 @@ Item {
                         id: findUsbProcess
                         onReadyRead: {
                             const result = readAll()
+                            serialPortName.text = ""
                             serialPortName.text = ("/dev/" + result).replace(/\s/g, "")
+                            findUsbTimer.start()
                         }
                     }
                     Timer {
+                        id: findUsbTimer
                         interval: 1000
-                        repeat: true
-                        triggeredOnStart: true
+                        repeat: false
+                        triggeredOnStart: false
                         running: true
                         onTriggered: {
-                            serialPortName.text = ""
                             findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
                         }
                     }

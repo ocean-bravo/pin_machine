@@ -149,7 +149,7 @@ void Video4Private::update()
 
          //qd() << "buffSize:" << buffSize;
         {
-            ScopedMeasure ("resize");
+            //ScopedMeasure ("resize");
             inBuffer.resize(buffSize);
             rgbBuffer.resize(buffSize);
         }
@@ -164,14 +164,14 @@ void Video4Private::update()
         //qd() << "size:" << rsize;
 
         {
-            ScopedMeasure ("YUYV2RGB");
+            //ScopedMeasure ("YUYV2RGB");
             YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
         }
         {
-            ScopedMeasure ("QImage ");
+            //ScopedMeasure ("QImage ");
             QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
             emit newImage(img, "", QByteArray());
-            qd() << "\n";
+            //qd() << "\n";
         }
 
     }
