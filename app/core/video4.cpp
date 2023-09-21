@@ -114,6 +114,12 @@ void Video4Private::init()
 
 void Video4Private::update()
 {
+    std::vector<char> inBuffer;
+    inBuffer.reserve(20000000); // должно хватить
+
+    std::vector<char> rgbBuffer;
+    rgbBuffer.reserve(20000000); // должно хватить
+
     while (true)
     {
         //ScopedMeasure ("update");
@@ -143,9 +149,9 @@ void Video4Private::update()
          //qd() << "buffSize:" << buffSize;
 
 
-        char inBuffer[buffSize];
+        inBuffer.reserve(buffSize);
 
-        int rsize = _videoCapture->readInternal(inBuffer, buffSize);
+        int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
         if (rsize == -1)
         {
             qd() << "stop " << strerror(errno);
@@ -154,11 +160,11 @@ void Video4Private::update()
 
         //qd() << "size:" << rsize;
 
-        char rgbBuffer[buffSize];
+        rgbBuffer.resize(buffSize);
 
-        YUYV2RGB((const uint8_t *)inBuffer, (uint8_t *)rgbBuffer, buffSize);
+        YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
 
-        QImage img((const uint8_t*)rgbBuffer, _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
+        QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
 
         emit newImage(img, "", QByteArray());
 
