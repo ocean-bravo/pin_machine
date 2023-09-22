@@ -63,8 +63,14 @@ void Engine::createQmlEngine()
         //qd() << "new image";
         myImageProvider->setImage(img, "raw");
         //emit imageCaptured();
-        _openCv->searchCircles(img, ba);
-        //_openCv->blobDetector(img, ba);
+
+        QString mode = db().value("mode").toString();
+
+        if (mode == "circle")
+            _openCv->searchCircles(img, ba);
+
+        if (mode == "blob")
+            _openCv->blobDetector(img, ba);
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);

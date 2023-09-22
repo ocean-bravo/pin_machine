@@ -208,7 +208,6 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 
 void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)
 {
-    return;
     // Setup BlobDetector
     cv::SimpleBlobDetector::Params params;
 

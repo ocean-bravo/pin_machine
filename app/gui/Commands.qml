@@ -447,6 +447,7 @@ Item {
                         }
                         onActivated: {
                             image.setSource("image://camera/" + textAt(index))
+                            DataBus.mode = textAt(index)
                         }
                     }
 
