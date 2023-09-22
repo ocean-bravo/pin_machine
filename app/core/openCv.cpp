@@ -125,14 +125,12 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
+void OpenCvPrivate::searchCircles(QImage imag, QByteArray ba)
 {
     if (!_jobDone.tryLock())
         return;
 
-    //QImage img = imag.copy();
-
-
+    QImage img = imag.copy();
 
     static int i = 0;
     static int fmtOut = 0;
@@ -143,26 +141,12 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
 //                                     CV_16UC1, CV_16UC2, CV_16UC3,CV_16UC4};
 
     ++i;
-
-    if (i % 20 == 0)
-        ++fmtOut;
-
-    if (fmtOut == 30)
-        fmtOut = 0;
-
-
-    if (i % 20 == 0)
-        ++fmtIn;
-
-    if (fmtIn == 126)
-        fmtIn = 107;
-
-
+    if (i % 20 == 0) ++fmtOut;
+    if (fmtOut == 30) fmtOut = 0;
+    if (i % 20 == 0) ++fmtIn;
+    if (fmtIn == 126) fmtIn = 107;
 //    qd() << "in format " << fmtIn;
 //    qd() << "out format " << fmtOut;
-
-
-
     try
     {
         //ScopedMeasure m("all");
@@ -206,8 +190,13 @@ void OpenCvPrivate::searchCircles(QImage img, QByteArray ba)
     _jobDone.unlock();
 }
 
-void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)
+void OpenCvPrivate::blobDetector(QImage imag, QByteArray ba)
 {
+    if (!_jobDone.tryLock())
+        return;
+
+    QImage img = imag.copy();
+
     // Setup BlobDetector
     cv::SimpleBlobDetector::Params params;
 
@@ -238,20 +227,30 @@ void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)
     std::vector<cv::KeyPoint> keypoints;
 
     // Detect blobs
-    //
-    cv::Mat image = qimage_to_mat_cpy(img,  CV_8UC3);
+    cv::Mat rgbimg = qimage2mat(img);
     cv::Mat grey;
-    cv::cvtColor(image, grey, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
+
     detector->detect(grey, keypoints);
 
     // Draw detected blobs as red circles.
-        // DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
-        // the size of the circle corresponds to the size of blob
+    // DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
+    // the size of the circle corresponds to the size of blob
 
     cv::Mat im_with_keypoints;
-    cv::drawKeypoints(grey, keypoints, im_with_keypoints, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::drawKeypoints(grey, keypoints, im_with_keypoints, Color::ColorBlue, cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
-    emit blobChanged(mat_to_qimage_ref(im_with_keypoints, QImage::Format_BGR888));
+
+//    emit blobChanged(mat_to_qimage_ref(im_with_keypoints, QImage::Format_BGR888));
+
+
+
+    QImage im1 = QImage(im_with_keypoints.data, im_with_keypoints.cols, im_with_keypoints.rows, QImage::Format_RGB888);
+
+    im1.detach();
+    emit blobChanged(im1);
+
+    _jobDone.unlock();
 
 //while camera.isOpened():
 
@@ -270,9 +269,5 @@ void OpenCvPrivate::blobDetector(QImage img, QByteArray ba)
 //    # Uncomment to resize to fit output window if needed
 //    #im = cv2.resize(im, None,fx=0.5, fy=0.5, interpolation = cv2.INTER_CUBIC)
 //    cv2.imshow("Output", im)
-
-
-
-
 
 }

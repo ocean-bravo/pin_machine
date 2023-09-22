@@ -486,76 +486,59 @@ Item {
                     //                    int minRadius = db().value("minRadius").toInt();
                     //                    int maxRadius = db().value("maxRadius").toInt();
 
-                    SpinBox {
+
+                }
+                Column {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    RowSpinSlider {
+                        text: "minDist"
                         from: 0
                         to: 500
                         stepSize: 1
                         value: DataBus.minDist
+                        valueBind: function() { return DataBus.minDist }
                         onValueChanged: DataBus.minDist = value
                     }
-                    SpinBox {
+
+                    RowSpinSlider {
+                        text: "param1"
                         from: 0
                         to: 500
                         stepSize: 1
                         value: DataBus.param1
+                        valueBind: function() { return DataBus.param1 }
                         onValueChanged: DataBus.param1 = value
                     }
-                    SpinBox {
+
+                    RowSpinSlider {
+                        text: "param2"
                         from: 0
                         to: 500
                         stepSize: 1
                         value: DataBus.param2
+                        valueBind: function() { return DataBus.param2 }
                         onValueChanged: DataBus.param2 = value
                     }
-                    SpinBox {
+                    RowSpinSlider {
+                        text: "minRadius"
                         from: 0
                         to: 500
                         stepSize: 1
                         value: DataBus.minRadius
+                        valueBind: function() { return DataBus.minRadius }
                         onValueChanged: DataBus.minRadius = value
                     }
-                    SpinBox {
+
+                    RowSpinSlider {
+                        text: "maxRadius"
                         from: 0
                         to: 500
                         stepSize: 1
                         value: DataBus.maxRadius
-                        onValueChanged: DataBus.maxRadius = value
-                    }
-
-
-                    Slider {
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.minDist
-                        onValueChanged: DataBus.minDist = value
-                    }
-                    Slider {
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.param1
-                        onValueChanged: DataBus.param1 = value
-                    }
-                    Slider {
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.param2
-                        onValueChanged: DataBus.param2 = value
-                    }
-                    Slider {
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.minRadius
-                        onValueChanged: DataBus.minRadius = value
-                    }
-                    Slider {
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.maxRadius
+                        valueBind: function() { return DataBus.maxRadius }
                         onValueChanged: DataBus.maxRadius = value
                     }
                 }
