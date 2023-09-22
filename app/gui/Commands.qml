@@ -414,10 +414,15 @@ Item {
                     Button {
                         id: startStopUpdate
                         width: 200
-                        text: qsTr("Start/Stop update")
-                        onClicked: {
+                        text: checked ? qsTr("Stop update") : qsTr("Start update")
+                        checkable: true
+                        checked: false
+                        onCheckedChanged: {
                             //updateTimer.running = !updateTimer.running
-                            Video4.update()
+                            if (checked)
+                                Video4.start()
+                            else
+                                Video4.stop()
                         }
                     }
 
@@ -436,7 +441,7 @@ Item {
                         width: 200
                         model: ListModel {
                             ListElement { text: "raw" }
-                            ListElement { text: "main" }
+                            ListElement { text: "circle" }
                             ListElement { text: "blob" }
                         }
                         onActivated: {

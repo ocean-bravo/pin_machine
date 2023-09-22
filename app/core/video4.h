@@ -24,6 +24,9 @@ public:
     Q_INVOKABLE void reloadDevices();
     Q_INVOKABLE void changeCamera(int device, int width, int height, QString fourcc);
     Q_INVOKABLE void update();
+    Q_INVOKABLE void start();
+    Q_INVOKABLE void stop();
+
 
 signals:
     void newImage(QImage, QString, QByteArray);
@@ -49,6 +52,9 @@ public slots:
     void update();
 
     void changeCamera(int device, int width, int height, QString fourcc);
+
+    void start();
+    void stop();
 
     //std::vector<DeviceInfo> devicesInfo();
 

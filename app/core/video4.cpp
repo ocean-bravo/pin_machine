@@ -79,6 +79,15 @@ void Video4::update()
     QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
 }
 
+void Video4::start()
+{
+    QMetaObject::invokeMethod(_impl, "start", Qt::QueuedConnection);
+}
+
+void Video4::stop()
+{
+    QMetaObject::invokeMethod(_impl, "stop", Qt::QueuedConnection);
+}
 
 Video4Private::Video4Private()
 {
@@ -94,6 +103,7 @@ void Video4Private::reloadDevices()
 {
 }
 
+
 void Video4Private::init()
 {
     if (_running)
@@ -107,11 +117,19 @@ void Video4Private::init()
 
     //changeCamera(0,320,240, "YUYV");
 
-    _running = true;
+    //_running = false;
+}
 
+void Video4Private::start()
+{
+    _running = true;
     QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
 }
 
+void Video4Private::stop()
+{
+    _running = false;
+}
 
 
 void Video4Private::update()
@@ -132,9 +150,9 @@ void Video4Private::update()
 
         //ScopedMeasure ("updat");
 
-//        QEventLoop loop;
-//        QTimer::singleShot(3, &loop, &QEventLoop::quit);
-//        loop.exec();
+        QEventLoop loop;
+        QTimer::singleShot(1, &loop, &QEventLoop::quit);
+        loop.exec();
 
         if (!_running)
             break;

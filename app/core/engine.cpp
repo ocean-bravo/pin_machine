@@ -71,7 +71,7 @@ void Engine::createQmlEngine()
 
     connect(_openCv, &OpenCv::imageChanged, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(img, "main");
+        myImageProvider->setImage(img, "circle");
     });
 
 
