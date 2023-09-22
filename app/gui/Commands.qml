@@ -418,9 +418,10 @@ Item {
                         checkable: true
                         checked: false
                         onCheckedChanged: {
-                            //updateTimer.running = !updateTimer.running
-                            if (checked)
+                            if (checked) {
+                                resList.setCurrentFormat()
                                 Video4.start()
+                            }
                             else
                                 Video4.stop()
                         }
@@ -469,6 +470,9 @@ Item {
                         width: 200
                         textRole: "display"
                         onActivated: {
+                            setCurrentFormat()
+                        }
+                        function setCurrentFormat() {
                             let md = model[currentIndex]
                             Video4.changeCamera(cameraList.currentIndex*2, md.width, md.height, md.fourcc)
                         }
