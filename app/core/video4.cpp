@@ -21,6 +21,8 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#include <QDateTime>
+
 namespace {
 
 }
@@ -120,13 +122,19 @@ void Video4Private::update()
     std::vector<char> rgbBuffer;
     rgbBuffer.reserve(20000000); // должно хватить
 
+    auto start = std::chrono::steady_clock::now();
+    auto finish = std::chrono::steady_clock::now();
+
+    int i = 0;
     while (true)
     {
-        //ScopedMeasure ("update");
+        //qd() << QDateTime::currentMSecsSinceEpoch();
 
-        QEventLoop loop;
-        QTimer::singleShot(3, &loop, &QEventLoop::quit);
-        loop.exec();
+        //ScopedMeasure ("updat");
+
+//        QEventLoop loop;
+//        QTimer::singleShot(3, &loop, &QEventLoop::quit);
+//        loop.exec();
 
         if (!_running)
             break;
@@ -140,7 +148,7 @@ void Video4Private::update()
             break;
 
 
-        const bool hasFrame = _videoCapture->isReadable(100);
+        const bool hasFrame = _videoCapture->isReadable(10);
 
         if (!hasFrame)
             continue;
@@ -153,15 +161,25 @@ void Video4Private::update()
             inBuffer.resize(buffSize);
             rgbBuffer.resize(buffSize);
         }
-
-        int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
-        if (rsize == -1)
         {
-            qd() << "stop " << strerror(errno);
-            break;
+            //ScopedMeasure ("read internal");
+            int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
+            if (rsize == -1)
+            {
+                qd() << "stop " << strerror(errno);
+                break;
+            }
         }
 
+
         //qd() << "size:" << rsize;
+
+        finish = std::chrono::steady_clock::now();
+        const std::chrono::duration<double, std::milli> elapsed = finish - start;
+        ++i;
+        //qd() << i << ":" << elapsed.count() << "ms";
+        qd() << i << ":" << 1000/elapsed.count() << "fps";
+        start = std::chrono::steady_clock::now();
 
         {
             //ScopedMeasure ("YUYV2RGB");
@@ -170,7 +188,7 @@ void Video4Private::update()
         {
             //ScopedMeasure ("QImage ");
             QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
-            emit newImage(img, "", QByteArray());
+            emit newImage(img.copy(), "", QByteArray());
             //qd() << "\n";
         }
 

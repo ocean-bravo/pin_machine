@@ -49,11 +49,11 @@ protected:
 
 private:
     bool streamOff(int fd);
-    bool request_buffer(int fd, int count);
+    bool requestBuffers(int fd, int count);
     bool queryBuffers(int fd, int count);
-    bool start_streaming(int fd);
+    bool streamOn(int fd);
     bool queueBuffers(int fd, int count);
-    int set_format(int fd, int width, int height, int fourcc);
+    int setFormat(int fd, int width, int height, int fourcc);
 
 
 

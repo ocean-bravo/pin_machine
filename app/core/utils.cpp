@@ -13,14 +13,14 @@
 #include <cmath>
 
 ScopedMeasure::ScopedMeasure(const QString& msg)
-    : _start(std::chrono::high_resolution_clock::now())
+    : _start(std::chrono::steady_clock::now())
     , _msg(msg)
 {
 }
 
 ScopedMeasure::~ScopedMeasure()
 {
-    const auto finish = std::chrono::high_resolution_clock::now();
+    const auto finish = std::chrono::steady_clock::now();
     const std::chrono::duration<double, std::micro> elapsed = finish - _start;
 
     qd() << _msg << elapsed.count() << "us";
@@ -28,7 +28,7 @@ ScopedMeasure::~ScopedMeasure()
 
 
 Measure::Measure(const QString& msg)
-    : _start(std::chrono::high_resolution_clock::now())
+    : _start(std::chrono::steady_clock::now())
     , _msg(msg)
 {
 
@@ -36,12 +36,12 @@ Measure::Measure(const QString& msg)
 
 void Measure::start()
 {
-    _start = std::chrono::high_resolution_clock::now();
+    _start = std::chrono::steady_clock::now();
 }
 
 void Measure::stop()
 {
-    const auto finish = std::chrono::high_resolution_clock::now();
+    const auto finish = std::chrono::steady_clock::now();
     const std::chrono::duration<double> elapsed = finish - _start;
 
     qd() << _msg << elapsed.count();

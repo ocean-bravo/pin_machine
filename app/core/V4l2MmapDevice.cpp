@@ -22,7 +22,18 @@
 
 namespace {
 
-const size_t V4L2MMAP_NBBUFFER = 20;
+const size_t V4L2MMAP_NBBUFFER = 15;
+
+QString fourccToString (quint32 fourcc)
+{
+    QString str;
+    for(uint32_t i=0; i<4; i++)
+    {
+        str += (char)(fourcc & 0xFF);
+        fourcc >>= 8;
+    }
+    return str;
+}
 
 }
 
@@ -48,12 +59,12 @@ V4l2MmapDevice::V4l2MmapDevice()
 
 bool V4l2MmapDevice::init(int device, int width, int height, int fourcc)
 {
-    qd() << "init device";
+    qd() << "Camera: init device";
 
     open(QString("/dev/video%1").arg(device));
     this->width = width;
     this->height = height;
-    set_format(m_fd, width, height, fourcc);
+    setFormat(m_fd, width, height, fourcc);
 
     //int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
@@ -71,20 +82,16 @@ V4l2MmapDevice::~V4l2MmapDevice()
 }
 
 
-bool V4l2MmapDevice::request_buffer(int fd, int count)
+bool V4l2MmapDevice::requestBuffers(int fd, int count)
 {
-    struct v4l2_requestbuffers req = {0};
+    struct v4l2_requestbuffers req = {};
 
     req.count   = count;
     req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory  = V4L2_MEMORY_MMAP;
 
-    if (ioctl(fd, VIDIOC_REQBUFS, &req) == -1)
-    {
-        qd() << "error VIDIOC_REQBUFS";
-        return false;
-    }
-    return true;
+    if (ioctl(fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
+    qd() << "Camera: request buffers OK"; return true;
 }
 
 bool V4l2MmapDevice::queryBuffers(int fd, int count)
@@ -97,18 +104,17 @@ bool V4l2MmapDevice::queryBuffers(int fd, int count)
         buf.memory = V4L2_MEMORY_MMAP;
         buf.index  = i;
 
-        int res = ioctl(fd, VIDIOC_QUERYBUF, &buf);
-
-        if (res == -1)
+        if (ioctl(fd, VIDIOC_QUERYBUF, &buf) == -1)
         {
-            qd() << "error VIDIOC_QUERYBUF " << i;
+            qd() << "Camera: error VIDIOC_QUERYBUF " << i;
             return false;
         }
         auto bufff = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
 
         if (bufff == MAP_FAILED)
         {
-            qd() << "error mmap " << i;
+            qd() << "Camera: error mmap " << i;
+            return false;
         }
 
         // какая то проверка buf.bytesused могла бы быть
@@ -117,19 +123,7 @@ bool V4l2MmapDevice::queryBuffers(int fd, int count)
         m_buffers[i].length = buf.length;
         _bufSize = buf.length;
 
-        qd() << "buff size " << _bufSize;
-    }
-    return true;
-}
-
-bool V4l2MmapDevice::start_streaming(int fd)
-{
-    unsigned int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
-    if (ioctl(fd, VIDIOC_STREAMON, &type) == -1)
-    {
-        qd() << "error VIDIOC_STREAMON";
-        return false;
+        qd() << "Camera: query buffer OK (size " << _bufSize << ")";
     }
     return true;
 }
@@ -146,80 +140,66 @@ bool V4l2MmapDevice::queueBuffers(int fd, int count)
 
         if (ioctl(fd, VIDIOC_QBUF, &buf) == -1)
         {
-            qd() << "error VIDIOC_QBUF " << i;
+            qd() << "Camera: error VIDIOC_QBUF " << i;
             return false;
         }
     }
     return true;
 }
 
-int V4l2MmapDevice::set_format(int fd, int width, int height, int fourcc)
+int V4l2MmapDevice::setFormat(int fd, int width, int height, int fourcc)
 {
-    qd() << "set format...";
-
     v4l2_format format = {};
-    format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    format.fmt.pix.width = width;
-    format.fmt.pix.height = height;
+    format.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    format.fmt.pix.width       = width;
+    format.fmt.pix.height      = height;
     format.fmt.pix.pixelformat = fourcc;//V4L2_PIX_FMT_YUYV;
-    format.fmt.pix.field = V4L2_FIELD_NONE;
+    format.fmt.pix.field       = V4L2_FIELD_NONE;
 
-    int res = ioctl(fd, VIDIOC_S_FMT, &format);
-    if(res == -1)
-    {
-        qd() << " error could not set format";
-        return false;
-    }
-
-    qd() << "set format OK";
-    return true;
+    if (ioctl(fd, VIDIOC_S_FMT, &format) == -1) { qd() << "Camera: error could not set format"; return false; }
+    qd() << QString("Camera: set format (%1x%2 %3) OK").arg(width).arg(height).arg(fourccToString(fourcc)); return true;
 }
 
 bool V4l2MmapDevice::start() 
 {
-    qd() << "start device " << _deviceName;
+    qd() << "Camera: starting device " << _deviceName << "...";
 
-    if (!request_buffer(m_fd, V4L2MMAP_NBBUFFER))
+    if (!requestBuffers(m_fd, V4L2MMAP_NBBUFFER))
         return false;
 
     if (!queryBuffers(m_fd, V4L2MMAP_NBBUFFER))
         return false;
 
-    if (!start_streaming(m_fd))
+    if (!streamOn(m_fd))
         return false;
 
     if (!queueBuffers(m_fd, V4L2MMAP_NBBUFFER))
         return false;
 
-
-    qd() << "start device OK";
+    qd() << "Camera: start device OK";
     return true;
 }
 
 bool V4l2MmapDevice::unmapAndDeleteBuffers()
 {
-    qd() << "unmap and delete buffers";
-
     bool result = true;
     for(uint32_t i=0; i< m_buffers.size(); i++)
     {
         if (munmap(m_buffers[i].start, m_buffers[i].length) == -1)
         {
-            qd() << "error munmap";
+            qd() << "Camera: error munmap";
             result = false;
         }
     }
 
     m_buffers.clear();
 
-    qd() <<  "Mmap buffers deleted";
+    qd() << "Camera: munmap and delete buffers OK";
     return result;
 }
 
 bool V4l2MmapDevice::freeBuffers()
 {
-    qd() << "free buffers";
-
     n_buffers = 0;
 
     v4l2_requestbuffers req = {};
@@ -228,18 +208,14 @@ bool V4l2MmapDevice::freeBuffers()
     req.type     = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory   = V4L2_MEMORY_MMAP;
 
-    if (ioctl(m_fd, VIDIOC_REQBUFS, &req) == -1)
-    {
-        qd() << "error VIDIOC_REQBUFS";
-        return false;
-    }
-
+    if (ioctl(m_fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
+    qd() << "Camera: free buffers OK";
     return true;
 }
 
 bool V4l2MmapDevice::stop() 
 {
-    qd() << "stop device " << _deviceName;
+    qd() << "Camera: stop device " << _deviceName;
 
     streamOff(m_fd);
     unmapAndDeleteBuffers();
@@ -250,20 +226,16 @@ bool V4l2MmapDevice::stop()
 
 bool V4l2MmapDevice::open(QString deviceName)
 {
-    qd() << "open device " << deviceName;
-
     _deviceName = deviceName;
 
-    m_fd = ::open(deviceName.toStdString().c_str(),  O_RDWR);
+    m_fd = ::open(deviceName.toStdString().c_str(),  O_RDWR); // TODO: возможно NONBLOCK
 
     if (m_fd < 0)
     {
-        qd() <<  "error cannot open device:" << deviceName << " " << strerror(errno);
+        qd() <<  "Camera: error cannot open device" << deviceName << strerror(errno);
         return false;
     }
-
-    qd() << "open device OK";
-
+    qd() << "Camera: open device" << deviceName << "OK";
     return true;
 }
 
@@ -279,7 +251,8 @@ bool V4l2MmapDevice::isReadable(int timeoutMs) const
 {
     if (m_fd == -1)
     {
-        qd() << "error fd = -1";
+        qd() << "Camera: error fd = -1";
+        return false;
     }
     // Use poll to wait for video capture events
     pollfd poll_fds[1];
@@ -291,22 +264,21 @@ bool V4l2MmapDevice::isReadable(int timeoutMs) const
 
 size_t V4l2MmapDevice::bufSize() const
 {
-     return _bufSize;
+    return _bufSize;
+}
+
+bool V4l2MmapDevice::streamOn(int fd)
+{
+    v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (ioctl(fd, VIDIOC_STREAMON, &type) == -1) { qd() << "Camera: error VIDIOC_STREAMON"; return false; }
+    qd() << "Camera: stream on OK"; return true;
 }
 
 bool V4l2MmapDevice::streamOff(int fd)
 {
-    qd() << "stream off";
-
     v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
-    if (ioctl(fd, VIDIOC_STREAMOFF, &type) == -1)
-    {
-        qd() << "error VIDIOC_STREAMOFF";
-        return false;
-    }
-
-    return true;
+    if (ioctl(fd, VIDIOC_STREAMOFF, &type) == -1) { qd() << "Camera: error VIDIOC_STREAMOFF"; return false; }
+    qd() << "Camera: stream off OK"; return true;
 }
 
 //void grab_yuyvframe() {
@@ -330,15 +302,16 @@ bool V4l2MmapDevice::streamOff(int fd)
 size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
 {
     size_t size = 0;
+
     if (n_buffers > 0)
     {
         v4l2_buffer buf = {};
         buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
 
-        if (-1 == ioctl(m_fd, VIDIOC_DQBUF, &buf))
+        if (ioctl(m_fd, VIDIOC_DQBUF, &buf) == -1)
         {
-            perror("VIDIOC_DQBUF");
+            qd() << "Camera: error VIDIOC_DQBUF";
             size = -1;
         }
         else if (buf.index < n_buffers)
@@ -351,9 +324,9 @@ size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
             }
             memcpy(buffer, m_buffers[buf.index].start, size);
 
-            if (-1 == ioctl(m_fd, VIDIOC_QBUF, &buf))
+            if (ioctl(m_fd, VIDIOC_QBUF, &buf) == -1)
             {
-                perror("VIDIOC_QBUF");
+                qd() <<  "Camera: error VIDIOC_QBUF";
                 size = -1;
             }
         }

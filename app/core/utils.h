@@ -18,7 +18,7 @@ public:
     ~ScopedMeasure();
 
 private:
-    std::chrono::system_clock::time_point _start;
+    std::chrono::steady_clock::time_point _start;
     QString _msg;
 };
 
@@ -31,7 +31,7 @@ public:
     void stop();
 
 private:
-    std::chrono::system_clock::time_point _start;
+    std::chrono::steady_clock::time_point _start;
     QString _msg;
 };
 
