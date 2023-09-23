@@ -32,15 +32,20 @@ cv::Scalar Color::ColorBlack(0, 0, 0, 0);
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
 {
-    for (size_t i = 0; i < circles.size(); i++ )
+    for (const cv::Vec3f& c : circles)
     {
-        cv::Vec3i c = circles[i];
-        cv::Point center = cv::Point(c[0], c[1]);
-        // circle center
-        cv::circle(image, center, 1, Color::ColorBlue, 3, cv::LINE_AA);
-        // circle outline
-        int radius = c[2];
-        cv::circle(image, center, radius, Color::ColorGreen, 1, cv::LINE_AA);
+        const cv::Point center = cv::Point(c[0], c[1]);
+        cv::circle(image, center, 1, Color::ColorBlue, 3, cv::LINE_AA);     // circle center
+        cv::circle(image, center, c[2], Color::ColorGreen, 1, cv::LINE_AA); // circle outline
+    }
+}
+
+void drawKeyPoints(const cv::Mat& image, const std::vector<cv::KeyPoint>& kps)
+{
+    for (const cv::KeyPoint & kp : kps)
+    {
+        cv::circle(image, kp.pt, 1, Color::ColorBlue, 3, cv::LINE_AA);          // circle center
+        cv::circle(image, kp.pt, kp.size/2, Color::ColorGreen, 1, cv::LINE_AA); // circle outline
     }
 }
 
@@ -107,12 +112,20 @@ void OpenCv::blobDetector(QImage img, QByteArray ba)
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("dp", 1.2);
-    db().insert("minDist", 70);
-    db().insert("param1", 168);
-    db().insert("param2", 29);
-    db().insert("minRadius", 80);
-    db().insert("maxRadius", 110);
+    db().insert("blob_minArea", 5000);
+    db().insert("blob_maxArea", 30000);
+//    db().insert("circle_param1", 168);
+//    db().insert("circle_param2", 29);
+//    db().insert("circle_minRadius", 80);
+//    db().insert("circle_maxRadius", 110);
+
+
+    db().insert("circle_dp", 1.2);
+    db().insert("circle_minDist", 70);
+    db().insert("circle_param1", 168);
+    db().insert("circle_param2", 29);
+    db().insert("circle_minRadius", 80);
+    db().insert("circle_maxRadius", 110);
 }
 
 OpenCvPrivate::~OpenCvPrivate()
@@ -164,12 +177,12 @@ void OpenCvPrivate::searchCircles(QImage imag, QByteArray ba)
         {
             //ScopedMeasure m("circles");
 
-            double dp = db().value("dp").toDouble();
-            double minDist = db().value("minDist").toDouble();
-            double param1 = db().value("param1").toDouble();
-            double param2 = db().value("param2").toDouble();
-            int minRadius = db().value("minRadius").toInt();
-            int maxRadius = db().value("maxRadius").toInt();
+            double dp = db().value("circle_dp").toDouble();
+            double minDist = db().value("circle_minDist").toDouble();
+            double param1 = db().value("circle_param1").toDouble();
+            double param2 = db().value("circle_param2").toDouble();
+            int minRadius = db().value("circle_minRadius").toInt();
+            int maxRadius = db().value("circle_maxRadius").toInt();
 
             cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius);
             //cv::HoughCircles(blur, circles, cv::HOUGH_GRADIENT, dp, 70, 168, 29, 80, 110);
@@ -202,35 +215,41 @@ void OpenCvPrivate::blobDetector(QImage imag, QByteArray ba)
 
     // Filter by Area.
     params.filterByArea = true;
-    params.minArea = 20000;
-    params.maxArea = 40000;
+    params.minArea = db().value("blob_minArea").toFloat();
+    params.maxArea = db().value("blob_maxArea").toFloat();
 
     // Filter by Circularity
     params.filterByCircularity = true;
     params.minCircularity = 0.5;
+    params.maxCircularity = 5.0;
 
     // Filter by Convexity
-    params.filterByConvexity = false;
+    //params.filterByConvexity = false;
     //params.minConvexity = 0.87
 
     // Filter by Inertia
     params.filterByInertia = true;
     params.minInertiaRatio = 0.8;
+    params.maxInertiaRatio = 5.0;
 
     // Distance Between Blobs
-    params.minDistBetweenBlobs = 200;
+    params.minDistBetweenBlobs = 2.0;
+
+
+    params.thresholdStep = 10.0;
+    params.minThreshold = 1.0;
+    params.maxThreshold = 200.0;
 
     // Create a detector with the parameters
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
-
-    // Storage for blobs
-    std::vector<cv::KeyPoint> keypoints;
 
     // Detect blobs
     cv::Mat rgbimg = qimage2mat(img);
     cv::Mat grey;
     cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
+    // Storage for blobs
+    std::vector<cv::KeyPoint> keypoints;
     detector->detect(grey, keypoints);
 
     // Draw detected blobs as red circles.
@@ -238,14 +257,15 @@ void OpenCvPrivate::blobDetector(QImage imag, QByteArray ba)
     // the size of the circle corresponds to the size of blob
 
     cv::Mat im_with_keypoints;
-    cv::drawKeypoints(grey, keypoints, im_with_keypoints, Color::ColorBlue, cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
+    //cv::drawKeypoints(grey, keypoints, im_with_keypoints, Color::ColorRed, cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    drawKeyPoints(rgbimg, keypoints);
 
 //    emit blobChanged(mat_to_qimage_ref(im_with_keypoints, QImage::Format_BGR888));
 
 
 
-    QImage im1 = QImage(im_with_keypoints.data, im_with_keypoints.cols, im_with_keypoints.rows, QImage::Format_RGB888);
+    //QImage im1 = QImage(im_with_keypoints.data, im_with_keypoints.cols, im_with_keypoints.rows, QImage::Format_RGB888);
+    QImage im1 = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
     im1.detach();
     emit blobChanged(im1);

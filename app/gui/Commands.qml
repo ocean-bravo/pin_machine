@@ -478,69 +478,18 @@ Item {
                             Video4.changeCamera(cameraList.currentIndex*2, md.width, md.height, md.fourcc)
                         }
                     }
-
-                    //                    double dp = db().value("dp").toDouble();
-                    //                    double minDist = db().value("minDist").toDouble();
-                    //                    double param1 = db().value("param1").toDouble();
-                    //                    double param2 = db().value("param2").toDouble();
-                    //                    int minRadius = db().value("minRadius").toInt();
-                    //                    int maxRadius = db().value("maxRadius").toInt();
-
-
                 }
-                Column {
+                CircleSettings {
+                    visible: imgType.currentText === "circle"
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-
-                    RowSpinSlider {
-                        text: "minDist"
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.minDist
-                        valueBind: function() { return DataBus.minDist }
-                        onValueChanged: DataBus.minDist = value
-                    }
-
-                    RowSpinSlider {
-                        text: "param1"
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.param1
-                        valueBind: function() { return DataBus.param1 }
-                        onValueChanged: DataBus.param1 = value
-                    }
-
-                    RowSpinSlider {
-                        text: "param2"
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.param2
-                        valueBind: function() { return DataBus.param2 }
-                        onValueChanged: DataBus.param2 = value
-                    }
-                    RowSpinSlider {
-                        text: "minRadius"
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.minRadius
-                        valueBind: function() { return DataBus.minRadius }
-                        onValueChanged: DataBus.minRadius = value
-                    }
-
-                    RowSpinSlider {
-                        text: "maxRadius"
-                        from: 0
-                        to: 500
-                        stepSize: 1
-                        value: DataBus.maxRadius
-                        valueBind: function() { return DataBus.maxRadius }
-                        onValueChanged: DataBus.maxRadius = value
-                    }
+                }
+                BlobSettings {
+                    visible: imgType.currentText === "blob"
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                 }
             }
         }
