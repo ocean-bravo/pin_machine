@@ -29,7 +29,7 @@ public:
 
 
 signals:
-    void newImage(QImage, QString, QByteArray);
+    void newImage(QImage);
 
 private:
     Video4Private* _impl = nullptr;
@@ -79,7 +79,7 @@ public slots:
 //    void onColorEnableSlider(int value);
 
 signals:
-    void newImage(QImage, QString, QByteArray);
+    void newImage(QImage);
     void newSize(quint32 width, quint32 height);
     void stopped();
 

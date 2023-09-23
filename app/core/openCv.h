@@ -6,7 +6,6 @@
 #include <QMutex>
 
 #include <vector>
-#include <tuple>
 
 class OpenCvPrivate;
 
@@ -18,12 +17,12 @@ public:
     OpenCv();
     ~OpenCv();
 
-    void searchCircles(QImage img, QByteArray ba);
-    void blobDetector(QImage img, QByteArray ba);
+    void searchCircles(QImage img);
+    void blobDetector(QImage img);
 
 signals:
-        void imageChanged(QImage);
-            void blobChanged(QImage);
+    void imageChanged(QImage);
+    void blobChanged(QImage);
 
 private:
     OpenCvPrivate* const _impl;
@@ -37,22 +36,17 @@ class OpenCvPrivate : public QObject
 public:
     OpenCvPrivate();
     ~OpenCvPrivate();
-
-
     void init();
 
 public slots:
-    void searchCircles(QImage img, QByteArray ba);
-    void blobDetector(QImage img, QByteArray ba);
+    void searchCircles(QImage img);
+    void blobDetector(QImage img);
 
 signals:
     void imageChanged(QImage);
     void blobChanged(QImage);
 
 private:
-
-    //QAtomicInteger<bool> _done = true;
     QMutex _jobDone;
-
 };
 

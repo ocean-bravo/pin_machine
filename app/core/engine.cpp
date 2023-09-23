@@ -34,8 +34,6 @@ Engine::Engine(QObject* parent)
 
     _videoDriver3 = new Video3();
     _videoDriver4 = new Video4();
-    //_videoDriver3->reloadDevices();
-    //_videoDriver3->changeCamera(0, 0);
 
     createQmlEngine();
 }
@@ -57,20 +55,17 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
 
     MyImageProvider*    myImageProvider = new MyImageProvider;
-    connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img, QString str, QByteArray ba)
+    connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img)
     {
-        //_image = img;
-        //qd() << "new image";
         myImageProvider->setImage(img, "raw");
-        //emit imageCaptured();
 
         QString mode = db().value("mode").toString();
 
         if (mode == "circle")
-            _openCv->searchCircles(img, ba);
+            _openCv->searchCircles(img);
 
         if (mode == "blob")
-            _openCv->blobDetector(img, ba);
+            _openCv->blobDetector(img);
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
