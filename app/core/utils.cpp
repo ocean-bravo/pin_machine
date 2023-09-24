@@ -12,17 +12,24 @@
 #include <chrono>
 #include <cmath>
 
-ScopedMeasure::ScopedMeasure(const QString& msg)
+ScopedMeasure::ScopedMeasure(const QString& msg, Units units)
     : _start(std::chrono::steady_clock::now())
     , _msg(msg)
+    , _units(units)
 {
 }
 
 ScopedMeasure::~ScopedMeasure()
 {
     const auto finish = std::chrono::steady_clock::now();
-    const std::chrono::duration<double, std::micro> elapsed = finish - _start;
 
+    if (_units == Units::Milli)
+    {
+        const std::chrono::duration<double, std::milli> elapsed = finish - _start;
+        qd() << _msg << elapsed.count() << "ms";
+        return;
+    }
+    const std::chrono::duration<double, std::micro> elapsed = finish - _start;
     qd() << _msg << elapsed.count() << "us";
 }
 

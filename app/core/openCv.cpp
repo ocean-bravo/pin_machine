@@ -3,40 +3,29 @@
 
 #include "data_bus.h"
 
+#include <QtConcurrent>
+
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
+namespace ColorRgb {
+cv::Scalar Blue(0, 0, 255, 255);
+cv::Scalar Red(255, 0, 0, 255);
+cv::Scalar Green(0, 255, 0, 255);
+cv::Scalar White(255, 255, 255);
+cv::Scalar Black(0, 0, 0, 0);
+}
 
 namespace {
-
-//In the header file add:
-
-class Color
-{
-    public:
-    static cv::Scalar ColorBlue;
-    static cv::Scalar ColorRed;
-    static cv::Scalar ColorGreen;
-    static cv::Scalar ColorWhite;
-    static cv::Scalar ColorBlack;
-};
-
-//In the cpp file add:
-
-cv::Scalar Color::ColorBlue(0, 0, 255, 255); //rgb 0 0 255
-cv::Scalar Color::ColorRed(255, 0, 0, 255); // rgb 255 0 0
-cv::Scalar Color::ColorGreen(0, 255, 0, 255);
-cv::Scalar Color::ColorWhite(255, 255, 255);
-cv::Scalar Color::ColorBlack(0, 0, 0, 0);
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
 {
     for (const cv::Vec3f& c : circles)
     {
         const cv::Point center = cv::Point(c[0], c[1]);
-        cv::circle(image, center, 1, Color::ColorBlue, 3, cv::LINE_AA);     // circle center
-        cv::circle(image, center, c[2], Color::ColorGreen, 1, cv::LINE_AA); // circle outline
+        cv::circle(image, center, 1, ColorRgb::Blue, 3, cv::LINE_AA);     // circle center
+        cv::circle(image, center, c[2], ColorRgb::Green, 1, cv::LINE_AA); // circle outline
     }
 }
 
@@ -44,8 +33,8 @@ void drawKeyPoints(const cv::Mat& image, const std::vector<cv::KeyPoint>& kps)
 {
     for (const cv::KeyPoint & kp : kps)
     {
-        cv::circle(image, kp.pt, 1, Color::ColorBlue, 3, cv::LINE_AA);          // circle center
-        cv::circle(image, kp.pt, kp.size/2, Color::ColorGreen, 1, cv::LINE_AA); // circle outline
+        cv::circle(image, kp.pt, 1, ColorRgb::Blue, 3, cv::LINE_AA);          // circle center
+        cv::circle(image, kp.pt, kp.size/2, ColorRgb::Green, 1, cv::LINE_AA); // circle outline
     }
 }
 
@@ -114,10 +103,10 @@ OpenCvPrivate::OpenCvPrivate()
 {
     db().insert("blob_minArea", 5000);
     db().insert("blob_maxArea", 30000);
-//    db().insert("circle_param1", 168);
-//    db().insert("circle_param2", 29);
-//    db().insert("circle_minRadius", 80);
-//    db().insert("circle_maxRadius", 110);
+    db().insert("blob_thresholdStep", 10);
+    db().insert("blob_minThreshold", 1);
+    db().insert("blob_maxThreshold", 200);
+    //    db().insert("circle_maxRadius", 110);
 
 
     db().insert("circle_dp", 1.2);
@@ -126,6 +115,16 @@ OpenCvPrivate::OpenCvPrivate()
     db().insert("circle_param2", 29);
     db().insert("circle_minRadius", 80);
     db().insert("circle_maxRadius", 110);
+
+    connect(&_circleWatcher, &QFutureWatcher<QImage>::finished, this, [this]()
+    {
+        emit imageChanged(_circleWatcher.result());
+    });
+
+    connect(&_blobWatcher, &QFutureWatcher<QImage>::finished, this, [this]()
+    {
+        emit blobChanged(_blobWatcher.result());
+    });
 }
 
 OpenCvPrivate::~OpenCvPrivate()
@@ -140,8 +139,16 @@ void OpenCvPrivate::init()
 
 void OpenCvPrivate::searchCircles(QImage img)
 {
-    if (!_jobDone.tryLock())
+    if (!_circleWatcher.isFinished())
         return;
+
+    QFuture<QImage> future = QtConcurrent::run(this, &OpenCvPrivate::searchCirclesWorker, img);
+    _circleWatcher.setFuture(future);
+}
+
+QImage OpenCvPrivate::searchCirclesWorker(QImage img)
+{
+    ScopedMeasure mes ("circles", ScopedMeasure::Milli);
 
     try
     {
@@ -174,20 +181,27 @@ void OpenCvPrivate::searchCircles(QImage img)
 
         QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-        emit imageChanged(im);
+        return im;
     }
     catch (...)
     {
         qd() << "упало";
     }
-
-    _jobDone.unlock();
+    return QImage();
 }
 
 void OpenCvPrivate::blobDetector(QImage img)
 {
-    if (!_jobDone.tryLock())
+    if (!_blobWatcher.isFinished())
         return;
+
+    QFuture<QImage> future = QtConcurrent::run(this, &OpenCvPrivate::blobDetectorWorker, img);
+    _blobWatcher.setFuture(future);
+}
+
+QImage OpenCvPrivate::blobDetectorWorker(QImage img)
+{
+    ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
 
     // Setup BlobDetector
     cv::SimpleBlobDetector::Params params;
@@ -214,9 +228,9 @@ void OpenCvPrivate::blobDetector(QImage img)
     // Distance Between Blobs
     params.minDistBetweenBlobs = 2.0;
 
-    params.thresholdStep = 10.0;
-    params.minThreshold = 1.0;
-    params.maxThreshold = 200.0;
+    params.thresholdStep = db().value("blob_thresholdStep").toFloat();
+    params.minThreshold = db().value("blob_minThreshold").toFloat();
+    params.maxThreshold = db().value("blob_maxThreshold").toFloat();
 
     // Create a detector with the parameters
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
@@ -234,7 +248,5 @@ void OpenCvPrivate::blobDetector(QImage img)
 
     QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-    emit blobChanged(im);
-
-    _jobDone.unlock();
+    return im;
 }

@@ -17,17 +17,17 @@ Item {
             valueBind: function() { return DataBus.blob_maxArea }
             onValueChanged: DataBus.blob_maxArea = value
         }
-//        RowSpinSlider { text: "param2"; from: 0; to: 500; stepSize: 1; value: DataBus.param2
-//            valueBind: function() { return DataBus.param2 }
-//            onValueChanged: DataBus.param2 = value
-//        }
-//        RowSpinSlider { text: "minRadius"; from: 0; to: 500; stepSize: 1; value: DataBus.minRadius
-//            valueBind: function() { return DataBus.minRadius }
-//            onValueChanged: DataBus.minRadius = value
-//        }
-//        RowSpinSlider { text: "maxRadius"; from: 0; to: 500; stepSize: 1; value: DataBus.maxRadius
-//            valueBind: function() { return DataBus.maxRadius }
-//            onValueChanged: DataBus.maxRadius = value
-//        }
+        RowSpinSlider { text: "thresholdStep"; from: 0; to: 100; stepSize: 1; value: DataBus.blob_thresholdStep
+            valueBind: function() { return DataBus.blob_thresholdStep }
+            onValueChanged: DataBus.blob_thresholdStep = value
+        }
+        RowSpinSlider { text: "minThreshold"; from: 0; to: 500; stepSize: 1; value: DataBus.blob_minThreshold
+            valueBind: function() { return DataBus.blob_minThreshold }
+            onValueChanged: DataBus.blob_minThreshold = value
+        }
+        RowSpinSlider { text: "maxThreshold"; from: 0; to: 500; stepSize: 1; value: DataBus.blob_maxThreshold
+            valueBind: function() { return DataBus.blob_maxThreshold }
+            onValueChanged: DataBus.blob_maxThreshold = value
+        }
     }
 }

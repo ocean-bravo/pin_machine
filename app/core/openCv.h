@@ -3,7 +3,7 @@
 #include <QString>
 #include <QObject>
 #include <QImage>
-#include <QMutex>
+#include <QFutureWatcher>
 
 #include <vector>
 
@@ -47,6 +47,10 @@ signals:
     void blobChanged(QImage);
 
 private:
-    QMutex _jobDone;
+    QImage searchCirclesWorker(QImage img);
+    QImage blobDetectorWorker(QImage img);
+
+    QFutureWatcher<QImage> _circleWatcher;
+    QFutureWatcher<QImage> _blobWatcher;
 };
 

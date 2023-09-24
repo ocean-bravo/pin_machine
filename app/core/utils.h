@@ -14,12 +14,14 @@ class QJsonObject;
 class ScopedMeasure
 {
 public:
-    ScopedMeasure(const QString& msg);
+    enum Units { Micro, Milli };
+    ScopedMeasure(const QString& msg, Units = Units::Micro);
     ~ScopedMeasure();
 
 private:
     std::chrono::steady_clock::time_point _start;
     QString _msg;
+    Units _units = Units::Micro;
 };
 
 class Measure
