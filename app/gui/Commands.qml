@@ -398,16 +398,16 @@ Item {
                     }
                 }
 
-                Timer {
-                    id: updateTimer
-                    interval: 1
-                    repeat: true
-                    triggeredOnStart: true
-                    running: false
-                    onTriggered: {
+//                Timer {
+//                    id: updateTimer
+//                    interval: 1
+//                    repeat: true
+//                    triggeredOnStart: true
+//                    running: false
+//                    onTriggered: {
 
-                    }
-                }
+//                    }
+//                }
 
                 Column {
                     spacing: 5

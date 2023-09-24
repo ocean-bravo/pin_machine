@@ -144,13 +144,16 @@ void Video4Private::update()
     auto finish = std::chrono::steady_clock::now();
 
     int i = 0;
+
+    QEventLoop loop;
+
     while (true)
     {
         //qd() << QDateTime::currentMSecsSinceEpoch();
 
         //ScopedMeasure ("updat");
 
-        QEventLoop loop;
+
         QTimer::singleShot(1, &loop, &QEventLoop::quit);
         loop.exec();
 

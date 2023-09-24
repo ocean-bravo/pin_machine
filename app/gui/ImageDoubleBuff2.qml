@@ -3,15 +3,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-
 Item {
     id: root
 
-//    property string source
-
-//    onSourceChanged: {
-//        setSource(source)
-//    }
+    function setSource(source){
+        var imageNotVis = image.visible ? image2 : image
+        imageNotVis.source = ""
+        imageNotVis.source = source
+    }
 
     component MyImage :
         Image {
@@ -41,21 +40,19 @@ Item {
             id: image
             visible: true
             onStatusChanged: {
-                if (status === Component.Ready)
+                if (status === Component.Ready) {
                     visible = true
-                else
-                    visible = false
+                }
             }
         }
 
         MyImage {
             id: image2
-            visible: false
+            visible: !image.visible
             onStatusChanged: {
-                if (status === Component.Ready)
-                    visible = true
-                else
-                    visible = false
+                if (status === Component.Ready) {
+                    image.visible = false
+                }
             }
         }
     }
@@ -75,15 +72,5 @@ Item {
 
             wheel.accepted=true
         }
-    }
-
-    function setSource(source){
-        //console.log("set source ", source)
-        var imageNotVis = image.visible ? image2 : image
-        var imageVis = image.visible ? image : image2
-
-        imageNotVis.source = ""
-
-        imageNotVis.source = source
     }
 }
