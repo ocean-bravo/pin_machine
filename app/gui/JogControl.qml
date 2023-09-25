@@ -36,7 +36,7 @@ Rectangle {
     }
 
     function jog(axis, mm) {
-        let feed = 100
+        let feed = 1000
         write("$J=G91 " + axis + mm + " F" + feed + "\n")
     }
 
