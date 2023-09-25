@@ -346,6 +346,15 @@ Item {
                         sendCodeTimer.stopProgram()
                     }
                 }
+                SmButton {
+                    text: qsTr("Generate program")
+                    onClicked: {
+                        codeEditor.clear()
+                        codeEditor.append(Utils.generateSteps(100, 100, 200, 200, 6.25, 4.25, 5000).join("\n"))
+                    }
+                }
+
+
             }
 
             JogControl {

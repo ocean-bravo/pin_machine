@@ -15,6 +15,10 @@ Item {
         edit.append(txt)
     }
 
+    function clear() {
+        edit.clear()
+    }
+
     Flickable {
         id: flick
         focus: false
