@@ -132,7 +132,7 @@ OpenCvPrivate::OpenCvPrivate()
         QString res;
         for (cv::KeyPoint kp : kps)
         {
-            res += QString("(%1, %2) %3").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
+            res += QString("(%1, %2) %3\n").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
         }
 
         db().insert("blob_info", res);
