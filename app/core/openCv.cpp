@@ -34,7 +34,7 @@ void drawKeyPoints(const cv::Mat& image, const std::vector<cv::KeyPoint>& kps)
     for (const cv::KeyPoint & kp : kps)
     {
         cv::circle(image, kp.pt, 1, ColorRgb::Blue, 3, cv::LINE_AA);          // circle center
-        cv::circle(image, kp.pt, kp.size/2, ColorRgb::Green, 1, cv::LINE_AA); // circle outline
+        cv::circle(image, kp.pt, kp.size/2, ColorRgb::Red, -1, cv::LINE_AA); // circle outline
     }
 }
 
