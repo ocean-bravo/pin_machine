@@ -6,6 +6,9 @@
 #include <QFutureWatcher>
 
 #include <vector>
+#include <tuple>
+
+#include <opencv2/core/types.hpp>
 
 class OpenCvPrivate;
 
@@ -48,9 +51,13 @@ signals:
 
 private:
     QImage searchCirclesWorker(QImage img);
-    QImage blobDetectorWorker(QImage img);
+
+    using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
+
+
+    BlobInfo blobDetectorWorker(QImage img);
 
     QFutureWatcher<QImage> _circleWatcher;
-    QFutureWatcher<QImage> _blobWatcher;
+    QFutureWatcher<BlobInfo> _blobWatcher;
 };
 

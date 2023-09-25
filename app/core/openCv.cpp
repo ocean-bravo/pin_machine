@@ -108,6 +108,8 @@ OpenCvPrivate::OpenCvPrivate()
     db().insert("blob_maxThreshold", 200);
     //    db().insert("circle_maxRadius", 110);
 
+    db().insert("blob_info", "");
+
 
     db().insert("circle_dp", 1.2);
     db().insert("circle_minDist", 70);
@@ -121,9 +123,19 @@ OpenCvPrivate::OpenCvPrivate()
         emit imageChanged(_circleWatcher.result());
     });
 
-    connect(&_blobWatcher, &QFutureWatcher<QImage>::finished, this, [this]()
+    connect(&_blobWatcher, &QFutureWatcher<BlobInfo>::finished, this, [this]()
     {
-        emit blobChanged(_blobWatcher.result());
+        emit blobChanged(std::get<0>(_blobWatcher.result()));
+
+        auto kps = std::get<1>(_blobWatcher.result());
+
+        QString res;
+        for (cv::KeyPoint kp : kps)
+        {
+            res += QString("(%1, %2) %3").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
+        }
+
+        db().insert("blob_info", res);
     });
 }
 
@@ -195,11 +207,11 @@ void OpenCvPrivate::blobDetector(QImage img)
     if (!_blobWatcher.isFinished())
         return;
 
-    QFuture<QImage> future = QtConcurrent::run(this, &OpenCvPrivate::blobDetectorWorker, img);
+    QFuture<BlobInfo> future = QtConcurrent::run(this, &OpenCvPrivate::blobDetectorWorker, img);
     _blobWatcher.setFuture(future);
 }
 
-QImage OpenCvPrivate::blobDetectorWorker(QImage img)
+OpenCvPrivate::BlobInfo OpenCvPrivate::blobDetectorWorker(QImage img)
 {
     ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
 
@@ -248,5 +260,5 @@ QImage OpenCvPrivate::blobDetectorWorker(QImage img)
 
     QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-    return im;
+    return {im, keypoints};
 }

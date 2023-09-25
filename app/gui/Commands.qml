@@ -387,27 +387,11 @@ Item {
                 Connections {
                     target: Engine
                     function onImageChanged(id) {
-                        //console.log("image changed " , id)
                         if (id !== imgType.currentText)
                             return
-
-                        //console.log("get image " , id)
                         image.setSource("image://camera/" +  id)
-                        //                        image.source = ""
-                        //                        image.source = "image://camera/" +  id
                     }
                 }
-
-//                Timer {
-//                    id: updateTimer
-//                    interval: 1
-//                    repeat: true
-//                    triggeredOnStart: true
-//                    running: false
-//                    onTriggered: {
-
-//                    }
-//                }
 
                 Column {
                     spacing: 5
@@ -426,6 +410,15 @@ Item {
                                 Video4.stop()
                         }
                     }
+
+                    Text {
+                        anchors.top: parent.top
+                        anchors.left: reloadDevices.right
+
+                        text: DataBus.blob_info
+
+                    }
+
 
                     Button {
                         id: reloadDevices
