@@ -82,11 +82,11 @@ Item {
                 //                if (msg.includes(alrm))
                 //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
                 //            }
-                            for (let j = 1; j < 100; ++j) {
-                                let err = "error:" + j
-                                if (msg.includes(err))
-                                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-                            }
+                for (let j = 1; j < 100; ++j) {
+                    let err = "error:" + j
+                    if (msg.includes(err))
+                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+                }
                 logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
             }
         }
@@ -96,18 +96,17 @@ Item {
         id: cycle
         function runAsync() {
             asyncToGenerator( function* () {
-                Video4.capture()
-                yield waitForSignal(Video4.captured);
-                //sendCodeTimer.sendNextLine()
-                status = "wait"
-                console.log("status ", root["status"])
+                while (true) {
+                    sendCodeTimer.sendNextLine()
+                    yield waitUntil({target: root, property: "status", value: "Idle"})
+                    Video4.capture()
+                    yield waitForSignal(Video4.captured)
 
-
-                yield waitUntil({target: root, property: "status", value: "Idle"})
-
-
-                console.log("status ", status)
-
+                    if (sendCodeTimer.lineToSend >= sendCodeTimer.codeLines.length) {
+                        sendCodeTimer.stopProgram()
+                        return
+                    }
+                }
             } )();
         }
     }
@@ -143,16 +142,25 @@ Item {
             status = "wait for update"
         }
 
+        function startProgram() {
+            lineToSend = 0
+            status = "Wait"
+            codeEditor.readOnly = true
+            sendCodeTimer.codeLines = codeEditor.text.split("\n")
+
+            cycle.runAsync()
+        }
+
         function startResumeProgram() {
             if (lineToSend === 0) {
                 status = "wait for update"
                 codeEditor.readOnly = true
                 sendCodeTimer.codeLines = codeEditor.text.split("\n")
-                conn = Video4.captured.connect(sendNextLine)
+
             }
 
-            sendCodeTimer.interval = 20 // Замедление программы
-            sendCodeTimer.start()
+//            sendCodeTimer.interval = 20 // Замедление программы
+//            sendCodeTimer.start()
 
             statusTimer.interval = 100
             statusTimer.start()
@@ -161,7 +169,7 @@ Item {
         }
 
         function pauseProgram() {
-            sendCodeTimer.stop()
+            //sendCodeTimer.stop()
             statusTimer.stop()
             playPauseProgram.text = qsTr("Resume program")
         }
@@ -172,7 +180,6 @@ Item {
             codeEditor.readOnly = false
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
-            Video4.disconnect(conn)
         }
     }
 
