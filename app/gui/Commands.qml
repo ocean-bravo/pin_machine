@@ -295,12 +295,8 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                 }
 
-
                 //                Item { height: 20; width: 10}
                 //                Item { height: 20; width: 10}
-
-
-
 
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
@@ -353,8 +349,6 @@ Item {
                         codeEditor.append(Utils.generateSteps(0, 100, 200, 300, 6.25, 4.25, 5000).join("\n"))
                     }
                 }
-
-
             }
 
             JogControl {
@@ -383,15 +377,10 @@ Item {
                 }
             }
 
-
-
             ImageDoubleBuff2 {
                 id: image
                 width: parent.width
                 height: parent.height
-
-                //property string source :  "image://camera/raw"
-                //source: "image://camera/raw"
 
                 Connections {
                     target: Engine
@@ -423,17 +412,13 @@ Item {
                     Text {
                         anchors.top: startStopUpdate.top
                         anchors.left: reloadDevices.right
-
                         text: DataBus.blob_info
-
                     }
-
 
                     Button {
                         id: reloadDevices
                         width: 200
                         text: qsTr("Reload devices")
-                        //property bool update: false
                         onPressed: {
                             Video3.reloadDevices()
                         }

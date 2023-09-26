@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QScopedPointer>
 #include <QImage>
 #include "openpnp-capture.h"
 #include <vector>
@@ -79,7 +80,7 @@ signals:
     void stopped();
 
 private:
-    V4l2MmapDevice* _videoCapture = nullptr;
+    QScopedPointer<V4l2MmapDevice> _videoCapture;
 
     QAtomicInteger<bool> _running = false;
 };

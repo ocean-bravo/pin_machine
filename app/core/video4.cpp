@@ -74,8 +74,7 @@ void Video4::stop()
 
 Video4Private::~Video4Private()
 {
-    if (_videoCapture)
-        delete _videoCapture;
+
 }
 
 void Video4Private::reloadDevices()
@@ -190,9 +189,6 @@ void Video4Private::update()
 
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)
 {
-    if (_videoCapture)
-        delete _videoCapture;
-
-    _videoCapture = new V4l2MmapDevice;
+    _videoCapture.reset(new V4l2MmapDevice);
     _videoCapture->init(device, width, height, V4l2Device::fourcc(fourcc.toLatin1().toStdString().c_str()));
 }
