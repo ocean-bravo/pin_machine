@@ -97,13 +97,14 @@ Item {
         function runAsync() {
             asyncToGenerator( function* () {
                 while (true) {
-                    sendCodeTimer.sendNextLine()
+                    sendCodeObj.sendNextLine()
+                    status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
                     Video4.capture()
                     yield waitForSignal(Video4.captured)
 
-                    if (sendCodeTimer.lineToSend >= sendCodeTimer.codeLines.length) {
-                        sendCodeTimer.stopProgram()
+                    if (sendCodeObj.lineToSend >= sendCodeObj.codeLines.length) {
+                        sendCodeObj.stopProgram()
                         return
                     }
                 }
@@ -111,51 +112,39 @@ Item {
         }
     }
 
-    Timer {
-        id: sendCodeTimer
+    Item {
+        id: sendCodeObj
 
-        repeat: true
         property var codeLines: []
         property int lineToSend: 0
 
-        property var conn
-        onTriggered: {
-            //console.log("triggered")
-            if (lineToSend >= codeLines.length) {
-                stopProgram()
-                return
-            }
-
-            if (status === "Idle") {
-                cycle.runAsync()
-            }
-        }
-
         function sendNextLine() {
             var line = codeLines[lineToSend]
-            //console.log(line)
+            console.log(line)
             Serial.write(line)
             let lineNumber = lineToSend+1
             var msg = "" + lineNumber + ": " + line + "\n"
             appendLog(msg)
             ++lineToSend
-            status = "wait for update"
         }
 
         function startProgram() {
             lineToSend = 0
             status = "Wait"
             codeEditor.readOnly = true
-            sendCodeTimer.codeLines = codeEditor.text.split("\n")
+            sendCodeObj.codeLines = codeEditor.text.split("\n")
+
+            statusTimer.interval = 100
+            statusTimer.start()
 
             cycle.runAsync()
         }
 
         function startResumeProgram() {
             if (lineToSend === 0) {
-                status = "wait for update"
+                status = "Wait"
                 codeEditor.readOnly = true
-                sendCodeTimer.codeLines = codeEditor.text.split("\n")
+                sendCodeObj.codeLines = codeEditor.text.split("\n")
 
             }
 
@@ -364,14 +353,14 @@ Item {
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
-                    onCheckedChanged: checked ? sendCodeTimer.startResumeProgram() : sendCodeTimer.pauseProgram()
+                    onCheckedChanged: checked ? sendCodeObj.startResumeProgram() : sendCodeObj.pauseProgram()
                     checkable: true
                 }
                 SmButton {
                     text: qsTr("Stop program")
                     onClicked: {
                         playPauseProgram.checked = false
-                        sendCodeTimer.stopProgram()
+                        sendCodeObj.stopProgram()
                     }
                 }
                 SmButton {
