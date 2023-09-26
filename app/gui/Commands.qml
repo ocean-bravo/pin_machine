@@ -98,8 +98,10 @@ Item {
             asyncToGenerator( function* () {
                 Video4.capture()
                 yield waitForSignal(Video4.captured);
-                sendCodeTimer.sendNextLine()
+                //sendCodeTimer.sendNextLine()
+                status = "wait"
                 console.log("status ", status)
+
 
                 yield waitUntil({target: root, property: status, value: "Idle"})
 
