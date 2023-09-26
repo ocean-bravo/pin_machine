@@ -351,7 +351,7 @@ Item {
                     text: qsTr("Generate program")
                     onClicked: {
                         codeEditor.clear()
-                        codeEditor.append(Utils.generateSteps(0, 100, 200, 300, 6.25, 4.25, 5000).join("\n"))
+                        codeEditor.append(Utils.generateSteps(0, 100, 200, 200, 6.25, 4.25, 5000).join("\n"))
                     }
                 }
             }
