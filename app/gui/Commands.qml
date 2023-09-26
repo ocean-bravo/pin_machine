@@ -97,11 +97,12 @@ Item {
         function runAsync() {
             asyncToGenerator( function* () {
                 Video4.capture()
-                yield waitForSignal(Video4.captured)
+                yield waitForSignal(Video4.captured);
                 sendCodeTimer.sendNextLine()
                 console.log("status ", status)
 
-                yield waitForSignal(root.onStatusChanged)
+                yield waitUntil({target: root, property: status, value: "Idle"})
+
 
                 console.log("status ", status)
 
