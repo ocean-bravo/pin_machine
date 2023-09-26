@@ -152,7 +152,7 @@ Item {
             codeEditor.readOnly = false
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
-            Video4.captured.disconnect(sendNextLine())
+            Video4.captured.disconnect(sendNextLine)
         }
     }
 
