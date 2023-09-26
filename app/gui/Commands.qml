@@ -82,11 +82,11 @@ Item {
                 //                if (msg.includes(alrm))
                 //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
                 //            }
-                //            for (let j = 1; j < 100; ++j) {
-                //                let err = "error:" + j
-                //                if (msg.includes(err))
-                //                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-                //            }
+                            for (let j = 1; j < 100; ++j) {
+                                let err = "error:" + j
+                                if (msg.includes(err))
+                                    msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+                            }
                 logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
             }
         }
@@ -523,25 +523,76 @@ Item {
     }
 
     property variant errors :  {
-        1: "G-code words consist of a letter and a value. Letter was not found.",
-        2: "Numeric value format is not valid or missing an expected value.",
-        3: "",
-        4: "",
-        5: "",
-        6: "",
-        7: "",
-        8: "Grbl '$' command cannot be used unless Grbl is IDLE. Ensures smooth operation during a job.",
-        9: "G-code locked out during alarm or jog state",
-        10: "",
-        11: "",
-        12: "",
-        13: "",
-        14: "",
-        15: "",
-        16: "",
-        17: "",
-        18: ""
+        0: "No error",
+        1: "Expected GCodecommand letter",
+        2: "Bad GCode number format",
+        3: "Invalid $ statement",
+        4: "Negative value",
+        5: "Setting disabled",
+        6: "Step pulse too short",
+        7: "Failed to read settings",
+        8: "Command requires idle state",
+        9: "GCode cannot be executed in lock or alarm state",
+        10: "Soft limit error",
+        11: "Line too long",
+        12: "Max step rate exceeded",
+        13: "Check door",
+        14: "Startup line too long",
+        15: "Max travel exceeded during jog",
+        16: "Invalid jog command",
+        17: "Laser mode requires PWM output",
+        18: "No Homing/Cycle defined in settings",
+        19: "Single axis homing not allowed",
+        20: "Unsupported GCode command",
+        21: "Gcode modal group violation",
+        22: "Gcode undefined feed rate",
+        23: "Gcode command value not integer",
+        24: "Gcode axis command conflict",
+        25: "Gcode word repeated",
+        26: "Gcode no axis words",
+        27: "Gcode invalid line number",
+        28: "Gcode value word missing",
+        29: "Gcode unsupported coordinate system",
+        30: "Gcode G53 invalid motion mode",
+        31: "Gcode extra axis words",
+        32: "Gcode no axis words in plane",
+        33: "Gcode invalid target",
+        34: "Gcode arc radius error",
+        35: "Gcode no offsets in plane",
+        36: "Gcode unused words",
+        37: "Gcode G43 dynamic axis error",
+        38: "Gcode max value exceeded",
+        39: "P param max exceeded",
+        40: "Check control pins",
+        60: "Failed to mount device",
+        61: "Read failed",
+        62: "Failed to open directory",
+        63: "Directory not found",
+        64: "File empty",
+        65: "File not found",
+        66: "Failed to open file",
+        67: "Device is busy",
+        68: "Failed to delete directory",
+        69: "Failed to delete file",
+        70: "Failed to rename file",
+        80: "Number out of range for setting",
+        81: "Invalid value for setting",
+        82: "Failed to create file",
+        83: "Failed to format filesystem",
+        90: "Failed to send message",
+        100: "Failed to store setting",
+        101: "Failed to get setting status",
+        110: "Authentication failed!",
+        111: "End of line",
+        112: "End of file",
+        120: "Another interface is busy",
+        130: "Jog Cancelled",
+        150: "Bad Pin Specification",
+        152: "Configuration is invalid. Check boot messages for ERR's.",
+        160: "File Upload Failed",
+        161: "File Download Failed",
     }
+
 
     property variant settings :  {
         0:	"Step pulse, microseconds",
