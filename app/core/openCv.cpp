@@ -150,7 +150,7 @@ void OpenCv::blobDetector(QImage img)
 
 void OpenCv::addToDetectBlobQueue(QImage img)
 {
-    _detectBlobQueue.push_back(img);
+    //_detectBlobQueue.push_back(img);
 }
 
 OpenCvPrivate::OpenCvPrivate()
@@ -191,11 +191,6 @@ OpenCvPrivate::OpenCvPrivate()
 
         db().insert("blob_info", res);
     });
-}
-
-OpenCvPrivate::~OpenCvPrivate()
-{
-
 }
 
 void OpenCvPrivate::init()

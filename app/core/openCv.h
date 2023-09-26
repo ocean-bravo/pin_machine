@@ -45,7 +45,6 @@ class OpenCvPrivate : public QObject
 
 public:
     OpenCvPrivate();
-    ~OpenCvPrivate();
     void init();
 
 public slots:

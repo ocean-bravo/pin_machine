@@ -424,6 +424,15 @@ Item {
                         }
                     }
 
+                    Button {
+                        id: captureFrame
+                        width: 200
+                        text: qsTr("Capture frame")
+                        onPressed: {
+                            Video4.capture()
+                        }
+                    }
+
                     ComboBox {
                         id: imgType
                         width: 200
@@ -431,6 +440,7 @@ Item {
                             ListElement { text: "raw" }
                             ListElement { text: "circle" }
                             ListElement { text: "blob" }
+                            ListElement { text: "raw captured" }
                         }
                         onActivated: {
                             image.setSource("image://camera/" + textAt(index))
