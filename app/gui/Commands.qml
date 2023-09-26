@@ -99,6 +99,7 @@ Item {
         property var codeLines: []
         property int lineToSend: 0
 
+        property var conn
         onTriggered: {
             //console.log("triggered")
             if (lineToSend >= codeLines.length) {
@@ -128,7 +129,7 @@ Item {
                 status = "wait for update"
                 codeEditor.readOnly = true
                 sendCodeTimer.codeLines = codeEditor.text.split("\n")
-                Video4.captured.connect(sendNextLine)
+                conn = Video4.captured.connect(sendNextLine)
             }
 
             sendCodeTimer.interval = 20 // Замедление программы
@@ -152,7 +153,7 @@ Item {
             codeEditor.readOnly = false
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
-            Video4.captured.disconnect(sendNextLine)
+            Video4.disconnect(conn)
         }
     }
 
