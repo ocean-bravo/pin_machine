@@ -106,6 +106,7 @@ void Video4Private::stop()
 
 void Video4Private::capture()
 {
+    qd() << "capture";
     _capture = true;
     _firstFrameThrowOut = false;
 }

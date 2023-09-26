@@ -112,7 +112,7 @@ Item {
             }
         }
 
-        function sendNextLine() {
+        function sendNextLine(im) {
             var line = codeLines[lineToSend]
             console.log(line)
             Serial.write(line)
