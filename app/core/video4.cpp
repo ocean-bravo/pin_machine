@@ -106,7 +106,7 @@ void Video4Private::stop()
 
 void Video4Private::capture()
 {
-    qd() << "capture";
+    qd() << "Video4Private::capture";
     _capture = true;
     _firstFrameThrowOut = false;
 }
@@ -192,6 +192,7 @@ void Video4Private::update()
                 {
                     _firstFrameThrowOut = false;
                     _capture = false;
+                    qd() << "Video4Private::update captured";
                     emit captured(img.copy());
                 }
                 else

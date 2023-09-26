@@ -92,6 +92,20 @@ Item {
         }
     }
 
+    QMLPromises {
+        id: cycle
+        function runAsync() {
+            asyncToGenerator( function* () {
+                Video4.capture()
+                yield waitForSignal(Video4.captured)
+                sendCodeTimer.sendNextLine()
+
+//                console.log("capture finished")
+
+            } )();
+        }
+    }
+
     Timer {
         id: sendCodeTimer
 
@@ -108,11 +122,11 @@ Item {
             }
 
             if (status === "Idle") {
-                Video4.capture()
+                cycle.runAsync()
             }
         }
 
-        function sendNextLine(im) {
+        function sendNextLine() {
             var line = codeLines[lineToSend]
             console.log(line)
             Serial.write(line)
@@ -435,7 +449,8 @@ Item {
                         width: 200
                         text: qsTr("Capture frame")
                         onPressed: {
-                            Video4.capture()
+                            //Video4.capture()
+                            cycle.runAsync()
                         }
                     }
 
