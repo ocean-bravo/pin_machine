@@ -100,8 +100,10 @@ Item {
                     sendCodeObj.sendNextLine()
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
+                    appendLog("capturing ...\n")
                     Video4.capture()
                     yield waitForSignal(Video4.captured)
+                    appendLog("captured\n")
 
                     if (sendCodeObj.lineToSend >= sendCodeObj.codeLines.length) {
                         sendCodeObj.stopProgram()
