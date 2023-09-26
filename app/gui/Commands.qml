@@ -99,8 +99,11 @@ Item {
                 Video4.capture()
                 yield waitForSignal(Video4.captured)
                 sendCodeTimer.sendNextLine()
+                console.log("status ", status)
 
-//                console.log("capture finished")
+                yield waitForSignal(root.onStatusChanged)
+
+                console.log("status ", status)
 
             } )();
         }
@@ -128,12 +131,11 @@ Item {
 
         function sendNextLine() {
             var line = codeLines[lineToSend]
-            console.log(line)
+            //console.log(line)
             Serial.write(line)
             let lineNumber = lineToSend+1
             var msg = "" + lineNumber + ": " + line + "\n"
             appendLog(msg)
-            //color line
             ++lineToSend
             status = "wait for update"
         }
