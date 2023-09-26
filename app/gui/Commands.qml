@@ -106,18 +106,21 @@ Item {
                 return
             }
 
+            if (status === "Idle") {
+                Video4.capture()
+            }
+        }
+
+        function sendNextLine() {
             var line = codeLines[lineToSend]
             console.log(line)
-
-            if (status === "Idle") {
-                Serial.write(line)
-                let lineNumber = lineToSend+1
-                var msg = "" + lineNumber + ": " + line + "\n"
-                appendLog(msg)
-                //color line
-                ++lineToSend
-                status = "wait for update"
-            }
+            Serial.write(line)
+            let lineNumber = lineToSend+1
+            var msg = "" + lineNumber + ": " + line + "\n"
+            appendLog(msg)
+            //color line
+            ++lineToSend
+            status = "wait for update"
         }
 
         function startResumeProgram() {
@@ -125,6 +128,7 @@ Item {
                 status = "wait for update"
                 codeEditor.readOnly = true
                 sendCodeTimer.codeLines = codeEditor.text.split("\n")
+                Video4.captured.connect(sendNextLine)
             }
 
             sendCodeTimer.interval = 20 // Замедление программы
@@ -148,6 +152,7 @@ Item {
             codeEditor.readOnly = false
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
+            Video4.captured.disconnect(sendNextLine())
         }
     }
 
