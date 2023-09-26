@@ -9,10 +9,10 @@
 #include <tuple>
 
 #include <QMutex>
-#include "video4.h"
+#include "V4l2MmapDevice.h"
 
 class Video4Private;
-class V4l2MmapDevice;
+
 
 class Video4 : public QObject
 {
@@ -42,7 +42,6 @@ class Video4Private : public QObject
     Q_OBJECT
 
 public:
-    ~Video4Private();
 
 public slots:
     void reloadDevices();

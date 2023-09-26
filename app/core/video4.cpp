@@ -4,6 +4,9 @@
 #include "data_bus.h"
 
 #include <QBuffer>
+#include <QEventLoop>
+#include <QTimer>
+#include <QDateTime>
 
 #include <linux/videodev2.h>
 
@@ -15,13 +18,8 @@
 //#include "logger.h"
 //#include "V4l2Capture.h"
 #include "V4l2MmapDevice.h"
-
 #include "yuvconverters.h"
 
-#include <QEventLoop>
-#include <QTimer>
-
-#include <QDateTime>
 
 Video4::Video4()
 {
@@ -71,12 +69,6 @@ void Video4::stop()
     QMetaObject::invokeMethod(_impl, "stop", Qt::QueuedConnection);
 }
 
-
-Video4Private::~Video4Private()
-{
-
-}
-
 void Video4Private::reloadDevices()
 {
 
@@ -104,7 +96,6 @@ void Video4Private::stop()
 {
     _running = false;
 }
-
 
 void Video4Private::update()
 {
