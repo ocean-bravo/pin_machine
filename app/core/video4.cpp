@@ -27,6 +27,8 @@ Video4::Video4()
     _thread = new QThread;
 
     connect(_impl, &Video4Private::newImage,   this, &Video4::newImage, Qt::QueuedConnection);
+    connect(_impl, &Video4Private::captured,   this, &Video4::captured, Qt::QueuedConnection);
+
     //    connect(_impl, &Video4Private::finished, _impl, &QObject::deleteLater);
     //    connect(_impl, &Video4Private::finished, _thread, &QThread::quit);
     connect(_thread, &QThread::started,  _impl, &Video4Private::init);
@@ -69,6 +71,11 @@ void Video4::stop()
     QMetaObject::invokeMethod(_impl, "stop", Qt::QueuedConnection);
 }
 
+void Video4::capture()
+{
+    QMetaObject::invokeMethod(_impl, "capture", Qt::QueuedConnection);
+}
+
 void Video4Private::reloadDevices()
 {
 
@@ -95,6 +102,12 @@ void Video4Private::start()
 void Video4Private::stop()
 {
     _running = false;
+}
+
+void Video4Private::capture()
+{
+    _capture = true;
+    _firstFrameThrowOut = false;
 }
 
 void Video4Private::update()
@@ -171,8 +184,21 @@ void Video4Private::update()
             QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
             emit newImage(img.copy());
             //qd() << "\n";
-        }
 
+            if (_capture)
+            {
+                if (_firstFrameThrowOut)
+                {
+                    _firstFrameThrowOut = false;
+                    _capture = false;
+                    emit captured(img.copy());
+                }
+                else
+                {
+                    _firstFrameThrowOut = true;
+                }
+            }
+        }
     }
 
     emit stopped();

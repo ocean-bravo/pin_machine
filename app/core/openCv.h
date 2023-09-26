@@ -3,6 +3,7 @@
 #include <QString>
 #include <QObject>
 #include <QImage>
+#include <QQueue>
 #include <QFutureWatcher>
 
 #include <vector>
@@ -17,11 +18,15 @@ class OpenCv : public QObject
     Q_OBJECT
 
 public:
+    using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
+
     OpenCv();
     ~OpenCv();
 
     void searchCircles(QImage img);
     void blobDetector(QImage img);
+
+    void addToDetectBlobQueue(QImage img);
 
 signals:
     void imageChanged(QImage);
@@ -31,7 +36,7 @@ private:
     OpenCvPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 
-    QVector<QImage> _imagesQueue;
+    QQueue<QImage> _detectBlobQueue;
 };
 
 class OpenCvPrivate : public QObject
@@ -54,12 +59,7 @@ signals:
 private:
     QImage searchCirclesWorker(QImage img);
 
-    using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
-
-
-    BlobInfo blobDetectorWorker(QImage img);
-
     QFutureWatcher<QImage> _circleWatcher;
-    QFutureWatcher<BlobInfo> _blobWatcher;
+    QFutureWatcher<OpenCv::BlobInfo> _blobWatcher;
 };
 

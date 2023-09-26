@@ -68,6 +68,14 @@ void Engine::createQmlEngine()
             _openCv->blobDetector(img);
     });
 
+    connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
+    {
+        myImageProvider->setImage(img, "raw captured");
+
+        _openCv->addToDetectBlobQueue(img);
+
+    });
+
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
     connect(_openCv, &OpenCv::imageChanged, this, [this, myImageProvider](QImage img)

@@ -60,6 +60,57 @@ cv::Mat qimage2matCopy(QImage& qimage)
     return qimage2matRef(qimage).clone();
 }
 
+OpenCv::BlobInfo detectBlobs(QImage img)
+{
+    ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
+
+    cv::SimpleBlobDetector::Params params;
+
+    // Filter by Area.
+    params.filterByArea = true;
+    params.minArea = db().value("blob_minArea").toFloat();
+    params.maxArea = db().value("blob_maxArea").toFloat();
+
+    // Filter by Circularity
+    params.filterByCircularity = true;
+    params.minCircularity = 0.5;
+    params.maxCircularity = 5.0;
+
+    // Filter by Convexity
+    //params.filterByConvexity = false;
+    //params.minConvexity = 0.87
+
+    // Filter by Inertia
+    params.filterByInertia = true;
+    params.minInertiaRatio = 0.8;
+    params.maxInertiaRatio = 5.0;
+
+    // Distance Between Blobs
+    params.minDistBetweenBlobs = 2.0;
+
+    params.thresholdStep = db().value("blob_thresholdStep").toFloat();
+    params.minThreshold = db().value("blob_minThreshold").toFloat();
+    params.maxThreshold = db().value("blob_maxThreshold").toFloat();
+
+    // Create a detector with the parameters
+    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+
+    // Detect blobs
+    cv::Mat rgbimg = qimage2matRef(img);
+    cv::Mat grey;
+    cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
+
+    // Storage for blobs
+    std::vector<cv::KeyPoint> keypoints;
+    detector->detect(grey, keypoints);
+
+    drawKeyPoints(rgbimg, keypoints);
+
+    QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+
+    return {im, keypoints};
+}
+
 }
 
 
@@ -68,7 +119,6 @@ OpenCv::OpenCv()
     , _thread(new QThread)
 {
     connect(_impl, &OpenCvPrivate::imageChanged,   this, &OpenCv::imageChanged, Qt::QueuedConnection);
-
     connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
     //    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
 
@@ -98,6 +148,10 @@ void OpenCv::blobDetector(QImage img)
     QMetaObject::invokeMethod(_impl, "blobDetector", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
+void OpenCv::addToDetectBlobQueue(QImage img)
+{
+    _detectBlobQueue.push_back(img);
+}
 
 OpenCvPrivate::OpenCvPrivate()
 {
@@ -123,7 +177,7 @@ OpenCvPrivate::OpenCvPrivate()
         emit imageChanged(_circleWatcher.result());
     });
 
-    connect(&_blobWatcher, &QFutureWatcher<BlobInfo>::finished, this, [this]()
+    connect(&_blobWatcher, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
     {
         emit blobChanged(std::get<0>(_blobWatcher.result()));
 
@@ -207,58 +261,7 @@ void OpenCvPrivate::blobDetector(QImage img)
     if (!_blobWatcher.isFinished())
         return;
 
-    QFuture<BlobInfo> future = QtConcurrent::run(this, &OpenCvPrivate::blobDetectorWorker, img);
+    QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
     _blobWatcher.setFuture(future);
 }
 
-OpenCvPrivate::BlobInfo OpenCvPrivate::blobDetectorWorker(QImage img)
-{
-    ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
-
-    // Setup BlobDetector
-    cv::SimpleBlobDetector::Params params;
-
-    // Filter by Area.
-    params.filterByArea = true;
-    params.minArea = db().value("blob_minArea").toFloat();
-    params.maxArea = db().value("blob_maxArea").toFloat();
-
-    // Filter by Circularity
-    params.filterByCircularity = true;
-    params.minCircularity = 0.5;
-    params.maxCircularity = 5.0;
-
-    // Filter by Convexity
-    //params.filterByConvexity = false;
-    //params.minConvexity = 0.87
-
-    // Filter by Inertia
-    params.filterByInertia = true;
-    params.minInertiaRatio = 0.8;
-    params.maxInertiaRatio = 5.0;
-
-    // Distance Between Blobs
-    params.minDistBetweenBlobs = 2.0;
-
-    params.thresholdStep = db().value("blob_thresholdStep").toFloat();
-    params.minThreshold = db().value("blob_minThreshold").toFloat();
-    params.maxThreshold = db().value("blob_maxThreshold").toFloat();
-
-    // Create a detector with the parameters
-    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
-
-    // Detect blobs
-    cv::Mat rgbimg = qimage2matRef(img);
-    cv::Mat grey;
-    cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
-
-    // Storage for blobs
-    std::vector<cv::KeyPoint> keypoints;
-    detector->detect(grey, keypoints);
-
-    drawKeyPoints(rgbimg, keypoints);
-
-    QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
-
-    return {im, keypoints};
-}

@@ -28,9 +28,11 @@ public:
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
 
+    Q_INVOKABLE void capture();
 
 signals:
     void newImage(QImage);
+    void captured(QImage);
 
 private:
     Video4Private* _impl = nullptr;
@@ -44,14 +46,14 @@ class Video4Private : public QObject
 public:
 
 public slots:
-    void reloadDevices();
     void init();
-    void update();
-
+    void reloadDevices();
     void changeCamera(int device, int width, int height, QString fourcc);
-
+    void update();
     void start();
     void stop();
+
+    void capture();
 
 
 //    void onAutoExposure(bool state);
@@ -76,11 +78,14 @@ public slots:
 
 signals:
     void newImage(QImage);
+    void captured(QImage);
     void stopped();
 
 private:
     QScopedPointer<V4l2MmapDevice> _videoCapture;
 
     QAtomicInteger<bool> _running = false;
+    QAtomicInteger<bool> _capture = false;
+    QAtomicInteger<bool> _firstFrameThrowOut = false;
 };
 
