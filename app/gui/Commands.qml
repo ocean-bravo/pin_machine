@@ -421,7 +421,7 @@ Item {
                     }
 
                     Text {
-                        anchors.top: parent.top
+                        anchors.top: startStopUpdate.top
                         anchors.left: reloadDevices.right
 
                         text: DataBus.blob_info

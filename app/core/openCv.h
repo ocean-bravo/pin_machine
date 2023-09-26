@@ -30,6 +30,8 @@ signals:
 private:
     OpenCvPrivate* const _impl;
     QScopedPointer<QThread> _thread;
+
+    QVector<QImage> _imagesQueue;
 };
 
 class OpenCvPrivate : public QObject

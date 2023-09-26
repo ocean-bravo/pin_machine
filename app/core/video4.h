@@ -41,10 +41,7 @@ class Video4Private : public QObject
     Q_OBJECT
 
 public:
-    Video4Private();
     ~Video4Private();
-
-
 
 public slots:
     void reloadDevices();
@@ -56,7 +53,6 @@ public slots:
     void start();
     void stop();
 
-    //std::vector<DeviceInfo> devicesInfo();
 
 //    void onAutoExposure(bool state);
 //    void onAutoWhiteBalance(bool state);
@@ -80,7 +76,6 @@ public slots:
 
 signals:
     void newImage(QImage);
-    void newSize(quint32 width, quint32 height);
     void stopped();
 
 private:
