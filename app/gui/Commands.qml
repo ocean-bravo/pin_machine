@@ -353,7 +353,7 @@ Item {
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
-                    onCheckedChanged: checked ? sendCodeObj.startResumeProgram() : sendCodeObj.pauseProgram()
+                    onCheckedChanged: checked ? sendCodeObj.startProgram() : sendCodeObj.pauseProgram()
                     checkable: true
                 }
                 SmButton {
