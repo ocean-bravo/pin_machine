@@ -100,10 +100,10 @@ Item {
                 yield waitForSignal(Video4.captured);
                 //sendCodeTimer.sendNextLine()
                 status = "wait"
-                console.log("status ", status)
+                console.log("status ", root["status"])
 
 
-                yield waitUntil({target: root, property: status, value: "Idle"})
+                yield waitUntil({target: root, property: "status", value: "Idle"})
 
 
                 console.log("status ", status)
