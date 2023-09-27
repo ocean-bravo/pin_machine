@@ -67,8 +67,17 @@ Item {
                     continue
 
                 // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-                msg = msg.replace(/</g, '[')
-                msg = msg.replace(/>/g, ']')
+                msg = msg.replace(/</g, '*')
+                msg = msg.replace(/>/g, '*')
+
+
+                if (msg.match(/^[*].+[*]$/)) {
+
+                    var statusValues = msg.split("|")
+
+                    console.log(statusValues)
+
+                }
 
                 for (let k = 0; k < modes.length; ++k) {
                     let stat = modes[k]
@@ -102,15 +111,13 @@ Item {
         function runAsync() {
             asyncToGenerator( function* () {
 
-                write("$Report/Interval=50")
-
                 sendCodeObj.lineToSend = 0
                 //status = "Wait"
                 codeEditor.readOnly = true
                 sendCodeObj.codeLines = codeEditor.text.split("\n")
 
-                //statusTimer.interval = 100
-                //statusTimer.start()
+                statusTimer.interval = 100
+                statusTimer.start()
 
                 DataBus.capture_number = 0
 
@@ -181,16 +188,14 @@ Item {
 //        }
 
         function pauseProgram() {
-            //statusTimer.stop()
-            write("$Report/Interval=0")
+            statusTimer.stop()
             playPauseProgram.text = qsTr("Resume program")
         }
 
         function stopProgram() {
             cycle.abort()
 
-            //statusTimer.stop()
-            write("$Report/Interval=0")
+            statusTimer.stop()
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
 
