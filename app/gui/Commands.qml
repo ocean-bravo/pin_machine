@@ -14,8 +14,8 @@ Item {
     property string fullStatus
 
     function write(msg) {
-        Serial.write(msg)
-        appendLog(msg)
+        Serial.write(msg+"\n")
+        appendLog(msg+"\n")
     }
 
     function appendLog(msg) {
@@ -84,11 +84,11 @@ Item {
                 //                if (msg.includes(alrm))
                 //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
                 //            }
-                for (let j = 1; j < 100; ++j) {
-                    let err = "error:" + j
-                    if (msg.includes(err))
-                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-                }
+//                for (let j = 1; j < 100; ++j) {
+//                    let err = "error:" + j
+//                    if (msg.includes(err))
+//                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+//                }
 
 
                 msg = String(Date.now()).slice(-4) + ": " + msg
@@ -101,13 +101,16 @@ Item {
         id: cycle
         function runAsync() {
             asyncToGenerator( function* () {
+
+                write("$Report/Interval=50")
+
                 sendCodeObj.lineToSend = 0
                 //status = "Wait"
                 codeEditor.readOnly = true
                 sendCodeObj.codeLines = codeEditor.text.split("\n")
 
-                statusTimer.interval = 100
-                statusTimer.start()
+                //statusTimer.interval = 100
+                //statusTimer.start()
 
                 DataBus.capture_number = 0
 
@@ -176,14 +179,16 @@ Item {
 //        }
 
         function pauseProgram() {
-            statusTimer.stop()
+            //statusTimer.stop()
+            write("$Report/Interval=0")
             playPauseProgram.text = qsTr("Resume program")
         }
 
         function stopProgram() {
             cycle.abort()
 
-            statusTimer.stop()
+            //statusTimer.stop()
+            write("$Report/Interval=0")
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
 
@@ -257,10 +262,10 @@ Item {
                 columnSpacing: 5
                 rowSpacing: 5
 
-                SmButton { text: qsTr("$H");  onClicked: { write("$H\n" )} }
-                SmButton { text: qsTr("$HX"); onClicked: { write("$HX\n" ) } }
-                SmButton { text: qsTr("$HY"); onClicked: { write("$HY\n" ) } }
-                SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ\n" ) } }
+                SmButton { text: qsTr("$H");  onClicked: { write("$H" )} }
+                SmButton { text: qsTr("$HX"); onClicked: { write("$HX" ) } }
+                SmButton { text: qsTr("$HY"); onClicked: { write("$HY" ) } }
+                SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ" ) } }
             }
 
             Item { height: 30; width: 10}
@@ -277,10 +282,10 @@ Item {
                 columnSpacing: 5
                 rowSpacing: 5
 
-                SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X\n" )     } }
-                SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85\n" )    } }
-                SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!\n" )     } }
-                SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~\n" )     } }
+                SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X" )     } }
+                SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85" )    } }
+                SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!" )     } }
+                SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~" )     } }
                 SmButton { text: qsTr("");   onClicked: {      } }
 
                 SmButton {
@@ -325,11 +330,11 @@ Item {
                     }
 
                     onActivated: {
-                        write(textAt(index) + "\n")
+                        write(currentText)
                     }
                 }
 
-                SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18\n" )       } }
+                SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18" )       } }
                 Text {
                     text: status
                     horizontalAlignment: Text.AlignHCenter
@@ -344,21 +349,21 @@ Item {
                 Item { height: 20; width: 10}
 
                 SmTextEdit { id: moveX}
-                SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text + "\n") } }
+                SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text) } }
                 SmButton {  }
 
 
                 SmTextEdit { id: moveY}
-                SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text + "\n") } }
+                SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text) } }
                 Item { height: 20; width: 10}
 
                 SmTextEdit { id: moveZ}
-                SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text + "\n") } }
+                SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text) } }
                 Item { height: 20; width: 10}
 
 
                 SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
-                SmButton { text: qsTr("Send");       onClicked: { write(sendText.text + "\n") } }
+                SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
 
                 Item { height: 30; width: 10}
                 Item { height: 30; width: 10}
@@ -548,7 +553,7 @@ Item {
     Shortcut {
         sequence: "F5"
         context: Qt.ApplicationShortcut
-        onActivated: write("?\n")
+        onActivated: write("?")
     }
 
     property variant modes: ["Idle", "Alarm", "Check", "Home", "Run", "Jog", "Hold:0", "Hold:1",
