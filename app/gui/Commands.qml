@@ -101,6 +101,16 @@ Item {
         id: cycle
         function runAsync() {
             asyncToGenerator( function* () {
+                sendCodeObj.lineToSend = 0
+                //status = "Wait"
+                codeEditor.readOnly = true
+                sendCodeObj.codeLines = codeEditor.text.split("\n")
+
+                statusTimer.interval = 100
+                statusTimer.start()
+
+                DataBus.capture_number = 0
+
                 while (true) {
                     sendCodeObj.sendNextLine()
                     yield sleep(200)
@@ -138,45 +148,47 @@ Item {
         }
 
         function startProgram() {
-            lineToSend = 0
-            status = "Wait"
-            codeEditor.readOnly = true
-            sendCodeObj.codeLines = codeEditor.text.split("\n")
+//            lineToSend = 0
+//            //status = "Wait"
+//            codeEditor.readOnly = true
+//            sendCodeObj.codeLines = codeEditor.text.split("\n")
 
-            statusTimer.interval = 100
-            statusTimer.start()
+//            statusTimer.interval = 100
+//            statusTimer.start()
 
-            DataBus.capture_number = 0
+//            DataBus.capture_number = 0
 
             cycle.runAsync()
         }
 
-        function startResumeProgram() {
-            if (lineToSend === 0) {
-                status = "Wait"
-                codeEditor.readOnly = true
-                sendCodeObj.codeLines = codeEditor.text.split("\n")
+//        function startResumeProgram() {
+//            if (lineToSend === 0) {
+//                status = "Wait"
+//                codeEditor.readOnly = true
+//                sendCodeObj.codeLines = codeEditor.text.split("\n")
 
-            }
+//            }
 
-            statusTimer.interval = 100
-            statusTimer.start()
+//            statusTimer.interval = 100
+//            statusTimer.start()
 
-            playPauseProgram.text = qsTr("Pause program")
-        }
+//            playPauseProgram.text = qsTr("Pause program")
+//        }
 
         function pauseProgram() {
-            //sendCodeTimer.stop()
             statusTimer.stop()
             playPauseProgram.text = qsTr("Resume program")
         }
 
         function stopProgram() {
-            pauseProgram()
-            lineToSend = 0
-            codeEditor.readOnly = false
+            cycle.abort()
+
+            statusTimer.stop()
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
+
+//            lineToSend = 0
+            codeEditor.readOnly = false
         }
     }
 
@@ -463,23 +475,18 @@ Item {
                         width: 200
                         text: qsTr("Capture frame")
                         onPressed: {
-                            //Video4.capture()
-                            cycle.runAsync()
+                            Video4.capture()
+                            //cycle.runAsync()
                         }
                     }
 
                     ComboBox {
                         id: imgType
                         width: 200
-                        model: ListModel {
-                            ListElement { text: "raw" }
-                            ListElement { text: "circle" }
-                            ListElement { text: "blob" }
-                            ListElement { text: "raw captured" }
-                        }
+                        model: ["raw", "circle", "blob", "raw captured" ]
                         onActivated: {
-                            image.setSource("image://camera/" + textAt(index))
-                            DataBus.mode = textAt(index)
+                            image.setSource("image://camera/" + currentText)
+                            DataBus.mode = currentText
                         }
                     }
 
@@ -488,7 +495,7 @@ Item {
                         width: 200
                         model: DataBus.capture_number
                         onActivated: {
-                            image.setSource("image://camera/" + "captured_" + textAt(index))
+                            image.setSource("image://camera/" + "captured_" + currentText)
                         }
                     }
 
