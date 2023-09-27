@@ -114,6 +114,8 @@ Item {
 
                 DataBus.capture_number = 0
 
+                yield sleep(200)
+
                 while (true) {
                     sendCodeObj.sendNextLine()
                     yield sleep(200)
