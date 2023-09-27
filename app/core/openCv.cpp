@@ -21,11 +21,8 @@ namespace {
 
 void drawText(const cv::Mat& image, const QString& text)
 {
-    cv::putText(image, //target image
-                "Hello, OpenCV!", //text
-                cv::Point(10, image.rows / 2), //top-left position
-                cv::FONT_HERSHEY_DUPLEX,
-                1.0,
+    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows),
+                cv::FONT_HERSHEY_DUPLEX,  1.0,
                 CV_RGB(118, 185, 0), //font color
                 2);
 }
@@ -164,7 +161,7 @@ void OpenCv::addToDetectBlobQueue(QImage img)
     //_detectBlobQueue.push_back(img);
 }
 
-QImage OpenCv::drawText(QImage& img, const QString& text)
+QImage OpenCv::drawText(QImage img, const QString& text)
 {
     cv::Mat image = qimage2matRef(img);
     ::drawText(image, text);

@@ -57,7 +57,7 @@ void Engine::createQmlEngine()
     MyImageProvider*    myImageProvider = new MyImageProvider;
     connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(img, "raw");
+        myImageProvider->setImage(_openCv->drawText(img.copy(), "Hello"), "raw");
 
         QString mode = db().value("mode").toString();
 
@@ -74,7 +74,7 @@ void Engine::createQmlEngine()
 
         // Где то взять номер
         int captureNumber = db().value("capture_number").toInt();
-        myImageProvider->setImage(_openCv->drawText(img, "Hello"), QString("captured_%1").arg(captureNumber));
+        myImageProvider->setImage(img, QString("captured_%1").arg(captureNumber));
 
         _openCv->addToDetectBlobQueue(img);
 
