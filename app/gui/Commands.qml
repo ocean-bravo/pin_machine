@@ -397,25 +397,11 @@ Item {
 
                     Log {
                         id: logViewer
-//                        height: parent.height / 2
-//                        width: parent.width
-
-//                        SplitView.minimumWidth: 50
-//                        SplitView.preferredWidth: root.width / 3
-//                        SplitView.maximumWidth: 800
-
                         SplitView.minimumHeight: 50
                         SplitView.preferredHeight: parent.height / 2
                     }
                     CodeEditor2 {
                         id: codeEditor
-//                        height: parent.height / 2
-//                        width: parent.width
-
-//                        SplitView.minimumWidth: 50
-//                        SplitView.preferredWidth: root.width / 3
-//                        SplitView.maximumWidth: 800
-
                         SplitView.minimumHeight: 50
                         SplitView.preferredHeight: parent.height / 2
                     }
