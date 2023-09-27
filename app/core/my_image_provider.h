@@ -11,12 +11,15 @@
 #include <QReadWriteLock>
 
 
+
 class MyImageProvider : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
 
 public:
     MyImageProvider();
+
+    void clearCaptured();
 
     void setPixmap(const QPixmap& pixmap)
     {

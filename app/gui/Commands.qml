@@ -10,6 +10,9 @@ import "utils.js" as Utils
 Item {
     id: root
 
+    property string status: "Idle"
+    property string fullStatus
+
     function write(msg) {
         Serial.write(msg)
         appendLog(msg)
@@ -21,9 +24,6 @@ Item {
         msg = String(Date.now()).slice(-4) + ": " + msg
         logViewer.append("<font color='red'>" + msg + "</font>")
     }
-
-    property string status: "Idle"
-    property string fullStatus
 
     Connections {
         target: Serial
@@ -107,6 +107,7 @@ Item {
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
                     appendLog("capturing ...\n")
+                    DataBus.capture_number += 1
                     Video4.capture()
                     yield waitForSignal(Video4.captured)
                     appendLog("captured\n")
@@ -144,6 +145,8 @@ Item {
 
             statusTimer.interval = 100
             statusTimer.start()
+
+            DataBus.capture_number = 0
 
             cycle.runAsync()
         }
@@ -477,6 +480,15 @@ Item {
                         onActivated: {
                             image.setSource("image://camera/" + textAt(index))
                             DataBus.mode = textAt(index)
+                        }
+                    }
+
+                    ComboBox {
+                        id: captureNumber
+                        width: 200
+                        model: DataBus.capture_number
+                        onActivated: {
+                            image.setSource("image://camera/" + "captured_" + textAt(index))
                         }
                     }
 
