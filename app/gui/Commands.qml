@@ -67,11 +67,11 @@ Item {
                     continue
 
                 // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-                msg = msg.replace(/</g, '*')
-                msg = msg.replace(/>/g, '*')
+                msg = msg.replace(/</g, '|')
+                msg = msg.replace(/>/g, '|')
 
 
-                if (msg.match(/^[*].+[*]$/)) {
+                if (msg.match(/^[|].+[|]$/)) {
 
                     var statusValues = msg.split("|")
 
