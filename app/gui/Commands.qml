@@ -17,6 +17,8 @@ Item {
 
     function appendLog(msg) {
         msg = msg.replace(/\r?\n/g, '<br>')
+
+        msg = String(Date.now()).slice(-4) + ": " + msg
         logViewer.append("<font color='red'>" + msg + "</font>")
     }
 
@@ -87,6 +89,9 @@ Item {
                     if (msg.includes(err))
                         msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
                 }
+
+
+                msg = String(Date.now()).slice(-4) + ": " + msg
                 logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
             }
         }
@@ -98,7 +103,7 @@ Item {
             asyncToGenerator( function* () {
                 while (true) {
                     sendCodeObj.sendNextLine()
-                    yield sleep(10)
+                    yield sleep(50)
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
                     appendLog("capturing ...\n")
