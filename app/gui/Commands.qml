@@ -103,7 +103,7 @@ Item {
             asyncToGenerator( function* () {
                 while (true) {
                     sendCodeObj.sendNextLine()
-                    yield sleep(50)
+                    yield sleep(100)
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
                     appendLog("capturing ...\n")
