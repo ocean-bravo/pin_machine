@@ -22,8 +22,8 @@ namespace {
 void drawText(const cv::Mat& image, const QString& text)
 {
     cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows),
-                cv::FONT_HERSHEY_DUPLEX,  1.0,
-                CV_RGB(118, 185, 0), //font color
+                cv::FONT_HERSHEY_DUPLEX,  2.0,
+                ColorRgb::White, //font color
                 2);
 }
 
