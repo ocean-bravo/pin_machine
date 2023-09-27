@@ -193,6 +193,7 @@ void Video4Private::update()
                     _firstFrameThrowOut = false;
                     _capture = false;
                     qd() << "Video4Private::update captured";
+
                     emit captured(img.copy());
                 }
                 else

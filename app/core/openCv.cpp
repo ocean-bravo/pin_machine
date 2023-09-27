@@ -19,6 +19,17 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
+void drawText(const cv::Mat& image, const QString& text)
+{
+    cv::putText(image, //target image
+                "Hello, OpenCV!", //text
+                cv::Point(10, image.rows / 2), //top-left position
+                cv::FONT_HERSHEY_DUPLEX,
+                1.0,
+                CV_RGB(118, 185, 0), //font color
+                2);
+}
+
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
 {
     for (const cv::Vec3f& c : circles)
@@ -151,6 +162,14 @@ void OpenCv::blobDetector(QImage img)
 void OpenCv::addToDetectBlobQueue(QImage img)
 {
     //_detectBlobQueue.push_back(img);
+}
+
+QImage OpenCv::drawText(QImage& img, const QString& text)
+{
+    cv::Mat image = qimage2matRef(img);
+    ::drawText(image, text);
+    QImage im = QImage(image.data, image.cols, image.rows, QImage::Format_RGB888);
+    return im;
 }
 
 OpenCvPrivate::OpenCvPrivate()

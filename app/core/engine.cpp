@@ -74,7 +74,7 @@ void Engine::createQmlEngine()
 
         // Где то взять номер
         int captureNumber = db().value("capture_number").toInt();
-        myImageProvider->setImage(img, QString("captured_%1").arg(captureNumber));
+        myImageProvider->setImage(_openCv->drawText(img, "Hello"), QString("captured_%1").arg(captureNumber));
 
         _openCv->addToDetectBlobQueue(img);
 

@@ -70,23 +70,24 @@ Item {
                 msg = msg.replace(/</g, '|')
                 msg = msg.replace(/>/g, '|')
 
-
+                // Если это статус - разделить его на части
                 if (msg.match(/^[|].+[|]$/)) {
-
-                    var statusValues = msg.split("|")
-
-                    console.log(statusValues)
-
+                    let statusValues = msg.split("|")
+                    status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
+                    let position = statusValues[2] // третий элемент - позиция
+                    let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
+                    DataBus.x_coord = pos[0]
+                    DataBus.y_coord = pos[1]
                 }
 
-                for (let k = 0; k < modes.length; ++k) {
-                    let stat = modes[k]
-                    if (msg.includes(stat)) {
-                        status = stat
-                        fullStatus = msg
-                        //continue nextMessage
-                    }
-                }
+//                for (let k = 0; k < modes.length; ++k) {
+//                    let stat = modes[k]
+//                    if (msg.includes(stat)) {
+//                        status = stat
+//                        fullStatus = msg
+//                        //continue nextMessage
+//                    }
+//                }
 
                 //            for (let i = 1; i < 11; ++i) {
                 //                let alrm = "ALARM:" + i

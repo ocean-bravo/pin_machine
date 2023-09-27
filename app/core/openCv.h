@@ -28,6 +28,8 @@ public:
 
     void addToDetectBlobQueue(QImage img);
 
+    QImage drawText(QImage& img, const QString& text);
+
 signals:
     void imageChanged(QImage);
     void blobChanged(QImage);
