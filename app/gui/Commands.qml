@@ -78,6 +78,7 @@ Item {
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
+                    console.log(DataBus.x_coord, DataBus.y_coord)
                 }
 
 //                for (let k = 0; k < modes.length; ++k) {
@@ -374,9 +375,21 @@ Item {
                 SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
 
                 Item { height: 30; width: 10}
-                Item { height: 30; width: 10}
+//                Item { height: 30; width: 10}
 
-                Item { height: 30; width: 10}
+//                Item { height: 30; width: 10}
+                SmButton { text: qsTr("Idle");
+                    onClicked:
+                    {
+                        status = "Idle"
+                    }
+                }
+                SmButton { text: qsTr("Wait");
+                    onClicked:
+                    {
+                        status = "Wait"
+                    }
+                }
                 SmButton { text: qsTr("Clear log");
                     onClicked:
                     {
