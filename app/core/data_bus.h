@@ -5,6 +5,8 @@
 
 #include "singleton.h"
 
+#include "utils.h"
+
 class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 {
     Q_OBJECT
@@ -13,6 +15,7 @@ public:
 
     Q_INVOKABLE void remove(QString key)
     {
+        qd() << "clear " << key;
         clear(key);
     }
 

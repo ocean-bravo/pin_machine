@@ -19,7 +19,7 @@ class MyImageProvider : public QObject, public QQuickImageProvider
 public:
     MyImageProvider();
 
-    void clearCaptured();
+    Q_INVOKABLE void clearCaptured();
 
     void setPixmap(const QPixmap& pixmap)
     {

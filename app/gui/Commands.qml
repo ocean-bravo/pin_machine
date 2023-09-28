@@ -172,8 +172,7 @@ Item {
 
 //            DataBus.capture_number = 0
 
-            for (let i = 0; i < 300; ++i)
-                DataBus.remove("captured_" + i)
+              ImagesStorage.clearCaptured()
 
             cycle.runAsync()
         }
