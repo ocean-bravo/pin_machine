@@ -114,7 +114,6 @@ Item {
             asyncToGenerator( function* () {
 
                 sendCodeObj.lineToSend = 0
-                //status = "Wait"
                 codeEditor.readOnly = true
                 sendCodeObj.codeLines = codeEditor.text.split("\n")
 
@@ -122,11 +121,14 @@ Item {
                 statusTimer.start()
 
                 DataBus.capture_number = 0
+                ImagesStorage.clearCaptured()
 
                 yield sleep(200)
 
                 while (true) {
-                    sendCodeObj.sendNextLine()
+                    if (!sendCodeObj.sendNextLine())
+                        continue
+
                     yield sleep(200)
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
@@ -152,13 +154,21 @@ Item {
         property int lineToSend: 0
 
         function sendNextLine() {
-            var line = codeLines[lineToSend]
-            console.log(line)
-            Serial.write(line)
+            let line = codeLines[lineToSend]
             let lineNumber = lineToSend+1
-            var msg = "" + lineNumber + ": " + line + "\n"
+
+            if (line === null) {
+                var msg = "" + lineNumber + ": " + "skip..." + "\n"
+            }
+            else {
+                Serial.write(line)
+                msg = "" + lineNumber + ": " + line + "\n"
+            }
+
             appendLog(msg)
             ++lineToSend
+
+            return line !== null
         }
 
         function startProgram() {
@@ -172,7 +182,6 @@ Item {
 
 //            DataBus.capture_number = 0
 
-              ImagesStorage.clearCaptured()
 
             cycle.runAsync()
         }
