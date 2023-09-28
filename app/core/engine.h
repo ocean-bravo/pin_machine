@@ -22,12 +22,7 @@ public:
     explicit Engine(QObject* parent = nullptr);
     ~Engine();
 
-    Q_INVOKABLE void setPhotoCommand(QString);
-
-    Q_INVOKABLE void update();
-
     Q_INVOKABLE QStringList camerasInfo();
-
 
 signals:
     void imageChanged(QString id);
@@ -36,10 +31,8 @@ private:
     void createQmlEngine();
 
 
-
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
     QScopedPointer<Serial> _serial;
-    QString _photoCommand;
 
     V4L2 _videoDriver;
     Video3* _videoDriver3;

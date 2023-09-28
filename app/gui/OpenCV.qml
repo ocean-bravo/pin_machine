@@ -21,7 +21,7 @@ Item {
             text: qsTr("update")
             onPressed: {
                 //Engine.setPhotoCommand(getPhotoCommand.text)
-                Engine.update()
+                //Engine.update()
             }
         }
 //        SmTextEdit {
