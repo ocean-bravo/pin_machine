@@ -172,6 +172,9 @@ Item {
 
 //            DataBus.capture_number = 0
 
+            for (let i = 0; i < 1000; ++i)
+                DataBus["captured_" + i] = null
+
             cycle.runAsync()
         }
 
@@ -203,6 +206,8 @@ Item {
 
 //            lineToSend = 0
             codeEditor.readOnly = false
+
+
         }
     }
 

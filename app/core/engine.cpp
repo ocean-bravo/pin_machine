@@ -17,20 +17,15 @@
 
 #include "openCv.h"
 
-namespace {
-
-}
-
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
+    , _serial(new Serial)
     , _openCv(new OpenCv)
 {
     _serial.reset(new Serial);
 
     DataBus& db = DataBus::instance();
-
-    //_videoDriver.init("/dev/video0", 15, 640, 480, "YUYV"); // MJPG
 
     _videoDriver3 = new Video3();
     _videoDriver4 = new Video4();
