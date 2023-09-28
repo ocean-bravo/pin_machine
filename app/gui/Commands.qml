@@ -172,8 +172,8 @@ Item {
 
 //            DataBus.capture_number = 0
 
-            for (let i = 0; i < 1000; ++i)
-                DataBus["captured_" + i] = null
+            for (let i = 0; i < 300; ++i)
+                DataBus.remove("captured_" + i)
 
             cycle.runAsync()
         }

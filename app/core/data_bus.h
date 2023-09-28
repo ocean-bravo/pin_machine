@@ -11,6 +11,10 @@ class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 
 public:
 
+    Q_INVOKABLE void remove(QString key)
+    {
+        clear(key);
+    }
 
 public slots:
 
@@ -19,11 +23,14 @@ signals:
 
 
 protected:
-
+    template <typename Derived>
+    explicit DataBus(Derived* derived, QObject* parent = nullptr)
+        : QQmlPropertyMap(derived, parent)
+    {}
 
 private:
 
-    DataBus();
+    DataBus(QObject * parent  = nullptr);
     ~DataBus();
 
     friend class Singleton<DataBus>;
