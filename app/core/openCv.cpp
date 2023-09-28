@@ -22,9 +22,9 @@ namespace {
 // В нижнем левом углу
 void drawTextBottomLeft(const cv::Mat& image, const QString& text)
 {
-    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows),
+    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows-1), // Чуть повыше текст, на 1 линию
                 cv::FONT_HERSHEY_DUPLEX,  2.0,
-                ColorRgb::White, 2);
+                ColorRgb::Blue, 2);
 }
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
@@ -167,7 +167,6 @@ QImage OpenCv::drawText(const QImage& img, const QString& text)
 {
     cv::Mat image = qimage2matRef(img);
     ::drawTextBottomLeft(image, text);
-    //QImage im = QImage(image.data, image.cols, image.rows, QImage::Format_RGB888);
     return img;
 }
 
