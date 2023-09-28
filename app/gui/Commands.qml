@@ -126,17 +126,21 @@ Item {
                 yield sleep(200)
 
                 while (true) {
-                    if (!sendCodeObj.sendNextLine())
+                    if (!sendCodeObj.sendNextLine()) // Если строка пустая, никаких действий после нее не надо делать
                         continue
 
                     yield sleep(200)
                     status = "Wait"
                     yield waitUntil({target: root, property: "status", value: "Idle"})
                     appendLog("capturing ...\n")
-                    DataBus.capture_number += 1
+
                     Video4.capture()
                     yield waitForSignal(Video4.captured)
                     appendLog("captured\n")
+
+                    // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
+                    yield sleep(1)
+                    DataBus.capture_number += 1
 
                     if (sendCodeObj.lineToSend >= sendCodeObj.codeLines.length) {
                         sendCodeObj.stopProgram()
@@ -155,9 +159,11 @@ Item {
 
         function sendNextLine() {
             let line = codeLines[lineToSend]
+
             let lineNumber = lineToSend+1
 
-            if (line === null) {
+            // Пропускаю пустые строки
+            if (line.length === 0) {
                 var msg = "" + lineNumber + ": " + "skip..." + "\n"
             }
             else {
@@ -168,37 +174,12 @@ Item {
             appendLog(msg)
             ++lineToSend
 
-            return line !== null
+            return line.length > 0
         }
 
         function startProgram() {
-//            lineToSend = 0
-//            //status = "Wait"
-//            codeEditor.readOnly = true
-//            sendCodeObj.codeLines = codeEditor.text.split("\n")
-
-//            statusTimer.interval = 100
-//            statusTimer.start()
-
-//            DataBus.capture_number = 0
-
-
             cycle.runAsync()
         }
-
-//        function startResumeProgram() {
-//            if (lineToSend === 0) {
-//                status = "Wait"
-//                codeEditor.readOnly = true
-//                sendCodeObj.codeLines = codeEditor.text.split("\n")
-
-//            }
-
-//            statusTimer.interval = 100
-//            statusTimer.start()
-
-//            playPauseProgram.text = qsTr("Pause program")
-//        }
 
         function pauseProgram() {
             statusTimer.stop()
@@ -212,10 +193,7 @@ Item {
             playPauseProgram.checked = false
             playPauseProgram.text = qsTr("Run program")
 
-//            lineToSend = 0
             codeEditor.readOnly = false
-
-
         }
     }
 
