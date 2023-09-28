@@ -19,12 +19,12 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
-void drawText(const cv::Mat& image, const QString& text)
+// В нижнем левом углу
+void drawTextBottomLeft(const cv::Mat& image, const QString& text)
 {
-    cv::putText(image, text.toLatin1().toStdString(),cv::Point(100, 500),
+    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows),
                 cv::FONT_HERSHEY_DUPLEX,  2.0,
-                ColorRgb::Red, //font color
-                2);
+                ColorRgb::White, 2);
 }
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
@@ -58,12 +58,13 @@ QImage mat_to_qimage_ref(cv::Mat &mat, QImage::Format format)
     return QImage(mat.data, mat.cols, mat.rows, mat.step, format);
 }
 
-cv::Mat qimage2matRef(QImage& qimage)
+// Опасная функция. Внутренний буфер разделен между QImage и Mat
+cv::Mat qimage2matRef(const QImage& qimage)
 {
-    return cv::Mat(qimage.height(), qimage.width(), CV_8UC3, qimage.bits(), qimage.bytesPerLine());
+    return cv::Mat(qimage.height(), qimage.width(), CV_8UC3, const_cast<uchar *>(qimage.constBits()), qimage.bytesPerLine());
 }
 
-cv::Mat qimage2matCopy(QImage& qimage)
+cv::Mat qimage2matCopy(const QImage& qimage)
 {
     return qimage2matRef(qimage).clone();
 }
@@ -161,12 +162,13 @@ void OpenCv::addToDetectBlobQueue(QImage img)
     //_detectBlobQueue.push_back(img);
 }
 
-QImage OpenCv::drawText(QImage img, const QString& text)
+// Текст рисуется на переданном изображение. И возвращается оно же просто для удобства.
+QImage OpenCv::drawText(const QImage& img, const QString& text)
 {
     cv::Mat image = qimage2matRef(img);
-    ::drawText(image, text);
-    QImage im = QImage(image.data, image.cols, image.rows, QImage::Format_RGB888);
-    return im;
+    ::drawTextBottomLeft(image, text);
+    //QImage im = QImage(image.data, image.cols, image.rows, QImage::Format_RGB888);
+    return img;
 }
 
 OpenCvPrivate::OpenCvPrivate()

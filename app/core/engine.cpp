@@ -66,6 +66,7 @@ void Engine::createQmlEngine()
 
         if (mode == "blob")
             _openCv->blobDetector(img);
+
     });
 
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)

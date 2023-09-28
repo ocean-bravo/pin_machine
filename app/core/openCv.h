@@ -28,7 +28,7 @@ public:
 
     void addToDetectBlobQueue(QImage img);
 
-    QImage drawText(QImage img, const QString& text);
+    QImage drawText(const QImage& img, const QString& text);
 
 signals:
     void imageChanged(QImage);
