@@ -24,7 +24,7 @@ void drawTextBottomLeft(const cv::Mat& image, const QString& text)
 {
     cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows-1), // Чуть повыше текст, на 1 линию
                 cv::FONT_HERSHEY_DUPLEX,  2.0,
-                ColorRgb::Blue, 2);
+                ColorRgb::Blue, 2, cv::LINE_AA);
 }
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
