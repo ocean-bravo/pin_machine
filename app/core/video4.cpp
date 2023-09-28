@@ -183,7 +183,7 @@ void Video4Private::update()
         {
             //ScopedMeasure ("QImage ");
             QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
-            emit newImage(img.copy());
+            emit newImage(img.copy()); // Наружу выпускается копия, все правильно
             //qd() << "\n";
 
             if (_capture)
@@ -194,7 +194,7 @@ void Video4Private::update()
                     _capture = false;
                     qd() << "Video4Private::update captured";
 
-                    emit captured(img.copy());
+                    emit captured(img.copy()); // Наружу выпускается копия, все правильно
                 }
                 else
                 {

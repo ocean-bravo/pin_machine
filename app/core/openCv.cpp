@@ -22,9 +22,8 @@ namespace {
 // В нижнем левом углу
 void drawTextBottomLeft(const cv::Mat& image, const QString& text)
 {
-    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows-5), // Чуть повыше текст, на 1 линию
-                cv::FONT_HERSHEY_DUPLEX,  2.0,
-                ColorRgb::Blue, 2, cv::LINE_AA);
+    cv::putText(image, text.toLatin1().toStdString(),cv::Point(0, image.rows-5), // Чуть повыше текст, на 5 линий
+                cv::FONT_HERSHEY_DUPLEX,  2.0, ColorRgb::Blue, 2, cv::LINE_AA);
 }
 
 void drawCircles(const cv::Mat& image, const std::vector<cv::Vec3f>& circles)
@@ -69,6 +68,8 @@ cv::Mat qimage2matCopy(const QImage& qimage)
     return qimage2matRef(qimage).clone();
 }
 
+// img должно быть скопировано, при передаче в эту функцию
+// Круги рисуются прямо на переданном изображении, без копирования.
 OpenCv::BlobInfo detectBlobs(QImage img)
 {
     ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
@@ -115,9 +116,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
     drawKeyPoints(rgbimg, keypoints);
 
-    QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+    //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-    return {im, keypoints};
+    return {img, keypoints};
 }
 
 }
@@ -127,7 +128,7 @@ OpenCv::OpenCv()
     : _impl(new OpenCvPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &OpenCvPrivate::imageChanged,   this, &OpenCv::imageChanged, Qt::QueuedConnection);
+    connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
     connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
     //    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
 
@@ -191,7 +192,7 @@ OpenCvPrivate::OpenCvPrivate()
 
     connect(&_circleWatcher, &QFutureWatcher<QImage>::finished, this, [this]()
     {
-        emit imageChanged(_circleWatcher.result());
+        emit circleChanged(_circleWatcher.result());
     });
 
     connect(&_blobWatcher, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
@@ -224,6 +225,8 @@ void OpenCvPrivate::searchCircles(QImage img)
     _circleWatcher.setFuture(future);
 }
 
+// img должно быть скопировано, при передаче в эту функцию
+// Круги рисуются прямо на переданном изображении, без копирования.
 QImage OpenCvPrivate::searchCirclesWorker(QImage img)
 {
     ScopedMeasure mes ("circles", ScopedMeasure::Milli);
@@ -257,9 +260,9 @@ QImage OpenCvPrivate::searchCirclesWorker(QImage img)
 
         drawCircles(rgbimg, circles);
 
-        QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+        //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-        return im;
+        return img;
     }
     catch (...)
     {

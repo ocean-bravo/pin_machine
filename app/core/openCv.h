@@ -31,7 +31,7 @@ public:
     QImage drawText(const QImage& img, const QString& text);
 
 signals:
-    void imageChanged(QImage);
+    void circleChanged(QImage);
     void blobChanged(QImage);
 
 private:
@@ -54,7 +54,7 @@ public slots:
     void blobDetector(QImage img);
 
 signals:
-    void imageChanged(QImage);
+    void circleChanged(QImage);
     void blobChanged(QImage);
 
 private:

@@ -62,10 +62,10 @@ void Engine::createQmlEngine()
         QString mode = db().value("mode").toString();
 
         if (mode == "circle")
-            _openCv->searchCircles(img);
+            _openCv->searchCircles(img.copy());
 
         if (mode == "blob")
-            _openCv->blobDetector(img);
+            _openCv->blobDetector(img.copy());
 
     });
 
@@ -73,7 +73,6 @@ void Engine::createQmlEngine()
     {
         myImageProvider->setImage(img, "raw captured");
 
-        // Где то взять номер
         int captureNumber = db().value("capture_number").toInt();
         QString x = db().value("x_coord").toString();
         QString y = db().value("y_coord").toString();
@@ -86,7 +85,7 @@ void Engine::createQmlEngine()
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
-    connect(_openCv, &OpenCv::imageChanged, this, [this, myImageProvider](QImage img)
+    connect(_openCv, &OpenCv::circleChanged, this, [this, myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "circle");
     });
