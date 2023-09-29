@@ -143,8 +143,12 @@ OpenCv::OpenCv()
         QImage im = std::get<0>(_blobWatcherCaptured.result());
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCaptured.result());
 
+        qd() << "after run detect blob " << im.text("x") << im.text("y");
+
         if (kps.empty())
             return;
+
+
 
         QString x = im.text("x");
         QString y = im.text("y");
