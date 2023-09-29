@@ -143,12 +143,8 @@ OpenCv::OpenCv()
         QImage im = std::get<0>(_blobWatcherCaptured.result());
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCaptured.result());
 
-        qd() << "after run detect blob " << im.text("x") << im.text("y");
-
         if (kps.empty())
             return;
-
-
 
         QString x = im.text("x");
         QString y = im.text("y");
@@ -166,8 +162,6 @@ OpenCv::OpenCv()
         {
             QImage img = _detectBlobQueue.first();
             _detectBlobQueue.pop_front();
-
-            qd() << "befor run detect blob " << img.text("x") << img.text("y");
             QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
             _blobWatcherCaptured.setFuture(future);
         }
