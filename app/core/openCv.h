@@ -26,7 +26,7 @@ public:
     void searchCircles(QImage img);
     void blobDetector(QImage img);
 
-    void addToDetectBlobQueue(QImage img);
+    void addToDetectBlobQueue(QImage img, QString x, QString y);
 
     QImage drawText(const QImage& img, const QString& text);
 

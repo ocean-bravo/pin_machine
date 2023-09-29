@@ -38,6 +38,8 @@ Item {
         property string prevMsg: ""
 
         function onData(msg) {
+            let currentTime = String(Date.now()).slice(-4)
+
             msg = prevMsg + msg
 
             // Нет перевода строки - копим сообщения дальше
@@ -102,7 +104,7 @@ Item {
 //                }
 
 
-                msg = String(Date.now()).slice(-4) + ": " + msg
+                msg = currentTime + ": " + msg
                 logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
             }
         }
@@ -505,6 +507,10 @@ Item {
                             image.setSource("image://camera/" + currentText)
                             DataBus.mode = currentText
                         }
+                        Component.onCompleted: {
+                            image.setSource("image://camera/raw")
+                            DataBus.mode = "raw"
+                        }
                     }
 
                     ComboBox {
@@ -512,7 +518,7 @@ Item {
                         width: 200
                         model: DataBus.capture_number
                         onActivated: {
-                            image.setSource("image://camera/" + "captured_" + currentText)
+                            image.setSource("image://camera/captured_" + currentText)
                         }
                     }
 
@@ -527,7 +533,6 @@ Item {
                         }
                         onModelChanged: {
                             resList.model = DataBus["camera" + 0]
-                            //Video4.changeCamera(0, 640, 480, "YUYV")
                         }
                     }
 

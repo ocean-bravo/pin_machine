@@ -46,36 +46,34 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-    _qmlEngine.reset(new QQmlApplicationEngine());
-    _qmlEngine->addImportPath(appDir() + "libs");
 
-    MyImageProvider*    myImageProvider = new MyImageProvider;
+
+    MyImageProvider* myImageProvider = new MyImageProvider;
+
     connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(img, "raw");
+        const QString mode = db().value("mode").toString();
 
-        QString mode = db().value("mode").toString();
+        if (mode == "raw")
+            myImageProvider->setImage(img, "raw");
 
         if (mode == "circle")
-            _openCv->searchCircles(img.copy());
+            _openCv->searchCircles(img);
 
         if (mode == "blob")
-            _openCv->blobDetector(img.copy());
-
+            _openCv->blobDetector(img);
     });
 
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(img, "raw captured");
-
         int captureNumber = db().value("capture_number").toInt();
         QString x = db().value("x_coord").toString();
         QString y = db().value("y_coord").toString();
 
+        myImageProvider->setImage(img, "raw captured");
         myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
-        _openCv->addToDetectBlobQueue(img);
-
+        _openCv->addToDetectBlobQueue(img.copy(), x, y);
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
@@ -85,7 +83,6 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "circle");
     });
 
-
     connect(_openCv, &OpenCv::blobChanged, this, [this, myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "blob");
@@ -94,6 +91,9 @@ void Engine::createQmlEngine()
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
+    _qmlEngine.reset(new QQmlApplicationEngine());
+
+    _qmlEngine->addImportPath(appDir() + "libs");
     _qmlEngine->addImageProvider("camera", myImageProvider);
 
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());

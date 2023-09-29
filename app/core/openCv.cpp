@@ -158,9 +158,9 @@ void OpenCv::blobDetector(QImage img)
     QMetaObject::invokeMethod(_impl, "blobDetector", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::addToDetectBlobQueue(QImage img)
+void OpenCv::addToDetectBlobQueue(QImage img, QString x, QString y)
 {
-    //_detectBlobQueue.push_back(img);
+    _detectBlobQueue.push_back(img);
 }
 
 // Текст рисуется на переданном изображение. И возвращается оно же просто для удобства.
