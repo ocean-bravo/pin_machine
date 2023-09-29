@@ -124,6 +124,7 @@ Item {
 
                 DataBus.capture_number = 0
                 ImagesStorage.clearCaptured()
+                OpenCv.resetFoundBlobs()
 
                 yield sleep(200)
 
@@ -403,7 +404,6 @@ Item {
                     let foundBlobs = DataBus.found_blobs
                     foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
                     foundBlobs = foundBlobs.replace(/\n/g, '<br>')
-                    //"&nbsp;&nbsp;&nbsp;&nbsp;"
                     logViewer.append(foundBlobs)
                 }
             }

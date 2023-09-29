@@ -105,6 +105,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Video4", _videoDriver4);
     _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
+    _qmlEngine->rootContext()->setContextProperty("OpenCv", _openCv);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

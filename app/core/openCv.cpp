@@ -216,6 +216,11 @@ void OpenCv::foundBlobs() const
     db().insert("found_blobs", s.join("\n"));
 }
 
+void OpenCv::resetFoundBlobs()
+{
+    _detectBlobResult.clear();
+}
+
 OpenCvPrivate::OpenCvPrivate()
 {
     db().insert("blob_minArea", 5000);

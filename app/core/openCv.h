@@ -32,6 +32,7 @@ public:
     QImage drawText(const QImage& img, const QString& text);
 
     void foundBlobs() const;
+    Q_INVOKABLE void resetFoundBlobs();
 
 signals:
     void circleChanged(QImage);
