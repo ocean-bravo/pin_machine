@@ -23,8 +23,8 @@ public:
     OpenCv();
     ~OpenCv();
 
-    void searchCircles(QImage img);
-    void blobDetector(QImage img);
+    void searchCirclesLive(QImage img);
+    void blobDetectorLive(QImage img);
 
     void addToDetectBlobQueue(QImage img, QString x, QString y);
 
@@ -50,8 +50,8 @@ public:
     void init();
 
 public slots:
-    void searchCircles(QImage img);
-    void blobDetector(QImage img);
+    void searchCirclesLive(QImage img);
+    void blobDetectorLive(QImage img);
 
 signals:
     void circleChanged(QImage);
@@ -62,5 +62,6 @@ private:
 
     QFutureWatcher<QImage> _circleWatcher;
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcher;
+    QMutex _blobQueueMutex;
 };
 

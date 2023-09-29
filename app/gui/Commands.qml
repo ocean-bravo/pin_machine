@@ -368,9 +368,7 @@ Item {
                 SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
 
                 Item { height: 30; width: 10}
-//                Item { height: 30; width: 10}
 
-//                Item { height: 30; width: 10}
                 SmButton { text: qsTr("Idle");
                     onClicked:
                     {

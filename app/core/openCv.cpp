@@ -148,14 +148,14 @@ OpenCv::~OpenCv()
     _thread->wait(1000);
 }
 
-void OpenCv::searchCircles(QImage img)
+void OpenCv::searchCirclesLive(QImage img)
 {
-    QMetaObject::invokeMethod(_impl, "searchCircles", Qt::QueuedConnection, Q_ARG(QImage, img));
+    QMetaObject::invokeMethod(_impl, "searchCirclesLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::blobDetector(QImage img)
+void OpenCv::blobDetectorLive(QImage img)
 {
-    QMetaObject::invokeMethod(_impl, "blobDetector", Qt::QueuedConnection, Q_ARG(QImage, img));
+    QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
 void OpenCv::addToDetectBlobQueue(QImage img, QString x, QString y)
@@ -216,7 +216,7 @@ void OpenCvPrivate::init()
 
 }
 
-void OpenCvPrivate::searchCircles(QImage img)
+void OpenCvPrivate::searchCirclesLive(QImage img)
 {
     if (!_circleWatcher.isFinished())
         return;
@@ -271,7 +271,7 @@ QImage OpenCvPrivate::searchCirclesWorker(QImage img)
     return QImage();
 }
 
-void OpenCvPrivate::blobDetector(QImage img)
+void OpenCvPrivate::blobDetectorLive(QImage img)
 {
     if (!_blobWatcher.isFinished())
         return;

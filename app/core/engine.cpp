@@ -58,10 +58,10 @@ void Engine::createQmlEngine()
             myImageProvider->setImage(img, "raw");
 
         if (mode == "circle")
-            _openCv->searchCircles(img);
+            _openCv->searchCirclesLive(img);
 
         if (mode == "blob")
-            _openCv->blobDetector(img);
+            _openCv->blobDetectorLive(img);
     });
 
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
