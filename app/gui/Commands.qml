@@ -80,7 +80,7 @@ Item {
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
-                    console.log(DataBus.x_coord, DataBus.y_coord)
+                    fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
                 }
 
 //                for (let k = 0; k < modes.length; ++k) {
