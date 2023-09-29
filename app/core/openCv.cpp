@@ -213,7 +213,7 @@ void OpenCv::foundBlobs() const
         }
     }
 
-    db().insert("found_blobs", s);
+    db().insert("found_blobs", s.join("\n"));
 }
 
 OpenCvPrivate::OpenCvPrivate()

@@ -401,6 +401,9 @@ Item {
                 text: qsTr("Print blobs");
                 onClicked: {
                     let foundBlobs = DataBus.found_blobs
+                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+                    foundBlobs = foundBlobs.replace(/\n/g, '<br>')
+                    //"&nbsp;&nbsp;&nbsp;&nbsp;"
                     logViewer.append(foundBlobs)
                 }
             }
