@@ -130,16 +130,37 @@ OpenCv::OpenCv()
 {
     connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
     connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
-    //    connect(this, &Logger::common, _impl, &LoggerPrivate::common, Qt::QueuedConnection);
-
-    //    connect(_impl, &LoggerPrivate::logToFileChanged, this, &Logger::logToFileChanged, Qt::QueuedConnection);
-    //    connect(_impl, &LoggerPrivate::inited,           this, &Logger::inited, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
     connect(_thread.data(), &QThread::started,  _impl, &OpenCvPrivate::init, Qt::QueuedConnection);
 
     _impl->moveToThread(_thread.data());
     _thread->start();
+
+
+    connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    {
+        QImage im = std::get<0>(_blobWatcherCaptured.result());
+        auto kps = std::get<1>(_blobWatcherCaptured.result());
+        QString x = im.text("x");
+        QString y = im.text("y");
+
+        _detectBlobResult.push_back({kps, x, y});
+    });
+
+    QTimer* timer = new QTimer;
+    timer->start(50);
+
+    connect(timer, &QTimer::timeout, this, [this]()
+    {
+        if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
+        {
+            QImage img = _detectBlobQueue.first();
+            _detectBlobQueue.pop_front();
+            QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
+            _blobWatcherCaptured.setFuture(future);
+        }
+    });
 }
 
 OpenCv::~OpenCv()
@@ -158,7 +179,7 @@ void OpenCv::blobDetectorLive(QImage img)
     QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::addToDetectBlobQueue(QImage img, QString x, QString y)
+void OpenCv::blobDetectorCaptured(QImage img)
 {
     _detectBlobQueue.push_back(img);
 }
@@ -190,16 +211,16 @@ OpenCvPrivate::OpenCvPrivate()
     db().insert("circle_minRadius", 80);
     db().insert("circle_maxRadius", 110);
 
-    connect(&_circleWatcher, &QFutureWatcher<QImage>::finished, this, [this]()
+    connect(&_circleWatcherLive, &QFutureWatcher<QImage>::finished, this, [this]()
     {
-        emit circleChanged(_circleWatcher.result());
+        emit circleChanged(_circleWatcherLive.result());
     });
 
-    connect(&_blobWatcher, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
     {
-        emit blobChanged(std::get<0>(_blobWatcher.result()));
+        emit blobChanged(std::get<0>(_blobWatcherLive.result()));
 
-        auto kps = std::get<1>(_blobWatcher.result());
+        auto kps = std::get<1>(_blobWatcherLive.result());
 
         QString res;
         for (cv::KeyPoint kp : kps)
@@ -218,11 +239,11 @@ void OpenCvPrivate::init()
 
 void OpenCvPrivate::searchCirclesLive(QImage img)
 {
-    if (!_circleWatcher.isFinished())
+    if (!_circleWatcherLive.isFinished())
         return;
 
     QFuture<QImage> future = QtConcurrent::run(this, &OpenCvPrivate::searchCirclesWorker, img);
-    _circleWatcher.setFuture(future);
+    _circleWatcherLive.setFuture(future);
 }
 
 // img должно быть скопировано, при передаче в эту функцию
@@ -273,10 +294,10 @@ QImage OpenCvPrivate::searchCirclesWorker(QImage img)
 
 void OpenCvPrivate::blobDetectorLive(QImage img)
 {
-    if (!_blobWatcher.isFinished())
+    if (!_blobWatcherLive.isFinished())
         return;
 
     QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
-    _blobWatcher.setFuture(future);
+    _blobWatcherLive.setFuture(future);
 }
 

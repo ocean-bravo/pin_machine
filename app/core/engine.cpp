@@ -73,7 +73,10 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "raw captured");
         myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
-        _openCv->addToDetectBlobQueue(img.copy(), x, y);
+        QImage imWithCoord = img.copy();
+        imWithCoord.setText("x", x);
+        imWithCoord.setText("y", y);
+        _openCv->blobDetectorCaptured(imWithCoord);
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);

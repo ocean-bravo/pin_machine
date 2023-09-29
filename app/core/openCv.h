@@ -19,6 +19,7 @@ class OpenCv : public QObject
 
 public:
     using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
+    using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString>;
 
     OpenCv();
     ~OpenCv();
@@ -26,7 +27,7 @@ public:
     void searchCirclesLive(QImage img);
     void blobDetectorLive(QImage img);
 
-    void addToDetectBlobQueue(QImage img, QString x, QString y);
+    void blobDetectorCaptured(QImage img);
 
     QImage drawText(const QImage& img, const QString& text);
 
@@ -39,6 +40,8 @@ private:
     QScopedPointer<QThread> _thread;
 
     QQueue<QImage> _detectBlobQueue;
+    QVector<BlobInfo2> _detectBlobResult;
+    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCaptured;
 };
 
 class OpenCvPrivate : public QObject
@@ -60,8 +63,8 @@ signals:
 private:
     QImage searchCirclesWorker(QImage img);
 
-    QFutureWatcher<QImage> _circleWatcher;
-    QFutureWatcher<OpenCv::BlobInfo> _blobWatcher;
+    QFutureWatcher<QImage> _circleWatcherLive;
+    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherLive;
     QMutex _blobQueueMutex;
 };
 
