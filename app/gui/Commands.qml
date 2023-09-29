@@ -416,10 +416,8 @@ Item {
                 onClicked: {
                     codeEditor.clear()
                     let p = programParams.text.split(' ')
-
                     p = p.filter(e => e) // Магия JS. Выкидываю нулевые строки
-                    p = Array.from(p,Number)
-                    console.log(p)
+                    p = Array.from(p,Number) // Перевожу строки в числа
                     codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
                 }
             }
@@ -573,8 +571,6 @@ Item {
             }
         }
     }
-
-
 
     Shortcut {
         sequence: "F5"
