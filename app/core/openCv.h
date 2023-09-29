@@ -31,6 +31,8 @@ public:
 
     QImage drawText(const QImage& img, const QString& text);
 
+    void foundBlobs() const;
+
 signals:
     void circleChanged(QImage);
     void blobChanged(QImage);

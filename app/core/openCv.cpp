@@ -141,11 +141,16 @@ OpenCv::OpenCv()
     connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
     {
         QImage im = std::get<0>(_blobWatcherCaptured.result());
-        auto kps = std::get<1>(_blobWatcherCaptured.result());
+        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCaptured.result());
+
+        if (kps.empty())
+            return;
+
         QString x = im.text("x");
         QString y = im.text("y");
 
         _detectBlobResult.push_back({kps, x, y});
+        foundBlobs();
     });
 
     QTimer* timer = new QTimer;
@@ -190,6 +195,25 @@ QImage OpenCv::drawText(const QImage& img, const QString& text)
     cv::Mat image = qimage2matRef(img);
     ::drawTextBottomLeft(image, text);
     return img;
+}
+
+void OpenCv::foundBlobs() const
+{
+    QStringList s;
+    for (const auto& result : _detectBlobResult)
+    {
+        auto kps = std::get<0>(result);
+        QString x = std::get<1>(result);
+        QString y = std::get<1>(result);
+        s.append(QString("[%1 %2]").arg(x, y));
+
+        for (const cv::KeyPoint& kp : kps)
+        {
+            s.append(QString("\t size: %1 pos: [%2 %3]").arg(kp.size).arg(kp.pt.x).arg(kp.pt.y));
+        }
+    }
+
+    db().insert("found_blobs", s);
 }
 
 OpenCvPrivate::OpenCvPrivate()

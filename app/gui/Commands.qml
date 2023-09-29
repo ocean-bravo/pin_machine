@@ -369,24 +369,9 @@ Item {
 
                 Item { height: 30; width: 10}
 
-                SmButton { text: qsTr("Idle");
-                    onClicked:
-                    {
-                        status = "Idle"
-                    }
-                }
-                SmButton { text: qsTr("Wait");
-                    onClicked:
-                    {
-                        status = "Wait"
-                    }
-                }
-                SmButton { text: qsTr("Clear log");
-                    onClicked:
-                    {
-                        logViewer.clear()
-                    }
-                }
+                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
+                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
+                SmButton { text: qsTr("Clear log");  onClicked: { logViewer.clear() } }
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
@@ -411,6 +396,13 @@ Item {
 
             JogControl {
                 width: parent.width
+            }
+            SmButton {
+                text: qsTr("Print blobs");
+                onClicked: {
+                    let foundBlobs = DataBus.found_blobs
+                    logViewer.append(foundBlobs)
+                }
             }
         }
 
