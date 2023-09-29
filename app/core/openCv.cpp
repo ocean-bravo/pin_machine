@@ -210,7 +210,7 @@ void OpenCv::foundBlobs() const
     {
         auto kps = std::get<0>(result);
         QString x = std::get<1>(result);
-        QString y = std::get<1>(result);
+        QString y = std::get<2>(result);
         s.append(QString("[%1 %2]").arg(x, y));
 
         for (const cv::KeyPoint& kp : kps)
