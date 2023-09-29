@@ -386,13 +386,7 @@ Item {
                         sendCodeObj.stopProgram()
                     }
                 }
-                SmButton {
-                    text: qsTr("Generate program")
-                    onClicked: {
-                        codeEditor.clear()
-                        codeEditor.append(Utils.generateSteps(0, 100, 10, 200, 6.25, 4.25, 5000).join("\n"))
-                    }
-                }
+
             }
 
             JogControl {
@@ -409,6 +403,24 @@ Item {
                     foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
                     foundBlobs = foundBlobs.replace(/\n/g, '<br>')
                     logViewer.append(foundBlobs)
+                }
+            }
+            SmTextEdit {
+                id: programParams
+                width: 200
+                text: "0  100  10  200  6.25  4.25  5000"
+
+            }
+            SmButton {
+                text: qsTr("Generate program")
+                onClicked: {
+                    codeEditor.clear()
+                    let p = programParams.text.split(' ')
+
+                    p = p.filter(e => e) // Магия JS. Выкидываю нулевые строки
+                    p = Array.from(p,Number)
+                    console.log(p)
+                    codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
                 }
             }
         }
