@@ -54,6 +54,12 @@ void Engine::createQmlEngine()
     {
         const QString mode = db().value("mode").toString();
 
+        QString x = db().value("x_coord").toString();
+        QString y = db().value("y_coord").toString();
+
+        img.setText("x", x);
+        img.setText("y", y);
+
         if (mode == "raw")
             myImageProvider->setImage(img, "raw");
 
@@ -69,14 +75,13 @@ void Engine::createQmlEngine()
         int captureNumber = db().value("capture_number").toInt();
         QString x = db().value("x_coord").toString();
         QString y = db().value("y_coord").toString();
+        img.setText("x", x);
+        img.setText("y", y);
 
         myImageProvider->setImage(img, "raw captured");
         myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
-        QImage imWithCoord = img.copy();
-        imWithCoord.setText("x", x);
-        imWithCoord.setText("y", y);
-        _openCv->blobDetectorCaptured(imWithCoord);
+        _openCv->blobDetectorCaptured(img.copy());
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);

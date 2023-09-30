@@ -308,7 +308,7 @@ OpenCvPrivate::OpenCvPrivate()
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            res.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
+            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size)
                      .arg(pixToRealX(x.toDouble(), kp.pt.x, im.width()))
                      .arg(pixToRealY(y.toDouble(), kp.pt.y, im.height())));
         }
