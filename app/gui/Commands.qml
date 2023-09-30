@@ -410,10 +410,8 @@ Item {
 
                 DoubleSpinBox {
                     decimals: 5
-                    value: 0.00524
-                    onValueModified: {
-                       DataBus.pixel_size = Number(text)
-                    }
+                    value: DataBus.pixel_size
+                    onValueModified: DataBus.pixel_size = Number(text)
                 }
 
                 SmButton {

@@ -26,8 +26,6 @@ double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double pixelSize = db().value("pixel_size").toDouble(); // мм
-
-    qd() << "pixel size" << pixelSize;
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
     return frameCenterPos + (posOriginRelativeCenter * pixelSize);
 }
@@ -189,6 +187,9 @@ OpenCv::OpenCv()
             _blobWatcherCaptured.setFuture(future);
         }
     });
+
+
+    db().insert("pixel_size", 0.00524);
 }
 
 OpenCv::~OpenCv()
