@@ -352,9 +352,21 @@ Item {
                 width: parent.width
             }
             SmButton {
-                text: qsTr("Print blobs");
+                text: qsTr("Print blobs1");
                 onClicked: {
                     let foundBlobs = DataBus.found_blobs
+
+                    if (foundBlobs === undefined)
+                        return
+
+                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+                    logViewer.append(foundBlobs)
+                }
+            }
+            SmButton {
+                text: qsTr("Print blobs2");
+                onClicked: {
+                    let foundBlobs = DataBus.found_blobs2
 
                     if (foundBlobs === undefined)
                         return
