@@ -310,7 +310,7 @@ OpenCvPrivate::OpenCvPrivate()
             QString xMod = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
             QString yMod = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
 
-            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size).arg(xMod).arg(yMod);
+            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size).arg(xMod).arg(yMod));
         }
         db().insert("blob_info2", res);
 
