@@ -304,6 +304,10 @@ OpenCvPrivate::OpenCvPrivate()
 
         QString x = im.text("x");
         QString y = im.text("y");
+
+
+        qd() <<  "image pos " << x <<  y;
+
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
@@ -323,7 +327,7 @@ OpenCvPrivate::OpenCvPrivate()
             QString xMod = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
             QString yMod = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
 
-            qd() <<  xMod <<  yMod;
+
             res = QString("%1 %2").arg(xMod).arg(yMod);
         }
         db().insert("blob_info3", res);
