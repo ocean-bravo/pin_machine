@@ -288,7 +288,8 @@ OpenCvPrivate::OpenCvPrivate()
 
     connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
     {
-        emit blobChanged(std::get<0>(_blobWatcherLive.result()));
+        QImage im = std::get<0>(_blobWatcherLive.result());
+        emit blobChanged(im);
 
         auto kps = std::get<1>(_blobWatcherLive.result());
 
@@ -299,6 +300,19 @@ OpenCvPrivate::OpenCvPrivate()
         }
 
         db().insert("blob_info", res);
+
+
+        QString x = im.text("x");
+        QString y = im.text("y");
+
+        res.clear();
+        for (const cv::KeyPoint& kp : kps)
+        {
+            res.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
+                     .arg(pixToRealX(x.toDouble(), kp.pt.x, im.width()))
+                     .arg(pixToRealY(y.toDouble(), kp.pt.y, im.height())));
+        }
+
     });
 }
 
