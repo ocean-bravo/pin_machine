@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    DoubleSpinBox.qml \
     FindUsb.qml
 
 TRANSLATIONS += gui_language_de.ts \

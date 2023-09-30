@@ -25,6 +25,11 @@ Item {
         logViewer.append("<font color='red'>" + msg + "</font>")
     }
 
+    function moveTo(x, y) {
+        write("G1 G90 F100 X" + x + " Y" + y)
+    }
+
+
     Connections {
         target: Serial
         function onMessage(msg) {
@@ -83,25 +88,25 @@ Item {
                     fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
                 }
 
-//                for (let k = 0; k < modes.length; ++k) {
-//                    let stat = modes[k]
-//                    if (msg.includes(stat)) {
-//                        status = stat
-//                        fullStatus = msg
-//                        //continue nextMessage
-//                    }
-//                }
+                //                for (let k = 0; k < modes.length; ++k) {
+                //                    let stat = modes[k]
+                //                    if (msg.includes(stat)) {
+                //                        status = stat
+                //                        fullStatus = msg
+                //                        //continue nextMessage
+                //                    }
+                //                }
 
                 //            for (let i = 1; i < 11; ++i) {
                 //                let alrm = "ALARM:" + i
                 //                if (msg.includes(alrm))
                 //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
                 //            }
-//                for (let j = 1; j < 100; ++j) {
-//                    let err = "error:" + j
-//                    if (msg.includes(err))
-//                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-//                }
+                //                for (let j = 1; j < 100; ++j) {
+                //                    let err = "error:" + j
+                //                    if (msg.includes(err))
+                //                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+                //                }
 
 
                 msg = currentTime + ": " + msg
@@ -292,7 +297,7 @@ Item {
                 ComboBox {
                     height: 30
                     model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
-                            "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
+                        "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
                     onActivated: write(currentText)
                 }
 
@@ -310,18 +315,28 @@ Item {
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
 
-                SmTextEdit { id: moveX}
-                SmButton { text: qsTr("Move X");     onClicked: {write("G1 G90 F2000 X" + moveX.text) } }
-                SmButton {  }
+                DoubleSpinBox { id: moveX; }
+                SmButton { text: qsTr("Move X");
+                    onClicked: {
+                        write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F1000 X" + moveX.text) }
+                }
+                SmButton { id: relAbsX; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
 
+                DoubleSpinBox { id: moveY; }
+                SmButton { text: qsTr("Move Y");
+                    onClicked: {
+                        write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F1000 Y" + moveY.text) }
+                }
+                SmButton { id: relAbsY; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
 
-                SmTextEdit { id: moveY}
-                SmButton { text: qsTr("Move Y");     onClicked: {write("G1 G90 F2000 Y" + moveY.text) } }
-                Item { height: 20; width: 10}
+                DoubleSpinBox { id: moveZ; }
+                SmButton { text: qsTr("Move Z");
+                    onClicked: {
+                        write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F1000 Z" + moveZ.text) }
+                }
+                SmButton { id: relAbsZ; checkable: true; text: checked ? "Rel" : "Abs"; width: 50  }
 
-                SmTextEdit { id: moveZ}
-                SmButton { text: qsTr("Move Z");     onClicked: {write("G1 G90 F2000 Z" + moveZ.text) } }
-                Item { height: 20; width: 10}
+                //Item { height: 20; width: 10}
 
 
                 SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
@@ -351,41 +366,64 @@ Item {
             JogControl {
                 width: parent.width
             }
-            SmButton {
-                text: qsTr("Print blobs1");
-                onClicked: {
-                    let foundBlobs = DataBus.found_blobs
+            Grid {
+                width: parent.width
+                //height: 100
+                columns: 3
+                SmButton {
+                    text: qsTr("Print blobs1");
+                    onClicked: {
+                        let foundBlobs = DataBus.found_blobs
 
-                    if (foundBlobs === undefined)
-                        return
+                        if (foundBlobs === undefined)
+                            return
 
-                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
-                    logViewer.append(foundBlobs)
+                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+                        logViewer.append(foundBlobs)
+                    }
                 }
-            }
-            SmButton {
-                text: qsTr("Print blobs2");
-                onClicked: {
-                    let foundBlobs = DataBus.found_blobs2
+                SmButton {
+                    text: qsTr("Print blobs2");
+                    onClicked: {
+                        let foundBlobs = DataBus.found_blobs2
 
-                    if (foundBlobs === undefined)
-                        return
+                        if (foundBlobs === undefined)
+                            return
 
-                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
-                    logViewer.append(foundBlobs)
+                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+                        logViewer.append(foundBlobs)
+                    }
                 }
-            }
-            SmTextEdit {
-                id: programParams
-                width: 200
-                text: "0  140  10  160  6.25  4.25  5000"
-            }
-            SmButton {
-                text: qsTr("Generate program")
-                onClicked: {
-                    codeEditor.clear()
-                    let p = programParams.text.split(' ').filter(e => e).map(Number) // Выкидываю нулевые строки и преобразую в массив чисел
-                    codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
+                SmTextEdit {
+                    id: programParams
+                    width: 200
+                    text: "0  140  10  160  6.25  4.25  5000"
+                }
+                SmButton {
+                    text: qsTr("Generate program")
+                    onClicked: {
+                        codeEditor.clear()
+                        let p = programParams.text.split(' ').filter(e => e).map(Number) // Выкидываю нулевые строки и преобразую в массив чисел
+                        codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
+                    }
+                }
+
+                DoubleSpinBox {
+                    decimals: 5
+                    value: 0.0051
+                    onValueModified: {
+                       DataBus.pixel_size = Number(text)
+                    }
+                }
+
+                SmButton {
+                    text: qsTr("Visit blob")
+
+                    onClicked: {
+                        var blobInfo = DataBus.blob_info3
+                        var points = blobInfo.split(" ");
+                        moveTo(points[0], points[1]);
+                    }
                 }
             }
         }
@@ -433,7 +471,7 @@ Item {
                 Text {
                     anchors.top: image.top
                     anchors.right: image.right
-                    text: DataBus.blob_info + "\n" + DataBus.blob_info2
+                    text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3
                 }
 
                 Column {

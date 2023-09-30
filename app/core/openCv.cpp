@@ -19,14 +19,13 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
-const double pixelSize = 0.0051; // мм
-
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
 // pixPos - [0, pixelInLine)
 double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
+    const double pixelSize = db().value("pixel_size").toDouble(); // мм
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
     return frameCenterPos + (posOriginRelativeCenter * pixelSize);
 }
@@ -36,6 +35,7 @@ double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
+    const double pixelSize = db().value("pixel_size").toDouble(); // мм
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
     return frameCenterPos - (posOriginRelativeCenter * pixelSize);
 }
@@ -291,7 +291,7 @@ OpenCvPrivate::OpenCvPrivate()
         QImage im = std::get<0>(_blobWatcherLive.result());
         emit blobChanged(im);
 
-        auto kps = std::get<1>(_blobWatcherLive.result());
+        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherLive.result());
 
         QString res;
         for (cv::KeyPoint kp : kps)
@@ -304,17 +304,24 @@ OpenCvPrivate::OpenCvPrivate()
 
         QString x = im.text("x");
         QString y = im.text("y");
-
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
             res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size)
-                     .arg(pixToRealX(x.toDouble(), kp.pt.x, im.width()))
-                     .arg(pixToRealY(y.toDouble(), kp.pt.y, im.height())));
+                     .arg(QString::number(pixToRealX(x.toDouble(), 'f', 3), kp.pt.x, im.width()))
+                     .arg(QString::number(pixToRealY(y.toDouble(), 'f', 3), kp.pt.y, im.height())));
         }
-
         db().insert("blob_info2", res);
 
+
+        res.clear();
+        if (!kps.empty())
+        {
+            auto kp = kps[0];
+            res.append(QString("%1 %2").arg(QString::number(pixToRealX(x.toDouble(), 'f', 3), kp.pt.x, im.width()))
+                                       .arg(QString::number(pixToRealY(y.toDouble(), 'f', 3), kp.pt.y, im.height())));
+        }
+        db().insert("blob_info3", res);
     });
 }
 
