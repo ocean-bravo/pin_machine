@@ -319,11 +319,11 @@ OpenCvPrivate::OpenCvPrivate()
         {
             auto kp = kps[0];
             qd() <<  kp.pt.x <<  kp.pt.y;
-            QString xMod = QString::number(pixToRealX(x.toDouble(), 'f', 3), kp.pt.x, im.width());
-            QString yMod = QString::number(pixToRealY(y.toDouble(), 'f', 3), kp.pt.y, im.height());
+            QString xMod = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
+            QString yMod = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
 
             qd() <<  xMod <<  yMod;
-            res.append(QString("%1 %2").arg(xMod).arg(yMod));
+            res = (QString("%1 %2").arg(xMod).arg(yMod));
         }
         db().insert("blob_info3", res);
     });
