@@ -12,7 +12,7 @@ Item {
         id: findUsbProcess
         onReadyRead: {
             const result = readAll()
-            root.usbFound("/dev/" + result).replace(/\s/g, "")
+            root.usbFound(("/dev/" + result).replace(/\s/g, ""))
         }
         onFinished: {
             findUsbTimer.start()
