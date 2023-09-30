@@ -354,7 +354,7 @@ Item {
             SmButton {
                 text: qsTr("Print blobs");
                 onClicked: {
-                    let foundBlobs = DataBus.found_blobs2
+                    let foundBlobs = DataBus.found_blobs
 
                     if (foundBlobs === undefined)
                         return
@@ -366,7 +366,7 @@ Item {
             SmTextEdit {
                 id: programParams
                 width: 200
-                text: "0  100  10  200  6.25  4.25  5000"
+                text: "0  140  10  160  6.25  4.25  5000"
             }
             SmButton {
                 text: qsTr("Generate program")
