@@ -413,6 +413,7 @@ Item {
                     value: 0.0051
                     onValueModified: {
                        DataBus.pixel_size = Number(text)
+                       console.log(" pix size " , DataBus.pixel_size)
                     }
                 }
 
