@@ -295,12 +295,7 @@ Item {
                     text: qsTr("Status(?)")
                     tooltipText: "F5";
                     checkable: true
-                    onCheckedChanged: {
-                        if (checked)
-                            statusTimer.start()
-                        else
-                            statusTimer.stop()
-                    }
+                    onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
 
                     Timer {
                         id: statusTimer
@@ -308,33 +303,15 @@ Item {
                         repeat: true
                         triggeredOnStart: true
                         running: false
-                        onTriggered: {
-                            Serial.write("?\n")
-                        }
+                        onTriggered: Serial.write("?\n")
                     }
-
                 }
 
                 ComboBox {
                     height: 30
-                    model: ListModel {
-                        ListElement { text: "$Alarm/Disable" }
-                        ListElement { text: "$Alarms/List" }
-                        ListElement { text: "$Build/Info" }
-                        ListElement { text: "$Bye" }
-                        ListElement { text: "$Commands/List" }
-                        ListElement { text: "$Errors/List " }
-                        ListElement { text: "$Firmware/Info" }
-                        ListElement { text: "$GCode/Modes" }
-                        ListElement { text: "$Heap/Show" }
-                        ListElement { text: "$Help" }
-                        ListElement { text: "$Settings/List" }
-                        ListElement { text: "$Startup/Show" }
-                    }
-
-                    onActivated: {
-                        write(currentText)
-                    }
+                    model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
+                            "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
+                    onActivated: write(currentText)
                 }
 
                 SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18" )       } }
@@ -400,8 +377,7 @@ Item {
                     if (foundBlobs === undefined)
                         return
 
-                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-                    foundBlobs = foundBlobs.replace(/\n/g, '<br>')
+                    foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
                     logViewer.append(foundBlobs)
                 }
             }
@@ -409,15 +385,12 @@ Item {
                 id: programParams
                 width: 200
                 text: "0  100  10  200  6.25  4.25  5000"
-
             }
             SmButton {
                 text: qsTr("Generate program")
                 onClicked: {
                     codeEditor.clear()
-                    let p = programParams.text.split(' ')
-                    p = p.filter(e => e) // Магия JS. Выкидываю нулевые строки
-                    p = Array.from(p,Number) // Перевожу строки в числа
+                    let p = programParams.text.split(' ').filter(e => e).map(Number) // Выкидываю нулевые строки и преобразую в массив чисел
                     codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
                 }
             }
