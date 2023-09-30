@@ -313,6 +313,8 @@ OpenCvPrivate::OpenCvPrivate()
                      .arg(pixToRealY(y.toDouble(), kp.pt.y, im.height())));
         }
 
+        db().insert("blob_info2", res);
+
     });
 }
 

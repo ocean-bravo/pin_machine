@@ -451,7 +451,7 @@ Item {
                     Text {
                         anchors.top: startStopUpdate.top
                         anchors.left: reloadDevices.right
-                        text: DataBus.blob_info
+                        text: DataBus.blob_info + "\n" + DataBus.blob_info2
                     }
 
                     Button {
