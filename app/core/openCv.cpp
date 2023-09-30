@@ -23,7 +23,7 @@ const double pixelSize = 0.0051; // мм
 
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
 // pixPos - [0, pixelInLine)
-double pixToReal(double frameCenterPos, double pixPos, int pixelInLine)
+double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
@@ -31,6 +31,14 @@ double pixToReal(double frameCenterPos, double pixPos, int pixelInLine)
     return frameCenterPos + (posOriginRelativeCenter * pixelSize);
 }
 
+
+double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
+{
+    // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
+    // центра.
+    const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
+    return frameCenterPos - (posOriginRelativeCenter * pixelSize);
+}
 
 // В нижнем левом углу
 void drawTextBottomLeft(const cv::Mat& image, const QString& text)
@@ -241,8 +249,8 @@ void OpenCv::foundBlobs() const
         for (const cv::KeyPoint& kp : kps)
         {
             s.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
-                     .arg(pixToReal(x.toDouble(), kp.pt.x, w))
-                     .arg(pixToReal(y.toDouble(), kp.pt.y, h)));
+                     .arg(pixToRealX(x.toDouble(), kp.pt.x, w))
+                     .arg(pixToRealY(y.toDouble(), kp.pt.y, h)));
         }
     }
 
