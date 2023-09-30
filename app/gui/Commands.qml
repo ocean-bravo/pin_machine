@@ -354,7 +354,7 @@ Item {
             SmButton {
                 text: qsTr("Print blobs");
                 onClicked: {
-                    let foundBlobs = DataBus.found_blobs
+                    let foundBlobs = DataBus.found_blobs2
 
                     if (foundBlobs === undefined)
                         return

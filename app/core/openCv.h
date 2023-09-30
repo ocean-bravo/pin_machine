@@ -19,7 +19,7 @@ class OpenCv : public QObject
 
 public:
     using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
-    using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString>;
+    using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString, int, int>; // координаты центра, размеры изображения
 
     OpenCv();
     ~OpenCv();

@@ -19,6 +19,19 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
+const double pixelSize = 0.0051; // мм
+
+// frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
+// pixPos - [0, pixelInLine)
+double pixToReal(double frameCenterPos, double pixPos, int pixelInLine)
+{
+    // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
+    // центра.
+    const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
+    return frameCenterPos + (posOriginRelativeCenter * pixelSize);
+}
+
+
 // В нижнем левом углу
 void drawTextBottomLeft(const cv::Mat& image, const QString& text)
 {
@@ -149,7 +162,7 @@ OpenCv::OpenCv()
         QString x = im.text("x");
         QString y = im.text("y");
 
-        _detectBlobResult.push_back({kps, x, y});
+        _detectBlobResult.push_back({kps, x, y, im.width(), im.height()});
         foundBlobs();
     });
 
@@ -212,8 +225,28 @@ void OpenCv::foundBlobs() const
             s.append(QString("\t size: %1 pos: [%2 %3]").arg(kp.size).arg(kp.pt.x).arg(kp.pt.y));
         }
     }
-
     db().insert("found_blobs", s.join("\n"));
+
+
+    s.clear();
+    for (const auto& result : _detectBlobResult)
+    {
+        auto kps = std::get<0>(result);
+        QString x = std::get<1>(result);
+        QString y = std::get<2>(result);
+
+        int w = std::get<3>(result);
+        int h = std::get<4>(result);
+
+        for (const cv::KeyPoint& kp : kps)
+        {
+            s.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
+                     .arg(pixToReal(x.toDouble(), kp.pt.x, w))
+                     .arg(pixToReal(y.toDouble(), kp.pt.y, h)));
+        }
+    }
+
+    db().insert("found_blobs2", s.join("\n"));
 }
 
 void OpenCv::resetFoundBlobs()
