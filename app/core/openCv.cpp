@@ -307,16 +307,13 @@ OpenCvPrivate::OpenCvPrivate()
         QString x = im.text("x");
         QString y = im.text("y");
 
-
-        qd() <<  "image pos " << x <<  y;
-
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            QString xMod = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
-            QString yMod = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
+            QString xBlob = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
+            QString yBlob = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
 
-            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size).arg(xMod).arg(yMod));
+            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size).arg(xBlob).arg(yBlob));
         }
         db().insert("blob_info2", res);
 
@@ -325,14 +322,25 @@ OpenCvPrivate::OpenCvPrivate()
         if (!kps.empty())
         {
             auto kp = kps[0];
-            qd() <<  kp.pt.x <<  kp.pt.y;
-            QString xMod = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
-            QString yMod = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
+            QString xBlob = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
+            QString yBlob = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
 
-
-            res = QString("%1 %2").arg(xMod).arg(yMod);
+            res = QString("%1 %2").arg(xBlob).arg(yBlob);
         }
         db().insert("blob_info3", res);
+
+
+        res.clear();
+        if (!kps.empty())
+        {
+            auto kp = kps[0];
+            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+
+            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
+        }
+        db().insert("blob_info4", res);
+
     });
 }
 
