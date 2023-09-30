@@ -318,6 +318,7 @@ OpenCvPrivate::OpenCvPrivate()
         if (!kps.empty())
         {
             auto kp = kps[0];
+            qd() <<  kp.pt.x <<  kp.pt.y;
             res.append(QString("%1 %2").arg(QString::number(pixToRealX(x.toDouble(), 'f', 3), kp.pt.x, im.width()))
                                        .arg(QString::number(pixToRealY(y.toDouble(), 'f', 3), kp.pt.y, im.height())));
         }
