@@ -430,6 +430,12 @@ Item {
                     }
                 }
 
+                Text {
+                    anchors.top: image.top
+                    anchors.right: image.right
+                    text: DataBus.blob_info + "\n" + DataBus.blob_info2
+                }
+
                 Column {
                     spacing: 5
                     Button {
@@ -448,11 +454,6 @@ Item {
                         }
                     }
 
-                    Text {
-                        anchors.top: startStopUpdate.top
-                        anchors.left: reloadDevices.right
-                        text: DataBus.blob_info + "\n" + DataBus.blob_info2
-                    }
 
                     Button {
                         id: reloadDevices
