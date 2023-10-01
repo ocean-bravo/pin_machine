@@ -474,12 +474,12 @@ Item {
                     function runAsync() {
                         asyncToGenerator( function* () {
 
-                            var blobs = DataBus.found_blobs3
+                            let blobs = DataBus.found_blobs3
                             console.log (blobs)
 
 
-                            for (const blob in blobs) {
-                                var point = blob.split(" ")
+                            for (let blob of blobs) {
+                                let point = blob.split(" ")
                                 console.log (point)
                                 console.log (point[0])
                                 console.log (point[1])
