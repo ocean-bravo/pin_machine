@@ -403,7 +403,7 @@ Item {
                         if (foundBlobs === undefined)
                             return
 
-                        logViewer.append(foundBlobs)
+                        logViewer.append(foundBlobs.join('\n'))
                     }
                 }
 
