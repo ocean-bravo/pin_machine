@@ -474,10 +474,10 @@ Item {
                     function runAsync() {
                         asyncToGenerator( function* () {
 
-                            let blobs = DataBus.found_blobs3
+                            var blobs = DataBus.found_blobs3
 
                             for (const blob in blobs) {
-                                let point = blob.split(" ")
+                                var point = blob.split(" ")
                                 moveTo(point[0], point[1])
                                 // Ждать пока позиция не станет той, что нужно
                                 yield waitUntil({target: root, property: "fullStatus", value: "[${point[0]} ${point[1]}]"})
