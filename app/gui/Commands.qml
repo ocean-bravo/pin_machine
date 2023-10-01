@@ -486,7 +486,10 @@ Item {
 
                                 moveTo(point[0], point[1])
                                 // Ждать пока позиция не станет той, что нужно
-                                yield waitUntil({target: root, property: "fullStatus", value: "[${point[0]} ${point[1]}]"})
+
+                                let pos = "[${point[0]} ${point[1]}]"
+                                console.log(pos)
+                                yield waitUntil({target: root, property: "fullStatus", value: pos })
                                 yield sleep(1000)
                             }
                         } )();
