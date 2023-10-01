@@ -26,7 +26,7 @@ Item {
     }
 
     function moveTo(x, y) {
-        write("G1 G90 F100 X" + x + " Y" + y)
+        write("G1 G90 F5000 X" + x + " Y" + y)
     }
 
 
@@ -403,7 +403,7 @@ Item {
                         if (foundBlobs === undefined)
                             return
 
-                        logViewer.append(foundBlobs.join('\n'))
+                        logViewer.append(foundBlobs.join('<br>'))
                     }
                 }
 
