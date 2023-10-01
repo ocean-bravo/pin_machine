@@ -394,6 +394,20 @@ Item {
                         logViewer.append(foundBlobs)
                     }
                 }
+
+                SmButton {
+                    text: qsTr("Print blobs3");
+                    onClicked: {
+                        let foundBlobs = DataBus.found_blobs3
+
+                        if (foundBlobs === undefined)
+                            return
+
+                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+                        logViewer.append(foundBlobs)
+                    }
+                }
+
                 SmTextEdit {
                     id: programParams
                     width: 200
@@ -423,6 +437,34 @@ Item {
                         moveTo(points[0], points[1]);
                     }
                 }
+
+                SmButton {
+                    id: blobVisitor
+                    property int idx: 0
+                    property var blobs: DataBus.found_blobs3
+
+                    text: qsTr("Visit next blob")
+
+                    onClicked: {
+                        var blobInfo = blobs[idx]
+                        var points = blobInfo.split(" ")
+                        moveTo(points[0], points[1])
+
+                        ++idx
+
+                        if (idx >= blobs.length)
+                            idx = 0
+                    }
+                }
+
+                SmButton {
+                    text: qsTr("Reset blob visitor")
+
+                    onClicked: {
+                        blobVisitor.idx = 0
+                    }
+                }
+
             }
         }
 

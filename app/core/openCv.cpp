@@ -258,6 +258,28 @@ void OpenCv::foundBlobs() const
     }
 
     db().insert("found_blobs2", s.join("\n"));
+
+
+    s.clear();
+    for (const BlobInfo2& result : _detectBlobResult)
+    {
+        auto kps = std::get<0>(result);
+
+        const QString imX = std::get<1>(result);
+        const QString imY = std::get<2>(result);
+
+        const int imWidth = std::get<3>(result);
+        const int imHeight = std::get<4>(result);
+
+        for (const cv::KeyPoint& kp : kps)
+        {
+            const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
+            const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
+            s.append(QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3)));
+        }
+    }
+
+    db().insert("found_blobs3", s);
 }
 
 void OpenCv::resetFoundBlobs()
