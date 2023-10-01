@@ -427,42 +427,66 @@ Item {
                     onValueModified: DataBus.pixel_size = Number(text)
                 }
 
-                SmButton {
-                    text: qsTr("Visit blob")
+//                SmButton {
+//                    text: qsTr("Visit blob")
 
-                    onClicked: {
-                        var blobInfo = DataBus.blob_info3
-                        var points = blobInfo.split(" ");
-                        moveTo(points[0], points[1]);
-                    }
-                }
+//                    onClicked: {
+//                        var blobInfo = DataBus.blob_info3
+//                        var points = blobInfo.split(" ");
+//                        moveTo(points[0], points[1]);
+//                    }
+//                }
 
                 SmButton {
                     id: blobVisitor
-                    property int idx: 0
-                    property var blobs: DataBus.found_blobs3
+//                    property int idx: 0
+//                    property var blobs: DataBus.found_blobs3
 
                     text: qsTr("Visit next blob")
+                    checkable: true
 
-                    onClicked: {
-                        var blobInfo = blobs[idx]
-                        var points = blobInfo.split(" ")
-                        moveTo(points[0], points[1])
+                    onCheckedChanged: {
+                        checked ? blobVisitorPromise.start() : blobVisitorPromise.abort()
+                    }
 
-                        ++idx
+//                    onClicked: {
+//                        var blobInfo = blobs[idx]
+//                        var points = blobInfo.split(" ")
+//                        moveTo(points[0], points[1])
 
-                        if (idx >= blobs.length)
-                            idx = 0
+//                        ++idx
+
+//                        if (idx >= blobs.length)
+//                            idx = 0
+//                    }
+                }
+
+//                SmButton {
+//                    text: qsTr("Reset blob visitor")
+
+//                    onClicked: {
+//                        blobVisitor.idx = 0
+//                    }
+//                }
+
+                QMLPromises {
+                    id: blobVisitorPromise
+                    function runAsync() {
+                        asyncToGenerator( function* () {
+
+                            let blobs = DataBus.found_blobs3
+
+                            for (const blob in blobs) {
+                                let point = blob.split(" ")
+                                moveTo(point[0], point[1])
+                                // Ждать пока позиция не станет той, что нужно
+                                yield waitUntil({target: root, property: "fullStatus", value: "[${point[0]} ${point[1]}]"})
+                                yield sleep(1000)
+                            }
+                        } )();
                     }
                 }
 
-                SmButton {
-                    text: qsTr("Reset blob visitor")
-
-                    onClicked: {
-                        blobVisitor.idx = 0
-                    }
-                }
 
             }
         }
