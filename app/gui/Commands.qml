@@ -403,7 +403,6 @@ Item {
                         if (foundBlobs === undefined)
                             return
 
-                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
                         logViewer.append(foundBlobs)
                     }
                 }
