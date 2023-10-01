@@ -61,7 +61,7 @@ void Engine::createQmlEngine()
         img.setText("y", y);
 
         if (mode == "raw")
-            myImageProvider->setImage(img, "raw");
+            myImageProvider->setImage(OpenCv::drawCross(img), "raw");
 
         if (mode == "circle")
             _openCv->searchCirclesLive(img);

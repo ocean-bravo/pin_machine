@@ -221,6 +221,32 @@ QImage OpenCv::drawText(const QImage& img, const QString& text)
     return img;
 }
 
+QImage OpenCv::drawCross(const QImage& img)
+{
+    cv::Mat image = qimage2matRef(img);
+
+    cv::Point a1((image.cols / 2) - 2, 0);
+    cv::Point a2((image.cols / 2) - 2, image.rows - 1);
+
+    cv::Point b1((image.cols / 2) + 1, 0);
+    cv::Point b2((image.cols / 2) + 1, image.rows - 1);
+
+
+    cv::Point c1(0,              (image.rows / 2) - 2);
+    cv::Point c2(image.cols - 1, (image.rows / 2) - 2);
+
+    cv::Point d1(0,              (image.rows / 2) + 1);
+    cv::Point d2(image.cols - 1, (image.rows / 2) + 1);
+
+
+    cv::line(image, a1, a2, ColorRgb::White);
+    cv::line(image, b1, b2, ColorRgb::White);
+    cv::line(image, c1, c2, ColorRgb::White);
+    cv::line(image, d1, d2, ColorRgb::White);
+
+    return img;
+}
+
 void OpenCv::foundBlobs() const
 {
     QStringList s;

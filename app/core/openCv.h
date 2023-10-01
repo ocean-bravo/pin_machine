@@ -29,10 +29,12 @@ public:
 
     void blobDetectorCaptured(QImage img);
 
-    QImage drawText(const QImage& img, const QString& text);
+    static QImage drawText(const QImage& img, const QString& text);
 
     void foundBlobs() const;
     Q_INVOKABLE void resetFoundBlobs();
+
+    static QImage drawCross(const QImage& img);
 
 signals:
     void circleChanged(QImage);
