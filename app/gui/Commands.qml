@@ -446,7 +446,7 @@ Item {
                     checkable: true
 
                     onCheckedChanged: {
-                        checked ? blobVisitorPromise.start() : blobVisitorPromise.abort()
+                        checked ? blobVisitorPromise.runAsync() : blobVisitorPromise.abort()
                     }
 
 //                    onClicked: {
