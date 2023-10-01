@@ -489,7 +489,7 @@ Item {
 
                                 let pos = "[${point[0]} ${point[1]}]"
                                 console.log(pos)
-                                yield waitUntil({target: root, property: "fullStatus", value: pos })
+                                //yield waitUntil({target: root, property: "fullStatus", value: pos })
                                 yield sleep(1000)
                             }
                         } )();
