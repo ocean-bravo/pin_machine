@@ -475,6 +475,8 @@ Item {
                         asyncToGenerator( function* () {
 
                             var blobs = DataBus.found_blobs3
+                            console.log (blobs)
+
 
                             for (const blob in blobs) {
                                 var point = blob.split(" ")
