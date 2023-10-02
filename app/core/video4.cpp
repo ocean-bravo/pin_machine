@@ -25,7 +25,7 @@
 namespace {
 
 const int throwFramesYuv = 1;
-const int throwFramesJpg = 11;
+const int throwFramesJpg = 12;
 }
 
 
