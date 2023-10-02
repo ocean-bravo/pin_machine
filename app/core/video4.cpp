@@ -188,8 +188,7 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                MjpegHelper jpeg;
-                jpeg.decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
+                _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
             }
             else
             {
