@@ -75,6 +75,9 @@ void Engine::createQmlEngine()
         int captureNumber = db().value("capture_number").toInt();
         QString x = db().value("x_coord").toString();
         QString y = db().value("y_coord").toString();
+
+        qd() << "captured " << captureNumber << x << y;
+
         img.setText("x", x);
         img.setText("y", y);
 

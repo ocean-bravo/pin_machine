@@ -313,8 +313,8 @@ void OpenCv::resetFoundBlobs()
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("blob_minArea", 5000);
-    db().insert("blob_maxArea", 30000);
+    db().insert("blob_minArea", 1000);
+    db().insert("blob_maxArea", 100000);
     db().insert("blob_thresholdStep", 10);
     db().insert("blob_minThreshold", 1);
     db().insert("blob_maxThreshold", 200);

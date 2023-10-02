@@ -117,57 +117,12 @@ Item {
 
     QMLPromises {
         id: cycle
-        function runAsync() {
-            asyncToGenerator( function* () {
-
-                sendCodeObj.lineToSend = 0
-                codeEditor.readOnly = true
-                sendCodeObj.codeLines = codeEditor.text.split("\n")
-
-                statusTimer.interval = 100
-                statusTimer.start()
-
-                DataBus.capture_number = 0
-                ImagesStorage.clearCaptured()
-                OpenCv.resetFoundBlobs()
-
-                yield sleep(200)
-
-                while (true) {
-                    if (!sendCodeObj.sendNextLine()) // Если строка пустая, никаких действий после нее не надо делать
-                        continue
-
-                    yield sleep(200)
-                    status = "Wait"
-                    yield waitUntil({target: root, property: "status", value: "Idle"})
-                    appendLog("capturing ...\n")
-
-                    Video4.capture()
-                    yield waitForSignal(Video4.captured)
-                    appendLog("captured\n")
-
-                    // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
-                    yield sleep(1)
-                    DataBus.capture_number += 1
-
-                    if (sendCodeObj.lineToSend >= sendCodeObj.codeLines.length) {
-                        sendCodeObj.stopProgram()
-                        return
-                    }
-                }
-            } )();
-        }
-    }
-
-    Item {
-        id: sendCodeObj
 
         property var codeLines: []
         property int lineToSend: 0
 
         function sendNextLine() {
             let line = codeLines[lineToSend]
-
             let lineNumber = lineToSend+1
 
             // Пропускаю пустые строки
@@ -203,7 +158,94 @@ Item {
 
             codeEditor.readOnly = false
         }
+
+        function runAsync() {
+            asyncToGenerator( function* () {
+
+                lineToSend = 0
+                codeEditor.readOnly = true
+                codeLines = codeEditor.text.split("\n")
+
+                statusTimer.interval = 100
+                statusTimer.start()
+
+                DataBus.capture_number = 0
+                ImagesStorage.clearCaptured()
+                OpenCv.resetFoundBlobs()
+
+                yield sleep(200)
+
+                while (true) {
+                    if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
+                        yield sleep(200)
+                        status = "Wait"
+                        yield waitUntil({target: root, property: "status", value: "Idle"})
+
+                        appendLog("capturing ...\n")
+                        Video4.capture()
+                        yield waitForSignal(Video4.captured)
+                        appendLog("captured\n")
+
+                        // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
+                        yield sleep(1)
+                        DataBus.capture_number += 1
+                    }
+
+                    if (lineToSend >= codeLines.length) {
+                        stopProgram()
+                        appendLog("program finished\n")
+                        return
+                    }
+                }
+            } )();
+        }
     }
+
+//    Item {
+//        id: sendCodeObj
+
+//        property var codeLines: []
+//        property int lineToSend: 0
+
+//        function sendNextLine() {
+//            let line = codeLines[lineToSend]
+
+//            let lineNumber = lineToSend+1
+
+//            // Пропускаю пустые строки
+//            if (line.length === 0) {
+//                var msg = "" + lineNumber + ": " + "skip..." + "\n"
+//            }
+//            else {
+//                Serial.write(line)
+//                msg = "" + lineNumber + ": " + line + "\n"
+//            }
+
+//            appendLog(msg)
+//            ++lineToSend
+
+//            return line.length > 0
+//        }
+
+//        function startProgram() {
+//            cycle.runAsync()
+//        }
+
+//        function pauseProgram() {
+//            statusTimer.stop()
+//            playPauseProgram.text = qsTr("Resume program")
+//        }
+
+//        function stopProgram() {
+//            cycle.abort()
+
+//            statusTimer.stop()
+//            playPauseProgram.checked = false
+//            playPauseProgram.text = qsTr("Run program")
+
+//            codeEditor.readOnly = false
+//        }
+//    }
 
     RowLayout {
         anchors.fill: parent
@@ -350,14 +392,14 @@ Item {
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
-                    onCheckedChanged: checked ? sendCodeObj.startProgram() : sendCodeObj.pauseProgram()
+                    onCheckedChanged: checked ? cycle.startProgram() : cycle.pauseProgram()
                     checkable: true
                 }
                 SmButton {
                     text: qsTr("Stop program")
                     onClicked: {
                         playPauseProgram.checked = false
-                        sendCodeObj.stopProgram()
+                        cycle.stopProgram()
                     }
                 }
 
@@ -471,12 +513,21 @@ Item {
 
                 QMLPromises {
                     id: blobVisitorPromise
+
+                    onRunningChanged: {
+                        if (running === false)
+                            blobVisitor.checked = false
+                    }
+
                     function runAsync() {
                         asyncToGenerator( function* () {
 
                             let blobs = DataBus.found_blobs3
-                            console.log (blobs)
 
+                            if (blobs === undefined) {
+                                appendLog("no blobs to visit\n")
+                                return
+                            }
 
                             for (let blob of blobs) {
                                 let point = blob.split(" ")
