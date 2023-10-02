@@ -87,7 +87,7 @@ private:
 
     QAtomicInteger<bool> _running = false;
     QAtomicInteger<bool> _capture = false;
-    QAtomicInteger<bool> _firstFrameThrowOut = false;
+    QAtomicInteger<int> _framesToThrowOut = 1;
 
     QString _currentFourcc;
     MjpegHelper* _jpegDecompressor = nullptr;

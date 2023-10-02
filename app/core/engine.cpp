@@ -46,16 +46,14 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-
-
     MyImageProvider* myImageProvider = new MyImageProvider;
 
     connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
-        QString x = db().value("x_coord").toString();
-        QString y = db().value("y_coord").toString();
+        const QString x = db().value("x_coord").toString();
+        const QString y = db().value("y_coord").toString();
 
         img.setText("x", x);
         img.setText("y", y);
@@ -73,8 +71,8 @@ void Engine::createQmlEngine()
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
-        QString x = db().value("x_coord").toString();
-        QString y = db().value("y_coord").toString();
+        const QString x = db().value("x_coord").toString();
+        const QString y = db().value("y_coord").toString();
 
         qd() << "captured " << captureNumber << x << y;
 

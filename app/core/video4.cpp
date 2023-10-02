@@ -22,6 +22,12 @@
 
 #include "mjpeghelper.h"
 
+namespace {
+
+const int throwFramesYuv = 1;
+const int throwFramesJpg = 4;
+}
+
 
 Video4::Video4()
 {
@@ -112,7 +118,7 @@ void Video4Private::capture()
 {
     qd() << "Video4Private::capture";
     _capture = true;
-    _firstFrameThrowOut = false;
+    _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
 }
 
 void Video4Private::update()
@@ -204,9 +210,9 @@ void Video4Private::update()
 
             if (_capture)
             {
-                if (_firstFrameThrowOut)
+                if (_framesToThrowOut == 0)
                 {
-                    _firstFrameThrowOut = false;
+                    _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
                     _capture = false;
                     qd() << "Video4Private::update captured";
 
@@ -214,7 +220,7 @@ void Video4Private::update()
                 }
                 else
                 {
-                    _firstFrameThrowOut = true;
+                    _framesToThrowOut -= 1;
                 }
             }
         }
