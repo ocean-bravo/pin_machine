@@ -20,6 +20,8 @@
 #include "V4l2MmapDevice.h"
 #include "yuvconverters.h"
 
+#include "mjpeghelper.h"
+
 
 Video4::Video4()
 {
@@ -83,14 +85,16 @@ void Video4Private::reloadDevices()
 
 void Video4Private::init()
 {
-    if (_running)
-    {
-        QEventLoop loop;
-        QTimer::singleShot(1000, &loop, &QEventLoop::quit);
-        QObject::connect(this, &Video4Private::stopped, &loop, &QEventLoop::quit);
-        _running = false;
-        loop.exec();
-    }
+//    if (_running)
+//    {
+//        QEventLoop loop;
+//        QTimer::singleShot(1000, &loop, &QEventLoop::quit);
+//        QObject::connect(this, &Video4Private::stopped, &loop, &QEventLoop::quit);
+//        _running = false;
+//        loop.exec();
+//    }
+
+    _jpegDecompressor = new MjpegHelper;
 }
 
 void Video4Private::start()
@@ -178,7 +182,20 @@ void Video4Private::update()
 
         {
             //ScopedMeasure ("YUYV2RGB");
-            YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
+
+            if (_currentFourcc == "YUYV")
+                YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
+
+            else if (_currentFourcc == "MJPG")
+            {
+                MjpegHelper jpeg;
+                jpeg.decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
+            }
+            else
+            {
+                qd() << "error: unknown frame format: " << _currentFourcc;
+                return;
+            }
         }
         {
             //ScopedMeasure ("QImage ");
@@ -211,4 +228,5 @@ void Video4Private::changeCamera(int device, int width, int height, QString four
 {
     _videoCapture.reset(new V4l2MmapDevice);
     _videoCapture->init(device, width, height, V4l2Device::fourcc(fourcc.toLatin1().toStdString().c_str()));
+    _currentFourcc = fourcc;
 }

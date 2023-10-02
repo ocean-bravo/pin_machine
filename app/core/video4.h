@@ -12,6 +12,7 @@
 #include "V4l2MmapDevice.h"
 
 class Video4Private;
+class MjpegHelper;
 
 
 class Video4 : public QObject
@@ -87,5 +88,8 @@ private:
     QAtomicInteger<bool> _running = false;
     QAtomicInteger<bool> _capture = false;
     QAtomicInteger<bool> _firstFrameThrowOut = false;
+
+    QString _currentFourcc;
+    MjpegHelper* _jpegDecompressor = nullptr;
 };
 
