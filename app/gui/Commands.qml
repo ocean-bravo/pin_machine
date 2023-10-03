@@ -531,6 +531,9 @@ Item {
 
                             let updatedBlobs = []
 
+                            statusTimer.interval = 100
+                            statusTimer.start()
+
                             for (let blob of blobs) {
                                 let point = blob.split(" ")
                                 console.log (point)
