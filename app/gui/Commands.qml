@@ -552,14 +552,17 @@ Item {
 //                                console.log(pos)
                                 //yield waitUntil({target: root, property: "fullStatus", value: pos })
 
+                                appendLog("capturing ...\n")
                                 Video4.captureSmallRegion()
                                 yield waitForSignal(Video4.capturedSmallRegion)
+                                appendLog("captured\n")
 
                                 var smallRegion = Video4.smallRegion()
 
 
                                 OpenCv.blobDetectorUpdated(smallRegion)
                                 yield waitForSignal(OpenCv.smallRegionBlobChanged)
+                                appendLog("blob found\n")
 
                                 let coordBlob = OpenCv.smallRegionBlob()
 
