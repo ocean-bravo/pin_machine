@@ -225,7 +225,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
     disconnect(_smallRegConn);
 
-    _smallRegConn= connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
     {
         QImage im = std::get<0>(_blobWatcherCapturedSmallRegion.result());
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCapturedSmallRegion.result());
