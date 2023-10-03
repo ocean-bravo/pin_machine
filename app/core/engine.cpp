@@ -68,6 +68,11 @@ void Engine::createQmlEngine()
             _openCv->blobDetectorLive(img);
     });
 
+    connect(_videoDriver4, &Video4::capturedSmallRegion, this, [this, myImageProvider](QImage img)
+    {
+        myImageProvider->setImage(img, "raw captured");
+    });
+
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
