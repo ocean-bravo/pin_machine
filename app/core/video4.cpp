@@ -25,7 +25,7 @@
 namespace {
 
 // Сколько кадров нужно выкинуть.
-const int throwFramesYuv = 2; // Достаточно 1, чтобы не было смаза.
+const int throwFramesYuv = 2; // Достаточно 1, чтобы не было смаза. Не всегда...
 const int throwFramesJpg = 12;
 }
 
@@ -165,9 +165,9 @@ void Video4Private::imageDispatch(QImage img)
             {
                 int xCenter = img.width()/2;
                 int yCenter = img.height()/2;
-                emit capturedSmallRegion(img.copy(QRect(xCenter - 800, yCenter - 800, 1600, 1600)));
-                qd() << "small region captured";
                 _captureSmallRegion = false;
+                emit capturedSmallRegion(img.copy(QRect(xCenter - 400, yCenter - 400, 800, 800)));
+                qd() << "small region captured";
             }
         }
         else
