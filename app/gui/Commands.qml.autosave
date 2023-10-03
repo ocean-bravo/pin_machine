@@ -540,8 +540,8 @@ Item {
                                 moveTo(point[0], point[1])
                                 // Ждать пока позиция не станет той, что нужно
 
-                                let pos = "[${point[0]} ${point[1]}]"
-                                console.log(pos)
+//                                let pos = "[${point[0]} ${point[1]}]"
+//                                console.log(pos)
                                 //yield waitUntil({target: root, property: "fullStatus", value: pos })
 
                                 Video4.captureSmallRegion()

@@ -229,7 +229,10 @@ void OpenCv::blobDetectorUpdated(QImage img)
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCapturedSmallRegion.result());
 
         if (kps.empty())
+        {
+            qd() << "kps is empty";
             return;
+        }
 
         QString x = im.text("x");
         QString y = im.text("y");
