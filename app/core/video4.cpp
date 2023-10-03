@@ -24,7 +24,8 @@
 
 namespace {
 
-const int throwFramesYuv = 1;
+// Сколько кадров нужно выкинуть.
+const int throwFramesYuv = 1; // Достаточно 1, чтобы не было смаза.
 const int throwFramesJpg = 12;
 }
 

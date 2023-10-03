@@ -608,7 +608,7 @@ Item {
                         checked: false
                         onCheckedChanged: {
                             if (checked) {
-                                resList.setCurrentFormat()
+                                resolutionList.setCurrentFormat()
                                 Video4.start()
                             }
                             else
@@ -663,27 +663,44 @@ Item {
                         width: 200
                         id: cameraList
                         model: DataBus.cameras
-                        onActivated: {
-                            resList.model = DataBus["camera" + index]
-                            let md = resList.model[0]
-                            Video4.changeCamera(index*2, md.width, md.height, md.fourcc)
-                        }
-                        onModelChanged: {
-                            resList.model = DataBus["camera" + 0]
-                        }
                     }
 
                     ComboBox {
-                        id: resList
+                        id: resolutionList
                         width: 200
                         textRole: "display"
+                        model: sortResolutions(DataBus["camera" + cameraList.currentIndex])
                         onActivated: {
                             setCurrentFormat()
                         }
-                        function setCurrentFormat() {
-                            let md = model[currentIndex]
-                            Video4.changeCamera(cameraList.currentIndex*2, md.width, md.height, md.fourcc)
+                        onModelChanged: {
+                            setCurrentFormat()
                         }
+
+                        function setCurrentFormat() {
+                            let resolution = model[currentIndex]
+                            Video4.changeCamera(cameraList.currentIndex*2, resolution.width, resolution.height, resolution.fourcc)
+                        }
+
+                        function sortResolutions(resolutions) {
+                            let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
+                            let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
+
+                            // Функция сортировки по возрастанию разрешения
+                            let sortFunction = function (a,b) {
+                                if (a.width * a.height === b.width * b.height)
+                                    return 0
+                                return a.width * a.height > b.width * b.height ? 1 : -1
+                            }
+
+                            // Меняю порядок сортировки - большие разрешения вперед
+                            resYuyv.sort(sortFunction).reverse()
+                            resMjpg.sort(sortFunction).reverse()
+
+                            // Сначала YUYV разрешения
+                            return resYuyv.concat(resMjpg)
+                        }
+
                     }
                 }
                 CircleSettings {

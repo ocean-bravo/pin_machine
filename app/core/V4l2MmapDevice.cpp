@@ -69,6 +69,7 @@ bool V4l2MmapDevice::init(int device, int width, int height, int fourcc)
     //int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
     start();
+    return true;
 }
 
 bool V4l2MmapDevice::isReady()
@@ -122,9 +123,8 @@ bool V4l2MmapDevice::queryBuffers(int fd, int count)
         m_buffers[i].start = bufff;
         m_buffers[i].length = buf.length;
         _bufSize = buf.length;
-
-        qd() << "Camera: query buffer OK (size " << _bufSize << ")";
     }
+    qd() << QString("Camera: query %1 buffers OK (size %2)").arg(count).arg(_bufSize);
     return true;
 }
 
