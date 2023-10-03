@@ -566,13 +566,13 @@ Item {
                                 let coordBlob = OpenCv.smallRegionBlob()
 
                                 point = coordBlob.split(" ")
-                                moveTo(point[0], point[1])
+                                //moveTo(point[0], point[1])
 
                                 updatedBlobs.append(point)
 
-                                yield sleep(200)
-                                status = "Wait"
-                                yield waitUntil({target: root, property: "status", value: "Idle"})
+//                                yield sleep(200)
+//                                status = "Wait"
+//                                yield waitUntil({target: root, property: "status", value: "Idle"})
 
                                 yield sleep(1000)
                             }
