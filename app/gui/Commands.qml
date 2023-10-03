@@ -538,6 +538,11 @@ Item {
                                 console.log (point[1])
 
                                 moveTo(point[0], point[1])
+
+                                yield sleep(200)
+                                status = "Wait"
+                                yield waitUntil({target: root, property: "status", value: "Idle"})
+
                                 // Ждать пока позиция не станет той, что нужно
 
 //                                let pos = "[${point[0]} ${point[1]}]"
@@ -557,6 +562,11 @@ Item {
 
                                 point = coordBlob.split(" ")
                                 moveTo(point[0], point[1])
+
+                                yield sleep(200)
+                                status = "Wait"
+                                yield waitUntil({target: root, property: "status", value: "Idle"})
+
 
                                 // Найти координаты блоба по центру
                                 // Занести его координаты в список
