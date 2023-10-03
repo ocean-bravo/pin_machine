@@ -141,6 +141,7 @@ void Video4Private::capture()
 void Video4Private::captureSmallRegion()
 {
     _captureSmallRegion = true;
+    _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
 }
 
 void Video4Private::imageDispatch(QImage img)
@@ -164,7 +165,7 @@ void Video4Private::imageDispatch(QImage img)
             {
                 int xCenter = img.width()/2;
                 int yCenter = img.height()/2;
-                emit capturedSmallRegion(img.copy(QRect(xCenter - 200, yCenter - 200, 400, 400)));
+                emit capturedSmallRegion(img.copy(QRect(xCenter - 300, yCenter - 300, 600, 600)));
                 qd() << "small region captured";
                 _captureSmallRegion = false;
             }
