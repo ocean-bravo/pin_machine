@@ -31,13 +31,20 @@ public:
 
     Q_INVOKABLE void capture();
 
+    Q_INVOKABLE void captureSmallRegion();
+
+    Q_INVOKABLE QImage smallRegion() const;
+
 signals:
     void newImage(QImage);
     void captured(QImage);
+    void capturedSmallRegion(QImage);
 
 private:
     Video4Private* _impl = nullptr;
     QThread* _thread = nullptr;
+
+    QImage _smallRegion;
 };
 
 class Video4Private : public QObject
@@ -55,6 +62,7 @@ public slots:
     void stop();
 
     void capture();
+    void captureSmallRegion();
 
 
 //    void onAutoExposure(bool state);
@@ -80,13 +88,19 @@ public slots:
 signals:
     void newImage(QImage);
     void captured(QImage);
+    void capturedSmallRegion(QImage);
     void stopped();
 
+    void imageCaptured(QImage); // Private
+
 private:
+    void imageDispatch(QImage img);
+
     QScopedPointer<V4l2MmapDevice> _videoCapture;
 
     QAtomicInteger<bool> _running = false;
     QAtomicInteger<bool> _capture = false;
+    QAtomicInteger<bool> _captureSmallRegion = false;
     QAtomicInteger<int> _framesToThrowOut = 1;
 
     QString _currentFourcc;

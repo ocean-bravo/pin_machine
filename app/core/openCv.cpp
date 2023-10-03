@@ -213,6 +213,45 @@ void OpenCv::blobDetectorCaptured(QImage img)
     _detectBlobQueue.push_back(img);
 }
 
+void OpenCv::blobDetectorUpdated(QImage img)
+{
+    if (!_blobWatcherCapturedSmallRegion.isFinished())
+        return;
+
+    QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
+    _blobWatcherCapturedSmallRegion.setFuture(future);
+
+    disconnect(_smallRegConn);
+
+    _smallRegConn= connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    {
+        QImage im = std::get<0>(_blobWatcherCapturedSmallRegion.result());
+        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCapturedSmallRegion.result());
+
+        if (kps.empty())
+            return;
+
+        QString x = im.text("x");
+        QString y = im.text("y");
+
+        auto kp = kps[0];
+
+        const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+        const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+
+        _smallRegionBlob = QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3));
+
+        emit smallRegionBlobChanged();
+    });
+
+
+}
+
+QString OpenCv::smallRegionBlob() const
+{
+    return _smallRegionBlob;
+}
+
 // Текст рисуется на переданном изображение. И возвращается оно же просто для удобства.
 QImage OpenCv::drawText(const QImage& img, const QString& text)
 {

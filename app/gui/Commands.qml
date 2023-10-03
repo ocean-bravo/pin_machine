@@ -529,6 +529,8 @@ Item {
                                 return
                             }
 
+                            let updatedBlobs = []
+
                             for (let blob of blobs) {
                                 let point = blob.split(" ")
                                 console.log (point)
@@ -541,6 +543,22 @@ Item {
                                 let pos = "[${point[0]} ${point[1]}]"
                                 console.log(pos)
                                 //yield waitUntil({target: root, property: "fullStatus", value: pos })
+
+                                Video4.captureSmallRegion()
+                                yield waitForSignal(Video4, capturedSmallRegion)
+
+                                var smallRegion = Video4.smallRegion()
+
+                                OpenCv.blobDetectorUpdated(smallRegion)
+                                yield waitForSignal(OpenCv, smallRegionBlobChanged)
+
+                                let coordBlob = OpenCv.smallRegionBlob()
+
+                                point = coordBlob.split(" ")
+                                moveTo(point[0], point[1])
+
+                                // Найти координаты блоба по центру
+                                // Занести его координаты в список
                                 yield sleep(1000)
                             }
                         } )();

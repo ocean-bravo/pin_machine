@@ -36,9 +36,15 @@ public:
 
     static QImage drawCross(const QImage& img);
 
+
+    Q_INVOKABLE void blobDetectorUpdated(QImage img);
+    Q_INVOKABLE QString smallRegionBlob() const;
+
 signals:
     void circleChanged(QImage);
     void blobChanged(QImage);
+
+    void smallRegionBlobChanged();
 
 private:
     OpenCvPrivate* const _impl;
@@ -47,6 +53,9 @@ private:
     QQueue<QImage> _detectBlobQueue;
     QVector<BlobInfo2> _detectBlobResult;
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCaptured;
+    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCapturedSmallRegion;
+    QMetaObject::Connection _smallRegConn;
+    QString _smallRegionBlob;
 };
 
 class OpenCvPrivate : public QObject
