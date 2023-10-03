@@ -568,7 +568,7 @@ Item {
                                 point = coordBlob.split(" ")
                                 //moveTo(point[0], point[1])
 
-                                updatedBlobs.append(point)
+                                updatedBlobs.push(point)
 
 //                                yield sleep(200)
 //                                status = "Wait"
