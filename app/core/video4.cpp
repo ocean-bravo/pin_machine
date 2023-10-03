@@ -147,29 +147,32 @@ void Video4Private::imageDispatch(QImage img)
 {
     emit newImage(img);
 
-    if (_capture)
+    if (_capture || _captureSmallRegion)
     {
         if (_framesToThrowOut == 0)
         {
             _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
-            _capture = false;
-            qd() << "Video4Private::update captured";
 
-            emit captured(img.copy()); // Наружу выпускается копия, все правильно
+            qd() << "Video4Private::update captured";
+            if (_capture)
+            {
+                _capture = false;
+                emit captured(img.copy()); // Наружу выпускается копия, все правильно
+            }
+
+            if (_captureSmallRegion)
+            {
+                int xCenter = img.width()/2;
+                int yCenter = img.height()/2;
+                emit capturedSmallRegion(img.copy(QRect(xCenter - 200, yCenter - 200, 400, 400)));
+                qd() << "small region captured";
+                _captureSmallRegion = false;
+            }
         }
         else
         {
             _framesToThrowOut -= 1;
         }
-    }
-
-    if (_captureSmallRegion)
-    {
-        int xCenter = img.width()/2;
-        int yCenter = img.height()/2;
-        emit capturedSmallRegion(img.copy(QRect(xCenter - 500, yCenter - 500, 1000, 1000)));
-        qd() << "small region captured";
-        _captureSmallRegion = false;
     }
 }
 
