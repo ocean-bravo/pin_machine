@@ -89,6 +89,10 @@ Item {
         return invoke(waitForSignalComponent, {signal: sig});
     }
 
+    function waitForCondition(func) {
+        return invoke(waitForConditionComponent, {fn: func});
+    }
+
     function waitUntilFinished() {
         if (!running) {
             return Promise.resolve();
@@ -229,6 +233,10 @@ Item {
 
     WaitForSignalPromiseComponent {
         id: waitForSignalComponent
+    }
+
+    WaitForConditionPromiseComponent {
+        id: waitForConditionComponent
     }
 
     function asyncToGenerator(fn) {

@@ -13,12 +13,16 @@ Item {
     property string status: "Idle"
     property string fullStatus
 
+    property double xPos
+    property double yPos
+
     function write(msg) {
         Serial.write(msg+"\n")
         appendLog(msg+"\n")
     }
 
-    function appendLog(msg) {
+    function appendLog(message) {
+        let msg = message.split('').join('') // Копирую строку фактически
         msg = msg.replace(/\r?\n/g, '<br>')
 
         msg = String(Date.now()).slice(-4) + ": " + msg
@@ -29,6 +33,13 @@ Item {
         write("G1 G90 F5000 X" + x + " Y" + y)
     }
 
+    function extractFromGcodeX(line) {
+        return parseFloat(line.split(' ').filter(e => e)[3].replace(/\D/g, '')) //G1 G90 F5000 X6 Y140
+    }
+
+    function extractFromGcodeY(line) {
+        return parseFloat(line.split(' ').filter(e => e)[4].replace(/\D/g, '')) //G1 G90 F5000 X6 Y140
+    }
 
     Connections {
         target: Serial
@@ -86,6 +97,8 @@ Item {
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
                     fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
+                    xPos = parseFloat(pos[0])
+                    yPos = parseFloat(pos[1])
                 }
 
                 //                for (let k = 0; k < modes.length; ++k) {
@@ -115,6 +128,13 @@ Item {
         }
     }
 
+    Connections {
+        target: root
+        onStatusChanged: {
+            appendLog("CONDITION " + root.status + "\n")
+        }
+    }
+
     QMLPromises {
         id: cycle
 
@@ -130,6 +150,9 @@ Item {
                 var msg = "" + lineNumber + ": " + "skip..." + "\n"
             }
             else {
+                xTarget = extractFromGcodeX(line)
+                yTarget = extractFromGcodeY(line)
+
                 Serial.write(line)
                 msg = "" + lineNumber + ": " + line + "\n"
             }
@@ -159,6 +182,9 @@ Item {
             codeEditor.readOnly = false
         }
 
+        property real xTarget
+        property real yTarget
+
         function runAsync() {
             asyncToGenerator( function* () {
 
@@ -177,9 +203,12 @@ Item {
 
                 while (true) {
                     if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
-                        yield sleep(200)
                         status = "Wait"
-                        yield waitUntil({target: root, property: "status", value: "Idle"})
+                        //yield sleep(200)
+
+                        yield waitForCondition(() => root.status === "Idle" &&
+                                               Math.abs(xTarget - xPos) <= 0.003 &&
+                                               Math.abs(yTarget - yPos) <= 0.003)
 
                         appendLog("capturing ...\n")
                         Video4.capture()
@@ -544,7 +573,11 @@ Item {
 
                                 yield sleep(200)
                                 status = "Wait"
-                                yield waitUntil({target: root, property: "status", value: "Idle"})
+                                //yield waitUntil({target: root, property: "status", value: "Idle"})
+
+                                yield waitForCondition(function() {
+                                    return root.status === "Idle"
+                                })
 
                                 // Ждать пока позиция не станет той, что нужно
 
