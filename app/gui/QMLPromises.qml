@@ -86,6 +86,8 @@ Item {
     }
 
     function waitForSignal(sig, time) {
+        if (time === undefined)
+            time = 0
         return invoke(waitForSignalComponent, {interval: time, signal: sig});
     }
 

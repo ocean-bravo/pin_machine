@@ -14,7 +14,7 @@ Component {
 
         property var signal
 
-        running: true
+        running: interval > 0
         repeat: false
 
         function finish() {
