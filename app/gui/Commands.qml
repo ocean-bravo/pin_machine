@@ -16,16 +16,16 @@ Item {
     property real xPos
     property real yPos
 
-    Connections {
-        target: root
-        onXPosChanged: {
-            console.log("x pos "  + xPos)
-        }
+//    Connections {
+//        target: root
+//        onXPosChanged: {
+//            console.log("x pos "  + xPos)
+//        }
 
-        onYPosChanged: {
-            console.log("y pos "  + yPos)
-        }
-    }
+//        onYPosChanged: {
+//            console.log("y pos "  + yPos)
+//        }
+//    }
 
     function write(msg) {
         Serial.write(msg+"\n")
