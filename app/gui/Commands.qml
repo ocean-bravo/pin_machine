@@ -613,10 +613,10 @@ Item {
 //                                status = "Wait"
 //                                yield waitUntil({target: root, property: "status", value: "Idle"})
 
-                                yield sleep(1000)
+                                //yield sleep(1000)
                             }
 
-                            console.log(updatedBlobs)
+                            appendLog(updatedBlobs.join('\n'))
                         } )();
                     }
                 }
