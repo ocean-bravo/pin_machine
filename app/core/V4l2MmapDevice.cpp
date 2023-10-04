@@ -22,7 +22,7 @@
 
 namespace {
 
-const size_t V4L2MMAP_NBBUFFER = 15;
+const size_t V4L2MMAP_NBBUFFER = 2;
 
 QString fourccToString (quint32 fourcc)
 {
