@@ -45,11 +45,11 @@ Item {
     }
 
     function extractFromGcodeX(line) {
-        return parseFloat(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
+        return Number(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
     }
 
     function extractFromGcodeY(line) {
-        return parseFloat(line.split(' ').filter(e => e)[4].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
+        return Number(line.split(' ').filter(e => e)[4].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
     }
 
     Connections {
@@ -217,8 +217,6 @@ Item {
 
                 while (true) {
                     if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
-                        status = "Wait"
-                        //yield sleep(200)
 
                         yield waitForCondition(() => root.status === "Idle" &&
                                                Math.abs(xTarget - xPos) <= 0.003 &&
@@ -562,6 +560,9 @@ Item {
                             blobVisitor.checked = false
                     }
 
+                    property real xTarget
+                    property real yTarget
+
                     function runAsync() {
                         asyncToGenerator( function* () {
 
@@ -579,25 +580,16 @@ Item {
 
                             for (let blob of blobs) {
                                 let point = blob.split(" ")
-                                console.log (point)
-                                console.log (point[0])
-                                console.log (point[1])
+
+                                xTarget = Number(point[0])
+                                yTarget = Number(point[1])
 
                                 moveTo(point[0], point[1])
 
-                                yield sleep(200)
-                                status = "Wait"
-                                //yield waitUntil({target: root, property: "status", value: "Idle"})
+                                yield waitForCondition(() => root.status === "Idle" &&
+                                                       Math.abs(xTarget - xPos) <= 0.003 &&
+                                                       Math.abs(yTarget - yPos) <= 0.003)
 
-                                yield waitForCondition(function() {
-                                    return root.status === "Idle"
-                                })
-
-                                // Ждать пока позиция не станет той, что нужно
-
-//                                let pos = "[${point[0]} ${point[1]}]"
-//                                console.log(pos)
-                                //yield waitUntil({target: root, property: "fullStatus", value: pos })
 
                                 appendLog("capturing ...\n")
                                 Video4.captureSmallRegion()
