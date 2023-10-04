@@ -13,8 +13,19 @@ Item {
     property string status: "Idle"
     property string fullStatus
 
-    property double xPos
-    property double yPos
+    property real xPos
+    property real yPos
+
+    Connections {
+        target: root
+        onXPosChanged: {
+            console.log("x pos "  + xPos)
+        }
+
+        onYPosChanged: {
+            console.log("y pos "  + yPos)
+        }
+    }
 
     function write(msg) {
         Serial.write(msg+"\n")
@@ -152,6 +163,9 @@ Item {
             else {
                 xTarget = extractFromGcodeX(line)
                 yTarget = extractFromGcodeY(line)
+
+                console.log( " x target " + xTarget)
+                console.log( " y target " + yTarget)
 
                 Serial.write(line)
                 msg = "" + lineNumber + ": " + line + "\n"
