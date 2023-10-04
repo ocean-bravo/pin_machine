@@ -236,13 +236,8 @@ void OpenCv::blobDetectorUpdated(QImage img)
             return;
         }
 
-
-        qd() << "kps NOT empty";
-
         QString x = im.text("x");
         QString y = im.text("y");
-
-        qd() << "image pos " << x << y;
 
         auto kp = kps[0];
 
@@ -250,6 +245,14 @@ void OpenCv::blobDetectorUpdated(QImage img)
         const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
 
         _smallRegionBlob = QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3));
+
+        QString x = "0.000";
+        QString y = "0.000";
+
+        const double xBlobError = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+        const double yBlobError = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+
+        qd() << "blob error " << xBlobError << yBlobError;
 
         emit smallRegionBlobChanged();
     });
