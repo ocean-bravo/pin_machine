@@ -246,8 +246,8 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         _smallRegionBlob = QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3));
 
-        QString x = "0.000";
-        QString y = "0.000";
+        x = "0.000";
+        y = "0.000";
 
         const double xBlobError = pixToRealX(x.toDouble(), kp.pt.x, im.width());
         const double yBlobError = pixToRealY(y.toDouble(), kp.pt.y, im.height());
