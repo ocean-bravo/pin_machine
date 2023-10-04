@@ -89,8 +89,8 @@ Item {
         return invoke(waitForSignalComponent, {signal: sig});
     }
 
-    function waitForCondition(func) {
-        return invoke(waitForConditionComponent, {fn: func});
+    function waitForCondition(func, time) {
+        return invoke(waitForConditionComponent, {fn: func, timeout: time});
     }
 
     function waitUntilFinished() {

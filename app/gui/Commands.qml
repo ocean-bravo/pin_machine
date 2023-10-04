@@ -581,7 +581,7 @@ Item {
 
                                 yield waitForCondition(() => root.status === "Idle" &&
                                                        Math.abs(xTarget - xPos) <= 0.003 &&
-                                                       Math.abs(yTarget - yPos) <= 0.003)
+                                                       Math.abs(yTarget - yPos) <= 0.003, 1000)
 
 
                                 appendLog("capturing ...\n")
