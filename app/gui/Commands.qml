@@ -590,6 +590,8 @@ Item {
                                 appendLog("captured\n")
 
                                 var smallRegion = Video4.smallRegion()
+                                smallRegion.setText("x", String(xPos))
+                                smallRegion.setText("y", String(yPos))
 
                                 OpenCv.blobDetectorUpdated(smallRegion)
                                 yield waitForSignal(OpenCv.smallRegionBlobChanged)
