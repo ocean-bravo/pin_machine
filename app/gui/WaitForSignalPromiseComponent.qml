@@ -22,11 +22,14 @@ Component {
                 return;
             }
 
+            signal.disconnect(slotConnection)
             stop();
             _resolve();
 
             Qt.callLater(destroy);
         }
+
+        property var slotConnection
 
         function connectOnce(sig, slot) {
             var slotConnection = () => {
@@ -34,10 +37,11 @@ Component {
                 sig.disconnect(slotConnection); // disconnect slot :)
             }
             sig.connect(slotConnection);        // connecting slot to signal in Qt way
+            return slotConnection
         }
 
         onSignalChanged: {
-            connectOnce(signal, finish)
+            slotConnection = connectOnce(signal, finish)
         }
 
         onTriggered: finish()
@@ -45,6 +49,7 @@ Component {
         on_AbortingChanged: {
             if (_aborting) {
                 if (running) {
+                    signal.disconnect(slotConnection)
                     stop();
                     _abort(_reject);
                     Qt.callLater(destroy);
