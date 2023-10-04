@@ -70,7 +70,7 @@ void Engine::createQmlEngine()
 
     connect(_videoDriver4, &Video4::capturedSmallRegion, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(_openCv->drawCross(img), "raw captured");
+        myImageProvider->setImage(_openCv->drawCross(img.copy()), "raw captured");
     });
 
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
