@@ -233,6 +233,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
         if (kps.empty())
         {
             qd() << "kps is empty";
+            _smallRegionBlob.clear();
             return;
         }
 

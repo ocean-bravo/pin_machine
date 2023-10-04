@@ -85,8 +85,8 @@ Item {
         return invoke(waitUntilComponent, properties);
     }
 
-    function waitForSignal(sig) {
-        return invoke(waitForSignalComponent, {signal: sig});
+    function waitForSignal(sig, time) {
+        return invoke(waitForSignalComponent, {interval: time, signal: sig});
     }
 
     function waitForCondition(func, time) {
@@ -122,102 +122,102 @@ Item {
         } );
     }
 
-    function fetch(properties) {
-        return new Promise(function (resolve, reject) {
-            let _prop = Object.assign({}, properties);
-            let method = _prop["method"] ?? "GET";
-            let url = _prop["url"] ?? "https://www.arcgis.com";
-            let body = _prop["body"] ?? null;
-            let headers = Object.assign({}, _prop["headers"]);
+//    function fetch(properties) {
+//        return new Promise(function (resolve, reject) {
+//            let _prop = Object.assign({}, properties);
+//            let method = _prop["method"] ?? "GET";
+//            let url = _prop["url"] ?? "https://www.arcgis.com";
+//            let body = _prop["body"] ?? null;
+//            let headers = Object.assign({}, _prop["headers"]);
 
-            let xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (aborted) {
-                    return;
-                }
+//            let xmlhttp = new XMLHttpRequest();
+//            xmlhttp.onreadystatechange = function() {
+//                if (aborted) {
+//                    return;
+//                }
 
-                if (xmlhttp.readyState !== XMLHttpRequest.DONE) {
-                    return;
-                }
+//                if (xmlhttp.readyState !== XMLHttpRequest.DONE) {
+//                    return;
+//                }
 
-                if (aborting) {
-                    internal.abort(reject);
-                    return;
-                }
+//                if (aborting) {
+//                    internal.abort(reject);
+//                    return;
+//                }
 
-                let responseJson = null;
-                try {
-                    responseJson = JSON.parse(xmlhttp.responseText);
-                } catch (parseErr) {
-                    console.info(xmlhttp.responseText);
-                    reject(parseErr);
-                }
+//                let responseJson = null;
+//                try {
+//                    responseJson = JSON.parse(xmlhttp.responseText);
+//                } catch (parseErr) {
+//                    console.info(xmlhttp.responseText);
+//                    reject(parseErr);
+//                }
 
-                let obj = {
-                    response: responseJson,
-                    responseText: xmlhttp.responseText
-                };
+//                let obj = {
+//                    response: responseJson,
+//                    responseText: xmlhttp.responseText
+//                };
 
-                Qt.callLater(resolve, obj);
-            };
+//                Qt.callLater(resolve, obj);
+//            };
 
-            let _url = url;
-            let payload = null;
+//            let _url = url;
+//            let payload = null;
 
-            if (body) {
-                let query = [ ];
-                for (let key in body) {
-                    let value = body[key];
-                    query.push(key + "=" + encodeURIComponent(value));
-                }
-                let queryString = query.join("&");
-                payload = queryString;
+//            if (body) {
+//                let query = [ ];
+//                for (let key in body) {
+//                    let value = body[key];
+//                    query.push(key + "=" + encodeURIComponent(value));
+//                }
+//                let queryString = query.join("&");
+//                payload = queryString;
 
-                if (method === "GET") {
-                    _url = url + "?" + queryString;
-                    payload = null;
-                }
-            }
+//                if (method === "GET") {
+//                    _url = url + "?" + queryString;
+//                    payload = null;
+//                }
+//            }
 
-            xmlhttp.open(method, _url);
+//            xmlhttp.open(method, _url);
 
-            if (method !== "GET" && payload) {
-                headers["Content-type"] = "application/x-www-form-urlencoded";
-            }
+//            if (method !== "GET" && payload) {
+//                headers["Content-type"] = "application/x-www-form-urlencoded";
+//            }
 
-            if (headers) {
-                for (let header in headers) {
-                    xmlhttp.setRequestHeader(header, headers[header]);
-                }
-            }
+//            if (headers) {
+//                for (let header in headers) {
+//                    xmlhttp.setRequestHeader(header, headers[header]);
+//                }
+//            }
 
-            if (payload) {
-                xmlhttp.send(payload);
-            } else {
-                xmlhttp.send();
-            }
-        } );
-    }
+//            if (payload) {
+//                xmlhttp.send(payload);
+//            } else {
+//                xmlhttp.send();
+//            }
+//        } );
+//    }
 
-    function grabToImage(item, filePath) {
-        return new Promise(function (resolve, reject) {
-            try {
-                item.grabToImage(function (result) {
-                    try {
-                        if (!result.saveToFile(filePath)) {
-                            reject(new Error(qStr("grabToImage error: %1").arg(filePath)));
-                            return;
-                        }
-                        resolve(filePath);
-                    } catch (saveError) {
-                        reject(saveError);
-                    }
-                } );
-            } catch (grabError) {
-                reject(grabError);
-            }
-        } );
-    }
+    //    function grabToImage(item, filePath) {
+    //        return new Promise(function (resolve, reject) {
+    //            try {
+    //                item.grabToImage(function (result) {
+    //                    try {
+    //                        if (!result.saveToFile(filePath)) {
+    //                            reject(new Error(qStr("grabToImage error: %1").arg(filePath)));
+    //                            return;
+    //                        }
+    //                        resolve(filePath);
+    //                    } catch (saveError) {
+    //                        reject(saveError);
+    //                    }
+    //                } );
+    //            } catch (grabError) {
+    //                reject(grabError);
+    //            }
+    //        } );
+    //    }
 
     SleepPromiseComponent {
         id: sleepComponent

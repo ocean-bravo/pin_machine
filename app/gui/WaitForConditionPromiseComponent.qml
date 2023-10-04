@@ -2,28 +2,15 @@ import QtQuick 2.15
 
 Component {
     QtObject {
+        id: root
         property var _resolve
         property var _reject
         property var _abort
         property bool _aborted: false
         property bool _aborting: false
 
-        property int timeout: 0
         property var fn
         property bool finished: fn() === true
-
-        Timer {
-            running: timeout > 0
-            repeat: false
-
-            interval: timeout
-
-            onTriggered: {
-                _reject();
-
-                Qt.callLater(destroy);
-            }
-        }
 
         onFinishedChanged: {
             if (_aborted) {

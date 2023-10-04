@@ -5,8 +5,7 @@ import QtQuick 2.15
 // Не проверял, нормально ли аборт срабатывает.
 
 Component {
-    QtObject {
-        id: root
+    Timer {
         property var _resolve
         property var _reject
         property var _abort
@@ -14,6 +13,20 @@ Component {
         property bool _aborting: false
 
         property var signal
+
+        running: true
+        repeat: false
+
+        function finish() {
+            if (_aborted) {
+                return;
+            }
+
+            stop();
+            _resolve();
+
+            Qt.callLater(destroy);
+        }
 
         function connectOnce(sig, slot) {
             var slotConnection = () => {
@@ -24,22 +37,57 @@ Component {
         }
 
         onSignalChanged: {
-            connectOnce(signal, function () {
-                if (_aborted) {
-                    return;
-                }
-
-                _resolve();
-
-                Qt.callLater(destroy);
-            })
+            connectOnce(signal, finish)
         }
 
-        function on_AbortingChanged() {
+        onTriggered: finish()
+
+        on_AbortingChanged: {
             if (_aborting) {
-                _abort(_reject);
-                Qt.callLater(destroy);
+                if (running) {
+                    stop();
+                    _abort(_reject);
+                    Qt.callLater(destroy);
+                }
             }
         }
     }
+
+
+
+//    QtObject {
+//        id: root
+
+
+//        property int timeout
+//        property var signal
+
+//        Timer {
+//            running: true
+//            repeat: false
+//            interval: root.timeout
+//            onTriggered: finish()
+//        }
+
+//        function connectOnce(sig, slot) {
+//            var slotConnection = () => {
+//                slot.apply(this, arguments);    // run slot by passing `this` and arguments (as list).
+//                sig.disconnect(slotConnection); // disconnect slot :)
+//            }
+//            sig.connect(slotConnection);        // connecting slot to signal in Qt way
+//        }
+
+
+
+//        onSignalChanged: {
+//            connectOnce(signal, finish)
+//        }
+
+//        function on_AbortingChanged() {
+//            if (_aborting) {
+//                _abort(_reject);
+//                Qt.callLater(destroy);
+//            }
+//        }
+//    }
 }

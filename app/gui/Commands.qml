@@ -556,6 +556,14 @@ Item {
                     property real xTarget
                     property real yTarget
 
+                    property bool timeExpired: false
+
+                    Timer {
+                        id: timeout
+                        interval: 1000
+                        onTriggered: timeExpired = true
+                    }
+
                     function runAsync() {
                         asyncToGenerator( function* () {
 
@@ -579,9 +587,11 @@ Item {
 
                                 moveTo(point[0], point[1])
 
+                                timeExpired = false
+                                timeout.start()
                                 yield waitForCondition(() => root.status === "Idle" &&
                                                        Math.abs(xTarget - xPos) <= 0.003 &&
-                                                       Math.abs(yTarget - yPos) <= 0.003, 100)
+                                                       Math.abs(yTarget - yPos) <= 0.003)
 
 
                                 appendLog("capturing ...\n")
@@ -591,7 +601,7 @@ Item {
 
                                 var smallRegion = Video4.smallRegion()
                                 OpenCv.blobDetectorUpdated(smallRegion)
-                                yield waitForSignal(OpenCv.smallRegionBlobChanged)
+                                yield waitForSignal(OpenCv.smallRegionBlobChanged, 1000)
                                 appendLog("blob found\n")
 
                                 let coordBlob = OpenCv.smallRegionBlob()
