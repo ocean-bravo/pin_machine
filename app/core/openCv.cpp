@@ -236,8 +236,13 @@ void OpenCv::blobDetectorUpdated(QImage img)
             return;
         }
 
+
+        qd() << "kps NOT empty";
+
         QString x = im.text("x");
         QString y = im.text("y");
+
+        qd() << "image pos " << x << y;
 
         auto kp = kps[0];
 

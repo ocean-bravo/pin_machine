@@ -139,13 +139,6 @@ Item {
         }
     }
 
-    Connections {
-        target: root
-        onStatusChanged: {
-            appendLog("CONDITION " + root.status + "\n")
-        }
-    }
-
     QMLPromises {
         id: cycle
 
@@ -617,6 +610,8 @@ Item {
                             }
 
                             appendLog(updatedBlobs.join('\n'))
+                            appendLog("visit finished\n")
+
                         } )();
                     }
                 }
