@@ -44,7 +44,10 @@ Component {
             slotConnection = connectOnce(signal, finish)
         }
 
-        onTriggered: finish()
+        onTriggered: {
+            console.log("wait for signal timeout!!!")
+            finish()
+        }
 
         on_AbortingChanged: {
             if (_aborting) {
