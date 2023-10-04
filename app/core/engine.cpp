@@ -70,7 +70,7 @@ void Engine::createQmlEngine()
 
     connect(_videoDriver4, &Video4::capturedSmallRegion, this, [this, myImageProvider](QImage img)
     {
-        myImageProvider->setImage(img, "raw captured");
+        myImageProvider->setImage(_openCv->drawCross(img), "raw captured");
     });
 
     connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
@@ -84,7 +84,7 @@ void Engine::createQmlEngine()
         img.setText("x", x);
         img.setText("y", y);
 
-        myImageProvider->setImage(_openCv->drawCross(img.copy()), "raw captured");
+        myImageProvider->setImage(img, "raw captured");
         myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
         _openCv->blobDetectorCaptured(img.copy());

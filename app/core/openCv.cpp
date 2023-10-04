@@ -95,7 +95,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 {
     ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
 
-    qd() << "detect blobs " << img.width() << img.height();
+    //qd() << "detect blobs " << img.width() << img.height();
 
     cv::SimpleBlobDetector::Params params;
 
