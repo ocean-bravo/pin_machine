@@ -95,7 +95,7 @@ void Video4::captureSmallRegion()
     QMetaObject::invokeMethod(_impl, "captureSmallRegion", Qt::QueuedConnection);
 }
 
-QImage Video4::smallRegion() const
+QImage Video4::smallRegion()
 {
     const QString x = db().value("x_coord").toString();
     const QString y = db().value("y_coord").toString();

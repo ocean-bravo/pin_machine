@@ -33,7 +33,7 @@ public:
 
     Q_INVOKABLE void captureSmallRegion();
 
-    Q_INVOKABLE QImage smallRegion() const;
+    Q_INVOKABLE QImage smallRegion();
 
 signals:
     void newImage(QImage);
