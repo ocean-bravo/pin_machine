@@ -97,6 +97,11 @@ void Video4::captureSmallRegion()
 
 QImage Video4::smallRegion() const
 {
+    const QString x = db().value("x_coord").toString();
+    const QString y = db().value("y_coord").toString();
+
+    _smallRegion.setText("x", x);
+    _smallRegion.setText("y", y);
     return _smallRegion;
 }
 
