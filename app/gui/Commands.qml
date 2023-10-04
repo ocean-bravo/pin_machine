@@ -45,11 +45,11 @@ Item {
     }
 
     function extractFromGcodeX(line) {
-        return parseFloat(line.split(' ').filter(e => e)[3].replace(/^\d.-/g, '')) //G1 G90 F5000 X6 Y140
+        return parseFloat(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
     }
 
     function extractFromGcodeY(line) {
-        return parseFloat(line.split(' ').filter(e => e)[4].replace(/^\d.-/g, '')) //G1 G90 F5000 X6 Y140
+        return parseFloat(line.split(' ').filter(e => e)[4].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
     }
 
     Connections {
