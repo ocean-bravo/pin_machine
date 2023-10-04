@@ -590,27 +590,16 @@ Item {
                                 appendLog("captured\n")
 
                                 var smallRegion = Video4.smallRegion()
-
-
                                 OpenCv.blobDetectorUpdated(smallRegion)
                                 yield waitForSignal(OpenCv.smallRegionBlobChanged)
                                 appendLog("blob found\n")
 
                                 let coordBlob = OpenCv.smallRegionBlob()
 
-                                point = coordBlob.split(" ")
-                                //moveTo(point[0], point[1])
-
-                                updatedBlobs.push(point)
-
-//                                yield sleep(200)
-//                                status = "Wait"
-//                                yield waitUntil({target: root, property: "status", value: "Idle"})
-
-                                //yield sleep(1000)
+                                updatedBlobs.push(coordBlob)
                             }
 
-                            appendLog(updatedBlobs.join('\n'))
+                            DataBus.found_blobs3 = updatedBlobs
                             appendLog("visit finished\n")
 
                         } )();
