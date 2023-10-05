@@ -157,8 +157,8 @@ Item {
                 xTarget = extractFromGcodeX(line)
                 yTarget = extractFromGcodeY(line)
 
-                console.log( " x target " + xTarget)
-                console.log( " y target " + yTarget)
+//                console.log( " x target " + xTarget)
+//                console.log( " y target " + yTarget)
 
                 Serial.write(line)
                 msg = "" + lineNumber + ": " + line + "\n"
@@ -556,13 +556,13 @@ Item {
                     property real xTarget
                     property real yTarget
 
-                    property bool timeExpired: false
+                    //property bool timeExpired: false
 
-                    Timer {
-                        id: timeout
-                        interval: 1000
-                        onTriggered: timeExpired = true
-                    }
+//                    Timer {
+//                        id: timeout
+//                        interval: 1000
+//                        onTriggered: timeExpired = true
+//                    }
 
                     function runAsync() {
                         asyncToGenerator( function* () {
@@ -587,8 +587,8 @@ Item {
 
                                 moveTo(point[0], point[1])
 
-                                timeExpired = false
-                                timeout.start()
+                                //timeExpired = false
+                                //timeout.start()
                                 yield waitForCondition(() => root.status === "Idle" &&
                                                        Math.abs(xTarget - xPos) <= 0.003 &&
                                                        Math.abs(yTarget - yPos) <= 0.003)
@@ -601,10 +601,15 @@ Item {
 
                                 var smallRegion = Video4.smallRegion()
                                 OpenCv.blobDetectorUpdated(smallRegion)
-                                yield waitForSignal(OpenCv.smallRegionBlobChanged, 1000)
-                                appendLog("blob found\n")
+                                yield waitForSignal(OpenCv.smallRegionBlobChanged, 2000)
 
                                 let coordBlob = OpenCv.smallRegionBlob()
+
+                                if (coordBlob.length === 0)
+                                    appendLog("blob NOT found\n")
+                                else
+                                    appendLog("blob found\n")
+
 
                                 updatedBlobs.push(coordBlob)
                             }
