@@ -569,7 +569,7 @@ Item {
                             }
 
                             statusTimer.stop()
-                            updatedBlobs = updatedBlobs.sort( (a, b) => parseFloat(a.split(' ')[0]) >  parseFloat(b.split(' ')[0]))
+                            updatedBlobs = updatedBlobs.sort( (a, b) => parseFloat(a.split(' ')[0]) >  parseFloat(b.split(' ')[0]) ? 1 : -1)
                             DataBus.found_blobs3 = updatedBlobs
                             DataBus.found_blobs4 = updatedBlobs.join('<br>')
 
