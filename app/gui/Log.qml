@@ -31,5 +31,6 @@ ScrollView {
         width: 500
         selectByMouse: true
         readOnly: true
+        font.family: "Consolas"
     }
 }
