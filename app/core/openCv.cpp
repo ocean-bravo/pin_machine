@@ -133,9 +133,12 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     cv::Mat grey;
     cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
+    cv::Mat blur;
+    cv::medianBlur(grey, blur, 3);
+
     // Storage for blobs
     std::vector<cv::KeyPoint> keypoints;
-    detector->detect(grey, keypoints);
+    detector->detect(blur, keypoints);
 
     drawKeyPoints(rgbimg, keypoints);
 

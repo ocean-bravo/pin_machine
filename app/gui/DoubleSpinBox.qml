@@ -29,6 +29,7 @@ Item {
         from: Math.min(root.from, root.to) * self.factor
         to: Math.max(root.from, root.to) * self.factor
         locale: Qt.locale("en_US") // Чтобы использовалась точка для десятичных разрядов
+        wheelEnabled: true
 
         onValueModified: {
             root.value = spinbox.value / self.factor
