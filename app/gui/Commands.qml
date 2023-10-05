@@ -446,42 +446,31 @@ Item {
                 width: parent.width
                 //height: 100
                 columns: 3
-                SmButton {
-                    text: qsTr("Print blobs1");
-                    onClicked: {
-                        let foundBlobs = DataBus.found_blobs
 
-                        if (foundBlobs === undefined)
-                            return
-
-                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
-                        logViewer.append(foundBlobs)
-                    }
-                }
-                SmButton {
-                    text: qsTr("Print blobs2");
-                    onClicked: {
-                        let foundBlobs = DataBus.found_blobs2
-
-                        if (foundBlobs === undefined)
-                            return
-
-                        foundBlobs = foundBlobs.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
-                        logViewer.append(foundBlobs)
+                ComboBox {
+                    model: DataBus.keys()
+                    onActivated: {
+                        logViewer.append('<br>')
+                        logViewer.append(currentText + '<br>')
+                        let data = DataBus[currentText]
+                        console.log(typeof data)
+                        if (typeof data === "string")
+                            data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+                        logViewer.append(data)
                     }
                 }
 
-                SmButton {
-                    text: qsTr("Print blobs3");
-                    onClicked: {
-                        let foundBlobs = DataBus.found_blobs3
+//                SmButton {
+//                    text: qsTr("Print blobs3");
+//                    onClicked: {
+//                        let foundBlobs = DataBus.found_blobs3
 
-                        if (foundBlobs === undefined)
-                            return
+//                        if (foundBlobs === undefined)
+//                            return
 
-                        logViewer.append(foundBlobs.join('<br>'))
-                    }
-                }
+//                        logViewer.append(foundBlobs.join('<br>'))
+//                    }
+//                }
 
                 SmTextEdit {
                     id: programParams
@@ -582,17 +571,13 @@ Item {
                             for (let blob of blobs) {
                                 let point = blob.split(" ")
 
-                                xTarget = Number(point[0])
-                                yTarget = Number(point[1])
-
                                 moveTo(point[0], point[1])
 
-                                //timeExpired = false
-                                //timeout.start()
+                                xTarget = Number(point[0])
+                                yTarget = Number(point[1])
                                 yield waitForCondition(() => root.status === "Idle" &&
                                                        Math.abs(xTarget - xPos) <= 0.003 &&
                                                        Math.abs(yTarget - yPos) <= 0.003)
-
 
                                 appendLog("capturing ...\n")
                                 Video4.captureSmallRegion()
@@ -605,17 +590,20 @@ Item {
 
                                 let coordBlob = OpenCv.smallRegionBlob()
 
-                                if (coordBlob.length === 0)
+                                if (coordBlob.length === 0) {
                                     appendLog("blob NOT found\n")
-                                else
+                                    updatedBlobs.push(blob += " NOK")
+                                }
+                                else {
                                     appendLog("blob found\n")
-
-
-                                updatedBlobs.push(coordBlob)
+                                    updatedBlobs.push(coordBlob)
+                                }
                             }
 
-                            DataBus.found_blobs3 = updatedBlobs
+                            statusTimer.stop()
+                            DataBus.found_blobs4 = updatedBlobs
                             appendLog("visit finished\n")
+                            //blobVisitorPromise.abort()
 
                         } )();
                     }
