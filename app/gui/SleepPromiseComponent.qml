@@ -29,7 +29,7 @@ Component {
                     stop();
                     _abort(_reject);
                     Qt.callLater(destroy);
-                }
+               }
             }
         }
     }

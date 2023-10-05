@@ -14,52 +14,62 @@ Component {
 
         property var signal
 
-        running: interval > 0
+        running: true
         repeat: false
 
-        function finish() {
+//        function finish() {
+//            if (_aborted) {
+//                return;
+//            }
+
+//            signal.disconnect(slotConnection)
+//            stop();
+//            _resolve();
+//            Qt.callLater(destroy);
+//        }
+
+        //property var slotConnection
+
+//        function connectOnce(sig, slot) {
+//            var slotConnection = () => {
+//                slot.apply(this, arguments);    // run slot by passing `this` and arguments (as list).
+//                sig.disconnect(slotConnection); // disconnect slot :)
+//            }
+//            sig.connect(slotConnection);        // connecting slot to signal in Qt way
+//            return slotConnection
+//        }
+
+        function finishResolve () {
             if (_aborted) {
                 return;
             }
+            signal.disconnect(finishResolve)
 
-            signal.disconnect(slotConnection)
             stop();
             _resolve();
-
             Qt.callLater(destroy);
         }
 
-        property var slotConnection
-
-        function connectOnce(sig, slot) {
-            var slotConnection = () => {
-                slot.apply(this, arguments);    // run slot by passing `this` and arguments (as list).
-                sig.disconnect(slotConnection); // disconnect slot :)
-            }
-            sig.connect(slotConnection);        // connecting slot to signal in Qt way
-            return slotConnection
-        }
-
         onSignalChanged: {
-            slotConnection = connectOnce(signal, finish)
+            signal.connect(finishResolve)
         }
 
         onTriggered: {
-            console.log("wait for signal timeout!!!")
-            finish()
+            finishResolve()
         }
 
         on_AbortingChanged: {
             if (_aborting) {
+                signal.disconnect(finishResolve)
                 if (running) {
-                    signal.disconnect(slotConnection)
-                    stop();
-                    _abort(_reject);
-                    Qt.callLater(destroy);
+                    stop()
                 }
+                _abort(_reject);
+                Qt.callLater(destroy);
             }
         }
     }
+}
 
 
 
@@ -98,4 +108,4 @@ Component {
 //            }
 //        }
 //    }
-}
+//}
