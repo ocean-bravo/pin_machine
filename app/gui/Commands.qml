@@ -557,7 +557,7 @@ Item {
                     function distance (a, b) {
                         const [xa, ya] = a.split(' ')
                         const [xb, yb] = b.split(' ')
-                        return toFixed(Number(xa) - Number(xb), 4) + " " + toFixed(Number(ya) - Number(yb), 4)
+                        return (Number(xa) - Number(xb)).toFixed(4) + " " + (Number(ya) - Number(yb)).toFixed(4)
                     }
 
                     function runAsync() {
