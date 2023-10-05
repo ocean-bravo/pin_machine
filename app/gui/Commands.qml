@@ -602,6 +602,7 @@ Item {
                             }
 
                             statusTimer.stop()
+                            DataBus.found_blobs3 = updatedBlobs
                             DataBus.found_blobs4 = updatedBlobs.join('<br>')
 
                             appendLog("visit finished\n")
