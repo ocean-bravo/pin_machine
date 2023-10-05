@@ -554,6 +554,12 @@ Item {
 //                        onTriggered: timeExpired = true
 //                    }
 
+                    function distance (a, b) {
+                        const [xa, ya] = a.split(' ')
+                        const [xb, yb] = b.split(' ')
+                        return String(Number(xa) - Number(xb)) + " " + String(Number(ya) - Number(yb))
+                    }
+
                     function runAsync() {
                         asyncToGenerator( function* () {
 
@@ -597,7 +603,9 @@ Item {
                                 }
                                 else {
                                     appendLog("blob found\n")
-                                    updatedBlobs.push(coordBlob)
+
+                                    let dist = distance(blob, coordBlob)
+                                    updatedBlobs.push(coordBlob + " " + dist)
                                 }
                             }
 
