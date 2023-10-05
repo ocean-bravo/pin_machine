@@ -25,6 +25,7 @@ public slots:
 signals:
 
 
+
 protected:
     template <typename Derived>
     explicit DataBus(Derived* derived, QObject* parent = nullptr)

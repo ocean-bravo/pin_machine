@@ -457,6 +457,7 @@ Item {
                         if (typeof data === "string")
                             data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
                         logViewer.append(data)
+                        model = DataBus.keys()
                     }
                 }
 
@@ -601,7 +602,8 @@ Item {
                             }
 
                             statusTimer.stop()
-                            DataBus.found_blobs4 = updatedBlobs
+                            DataBus.found_blobs4 = updatedBlobs.join('<br>')
+
                             appendLog("visit finished\n")
                             //blobVisitorPromise.abort()
 
