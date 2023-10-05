@@ -16,16 +16,16 @@ Item {
     property real xPos
     property real yPos
 
-//    Connections {
-//        target: root
-//        onXPosChanged: {
-//            console.log("x pos "  + xPos)
-//        }
+    //    Connections {
+    //        target: root
+    //        onXPosChanged: {
+    //            console.log("x pos "  + xPos)
+    //        }
 
-//        onYPosChanged: {
-//            console.log("y pos "  + yPos)
-//        }
-//    }
+    //        onYPosChanged: {
+    //            console.log("y pos "  + yPos)
+    //        }
+    //    }
 
     function write(msg) {
         Serial.write(msg+"\n")
@@ -157,8 +157,8 @@ Item {
                 xTarget = extractFromGcodeX(line)
                 yTarget = extractFromGcodeY(line)
 
-//                console.log( " x target " + xTarget)
-//                console.log( " y target " + yTarget)
+                //                console.log( " x target " + xTarget)
+                //                console.log( " y target " + yTarget)
 
                 Serial.write(line)
                 msg = "" + lineNumber + ": " + line + "\n"
@@ -235,51 +235,51 @@ Item {
         }
     }
 
-//    Item {
-//        id: sendCodeObj
+    //    Item {
+    //        id: sendCodeObj
 
-//        property var codeLines: []
-//        property int lineToSend: 0
+    //        property var codeLines: []
+    //        property int lineToSend: 0
 
-//        function sendNextLine() {
-//            let line = codeLines[lineToSend]
+    //        function sendNextLine() {
+    //            let line = codeLines[lineToSend]
 
-//            let lineNumber = lineToSend+1
+    //            let lineNumber = lineToSend+1
 
-//            // Пропускаю пустые строки
-//            if (line.length === 0) {
-//                var msg = "" + lineNumber + ": " + "skip..." + "\n"
-//            }
-//            else {
-//                Serial.write(line)
-//                msg = "" + lineNumber + ": " + line + "\n"
-//            }
+    //            // Пропускаю пустые строки
+    //            if (line.length === 0) {
+    //                var msg = "" + lineNumber + ": " + "skip..." + "\n"
+    //            }
+    //            else {
+    //                Serial.write(line)
+    //                msg = "" + lineNumber + ": " + line + "\n"
+    //            }
 
-//            appendLog(msg)
-//            ++lineToSend
+    //            appendLog(msg)
+    //            ++lineToSend
 
-//            return line.length > 0
-//        }
+    //            return line.length > 0
+    //        }
 
-//        function startProgram() {
-//            cycle.runAsync()
-//        }
+    //        function startProgram() {
+    //            cycle.runAsync()
+    //        }
 
-//        function pauseProgram() {
-//            statusTimer.stop()
-//            playPauseProgram.text = qsTr("Resume program")
-//        }
+    //        function pauseProgram() {
+    //            statusTimer.stop()
+    //            playPauseProgram.text = qsTr("Resume program")
+    //        }
 
-//        function stopProgram() {
-//            cycle.abort()
+    //        function stopProgram() {
+    //            cycle.abort()
 
-//            statusTimer.stop()
-//            playPauseProgram.checked = false
-//            playPauseProgram.text = qsTr("Run program")
+    //            statusTimer.stop()
+    //            playPauseProgram.checked = false
+    //            playPauseProgram.text = qsTr("Run program")
 
-//            codeEditor.readOnly = false
-//        }
-//    }
+    //            codeEditor.readOnly = false
+    //        }
+    //    }
 
     RowLayout {
         anchors.fill: parent
@@ -461,18 +461,6 @@ Item {
                     }
                 }
 
-//                SmButton {
-//                    text: qsTr("Print blobs3");
-//                    onClicked: {
-//                        let foundBlobs = DataBus.found_blobs3
-
-//                        if (foundBlobs === undefined)
-//                            return
-
-//                        logViewer.append(foundBlobs.join('<br>'))
-//                    }
-//                }
-
                 SmTextEdit {
                     id: programParams
                     width: 200
@@ -493,20 +481,18 @@ Item {
                     onValueModified: DataBus.pixel_size = Number(text)
                 }
 
-//                SmButton {
-//                    text: qsTr("Visit blob")
+                //                SmButton {
+                //                    text: qsTr("Visit blob")
 
-//                    onClicked: {
-//                        var blobInfo = DataBus.blob_info3
-//                        var points = blobInfo.split(" ");
-//                        moveTo(points[0], points[1]);
-//                    }
-//                }
+                //                    onClicked: {
+                //                        var blobInfo = DataBus.blob_info3
+                //                        var points = blobInfo.split(" ");
+                //                        moveTo(points[0], points[1]);
+                //                    }
+                //                }
 
                 SmButton {
                     id: blobVisitor
-//                    property int idx: 0
-//                    property var blobs: DataBus.found_blobs3
 
                     text: qsTr("Visit next blob")
                     checkable: true
@@ -514,26 +500,7 @@ Item {
                     onCheckedChanged: {
                         checked ? blobVisitorPromise.runAsync() : blobVisitorPromise.abort()
                     }
-
-//                    onClicked: {
-//                        var blobInfo = blobs[idx]
-//                        var points = blobInfo.split(" ")
-//                        moveTo(points[0], points[1])
-
-//                        ++idx
-
-//                        if (idx >= blobs.length)
-//                            idx = 0
-//                    }
                 }
-
-//                SmButton {
-//                    text: qsTr("Reset blob visitor")
-
-//                    onClicked: {
-//                        blobVisitor.idx = 0
-//                    }
-//                }
 
                 QMLPromises {
                     id: blobVisitorPromise
@@ -545,14 +512,6 @@ Item {
 
                     property real xTarget
                     property real yTarget
-
-                    //property bool timeExpired: false
-
-//                    Timer {
-//                        id: timeout
-//                        interval: 1000
-//                        onTriggered: timeExpired = true
-//                    }
 
                     function distance (a, b) {
                         const [xa, ya] = a.split(' ')
@@ -610,8 +569,10 @@ Item {
                             }
 
                             statusTimer.stop()
+                            updatedBlobs = updatedBlobs.sort( (a, b) => parseFloat(a.split(' ')[0]) >  parseFloat(b.split(' ')[0]))
                             DataBus.found_blobs3 = updatedBlobs
                             DataBus.found_blobs4 = updatedBlobs.join('<br>')
+
 
                             appendLog("visit finished\n")
                             //blobVisitorPromise.abort()
@@ -770,8 +731,8 @@ Item {
                             resYuyv.sort(sortFunction).reverse()
                             resMjpg.sort(sortFunction).reverse()
 
-                            // Сначала YUYV разрешения
-                            return resYuyv.concat(resMjpg)
+                            // Сначала MJPG разрешения
+                            return resMjpg.concat(resYuyv)
                         }
 
                     }
