@@ -38,6 +38,7 @@ Item {
         validator: DoubleValidator {
             bottom: Math.min(root.from, root.to) * self.factor
             top: Math.max(root.from, root.to) * self.factor
+            locale: "en_US"
         }
 
         textFromValue: function (value, locale) {
