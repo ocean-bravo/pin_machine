@@ -454,12 +454,21 @@ Item {
                         logViewer.append('<br>')
                         logViewer.append(currentText + '<br>')
                         let data = DataBus[currentText]
-                        console.log(typeof data)
-                        console.log(data.length)
-                        if (typeof data === "string")
-                            data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
 
+                        if(data === undefined)
+                            return
+
+//                        console.log(typeof data)
+//                        console.log(data.length)
+//                        if (typeof data === "string")
+//                            data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+
+//                        if (typeof data === "object" && data.length !== undefined)
+//                            data = data.join('<br>')
+
+                        data = JSON.stringify(data).replace(/[,]/g, '<br>')
                         logViewer.append(data)
+                        logViewer.append('<br>')
                         model = DataBus.keys()
                     }
                 }
