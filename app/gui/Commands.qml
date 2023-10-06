@@ -228,6 +228,7 @@ Item {
                     if (lineToSend >= codeLines.length) {
                         stopProgram()
                         appendLog("program finished\n")
+
                         return
                     }
                 }
@@ -454,8 +455,10 @@ Item {
                         logViewer.append(currentText + '<br>')
                         let data = DataBus[currentText]
                         console.log(typeof data)
+                        console.log(data.length)
                         if (typeof data === "string")
                             data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+
                         logViewer.append(data)
                         model = DataBus.keys()
                     }
