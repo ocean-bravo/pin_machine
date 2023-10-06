@@ -132,23 +132,6 @@ void Video3Private::reloadDevices()
     }
 
     db().insert("cameras", devices);
-
-    QJsonArray testArr;
-    QJsonObject testObj {
-        {"width",  int(5)},
-        {"height", int(15)},
-        {"fourcc", "dfdf"},
-        {"fps", int(24)},
-        {"display", "dasf"}
-    };
-
-    testArr.append(testObj);
-    testArr.append(testObj);
-    testArr.append(testObj);
-
-    db().insert("testObj", testObj);
-    db().insert("testArr", testArr);
-
 }
 
 void Video3Private::init()
