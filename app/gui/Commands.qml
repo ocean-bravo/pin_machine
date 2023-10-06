@@ -16,17 +16,6 @@ Item {
     property real xPos
     property real yPos
 
-    //    Connections {
-    //        target: root
-    //        onXPosChanged: {
-    //            console.log("x pos "  + xPos)
-    //        }
-
-    //        onYPosChanged: {
-    //            console.log("y pos "  + yPos)
-    //        }
-    //    }
-
     function write(msg) {
         Serial.write(msg+"\n")
         appendLog(msg+"\n")
@@ -139,148 +128,10 @@ Item {
         }
     }
 
-    QMLPromises {
+    CyclePromise {
         id: cycle
-
-        property var codeLines: []
-        property int lineToSend: 0
-
-        function sendNextLine() {
-            let line = codeLines[lineToSend]
-            let lineNumber = lineToSend+1
-
-            // Пропускаю пустые строки
-            if (line.length === 0) {
-                var msg = "" + lineNumber + ": " + "skip..." + "\n"
-            }
-            else {
-                xTarget = extractFromGcodeX(line)
-                yTarget = extractFromGcodeY(line)
-
-                //                console.log( " x target " + xTarget)
-                //                console.log( " y target " + yTarget)
-
-                Serial.write(line)
-                msg = "" + lineNumber + ": " + line + "\n"
-            }
-
-            appendLog(msg)
-            ++lineToSend
-
-            return line.length > 0
-        }
-
-        function startProgram() {
-            cycle.runAsync()
-        }
-
-        function pauseProgram() {
-            statusTimer.stop()
-            playPauseProgram.text = qsTr("Resume program")
-        }
-
-        function stopProgram() {
-            cycle.abort()
-
-            statusTimer.stop()
-            playPauseProgram.checked = false
-            playPauseProgram.text = qsTr("Run program")
-
-            codeEditor.readOnly = false
-        }
-
-        property real xTarget
-        property real yTarget
-
-        function runAsync() {
-            asyncToGenerator( function* () {
-
-                lineToSend = 0
-                codeEditor.readOnly = true
-                codeLines = codeEditor.text.split("\n")
-
-                statusTimer.interval = 100
-                statusTimer.start()
-
-                DataBus.capture_number = 0
-                ImagesStorage.clearCaptured()
-                OpenCv.resetFoundBlobs()
-
-                yield sleep(200)
-
-                while (true) {
-                    if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
-
-                        yield waitForCondition(() => root.status === "Idle" &&
-                                               Math.abs(xTarget - xPos) <= 0.003 &&
-                                               Math.abs(yTarget - yPos) <= 0.003)
-
-                        appendLog("capturing ...\n")
-                        Video4.capture()
-                        yield waitForSignal(Video4.captured)
-                        appendLog("captured\n")
-
-                        // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
-                        yield sleep(1)
-                        DataBus.capture_number += 1
-                    }
-
-                    if (lineToSend >= codeLines.length) {
-                        stopProgram()
-                        appendLog("program finished\n")
-
-                        return
-                    }
-                }
-            } )();
-        }
     }
 
-    //    Item {
-    //        id: sendCodeObj
-
-    //        property var codeLines: []
-    //        property int lineToSend: 0
-
-    //        function sendNextLine() {
-    //            let line = codeLines[lineToSend]
-
-    //            let lineNumber = lineToSend+1
-
-    //            // Пропускаю пустые строки
-    //            if (line.length === 0) {
-    //                var msg = "" + lineNumber + ": " + "skip..." + "\n"
-    //            }
-    //            else {
-    //                Serial.write(line)
-    //                msg = "" + lineNumber + ": " + line + "\n"
-    //            }
-
-    //            appendLog(msg)
-    //            ++lineToSend
-
-    //            return line.length > 0
-    //        }
-
-    //        function startProgram() {
-    //            cycle.runAsync()
-    //        }
-
-    //        function pauseProgram() {
-    //            statusTimer.stop()
-    //            playPauseProgram.text = qsTr("Resume program")
-    //        }
-
-    //        function stopProgram() {
-    //            cycle.abort()
-
-    //            statusTimer.stop()
-    //            playPauseProgram.checked = false
-    //            playPauseProgram.text = qsTr("Run program")
-
-    //            codeEditor.readOnly = false
-    //        }
-    //    }
 
     RowLayout {
         anchors.fill: parent
@@ -514,85 +365,14 @@ Item {
                     }
                 }
 
-                QMLPromises {
+                VisitPromise {
                     id: blobVisitorPromise
 
                     onRunningChanged: {
                         if (running === false)
                             blobVisitor.checked = false
                     }
-
-                    property real xTarget
-                    property real yTarget
-
-                    function distance (a, b) {
-                        const [xa, ya] = a.split(' ')
-                        const [xb, yb] = b.split(' ')
-                        return (Number(xa) - Number(xb)).toFixed(3) + " " + (Number(ya) - Number(yb)).toFixed(3)
-                    }
-
-                    function runAsync() {
-                        asyncToGenerator( function* () {
-
-                            let blobs = DataBus.found_blobs3
-
-                            if (blobs === undefined) {
-                                appendLog("no blobs to visit\n")
-                                return
-                            }
-
-                            let updatedBlobs = []
-
-                            statusTimer.interval = 100
-                            statusTimer.start()
-
-                            for (let blob of blobs) {
-                                let point = blob.split(" ")
-
-                                moveTo(point[0], point[1])
-
-                                xTarget = Number(point[0])
-                                yTarget = Number(point[1])
-                                yield waitForCondition(() => root.status === "Idle" &&
-                                                       Math.abs(xTarget - xPos) <= 0.003 &&
-                                                       Math.abs(yTarget - yPos) <= 0.003)
-
-                                appendLog("capturing ...\n")
-                                Video4.captureSmallRegion()
-                                yield waitForSignal(Video4.capturedSmallRegion)
-                                appendLog("captured\n")
-
-                                var smallRegion = Video4.smallRegion()
-                                OpenCv.blobDetectorUpdated(smallRegion)
-                                yield waitForSignal(OpenCv.smallRegionBlobChanged, 2000)
-
-                                let coordBlob = OpenCv.smallRegionBlob()
-
-                                if (coordBlob.length === 0) {
-                                    appendLog("blob NOT found\n")
-                                    updatedBlobs.push(blob += " NOK")
-                                }
-                                else {
-                                    appendLog("blob found\n")
-
-                                    let dist = distance(blob, coordBlob)
-                                    updatedBlobs.push(coordBlob + " " + dist)
-                                }
-                            }
-
-                            statusTimer.stop()
-                            updatedBlobs = updatedBlobs.sort( (a, b) => parseFloat(a.split(' ')[0]) >  parseFloat(b.split(' ')[0]) ? 1 : -1)
-                            DataBus.found_blobs3 = updatedBlobs
-                            DataBus.found_blobs4 = updatedBlobs.join('<br>')
-
-
-                            appendLog("visit finished\n")
-                            //blobVisitorPromise.abort()
-
-                        } )();
-                    }
                 }
-
 
             }
         }
