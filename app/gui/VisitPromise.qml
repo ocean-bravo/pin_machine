@@ -34,7 +34,7 @@ QMLPromises {
             statusTimer.start()
 
             // point - массив строк
-            function updateBlobPosition(point) {
+            const updateBlobPosition = function* (point) {
                 xTarget = Number(point[0])
                 yTarget = Number(point[1])
 
@@ -68,9 +68,9 @@ QMLPromises {
             for (let blob of blobs) {
 
                 let point = blob.split(" ")
-                let [ok1, foundPoint1] = updateBlobPosition(point)
+                let [ok1, foundPoint1] = yield* updateBlobPosition(point)
 
-                let [ok2, foundPoint2] = updateBlobPosition(foundPoint1)
+                let [ok2, foundPoint2] = yield* updateBlobPosition(foundPoint1)
 
                 if (ok2) {
                     let dist = distance(blob, foundPoint2)

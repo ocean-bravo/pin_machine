@@ -8,6 +8,9 @@ QMLPromises {
     property var codeLines: []
     property int lineToSend: 0
 
+    property real xTarget
+    property real yTarget
+
     function sendNextLine() {
         let line = codeLines[lineToSend]
         let lineNumber = lineToSend+1
@@ -52,9 +55,6 @@ QMLPromises {
         codeEditor.readOnly = false
     }
 
-    property real xTarget
-    property real yTarget
-
     function runAsync() {
         asyncToGenerator( function* () {
 
@@ -71,12 +71,16 @@ QMLPromises {
 
             yield sleep(200)
 
+            const waitForGetPosition = function* () {
+                yield waitForCondition(() => root.status === "Idle" &&
+                                             Math.abs(xTarget - xPos) <= 0.003 &&
+                                             Math.abs(yTarget - yPos) <= 0.003)
+            }
+
             while (true) {
                 if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
-                    yield waitForCondition(() => root.status === "Idle" &&
-                                           Math.abs(xTarget - xPos) <= 0.003 &&
-                                           Math.abs(yTarget - yPos) <= 0.003)
+                    yield* waitForGetPosition()
 
                     appendLog("capturing ...\n")
                     Video4.capture()
@@ -91,7 +95,6 @@ QMLPromises {
                 if (lineToSend >= codeLines.length) {
                     stopProgram()
                     appendLog("program finished\n")
-
                     return
                 }
             }
