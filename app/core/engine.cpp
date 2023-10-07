@@ -58,7 +58,8 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
 
         qd() << x << y;
 
-        scene.addEllipse(x, y, 1, 1);
+        QGraphicsEllipseItem* item = scene.addEllipse(-0.5, -0.5, 1, 1);
+        item->setPos(x, y);
     }
 
     // если есть пересечение с кем то, то удалить его
@@ -71,8 +72,8 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
     QStringList b;
     for (const QGraphicsItem* item : scene.items())
     {
-        qd() << item->scenePos().x() << item->scenePos().y();
-        b.append(toReal(item->scenePos().x()) + " " + toReal(item->scenePos().y()));
+        qd() << item->x() << item->y();
+        b.append(toReal(item->x()) + " " + toReal(item->y()));
     }
 
     return b;
