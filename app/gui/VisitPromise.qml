@@ -14,9 +14,8 @@ QMLPromises {
     }
 
     function removeDuplicateBlobs(blobsWithDuplicates) {
-        return blobsWithDuplicates
+        return Engine.removeDuplicatedBlobs(blobsWithDuplicates)
     }
-
 
     function runAsync() {
         asyncToGenerator( function* () {
@@ -27,6 +26,8 @@ QMLPromises {
                 appendLog("no blobs to visit\n")
                 return
             }
+
+            blobs = removeDuplicateBlobs(blobs)
 
             let updatedBlobs = []
 

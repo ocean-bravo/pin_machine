@@ -10,6 +10,8 @@
 #include <QQmlApplicationEngine>
 #include <QProcess>
 #include <QBuffer>
+#include <QGraphicsScene>
+#include <QGraphicsItem>
 
 #include <QQuickStyle>
 
@@ -25,7 +27,7 @@ Engine::Engine(QObject* parent)
 {
     _serial.reset(new Serial);
 
-    DataBus& db = DataBus::instance();
+    DataBus::instance();
 
     _videoDriver3 = new Video3();
     _videoDriver4 = new Video4();
@@ -37,6 +39,38 @@ Engine::Engine(QObject* parent)
 QStringList Engine::camerasInfo()
 {
     return _info;
+}
+
+QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
+{
+    ScopedMeasure("remove duplicated blobs");
+
+    QGraphicsScene scene;
+
+    // Отправляю все блобы на сцену
+    for (const QString& blob : blobs)
+    {
+        QStringList coord = blob.split(" ");
+        double x = coord[0].toDouble();
+        double y = coord[1].toDouble();
+
+        scene.addEllipse(x-0.5, y-0.5, 1, 1);
+    }
+
+    // если есть пересечение с кем то, то удалить его
+    for (QGraphicsItem* item : scene.items())
+    {
+        if (!scene.collidingItems(item).isEmpty())
+            delete item;
+    }
+
+    QStringList b;
+    for (const QGraphicsItem* item : scene.items())
+    {
+        b.append(toReal(item->x() + 0.5) + " " + toReal(item->y() + 0.5));
+    }
+
+    return b;
 }
 
 Engine::~Engine()

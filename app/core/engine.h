@@ -24,6 +24,8 @@ public:
 
     Q_INVOKABLE QStringList camerasInfo();
 
+    Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
+
 signals:
     void imageChanged(QString id);
 

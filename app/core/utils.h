@@ -11,6 +11,11 @@
 
 class QJsonObject;
 
+inline QString toReal(double value)
+{
+    return QString::number(value, 'f', 3);
+}
+
 class ScopedMeasure
 {
 public:

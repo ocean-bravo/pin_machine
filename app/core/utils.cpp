@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cmath>
 
+
 ScopedMeasure::ScopedMeasure(const QString& msg, Units units)
     : _start(std::chrono::steady_clock::now())
     , _msg(msg)
