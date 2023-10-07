@@ -34,7 +34,7 @@ QMLPromises {
             statusTimer.start()
 
             // point - массив строк
-            function updateBlobPosition (point) {
+            var updateBlobPosition =  (point)  => {
                 xTarget = Number(point[0])
                 yTarget = Number(point[1])
 
