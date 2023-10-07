@@ -38,7 +38,7 @@ QMLPromises {
                 xTarget = Number(point[0])
                 yTarget = Number(point[1])
 
-                moveTo(xTarget, yTarget)
+                moveTo(point[0], point[0])
 
                 yield waitForCondition(() => root.status === "Idle" &&
                                        Math.abs(xTarget - xPos) <= 0.003 &&
