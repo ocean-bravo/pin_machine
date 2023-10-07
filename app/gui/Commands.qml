@@ -30,8 +30,16 @@ Item {
     }
 
     function moveTo(x, y) {
-        write("G1 G90 F5000 X" + x + " Y" + y)
+        if (typeof x === "string" && typeof y === "string")
+            write("G1 G90 F5000 X" + x + " Y" + y)
+        else if (typeof x === "number" && typeof y === "number") {
+            write("G1 G90 F5000 X" + x.toFixed(3) + " Y" + y.toFixed(3))
+        }
+        else {
+            appendLog("error move to point " + x + " " + y + " wrong arguments")
+        }
     }
+
 
     function extractFromGcodeX(line) {
         return Number(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
