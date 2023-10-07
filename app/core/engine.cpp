@@ -47,12 +47,16 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
 
     QGraphicsScene scene;
 
+    qd() << blobs;
+
     // Отправляю все блобы на сцену
     for (const QString& blob : blobs)
     {
         QStringList coord = blob.split(" ");
         double x = coord[0].toDouble();
         double y = coord[1].toDouble();
+
+        qd() << x << y;
 
         scene.addEllipse(x-0.5, y-0.5, 1, 1);
     }
