@@ -33,7 +33,7 @@ QMLPromises {
             statusTimer.interval = 100
             statusTimer.start()
 
-            // point - массив строк
+            // point - массив строк. Возвр значение строка с пробелом между координатами
             const updateBlobPosition = function* (point) {
                 xTarget = Number(point[0])
                 yTarget = Number(point[1])
@@ -57,7 +57,7 @@ QMLPromises {
 
                 if (coordBlob.length === 0) {
                     appendLog("blob NOT found\n")
-                    return [false, point]
+                    return [false, point.join(" ")]
                 }
                 else {
                     appendLog("blob found\n")
