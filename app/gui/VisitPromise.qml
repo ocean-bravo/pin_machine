@@ -70,7 +70,7 @@ QMLPromises {
                 let point = blob.split(" ")
                 let [ok1, foundPoint1] = yield* updateBlobPosition(point)
 
-                let [ok2, foundPoint2] = yield* updateBlobPosition(foundPoint1)
+                let [ok2, foundPoint2] = yield* updateBlobPosition(foundPoint1.split(" "))
 
                 if (ok2) {
                     let dist = distance(blob, foundPoint2)
