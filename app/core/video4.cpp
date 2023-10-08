@@ -218,7 +218,10 @@ void Video4Private::update()
         }
         {
             //ScopedMeasure ("read internal");
+
+            qd() << "read internal ...";
             int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
+            qd() << "... finished";
             if (rsize == -1)
             {
                 qd() << "stop " << strerror(errno);
@@ -244,7 +247,9 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
+                 qd() << "decompress ...";
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
+                 qd() << "... finished";
             }
             else
             {
