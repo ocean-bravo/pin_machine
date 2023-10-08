@@ -140,6 +140,7 @@ void Video4Private::captureSmallRegion()
 
 void Video4Private::imageDispatch(QImage img)
 {
+    qd() << "dispatch ...";
     emit newImage(img);
 
     if (_capture || _captureSmallRegion)
@@ -152,6 +153,7 @@ void Video4Private::imageDispatch(QImage img)
             if (_capture)
             {
                 _capture = false;
+                qd() << "captured";
                 emit captured(img.copy()); // Наружу выпускается копия, все правильно
             }
 
@@ -236,7 +238,7 @@ void Video4Private::update()
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
         //qd() << i << ":" << elapsed.count() << "ms";
-        //qd() << i << ":" << 1000/elapsed.count() << "fps";
+        qd() << 1000/elapsed.count() << "fps";
         start = std::chrono::steady_clock::now();
 
         {
