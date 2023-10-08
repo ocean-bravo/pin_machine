@@ -221,9 +221,9 @@ void Video4Private::update()
         {
             //ScopedMeasure ("read internal");
 
-            qd() << "read internal ...";
+            //qd() << "read internal ...";
             int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
-            qd() << "... finished";
+            //qd() << "... finished";
             if (rsize == -1)
             {
                 qd() << "stop " << strerror(errno);
