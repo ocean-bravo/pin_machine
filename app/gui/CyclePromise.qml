@@ -83,9 +83,11 @@ QMLPromises {
                     yield* waitForGetPosition()
 
                     appendLog("capturing ...\n")
+                    let a = Date.now()
                     Video4.capture()
                     yield waitForSignal(Video4.captured)
-                    appendLog("captured\n")
+                    let b = Date.now()
+                    appendLog("captured " + String(b-a) + "ms\n")
 
                     // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
                     yield sleep(1)
