@@ -399,7 +399,7 @@ OpenCvPrivate::OpenCvPrivate()
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherLive.result());
 
         QString res;
-        for (cv::KeyPoint kp : kps)
+        for (const cv::KeyPoint& kp : kps)
         {
             res += QString("(%1, %2) \t %3\n").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
         }

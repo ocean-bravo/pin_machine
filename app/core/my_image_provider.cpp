@@ -13,7 +13,7 @@ void MyImageProvider::clearCaptured()
     _lock.lockForWrite();
 
     QStringList keysToRemove;
-    for (const QString& k : _images.keys())
+    for (const QString& k : qAsConst(_images).keys())
     {
         if (k.contains("captured_"))
             keysToRemove.append(k);

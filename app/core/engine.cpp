@@ -59,14 +59,14 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
     }
 
     // если есть пересечение с кем то, то удалить его
-    for (QGraphicsItem* item : scene.items())
+    for (QGraphicsItem* item : qAsConst(scene).items())
     {
         if (!scene.collidingItems(item).isEmpty())
             delete item;
     }
 
     QStringList b;
-    for (const QGraphicsItem* item : scene.items())
+    for (const QGraphicsItem* item : qAsConst(scene).items())
     {
         b.append(toReal(item->x()) + " " + toReal(item->y()));
     }
@@ -127,12 +127,12 @@ void Engine::createQmlEngine()
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
-    connect(_openCv, &OpenCv::circleChanged, this, [this, myImageProvider](QImage img)
+    connect(_openCv, &OpenCv::circleChanged, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "circle");
     });
 
-    connect(_openCv, &OpenCv::blobChanged, this, [this, myImageProvider](QImage img)
+    connect(_openCv, &OpenCv::blobChanged, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "blob");
     });
