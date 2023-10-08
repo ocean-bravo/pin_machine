@@ -15,8 +15,6 @@
 #include <errno.h>
 #include <signal.h>
 
-//#include "logger.h"
-//#include "V4l2Capture.h"
 #include "V4l2MmapDevice.h"
 #include "yuvconverters.h"
 
@@ -112,15 +110,6 @@ void Video4Private::reloadDevices()
 
 void Video4Private::init()
 {
-//    if (_running)
-//    {
-//        QEventLoop loop;
-//        QTimer::singleShot(1000, &loop, &QEventLoop::quit);
-//        QObject::connect(this, &Video4Private::stopped, &loop, &QEventLoop::quit);
-//        _running = false;
-//        loop.exec();
-//    }
-
     _jpegDecompressor = new MjpegHelper;
     connect(this, &Video4Private::imageCaptured, this, &Video4Private::imageDispatch, Qt::QueuedConnection);
 }
@@ -277,6 +266,6 @@ void Video4Private::update()
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)
 {
     _videoCapture.reset(new V4l2MmapDevice);
-    _videoCapture->init(device, width, height, V4l2Device::fourcc(fourcc.toLatin1().toStdString().c_str()));
+    _videoCapture->init(device, width, height, V4l2MmapDevice::fourccToInt(fourcc));
     _currentFourcc = fourcc;
 }

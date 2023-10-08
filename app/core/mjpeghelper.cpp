@@ -1,6 +1,8 @@
 #include "mjpeghelper.h"
 #include "utils.h"
 
+#include <turbojpeg.h>
+
 MjpegHelper::MjpegHelper()
 {
     _decompressHandle = tjInitDecompress();
@@ -12,7 +14,7 @@ MjpegHelper::~MjpegHelper()
 }
 
 bool MjpegHelper::decompressFrame(const uint8_t *inBuffer, size_t inBytes, uint8_t *outBuffer,
-    uint32_t outBufWidth, uint32_t outBufHeight)
+    int outBufWidth, int outBufHeight)
 {
     // note: the jpeg-turbo library apparently uses a non-const
     // buffer pointer to the incoming JPEG data.

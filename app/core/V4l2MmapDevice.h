@@ -11,6 +11,9 @@ public:
     V4l2MmapDevice();
     ~V4l2MmapDevice();
 
+    static quint32 fourccToInt(QString fourcc);
+    static QString fourccToString(quint32 fourcc);
+
     //virtual bool init(unsigned int mandatoryCapabilities);
     bool init(int device, int width, int height, int fourcc);
     bool isReady();

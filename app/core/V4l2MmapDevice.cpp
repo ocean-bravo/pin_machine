@@ -24,7 +24,10 @@ namespace {
 
 const size_t V4L2MMAP_NBBUFFER = 2;
 
-QString fourccToString (quint32 fourcc)
+}
+
+
+QString V4l2MmapDevice::fourccToString(quint32 fourcc)
 {
     QString str;
     for(uint32_t i=0; i<4; i++)
@@ -35,6 +38,15 @@ QString fourccToString (quint32 fourcc)
     return str;
 }
 
+quint32 V4l2MmapDevice::fourccToInt(QString fourcc)
+{
+    if (fourcc.size() != 4)
+    {
+        qd() << "error: wrong FOURCC size: " << fourcc;
+        return 0;
+    }
+
+    return v4l2_fourcc(fourcc[0].toLatin1(), fourcc[1].toLatin1(), fourcc[2].toLatin1(), fourcc[3].toLatin1());
 }
 
 V4l2MmapDevice::V4l2MmapDevice()

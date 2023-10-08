@@ -144,7 +144,7 @@ bool PlatformStreamHelper::queueAllBuffers()
     // create queue buffers
     // ****************************************
 
-    v4l2_buf_type bufferType;
+    //v4l2_buf_type bufferType;
     for (uint32_t i = 0; i < m_buffers.size(); ++i)
     {        
         v4l2_buffer   buf;
@@ -374,11 +374,6 @@ void PlatformStream::close()
     ::close(m_deviceHandle);
 
     m_deviceHandle = -1;    
-}
-
-void test(size_t bufferSizeBytes)
-{
-
 }
 
 bool PlatformStream::open(Context *owner, deviceInfo *device, uint32_t width, uint32_t height, uint32_t fourCC, uint32_t fps)

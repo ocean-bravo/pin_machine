@@ -64,27 +64,6 @@ public slots:
     void capture();
     void captureSmallRegion();
 
-
-//    void onAutoExposure(bool state);
-//    void onAutoWhiteBalance(bool state);
-//    void onAutoGain(bool state);
-//    void onAutoFocus(bool state);
-
-
-//    void setExposure(int value);
-//    void setWhiteBalance(int value);
-//    void setGain(int value);
-//    void setContrast(int value);
-//    void setBrightness(int value);
-//    void setSaturation(int value);
-//    void onFocusSlider(int value);
-//    void onZoomSlider(int value);
-//    void onGammaSlider(int value);
-//    void onHueSlider(int value);
-//    void onBacklightSlider(int value);
-//    void onSharpnessSlider(int value);
-//    void onColorEnableSlider(int value);
-
 signals:
     void newImage(QImage);
     void captured(QImage);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <turbojpeg.h>
 #include <stdint.h>
 #include <stdlib.h> // size_t
 
@@ -16,8 +15,8 @@ public:
         sanity checking only. If the JPEG does not match
         the buffer size, the function will return false.
     */
-    bool decompressFrame(const uint8_t *inBuffer, size_t inBytes, uint8_t *outBuffer, uint32_t outBufWidth, uint32_t outButHeight);
+    bool decompressFrame(const uint8_t *inBuffer, size_t inBytes, uint8_t *outBuffer, int outBufWidth, int outButHeight);
 
 protected:
-    tjhandle _decompressHandle;
+    void* _decompressHandle;
 };
