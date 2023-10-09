@@ -12,11 +12,11 @@ Item {
         imageNotVis.source = source
     }
 
+    property real zoom: 0.0
+    property real zoomStep: 0.1
+
     component MyImage :
         Image {
-            property real zoom: 0.0
-            property real zoomStep: 0.1
-
             asynchronous: true
             cache: false
             smooth: false
@@ -63,12 +63,11 @@ Item {
         acceptedButtons: Qt.NoButton
 
         onWheel: {
+           // let im = (image.visible ? image : image2)
             if (wheel.angleDelta.y > 0)
-                image.zoom = Number((image.zoom + image.zoomStep).toFixed(1))
+                zoom = Number((zoom + zoomStep).toFixed(1))
             else
-                if (image.zoom > 0) image.zoom = Number((image.zoom - image.zoomStep).toFixed(1))
-
-            image2.zoom = image.zoom
+                if (zoom > 0) zoom = Number((zoom - zoomStep).toFixed(1))
 
             wheel.accepted=true
         }

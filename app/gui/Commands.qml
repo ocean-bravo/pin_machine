@@ -484,14 +484,14 @@ Item {
                         }
                     }
 
-                    ComboBox {
-                        id: captureNumber
-                        width: 200
-                        model: DataBus.capture_number
-                        onActivated: {
-                            image.setSource("image://camera/captured_" + currentText)
-                        }
-                    }
+//                    ComboBox {
+//                        id: captureNumber
+//                        width: 200
+//                        model: DataBus.capture_number
+//                        onActivated: {
+//                            image.setSource("image://camera/captured_" + currentText)
+//                        }
+//                    }
 
                     ComboBox {
                         width: 200
