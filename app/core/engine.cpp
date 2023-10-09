@@ -120,7 +120,7 @@ void Engine::createQmlEngine()
         img.setText("y", y);
 
         myImageProvider->setImage(img, "raw captured");
-        myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
+        //myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
         _openCv->blobDetectorCaptured(img.copy());
     });
