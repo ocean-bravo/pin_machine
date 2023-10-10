@@ -140,7 +140,8 @@ void Video4Private::captureSmallRegion()
 
 void Video4Private::imageDispatch(QImage img)
 {
-    qd() << "dispatch ...";
+    qd() << csi + up + csi + fwd10 + "dispatch ...";
+    //qd() << "dispatch ...";
     emit newImage(img);
 
     if (_capture || _captureSmallRegion)
@@ -238,7 +239,7 @@ void Video4Private::update()
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
         //qd() << i << ":" << elapsed.count() << "ms";
-        qd() << QString::number(1000/elapsed.count(), 'f', 1) << "fps";
+        qd() << csi + up + csi + fwd10 + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
         start = std::chrono::steady_clock::now();
 
         {
@@ -249,9 +250,9 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                 qd() << "decompress ...";
+                 qd() << csi + up + csi + fwd10 +  "decompress ...";
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
-                 qd() << "... finished";
+                 qd() << csi + up + csi + fwd10 +  "... finished";
             }
             else
             {

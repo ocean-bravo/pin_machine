@@ -11,6 +11,11 @@
 
 class QJsonObject;
 
+const QString csi("\033[");
+const QString up("1A");
+const QString fwd10("10C");
+
+
 inline QString toReal(double value)
 {
     return QString::number(value, 'f', 3);
