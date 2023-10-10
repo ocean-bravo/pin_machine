@@ -141,12 +141,6 @@ void Engine::createQmlEngine()
 
     SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
 
-    connect(sb, &SearchBlobs::message, this, [](QString msg)
-    {
-        qd()  << msg;
-    });
-
-
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 

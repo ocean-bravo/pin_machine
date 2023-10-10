@@ -57,6 +57,13 @@ Item {
     }
 
     Connections {
+        target: SearchBlobs
+        function onMessage(msg) {
+            appendLog(msg)
+        }
+    }
+
+    Connections {
         target: Serial
 
         property string prevMsg: ""
