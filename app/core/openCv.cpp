@@ -93,7 +93,10 @@ cv::Mat qimage2matCopy(const QImage& qimage)
 // Круги рисуются прямо на переданном изображении, без копирования.
 OpenCv::BlobInfo detectBlobs(QImage img)
 {
-    ScopedMeasure mes ("blob detector", ScopedMeasure::Milli);
+    static quint32 count = 0;
+    ++count;
+
+    ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
 
     //qd() << "detect blobs " << img.width() << img.height();
 
@@ -304,40 +307,40 @@ QImage OpenCv::drawCross(const QImage& img)
 void OpenCv::foundBlobs() const
 {
     QStringList s;
-    for (const auto& result : _detectBlobResult)
-    {
-        auto kps = std::get<0>(result);
-        QString x = std::get<1>(result);
-        QString y = std::get<2>(result);
-        s.append(QString("[%1 %2]").arg(x, y));
+//    for (const auto& result : _detectBlobResult)
+//    {
+//        auto kps = std::get<0>(result);
+//        QString x = std::get<1>(result);
+//        QString y = std::get<2>(result);
+//        s.append(QString("[%1 %2]").arg(x, y));
 
-        for (const cv::KeyPoint& kp : kps)
-        {
-            s.append(QString("\t size: %1 pos: [%2 %3]").arg(kp.size).arg(kp.pt.x).arg(kp.pt.y));
-        }
-    }
-    db().insert("found_blobs", s.join("\n"));
+//        for (const cv::KeyPoint& kp : kps)
+//        {
+//            s.append(QString("\t size: %1 pos: [%2 %3]").arg(kp.size).arg(kp.pt.x).arg(kp.pt.y));
+//        }
+//    }
+//    db().insert("found_blobs", s.join("\n"));
 
 
-    s.clear();
-    for (const auto& result : _detectBlobResult)
-    {
-        auto kps = std::get<0>(result);
-        QString x = std::get<1>(result);
-        QString y = std::get<2>(result);
+//    s.clear();
+//    for (const auto& result : _detectBlobResult)
+//    {
+//        auto kps = std::get<0>(result);
+//        QString x = std::get<1>(result);
+//        QString y = std::get<2>(result);
 
-        int w = std::get<3>(result);
-        int h = std::get<4>(result);
+//        int w = std::get<3>(result);
+//        int h = std::get<4>(result);
 
-        for (const cv::KeyPoint& kp : kps)
-        {
-            s.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
-                     .arg(pixToRealX(x.toDouble(), kp.pt.x, w))
-                     .arg(pixToRealY(y.toDouble(), kp.pt.y, h)));
-        }
-    }
+//        for (const cv::KeyPoint& kp : kps)
+//        {
+//            s.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
+//                     .arg(pixToRealX(x.toDouble(), kp.pt.x, w))
+//                     .arg(pixToRealY(y.toDouble(), kp.pt.y, h)));
+//        }
+//    }
 
-    db().insert("found_blobs2", s.join("\n"));
+//    db().insert("found_blobs2", s.join("\n"));
 
 
     s.clear();
