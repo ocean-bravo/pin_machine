@@ -18,12 +18,12 @@ namespace {
 
 double extractFromGcodeX(QString line)
 {
-    return line.split(' ', Qt::SkipEmptyParts)[3].replace(QRegExp(R"( [^\d.-] )"), "").toDouble(); //G1 G90 F5000 X6 Y140
+    return line.split(' ', Qt::SkipEmptyParts)[3].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
 }
 
 double extractFromGcodeY(QString line)
 {
-    return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"( [^\d.-] )"), "").toDouble(); //G1 G90 F5000 X6 Y140
+    return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
 }
 
 }
@@ -81,11 +81,12 @@ bool SearchBlobsPrivate::sendNextLine()
     }
     else
     {
+        //QString line("G1 G90 F5000 X6 Y140");
         _xTarget = extractFromGcodeX(line);
         _yTarget = extractFromGcodeY(line);
 
-        qd() <<  " x target " << _xTarget;
-        qd() <<  " y target " << _yTarget;
+//        qd() <<  " x target " << _xTarget;
+//        qd() <<  " y target " << _yTarget;
 
         serial().write(line.toLatin1() + "\n");
         msg = QString("%1: %2\n" ).arg(lineNumber).arg(line);
@@ -128,8 +129,8 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
 
-        qd() << " target " << xTarget << yTarget;
-        qd() << " condition " << status << xPos << yPos;
+//        qd() << " target " << xTarget << yTarget;
+//        qd() << " condition " << status << xPos << yPos;
         return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
     };
 
@@ -138,14 +139,14 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 
     QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
     {
-        qd() << "value changed " << key;
+        //qd() << "value changed " << key;
 //        if ( key != "status" && key != "xPos" && key != "yPos")
 //            return;
 
-        bool cond = condition();
-        qd() << "cond " << cond;
+//        bool cond = condition();
+//        qd() << "cond " << cond;
 
-        if (cond)
+        if (condition())
             loop.quit();
     });
 
