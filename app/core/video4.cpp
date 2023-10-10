@@ -23,7 +23,7 @@
 namespace {
 
 // Сколько кадров нужно выкинуть.
-const int throwFramesYuv = 2; // Достаточно 1, чтобы не было смаза. Не всегда...
+const int throwFramesYuv = 1; // Достаточно 1, чтобы не было смаза. Не всегда...
 const int throwFramesJpg = 15; // 12 вроде достаточно было
 
 void wait(int timeout)
