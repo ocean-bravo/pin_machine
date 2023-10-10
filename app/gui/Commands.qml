@@ -291,7 +291,7 @@ Item {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
                     onCheckedChanged: {
-                        //checked ? cycle.startProgram() : cycle.pauseProgram()
+                        //checked ? SearchBlobs.run(codeEditor.text) : SearchBlobs.pauseProgram()
                         if(checked)
                             SearchBlobs.run(codeEditor.text)
                     }
@@ -301,7 +301,7 @@ Item {
                     text: qsTr("Stop program")
                     onClicked: {
                         playPauseProgram.checked = false
-                        //cycle.stopProgram()
+                        SearchBlobs.stopProgram()
                     }
                 }
 

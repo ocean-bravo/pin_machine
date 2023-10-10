@@ -25,7 +25,7 @@ public:
     void startProgram();
     void pauseProgram();
 
-    void stopProgram();
+    Q_INVOKABLE void stopProgram();
 signals:
 
     void message(QString);
