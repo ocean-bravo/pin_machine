@@ -96,9 +96,9 @@ void Video4::capture()
     QMetaObject::invokeMethod(_impl, "capture", Qt::QueuedConnection);
 }
 
-void Video4::captureSmallRegion()
+void Video4::captureSmallRegion(double width)
 {
-    QMetaObject::invokeMethod(_impl, "captureSmallRegion", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "captureSmallRegion", Qt::QueuedConnection, Q_ARG(double, width));
 }
 
 QImage Video4::smallRegion()
@@ -140,10 +140,11 @@ void Video4Private::capture()
     _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
 }
 
-void Video4Private::captureSmallRegion()
+void Video4Private::captureSmallRegion(double width)
 {
     _captureSmallRegion = true;
     _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
+    _smallRegionWidth = width;
 }
 
 void Video4Private::update()
@@ -261,7 +262,11 @@ void Video4Private::imageDispatch(QImage img)
                 int xCenter = img.width()/2;
                 int yCenter = img.height()/2;
                 _captureSmallRegion = false;
-                emit capturedSmallRegion(img.copy(QRect(xCenter - 400, yCenter - 400, 800, 800)));
+
+                double pixelSize = db().value("pixel_size").toDouble();
+                int widthInPixesl = pixelSize * _smallRegionWidth;
+
+                emit capturedSmallRegion(img.copy(QRect(xCenter - (widthInPixesl/2), yCenter - (widthInPixesl/2), widthInPixesl, widthInPixesl)));
                 //qd() << "small region captured";
             }
         }

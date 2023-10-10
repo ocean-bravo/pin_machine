@@ -31,7 +31,7 @@ public:
 
     Q_INVOKABLE void capture();
 
-    Q_INVOKABLE void captureSmallRegion();
+    Q_INVOKABLE void captureSmallRegion(double width);
 
     Q_INVOKABLE QImage smallRegion();
 
@@ -62,7 +62,7 @@ public slots:
     void stop();
 
     void capture();
-    void captureSmallRegion();
+    void captureSmallRegion(double width);
 
 signals:
     void newImage(QImage);
@@ -84,5 +84,6 @@ private:
 
     QString _currentFourcc;
     MjpegHelper* _jpegDecompressor = nullptr;
+    double _smallRegionWidth = 0;
 };
 
