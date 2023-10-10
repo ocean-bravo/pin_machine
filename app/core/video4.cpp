@@ -119,7 +119,7 @@ void Video4Private::reloadDevices()
 void Video4Private::init()
 {
     _jpegDecompressor = new MjpegHelper;
-    connect(this, &Video4Private::imageCaptured, this, &Video4Private::imageDispatch, Qt::QueuedConnection);
+    //connect(this, &Video4Private::imageCaptured, this, &Video4Private::imageDispatch, Qt::QueuedConnection);
 }
 
 void Video4Private::start()
@@ -146,45 +146,6 @@ void Video4Private::captureSmallRegion()
     _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
 }
 
-void Video4Private::imageDispatch(QImage img)
-{
-    //qd() << beginprevline + setpos(30) + "dispatch ...";
-    //qd() << "dispatch ...";
-    emit newImage(img);
-
-    if (_capture || _captureSmallRegion)
-    {
-        if (_framesToThrowOut == 0)
-        {
-            _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
-
-            //qd() << "Video4Private::update captured";
-            if (_capture)
-            {
-                _capture = false;
-
-                static quint32 count = 0;
-                ++count;
-                qd() << beginprevline << setpos(30) << "captured " << count;
-                emit captured(img.copy()); // Наружу выпускается копия, все правильно
-            }
-
-            if (_captureSmallRegion)
-            {
-                int xCenter = img.width()/2;
-                int yCenter = img.height()/2;
-                _captureSmallRegion = false;
-                emit capturedSmallRegion(img.copy(QRect(xCenter - 400, yCenter - 400, 800, 800)));
-                //qd() << "small region captured";
-            }
-        }
-        else
-        {
-            _framesToThrowOut -= 1;
-        }
-    }
-}
-
 void Video4Private::update()
 {
     std::vector<char> inBuffer;
@@ -197,8 +158,6 @@ void Video4Private::update()
     auto finish = std::chrono::steady_clock::now();
 
     int i = 0;
-
-    QEventLoop loop;
 
     while (true)
     {
@@ -241,10 +200,7 @@ void Video4Private::update()
                 break;
             }
         }
-
-
         //qd() << "size:" << rsize;
-
         finish = std::chrono::steady_clock::now();
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
@@ -254,7 +210,6 @@ void Video4Private::update()
 
         {
             //ScopedMeasure ("YUYV2RGB");
-
             if (_currentFourcc == "YUYV")
                 YUYV2RGB((const uint8_t *)inBuffer.data(), (uint8_t *)rgbBuffer.data(), buffSize);
 
@@ -270,19 +225,29 @@ void Video4Private::update()
                 return;
             }
         }
-        {
-            //ScopedMeasure ("QImage ");
-            QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
-            //emit imageCaptured(img.copy()); // Наружу выпускается копия, все правильно
-            wait(1);
 
+        QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
+        imageDispatch(img);
+    }
+
+    emit stopped();
+}
+
+void Video4Private::imageDispatch(QImage img)
+{
+    //qd() << beginprevline + setpos(30) + "dispatch ...";
+    //qd() << "dispatch ...";
+    emit newImage(img.copy());
+
+    if (_capture || _captureSmallRegion)
+    {
+        if (_framesToThrowOut == 0)
+        {
+            _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
+
+            //qd() << "Video4Private::update captured";
             if (_capture)
             {
-                if (_framesToThrowOut > 0)
-                {
-                    --_framesToThrowOut;
-                    continue;
-                }
                 _capture = false;
 
                 static quint32 count = 0;
@@ -290,11 +255,21 @@ void Video4Private::update()
                 qd() << beginprevline << setpos(30) << "captured " << count;
                 emit captured(img.copy()); // Наружу выпускается копия, все правильно
             }
-            //qd() << "\n";
+
+            if (_captureSmallRegion)
+            {
+                int xCenter = img.width()/2;
+                int yCenter = img.height()/2;
+                _captureSmallRegion = false;
+                emit capturedSmallRegion(img.copy(QRect(xCenter - 400, yCenter - 400, 800, 800)));
+                //qd() << "small region captured";
+            }
+        }
+        else
+        {
+            _framesToThrowOut -= 1;
         }
     }
-
-    emit stopped();
 }
 
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)

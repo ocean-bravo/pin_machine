@@ -70,7 +70,7 @@ signals:
     void capturedSmallRegion(QImage);
     void stopped();
 
-    void imageCaptured(QImage); // Private
+    //void imageCaptured(QImage); // Private
 
 private:
     void imageDispatch(QImage img);

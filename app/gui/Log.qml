@@ -32,5 +32,9 @@ ScrollView {
         selectByMouse: true
         readOnly: true
         font.family: "Consolas"
+        onLengthChanged: {
+            if (length > 10000)
+                remove(0, 100)
+        }
     }
 }
