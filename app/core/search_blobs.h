@@ -57,7 +57,7 @@ public slots:
     bool sendNextLine();
 
 
-    void startProgram();
+
     void pauseProgram();
 
 signals:

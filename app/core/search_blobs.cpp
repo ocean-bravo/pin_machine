@@ -5,7 +5,6 @@
 #include "utils.h"
 #include "openCv.h"
 #include "data_bus.h"
-#include <list>
 #include <QEventLoop>
 #include <QTimer>
 #include <QRegExp>
@@ -61,8 +60,7 @@ void SearchBlobs::stopProgram()
 SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
     : _video(video)
 {
-//    db().insert("xPos", 0);
-//    db().insert("yPos", 0);
+
 }
 
 bool SearchBlobsPrivate::sendNextLine()
@@ -78,45 +76,23 @@ bool SearchBlobsPrivate::sendNextLine()
     }
     else
     {
-        //QString line("G1 G90 F5000 X6 Y140");
         _xTarget = extractFromGcodeX(line);
         _yTarget = extractFromGcodeY(line);
-
-//        qd() <<  " x target " << _xTarget;
-//        qd() <<  " y target " << _yTarget;
 
         serial().write(line.toLatin1() + "\n");
         msg = QString("%1: %2" ).arg(lineNumber).arg(line);
     }
 
-    //appendLog(msg)
     emit message(msg);
     ++_lineToSend;
 
     return line.length() > 0;
 }
 
-void SearchBlobsPrivate:: startProgram()
-{
-    //cycle.runAsync()
-}
-
 void SearchBlobsPrivate::pauseProgram()
 {
-    //statusTimer.stop()
-    //playPauseProgram.text = qsTr("Resume program")
+
 }
-
-//void SearchBlobsPrivate:: stopProgram()
-//{
-//    //cycle.abort()
-
-////    statusTimer.stop()
-////    playPauseProgram.checked = false
-////    playPauseProgram.text = qsTr("Run program")
-
-//    //    codeEditor.readOnly = false
-//}
 
 void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 {
@@ -195,7 +171,6 @@ void SearchBlobsPrivate::run(QString program)
 
     wait(200);
 
-
     while (true)
     {
         if (stopProgram)
@@ -205,8 +180,6 @@ void SearchBlobsPrivate::run(QString program)
         }
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
-
-            emit message("wait get position ...");
 
             waitForGetPosition(_xTarget, _yTarget);
 
