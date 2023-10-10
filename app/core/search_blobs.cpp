@@ -58,15 +58,12 @@ void SearchBlobs::stopProgram()
 }
 
 
-
 SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
     : _video(video)
 {
-    db().insert("xPos", 0);
-    db().insert("yPos", 0);
-
+//    db().insert("xPos", 0);
+//    db().insert("yPos", 0);
 }
-
 
 bool SearchBlobsPrivate::sendNextLine()
 {
@@ -129,8 +126,6 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
 
-//        qd() << " target " << xTarget << yTarget;
-//        qd() << " condition " << status << xPos << yPos;
         return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
     };
 
@@ -139,15 +134,11 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 
     QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
     {
-        //qd() << "value changed " << key;
-//        if ( key != "status" && key != "xPos" && key != "yPos")
-//            return;
-
-//        bool cond = condition();
-//        qd() << "cond " << cond;
-
-        if (condition())
-            loop.quit();
+        if ( key == "status" || key == "xPos" || key == "yPos")
+        {
+            if (condition())
+                loop.quit();
+        }
     });
 
     auto guard = qScopeGuard([=]()
@@ -215,14 +206,11 @@ void SearchBlobsPrivate::run(QString program)
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
-            wait(1);
             emit message("wait get position ...");
 
-            wait(1);
             waitForGetPosition(_xTarget, _yTarget);
-            wait(1);
+
             emit message("capturing ...");
-            wait(1);
             auto a = QDateTime::currentMSecsSinceEpoch();
             _video->capture();
             waitForSignal(_video, QMetaMethod::fromSignal(&Video4::captured), 2000);
