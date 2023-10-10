@@ -122,7 +122,7 @@ void SearchBlobsPrivate::pauseProgram()
 
 void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 {
-    auto condition = [xTarget, yTarget]()
+    auto condition = [xTarget, yTarget]() -> bool
     {
         const QString status = db().value("status").toString();
         const double xPos = db().value("xPos").toDouble();
@@ -141,7 +141,10 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 //        if ( key != "status" && key != "xPos" && key != "yPos")
 //            return;
 
-        if (condition())
+        bool cond = condition();
+        qd() << "cond " << cond;
+
+        if (cond)
             loop.quit();
     });
 
@@ -213,7 +216,7 @@ void SearchBlobsPrivate::run(QString program)
 
             wait(1);
             waitForGetPosition(_xTarget, _yTarget);
-
+            wait(1);
             emit message("capturing ...");
             wait(1);
             auto a = QDateTime::currentMSecsSinceEpoch();
