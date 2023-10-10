@@ -32,9 +32,17 @@ ScrollView {
         selectByMouse: true
         readOnly: true
         font.family: "Consolas"
-        onLengthChanged: {
-            if (length > 10000)
-                remove(0, 100)
+
+        Timer {
+            interval: 500
+            running: true
+            repeat: true
+            onTriggered: {
+                const length = log.length
+
+                if (length > 10000)
+                    remove(0, length - 10000)
+            }
         }
     }
 }
