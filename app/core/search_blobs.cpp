@@ -127,6 +127,8 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         const QString status = db().value("status").toString();
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
+
+        qd() << " condition " << status << xPos << yPos;
         return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
     };
 
