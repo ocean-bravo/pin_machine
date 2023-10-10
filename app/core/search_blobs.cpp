@@ -196,9 +196,14 @@ void SearchBlobsPrivate::run(QString program)
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
+            wait(1);
+            emit message("wait get position ...\n");
+
+            wait(1);
             waitForGetPosition(_xTarget, _yTarget);
 
             emit message("capturing ...\n");
+            wait(1);
             //let a = Date.now()
             _video->capture();
             waitForSignal(_video, QMetaMethod::fromSignal(&Video4::captured), 2000);
