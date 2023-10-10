@@ -25,6 +25,14 @@ namespace {
 // Сколько кадров нужно выкинуть.
 const int throwFramesYuv = 2; // Достаточно 1, чтобы не было смаза. Не всегда...
 const int throwFramesJpg = 15; // 12 вроде достаточно было
+
+void wait(int timeout) const
+{
+    QEventLoop loop;
+    QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
+    loop.exec();
+}
+
 }
 
 
@@ -197,8 +205,7 @@ void Video4Private::update()
         //qd() << QDateTime::currentMSecsSinceEpoch();
 
         //ScopedMeasure ("updat");
-        QTimer::singleShot(1, &loop, &QEventLoop::quit);
-        loop.exec();
+        wait(1);
 
         if (!_running)
             break;
