@@ -100,6 +100,7 @@ Item {
                 if (msg.match(/^[|].+[|]$/)) {
                     let statusValues = msg.split("|")
                     status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
+                    DataBus.status = status
                     let position = statusValues[2] // третий элемент - позиция
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
@@ -107,6 +108,9 @@ Item {
                     fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
                     xPos = parseFloat(pos[0])
                     yPos = parseFloat(pos[1])
+
+                    DataBus.xPos = xPos
+                    DataBus.yPos = yPos
                 }
 
                 //                for (let k = 0; k < modes.length; ++k) {
@@ -286,14 +290,18 @@ Item {
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Pause program") : qsTr("Run program")
-                    onCheckedChanged: checked ? cycle.startProgram() : cycle.pauseProgram()
+                    onCheckedChanged: {
+                        //checked ? cycle.startProgram() : cycle.pauseProgram()
+                        if(checked)
+                            SearchBlobs.run(codeEditor.text)
+                    }
                     checkable: true
                 }
                 SmButton {
                     text: qsTr("Stop program")
                     onClicked: {
                         playPauseProgram.checked = false
-                        cycle.stopProgram()
+                        //cycle.stopProgram()
                     }
                 }
 

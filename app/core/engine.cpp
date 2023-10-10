@@ -16,18 +16,20 @@
 #include <QQuickStyle>
 
 #include "data_bus.h"
+#include "search_blobs.h"
 
 #include "openCv.h"
+
+#include "my_image_provider.h"
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
-    , _serial(new Serial)
-    , _openCv(new OpenCv)
 {
-    _serial.reset(new Serial);
+    Serial::instance();
 
     DataBus::instance();
+    OpenCv::instance();
 
     _videoDriver3 = new Video3();
     _videoDriver4 = new Video4();
@@ -83,7 +85,7 @@ void Engine::createQmlEngine()
 {
     MyImageProvider* myImageProvider = new MyImageProvider;
 
-    connect(_videoDriver4, &Video4::newImage, this, [this, myImageProvider](QImage img)
+    connect(_videoDriver4, &Video4::newImage, this, [myImageProvider](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
@@ -97,18 +99,18 @@ void Engine::createQmlEngine()
             myImageProvider->setImage(OpenCv::drawCross(img), "raw");
 
         if (mode == "circle")
-            _openCv->searchCirclesLive(img);
+            opencv().searchCirclesLive(img);
 
         if (mode == "blob")
-            _openCv->blobDetectorLive(img);
+            opencv().blobDetectorLive(img);
     });
 
-    connect(_videoDriver4, &Video4::capturedSmallRegion, this, [this, myImageProvider](QImage img)
+    connect(_videoDriver4, &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
     {
-        myImageProvider->setImage(_openCv->drawCross(img.copy()), "raw captured");
+        myImageProvider->setImage(opencv().drawCross(img.copy()), "raw captured");
     });
 
-    connect(_videoDriver4, &Video4::captured, this, [this, myImageProvider](QImage img)
+    connect(_videoDriver4, &Video4::captured, this, [myImageProvider](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
         const QString x = db().value("x_coord").toString();
@@ -122,20 +124,24 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "raw captured");
         //myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
-        _openCv->blobDetectorCaptured(img.copy());
+        opencv().blobDetectorCaptured(img.copy());
     });
 
     connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
-    connect(_openCv, &OpenCv::circleChanged, this, [myImageProvider](QImage img)
+    connect(&opencv(), &OpenCv::circleChanged, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "circle");
     });
 
-    connect(_openCv, &OpenCv::blobChanged, this, [myImageProvider](QImage img)
+    connect(&opencv(), &OpenCv::blobChanged, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(img, "blob");
     });
+
+    SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
+
+
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -149,9 +155,11 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
     _qmlEngine->rootContext()->setContextProperty("Video4", _videoDriver4);
-    _qmlEngine->rootContext()->setContextProperty("Serial", _serial.data());
+    _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
-    _qmlEngine->rootContext()->setContextProperty("OpenCv", _openCv);
+    _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
+
+    _qmlEngine->rootContext()->setContextProperty("SearchBlobs", sb);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

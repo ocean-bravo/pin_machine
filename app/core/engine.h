@@ -7,11 +7,9 @@
 #include "video3.h"
 #include "video4.h"
 
-#include "my_image_provider.h"
 
 class QQmlApplicationEngine;
 class Serial;
-class OpenCv;
 
 class Engine : public QObject
 {
@@ -34,7 +32,6 @@ private:
 
 
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
-    QScopedPointer<Serial> _serial;
 
     V4L2 _videoDriver;
     Video3* _videoDriver3;
@@ -43,6 +40,4 @@ private:
 
     QByteArray _imgPpm;
     QStringList _info;
-
-    OpenCv* _openCv;
 };

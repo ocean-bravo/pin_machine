@@ -8,17 +8,16 @@
 #include <QTime>
 #include <QScopedPointer>
 
+#include "singleton.h"
+
 class QThread;
 class SerialPrivate;
 
-class Serial : public QObject
+class Serial : public QObject , public Singleton<Serial>
 {
     Q_OBJECT
 
 public:
-    explicit Serial(QObject* parent = nullptr);
-    ~Serial();
-
     bool isOpen();
 
 public slots:
@@ -39,8 +38,12 @@ signals:
     void disconnected();
 
 protected:
+    explicit Serial(QObject* parent = nullptr);
+    ~Serial();
     SerialPrivate* const _impl;
     QScopedPointer<QThread> _thread;
+
+    friend class Singleton<Serial>;
 };
 
 
@@ -78,5 +81,8 @@ private:
     QByteArray _buffer;
 };
 
-
+inline Serial& serial()
+{
+    return Serial::instance();
+}
 

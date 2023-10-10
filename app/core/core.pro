@@ -54,6 +54,7 @@ HEADERS += *.h \
 #    logging.h \
 #    stream.h \
 
+
 SOURCES += *.cpp \
     #video3.cpp
 #    main.cpp \
@@ -66,6 +67,7 @@ SOURCES += *.cpp \
 #    libmain.cpp \
 #    logging.cpp \
 #    stream.cpp \
+
 
 
 FORMS += *.ui

@@ -8,12 +8,13 @@
 
 #include <vector>
 #include <tuple>
+#include "singleton.h"
 
 #include <opencv2/core/types.hpp>
 
 class OpenCvPrivate;
 
-class OpenCv : public QObject
+class OpenCv : public QObject, public Singleton<OpenCv>
 {
     Q_OBJECT
 
@@ -21,8 +22,7 @@ public:
     using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
     using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString, int, int>; // координаты центра, размеры изображения
 
-    OpenCv();
-    ~OpenCv();
+
 
     void searchCirclesLive(QImage img);
     void blobDetectorLive(QImage img);
@@ -47,6 +47,9 @@ signals:
     void smallRegionBlobChanged();
 
 private:
+    OpenCv();
+    ~OpenCv();
+
     OpenCvPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 
@@ -56,6 +59,8 @@ private:
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCapturedSmallRegion;
     QMetaObject::Connection _smallRegConn;
     QString _smallRegionBlob;
+
+    friend class Singleton<OpenCv>;
 };
 
 class OpenCvPrivate : public QObject
@@ -82,3 +87,7 @@ private:
     QMutex _blobQueueMutex;
 };
 
+inline OpenCv& opencv()
+{
+    return OpenCv::instance();
+}
