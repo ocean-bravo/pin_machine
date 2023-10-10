@@ -133,6 +133,7 @@ void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 
     QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
     {
+        qd() << "value changed " << key;
 //        if ( key != "status" && key != "xPos" && key != "yPos")
 //            return;
 
