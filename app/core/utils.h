@@ -14,6 +14,8 @@ class QJsonObject;
 const QString csi("\033[");
 const QString up("1A");
 const QString fwd10("10C");
+const QString beginprevline(csi + "F");
+inline const QString setpos(int column) { return csi + QString("%1C").arg(column); }
 
 
 inline QString toReal(double value)

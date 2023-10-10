@@ -140,7 +140,7 @@ void Video4Private::captureSmallRegion()
 
 void Video4Private::imageDispatch(QImage img)
 {
-    qd() << csi + up + csi + fwd10 + "dispatch ...";
+    //qd() << beginprevline + setpos(30) + "dispatch ...";
     //qd() << "dispatch ...";
     emit newImage(img);
 
@@ -154,7 +154,9 @@ void Video4Private::imageDispatch(QImage img)
             if (_capture)
             {
                 _capture = false;
-                qd() << "captured";
+
+                static quint32 count = 0;
+                qd() << beginprevline << setpos(30) << "captured " << count;
                 emit captured(img.copy()); // Наружу выпускается копия, все правильно
             }
 
@@ -239,7 +241,7 @@ void Video4Private::update()
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
         //qd() << i << ":" << elapsed.count() << "ms";
-        qd() << csi + up + csi + fwd10 + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
+        qd() << beginprevline + setpos(60) + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
         start = std::chrono::steady_clock::now();
 
         {
@@ -250,9 +252,9 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                 qd() << csi + up + csi + fwd10 +  "decompress ...";
+                 //qd() << beginprevline + "decompress ...";
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
-                 qd() << csi + up + csi + fwd10 +  "... finished";
+                 //qd() << beginprevline + setpos(15) + "... finished";
             }
             else
             {
