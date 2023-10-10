@@ -189,6 +189,8 @@ void SearchBlobsPrivate::waitForSignal(const QObject* object, const QMetaMethod&
 
 void SearchBlobsPrivate::run(QString program)
 {
+    stopProgram = false;
+
     _lineToSend = 0;
     _codeLines = program.split("\n", Qt::KeepEmptyParts);
 
