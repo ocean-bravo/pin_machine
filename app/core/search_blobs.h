@@ -16,6 +16,7 @@ class SearchBlobs : public QObject
 
 public:
     SearchBlobs(Video4* video, QObject* parent = nullptr);
+    ~SearchBlobs();
 
     Q_INVOKABLE void run(QString program); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
 

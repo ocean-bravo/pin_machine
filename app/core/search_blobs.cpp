@@ -41,6 +41,12 @@ SearchBlobs::SearchBlobs(Video4 *video, QObject* parent)
     _thread->start();
 }
 
+SearchBlobs::~SearchBlobs()
+{
+    _thread->quit();
+    _thread->wait(1000);
+}
+
 void SearchBlobs::run(QString program)
 {
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
