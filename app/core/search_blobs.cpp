@@ -62,6 +62,8 @@ void SearchBlobs::stopProgram()
 SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
     : _video(video)
 {
+    db().insert("xPos", 0);
+    db().insert("yPos", 0);
 
 }
 
