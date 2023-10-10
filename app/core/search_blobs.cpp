@@ -45,6 +45,11 @@ void SearchBlobs::run(QString program)
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
+void SearchBlobs::stopProgram()
+{
+    _impl->stopProgram = true;
+}
+
 
 
 SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
@@ -95,16 +100,16 @@ void SearchBlobsPrivate::pauseProgram()
     //playPauseProgram.text = qsTr("Resume program")
 }
 
-void SearchBlobsPrivate:: stopProgram()
-{
-    //cycle.abort()
+//void SearchBlobsPrivate:: stopProgram()
+//{
+//    //cycle.abort()
 
-//    statusTimer.stop()
-//    playPauseProgram.checked = false
-//    playPauseProgram.text = qsTr("Run program")
+////    statusTimer.stop()
+////    playPauseProgram.checked = false
+////    playPauseProgram.text = qsTr("Run program")
 
-    //    codeEditor.readOnly = false
-}
+//    //    codeEditor.readOnly = false
+//}
 
 void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
 {
@@ -183,6 +188,12 @@ void SearchBlobsPrivate::run(QString program)
 
     while (true)
     {
+        if (stopProgram)
+        {
+            emit message("program interrupted\n");
+            break;
+        }
+
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
             waitForGetPosition(_xTarget, _yTarget);
@@ -201,12 +212,10 @@ void SearchBlobsPrivate::run(QString program)
 
         if (_lineToSend >= _codeLines.length())
         {
-            stopProgram();
             emit message("program finished\n");
-            return;
+            break;
         }
     }
-
 }
 
 

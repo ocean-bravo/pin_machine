@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QAtomicInteger>
 
 
 class Video4;
@@ -46,6 +47,8 @@ class SearchBlobsPrivate : public QObject
 
 public:
     SearchBlobsPrivate(Video4* video);
+    QAtomicInteger<bool> stopProgram = false;
+
 
 public slots:
      void run(QString program);
@@ -56,7 +59,6 @@ public slots:
     void startProgram();
     void pauseProgram();
 
-    void stopProgram();
 signals:
 
     void message(QString);
@@ -78,4 +80,5 @@ private:
     using PointerToMember = void (SearchBlobsPrivate::*)();
     void waitForSignal(const PointerToMember &signal, int timeout) const;
     void waitForSignal(const QObject *object, const QMetaMethod &signal, int timeout) const;
+
 };
