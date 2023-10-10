@@ -59,7 +59,7 @@ Item {
     Connections {
         target: SearchBlobs
         function onMessage(msg) {
-            appendLog(msg)
+            appendLog(msg + '<br>')
         }
     }
 

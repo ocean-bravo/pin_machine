@@ -11,6 +11,7 @@
 #include <QRegExp>
 #include <QMetaMethod>
 #include <QScopeGuard>
+#include <QDateTime>
 
 
 namespace {
@@ -190,25 +191,25 @@ void SearchBlobsPrivate::run(QString program)
     {
         if (stopProgram)
         {
-            emit message("program interrupted\n");
+            emit message("program interrupted");
             break;
         }
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
             wait(1);
-            emit message("wait get position ...\n");
+            emit message("wait get position ...");
 
             wait(1);
             waitForGetPosition(_xTarget, _yTarget);
 
-            emit message("capturing ...\n");
+            emit message("capturing ...");
             wait(1);
-            //let a = Date.now()
+            auto a = QDateTime::currentMSecsSinceEpoch();
             _video->capture();
             waitForSignal(_video, QMetaMethod::fromSignal(&Video4::captured), 2000);
-            //let b = Date.now()
-            //emit message("captured " + String(b-a) + "ms\n");
+            auto b = QDateTime::currentMSecsSinceEpoch();
+            emit message(QString("captured %1 ms").arg(b-a));
 
             // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
             wait(1);
@@ -217,7 +218,7 @@ void SearchBlobsPrivate::run(QString program)
 
         if (_lineToSend >= _codeLines.length())
         {
-            emit message("program finished\n");
+            emit message("program finished");
             break;
         }
     }
