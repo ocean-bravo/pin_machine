@@ -278,6 +278,11 @@ void Video4Private::update()
 
             if (_capture)
             {
+                if (_framesToThrowOut > 0)
+                {
+                    --_framesToThrowOut;
+                    continue;
+                }
                 _capture = false;
 
                 static quint32 count = 0;

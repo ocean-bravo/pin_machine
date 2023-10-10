@@ -77,7 +77,7 @@ bool SearchBlobsPrivate::sendNextLine()
     QString msg;
     if (line.length() == 0)
     {
-        msg = QString("%1: skip...\n" ).arg(lineNumber);
+        msg = QString("%1: skip..." ).arg(lineNumber);
     }
     else
     {
@@ -89,7 +89,7 @@ bool SearchBlobsPrivate::sendNextLine()
 //        qd() <<  " y target " << _yTarget;
 
         serial().write(line.toLatin1() + "\n");
-        msg = QString("%1: %2\n" ).arg(lineNumber).arg(line);
+        msg = QString("%1: %2" ).arg(lineNumber).arg(line);
     }
 
     //appendLog(msg)
