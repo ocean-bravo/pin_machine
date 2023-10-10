@@ -84,8 +84,8 @@ bool SearchBlobsPrivate::sendNextLine()
         _xTarget = extractFromGcodeX(line);
         _yTarget = extractFromGcodeY(line);
 
-        //                console.log( " x target " + xTarget)
-        //                console.log( " y target " + yTarget)
+        qd() <<  " x target " << _xTarget;
+        qd() <<  " y target " << _yTarget;
 
         serial().write(line.toLatin1() + "\n");
         msg = QString("%1: %2\n" ).arg(lineNumber).arg(line);
