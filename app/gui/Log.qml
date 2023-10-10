@@ -41,7 +41,7 @@ ScrollView {
                 const length = log.length
 
                 if (length > 10000)
-                    remove(0, length - 10000)
+                    log.remove(0, length - 10000)
             }
         }
     }
