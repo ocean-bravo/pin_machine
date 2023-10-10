@@ -26,7 +26,7 @@ namespace {
 const int throwFramesYuv = 2; // Достаточно 1, чтобы не было смаза. Не всегда...
 const int throwFramesJpg = 15; // 12 вроде достаточно было
 
-void wait(int timeout) const
+void wait(int timeout)
 {
     QEventLoop loop;
     QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
@@ -274,6 +274,7 @@ void Video4Private::update()
             //ScopedMeasure ("QImage ");
             QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
             emit imageCaptured(img.copy()); // Наружу выпускается копия, все правильно
+            wait(1);
             //qd() << "\n";
         }
     }
