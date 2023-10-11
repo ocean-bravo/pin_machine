@@ -209,7 +209,7 @@ void Video4Private::update()
                 break;
             }
         }
-        //qd() << "size:" << rsize;
+        qd() << "size:" << rsize;
         finish = std::chrono::steady_clock::now();
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
