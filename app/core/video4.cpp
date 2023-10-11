@@ -223,7 +223,7 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                ScopedMeasure (beginprevline + setpos(65) + "decomp ");
+                ScopedMeasure (beginprevline + setpos(70) + "decomp ");
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
             }
             else
@@ -244,7 +244,11 @@ void Video4Private::imageDispatch(QImage img)
 {
     //qd() << beginprevline + setpos(30) + "dispatch ...";
     //qd() << "dispatch ...";
-    emit newImage(img.copy());
+
+    {
+        ScopedMeasure (beginprevline + setpos(80) + "copy img ");
+        emit newImage(img.copy());
+    }
 
     if (_capture || _captureSmallRegion)
     {
