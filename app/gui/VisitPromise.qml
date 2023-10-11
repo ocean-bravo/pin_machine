@@ -66,6 +66,8 @@ QMLPromises {
                 }
             }
 
+            const start = Date.now()
+
             for (let blob of blobs) {
 
                 let point = blob.split(" ")
@@ -82,15 +84,20 @@ QMLPromises {
                 }
             }
 
+            const finish = Date.now()
 
 
             statusTimer.stop()
             updatedBlobs = updatedBlobs.sort( (a, b) => parseFloat(a.split(' ')[0]) >  parseFloat(b.split(' ')[0]) ? 1 : -1)
             removeDuplicateBlobs(updatedBlobs)
+            appendLog("visit finished\n")
+            appendLog("visit time " + Math.floor((finish-start)/1000) + " sec\n")
+            appendLog("visit count " + blobs.length + "\n")
+
             DataBus.found_blobs3 = updatedBlobs
             DataBus.found_blobs4 = updatedBlobs.join('<br>')
 
-            appendLog("visit finished\n")
+
         } )();
     }
 }

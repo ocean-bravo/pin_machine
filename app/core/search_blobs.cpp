@@ -206,6 +206,6 @@ void SearchBlobsPrivate::run(QString program)
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 
-    emit message("program time " + QString::number(finish - start) + " ms");
+    emit message("program time " + QString::number((finish - start)/1000) + " sec");
     wait(10);
 }
