@@ -13,7 +13,7 @@ Item {
             valueBind: function() { return DataBus.blob_minArea }
             onValueChanged: DataBus.blob_minArea = value
         }
-        RowSpinSlider { text: "maxArea"; from: 0; to: 100000; stepSize: 1; value: DataBus.blob_maxArea
+        RowSpinSlider { text: "maxArea"; from: 0; to: 400000; stepSize: 1; value: DataBus.blob_maxArea
             valueBind: function() { return DataBus.blob_maxArea }
             onValueChanged: DataBus.blob_maxArea = value
         }
