@@ -191,7 +191,7 @@ void Video4Private::update()
 
         const quint32 buffSize = _videoCapture->bufSize();
 
-         //qd() << "buffSize:" << buffSize;
+         qd() << "buffSize:" << buffSize;
         {
             //ScopedMeasure ("resize");
             inBuffer.resize(buffSize);
