@@ -171,6 +171,8 @@ void SearchBlobsPrivate::run(QString program)
 
     wait(200);
 
+    auto start = QDateTime::currentMSecsSinceEpoch();
+
     while (true)
     {
         if (stopProgram)
@@ -201,6 +203,9 @@ void SearchBlobsPrivate::run(QString program)
             break;
         }
     }
+
+    auto finish = QDateTime::currentMSecsSinceEpoch();
+
+    emit message("program time " + QString::number(finish - start) + " ms");
+    wait(10);
 }
-
-

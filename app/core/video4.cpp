@@ -169,8 +169,6 @@ void Video4Private::update()
 
     while (true)
     {
-        //qd() << QDateTime::currentMSecsSinceEpoch();
-
         wait(1);
 
         if (!_running)
@@ -182,7 +180,7 @@ void Video4Private::update()
         if (!_videoCapture->isReady())
             break;
 
-        const bool hasFrame = _videoCapture->isReadable(3);
+        const bool hasFrame = _videoCapture->isReadable(10);
 
         if (!hasFrame)
             continue;
@@ -191,7 +189,7 @@ void Video4Private::update()
 
         const quint32 buffSize = _videoCapture->bufSize();
 
-         qd() << "buffSize:" << buffSize;
+        // qd() << "buffSize:" << buffSize;
         {
             //ScopedMeasure ("resize");
             inBuffer.resize(buffSize);
@@ -207,7 +205,7 @@ void Video4Private::update()
             break;
         }
 
-        qd() << "size:" << rsize;
+        //qd() << "size:" << rsize;
         finish = std::chrono::steady_clock::now();
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
