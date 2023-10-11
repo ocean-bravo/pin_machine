@@ -171,7 +171,6 @@ void Video4Private::update()
     {
         //qd() << QDateTime::currentMSecsSinceEpoch();
 
-        ScopedMeasure (beginprevline + setpos(85) + "upd ");
         wait(1);
 
         if (!_running)
@@ -183,6 +182,7 @@ void Video4Private::update()
         if (!_videoCapture->isReady())
             break;
 
+        ScopedMeasure (beginprevline + setpos(85) + "upd ");
         const bool hasFrame = _videoCapture->isReadable(10);
 
         if (!hasFrame)
