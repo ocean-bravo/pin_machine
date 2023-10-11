@@ -248,7 +248,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
         const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-        const QString diaBlob = toReal(kp.size / db().pixelSize());
+        const QString diaBlob = toReal(kp.size * db().pixelSize());
 
         _smallRegionBlob = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
 
@@ -357,7 +357,7 @@ void OpenCv::foundBlobs() const
         {
             const QString xBlob = toReal(pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
             const QString yBlob = toReal(pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
-            const QString diaBlob = toReal(kp.size / db().pixelSize());
+            const QString diaBlob = toReal(kp.size * db().pixelSize());
 
             s.append(QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
@@ -419,7 +419,7 @@ OpenCvPrivate::OpenCvPrivate()
         {
             const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
             const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal(kp.size / db().pixelSize());
+            const QString diaBlob = toReal(kp.size * db().pixelSize());
 
             res.append(QString("pos: [%1 %2] size: %3 \n").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
@@ -432,7 +432,7 @@ OpenCvPrivate::OpenCvPrivate()
             auto kp = kps[0];
             const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
             const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal(kp.size / db().pixelSize());
+            const QString diaBlob = toReal(kp.size * db().pixelSize());
 
             res = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
         }
