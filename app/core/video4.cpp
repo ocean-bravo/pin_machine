@@ -197,18 +197,16 @@ void Video4Private::update()
             inBuffer.resize(buffSize);
             rgbBuffer.resize(buffSize);
         }
-        {
-            //ScopedMeasure ("read internal");
 
-            //qd() << "read internal ...";
-            int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
-            //qd() << "... finished";
-            if (rsize == -1)
-            {
-                qd() << "stop " << strerror(errno);
-                break;
-            }
+        //qd() << "read internal ...";
+        int rsize = _videoCapture->readInternal(inBuffer.data(), buffSize);
+        //qd() << "... finished";
+        if (rsize == -1)
+        {
+            qd() << "stop " << strerror(errno);
+            break;
         }
+
         qd() << "size:" << rsize;
         finish = std::chrono::steady_clock::now();
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
