@@ -46,7 +46,7 @@ QMLPromises {
                                        Math.abs(yTarget - yPos) <= 0.003)
 
                 appendLog("capturing ...\n")
-                Video4.captureSmallRegion(3.0)
+                Video4.captureSmallRegion(5.5)
                 yield waitForSignal(Video4.capturedSmallRegion)
                 appendLog("captured\n")
 
