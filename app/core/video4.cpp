@@ -171,7 +171,7 @@ void Video4Private::update()
     {
         //qd() << QDateTime::currentMSecsSinceEpoch();
 
-        //ScopedMeasure ("updat");
+        ScopedMeasure (beginprevline + setpos(80) + "upd ");
         wait(1);
 
         if (!_running)
@@ -245,10 +245,8 @@ void Video4Private::imageDispatch(QImage img)
     //qd() << beginprevline + setpos(30) + "dispatch ...";
     //qd() << "dispatch ...";
 
-    {
-        ScopedMeasure (beginprevline + setpos(80) + "copy img ");
-        emit newImage(img.copy());
-    }
+    emit newImage(img.copy());
+
 
     if (_capture || _captureSmallRegion)
     {
