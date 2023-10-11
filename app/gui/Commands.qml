@@ -323,6 +323,7 @@ Item {
                 columns: 3
 
                 ComboBox {
+                    id: dbKeys
                     model: DataBus.keys()
                     onActivated: {
                         logViewer.append('<br>')
@@ -386,6 +387,13 @@ Item {
                     onCheckedChanged: {
                         checked ? blobVisitorPromise.runAsync() : blobVisitorPromise.abort()
                     }
+                }
+                SmTextEdit {
+                    id: sendDataBus
+                }
+                SmButton {
+                    text: qsTr("Write value")
+                    onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
                 }
 
                 VisitPromise {

@@ -120,6 +120,9 @@ void Video4Private::init()
 {
     _jpegDecompressor = new MjpegHelper;
     //connect(this, &Video4Private::imageCaptured, this, &Video4Private::imageDispatch, Qt::QueuedConnection);
+
+    db().insert("jpg_frames_throw", throwFramesJpg);
+    db().insert("yuv_frames_throw", throwFramesYuv);
 }
 
 void Video4Private::start()
@@ -137,7 +140,11 @@ void Video4Private::capture()
 {
     //qd() << "Video4Private::capture";
     _capture = true;
-    _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
+
+    int jpgFramesThrow = db().value("jpg_frames_throw").toInt();
+    int yuvFramesThrow = db().value("yuv_frames_throw").toInt();
+
+    _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow : jpgFramesThrow;
 }
 
 void Video4Private::captureSmallRegion(double width)
