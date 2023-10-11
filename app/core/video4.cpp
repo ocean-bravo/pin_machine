@@ -171,7 +171,7 @@ void Video4Private::update()
     {
         //qd() << QDateTime::currentMSecsSinceEpoch();
 
-        ScopedMeasure (beginprevline + setpos(80) + "upd ");
+        ScopedMeasure (beginprevline + setpos(85) + "upd ");
         wait(1);
 
         if (!_running)
