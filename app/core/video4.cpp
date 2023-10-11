@@ -182,7 +182,7 @@ void Video4Private::update()
         if (!_videoCapture->isReady())
             break;
 
-        const bool hasFrame = _videoCapture->isReadable(10);
+        const bool hasFrame = _videoCapture->isReadable(3);
 
         if (!hasFrame)
             continue;
