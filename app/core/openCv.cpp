@@ -25,9 +25,8 @@ double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
-    const double pixelSize = db().value("pixel_size").toDouble(); // мм
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos + (posOriginRelativeCenter * pixelSize);
+    return frameCenterPos + (posOriginRelativeCenter * db().pixelSize());
 }
 
 
@@ -35,9 +34,8 @@ double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
-    const double pixelSize = db().value("pixel_size").toDouble(); // мм
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos - (posOriginRelativeCenter * pixelSize);
+    return frameCenterPos - (posOriginRelativeCenter * db().pixelSize());
 }
 
 // В нижнем левом углу
@@ -248,10 +246,11 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         auto kp = kps[0];
 
-        const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-        const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
+        const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
+        const QString diaBlob = toReal(kp.size / db().pixelSize());
 
-        _smallRegionBlob = QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3));
+        _smallRegionBlob = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
 
         x = "0.000";
         y = "0.000";
@@ -356,9 +355,11 @@ void OpenCv::foundBlobs() const
 
         for (const cv::KeyPoint& kp : kps)
         {
-            const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
-            const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
-            s.append(QString("%1 %2").arg(QString::number(xBlob, 'f', 3)).arg(QString::number(yBlob, 'f', 3)));
+            const QString xBlob = toReal(pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
+            const QString yBlob = toReal(pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
+            const QString diaBlob = toReal(kp.size / db().pixelSize());
+
+            s.append(QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
     }
 
@@ -416,10 +417,11 @@ OpenCvPrivate::OpenCvPrivate()
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            QString xBlob = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
-            QString yBlob = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
+            const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
+            const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
+            const QString diaBlob = toReal(kp.size / db().pixelSize());
 
-            res.append(QString("size: %1 pos: [%2 %3] \n").arg(kp.size).arg(xBlob).arg(yBlob));
+            res.append(QString("pos: [%1 %2] size: %3 \n").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
         db().insert("blob_info2", res);
 
@@ -428,10 +430,11 @@ OpenCvPrivate::OpenCvPrivate()
         if (!kps.empty())
         {
             auto kp = kps[0];
-            QString xBlob = QString::number(pixToRealX(x.toDouble(), kp.pt.x, im.width()), 'f', 3);
-            QString yBlob = QString::number(pixToRealY(y.toDouble(), kp.pt.y, im.height()),'f', 3);
+            const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
+            const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
+            const QString diaBlob = toReal(kp.size / db().pixelSize());
 
-            res = QString("%1 %2").arg(xBlob).arg(yBlob);
+            res = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
         }
         db().insert("blob_info3", res);
 

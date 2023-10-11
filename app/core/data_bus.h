@@ -13,16 +13,16 @@ class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 
 public:
 
+    double pixelSize() const { return value("pixel_size").toDouble(); }
+
+
     Q_INVOKABLE void remove(QString key)
     {
         qd() << "clear " << key;
         clear(key);
     }
 
-public slots:
 
-
-signals:
 
 
 

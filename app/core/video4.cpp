@@ -268,8 +268,7 @@ void Video4Private::imageDispatch(QImage img)
                 int yCenter = img.height()/2;
                 _captureSmallRegion = false;
 
-                double pixelSize = db().value("pixel_size").toDouble();
-                int widthInPixesl = _smallRegionWidth / pixelSize;
+                int widthInPixesl = _smallRegionWidth / db().pixelSize();
 
                 emit capturedSmallRegion(img.copy(QRect(xCenter - (widthInPixesl/2), yCenter - (widthInPixesl/2), widthInPixesl, widthInPixesl)));
                 //qd() << "small region captured";
