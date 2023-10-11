@@ -182,11 +182,12 @@ void Video4Private::update()
         if (!_videoCapture->isReady())
             break;
 
-        ScopedMeasure (beginprevline + setpos(85) + "upd ");
         const bool hasFrame = _videoCapture->isReadable(10);
 
         if (!hasFrame)
             continue;
+
+        ScopedMeasure (beginprevline + setpos(85) + "upd ");
 
         const quint32 buffSize = _videoCapture->bufSize();
 
