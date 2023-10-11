@@ -187,7 +187,7 @@ void Video4Private::update()
         if (!hasFrame)
             continue;
 
-        ScopedMeasure (beginprevline + setpos(85) + "upd ");
+        //ScopedMeasure (beginprevline + setpos(85) + "upd ");
 
         const quint32 buffSize = _videoCapture->bufSize();
 
@@ -224,7 +224,7 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                ScopedMeasure (beginprevline + setpos(70) + "decomp ");
+                //ScopedMeasure (beginprevline + setpos(70) + "decomp ");
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
             }
             else
