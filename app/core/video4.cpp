@@ -144,7 +144,7 @@ void Video4Private::capture()
     int jpgFramesThrow = db().value("jpg_frames_throw").toInt();
     int yuvFramesThrow = db().value("yuv_frames_throw").toInt();
 
-    _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow : jpgFramesThrow;
+    _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow  : jpgFramesThrow;
 }
 
 void Video4Private::captureSmallRegion(double width)
@@ -223,9 +223,8 @@ void Video4Private::update()
 
             else if (_currentFourcc == "MJPG")
             {
-                 //qd() << beginprevline + "decompress ...";
+                ScopedMeasure (beginprevline + setpos(65) + "decomp ");
                 _jpegDecompressor->decompressFrame((const uint8_t *)inBuffer.data(), buffSize, (uint8_t *)rgbBuffer.data(), _videoCapture->width, _videoCapture->height);
-                 //qd() << beginprevline + setpos(15) + "... finished";
             }
             else
             {
