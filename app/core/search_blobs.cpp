@@ -1,10 +1,11 @@
 #include "search_blobs.h"
-
+#include "wait.h"
 #include "video4.h"
 #include "serial.h"
 #include "utils.h"
 #include "openCv.h"
 #include "data_bus.h"
+
 #include <QEventLoop>
 #include <QTimer>
 #include <QRegExp>
@@ -131,26 +132,6 @@ void SearchBlobsPrivate::wait(int timeout) const
         return;
 
     waitForSignal(this, QMetaMethod::fromSignal(&SearchBlobsPrivate::interrupt), timeout);
-}
-
-void SearchBlobsPrivate::waitForSignal(const PointerToMember& signal, int timeout) const
-{
-    QEventLoop loop;
-    QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
-    connect(this, signal, &loop, &QEventLoop::quit);
-    loop.exec();
-}
-
-void SearchBlobsPrivate::waitForSignal(const QObject* object, const QMetaMethod& signal, int timeout) const
-{
-    QEventLoop loop;
-    QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
-
-    const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
-    const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
-
-    connect(object, signal, &loop, quitMetaMethod);
-    loop.exec();
 }
 
 

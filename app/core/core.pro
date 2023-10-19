@@ -53,6 +53,7 @@ HEADERS += *.h \
 #    deviceinfo.h \
 #    logging.h \
 #    stream.h \
+    wait.h
 
 
 SOURCES += *.cpp \

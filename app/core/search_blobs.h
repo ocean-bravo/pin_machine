@@ -67,7 +67,6 @@ signals:
 
 private:
     void waitForGetPosition(double xTarget, double yTarget);
-    void waitForSignal();
     void sleep(int);
 
     Video4* _video = nullptr;
@@ -78,8 +77,5 @@ private:
     double _xTarget;
     double _yTarget;
     void wait(int timeout) const;
-    using PointerToMember = void (SearchBlobsPrivate::*)();
-    void waitForSignal(const PointerToMember &signal, int timeout) const;
-    void waitForSignal(const QObject *object, const QMetaMethod &signal, int timeout) const;
 
 };
