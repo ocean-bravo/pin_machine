@@ -45,7 +45,8 @@ Scene::Scene(QWidget *parent)
             qd() <<  " blob ";
             qd() <<  blob;
 
-            QStringList coord = blob.split(" ");
+            QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
+            qd() << coord;
             double x = coord[0].toDouble();
             double y = coord[1].toDouble();
             double dia = coord[3].toDouble();
