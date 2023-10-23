@@ -19,13 +19,19 @@ Scene::Scene(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
 
+    QPen pen(Qt::green, 3, Qt::SolidLine);
+    _scene->addRect(0, 0, 300, 300, pen);
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& blobs)
     {
         if (key != "found_blobs3")
             return;
 
+        qd() <<  "blobs to scene";
+
         _scene->clear();
+        QPen pen(Qt::green, 3, Qt::SolidLine);
+        _scene->addRect(0, 0, 300, 300, pen);
 
         // Отправляю все блобы на сцену
         for (const QString& blob : blobs.toStringList())
