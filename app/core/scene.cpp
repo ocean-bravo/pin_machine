@@ -31,7 +31,7 @@ Scene::Scene(QWidget *parent)
 //        if (key != "found_blobs3")
 //            return;
 
-        auto blobs = db().value("found_blobs3");
+        QStringList blobs = db().value("found_blobs3").toStringList();
 
         qd() <<  "blobs to scene";
 
@@ -40,7 +40,7 @@ Scene::Scene(QWidget *parent)
         _scene->addRect(0, 0, 300, 300, pen);
 
         // Отправляю все блобы на сцену
-        for (const QString& blob : blobs.toStringList())
+        for (const QString& blob : blobs)
         {
             QStringList coord = blob.split(" ");
             double x = coord[0].toDouble();
