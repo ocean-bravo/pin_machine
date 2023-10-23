@@ -20,7 +20,7 @@ Scene::Scene(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
 
-    QPen pen(Qt::green, 3, Qt::SolidLine);
+    QPen pen(Qt::green, 31, Qt::SolidLine);
     _scene->addRect(0, 0, 300, 300, pen);
 
 
@@ -36,7 +36,7 @@ Scene::Scene(QWidget *parent)
         qd() <<  "blobs to scene";
 
         _scene->clear();
-        QPen pen(Qt::green, 3, Qt::SolidLine);
+        QPen pen(Qt::green, 1, Qt::SolidLine);
         _scene->addRect(0, 0, 300, 300, pen);
 
         // Отправляю все блобы на сцену
@@ -51,7 +51,7 @@ Scene::Scene(QWidget *parent)
             double y = coord[1].toDouble();
             double dia = coord[2].toDouble();
 
-            QPen pen(Qt::red, 3, Qt::SolidLine);
+            QPen pen(Qt::red, 1, Qt::SolidLine);
             QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, pen);
             item->setPos(x, y);
         }
