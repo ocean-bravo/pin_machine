@@ -5,6 +5,7 @@
 
 #include <QMessageBox>
 #include <QGraphicsScene>
+#include <QTimer>
 
 Scene::Scene(QWidget *parent)
     : QWidget(parent)
@@ -22,10 +23,15 @@ Scene::Scene(QWidget *parent)
     QPen pen(Qt::green, 3, Qt::SolidLine);
     _scene->addRect(0, 0, 300, 300, pen);
 
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& blobs)
+
+    QTimer* timer = new QTimer(this);
+    timer->start(100);
+    connect(timer, &QTimer::timeout, this, [this]()
     {
-        if (key != "found_blobs3")
-            return;
+//        if (key != "found_blobs3")
+//            return;
+
+        auto blobs = db().value("found_blobs3");
 
         qd() <<  "blobs to scene";
 
