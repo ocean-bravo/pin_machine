@@ -42,6 +42,9 @@ Scene::Scene(QWidget *parent)
         // Отправляю все блобы на сцену
         for (const QString& blob : blobs)
         {
+            qd() <<  " blob ";
+            qd() <<  blob;
+
             QStringList coord = blob.split(" ");
             double x = coord[0].toDouble();
             double y = coord[1].toDouble();
