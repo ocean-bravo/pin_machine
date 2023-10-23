@@ -363,6 +363,8 @@ void OpenCv::foundBlobs() const
         }
     }
 
+    qd() << "new found blobs";
+
     db().insert("found_blobs3", s);
 }
 
