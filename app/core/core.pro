@@ -53,8 +53,6 @@ HEADERS += *.h \
 #    deviceinfo.h \
 #    logging.h \
 #    stream.h \
-    wait.h
-
 
 SOURCES += *.cpp \
     #video3.cpp
@@ -68,7 +66,6 @@ SOURCES += *.cpp \
 #    libmain.cpp \
 #    logging.cpp \
 #    stream.cpp \
-
 
 
 FORMS += *.ui

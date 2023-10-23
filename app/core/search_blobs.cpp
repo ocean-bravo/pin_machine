@@ -131,7 +131,7 @@ void SearchBlobsPrivate::wait(int timeout) const
     if (timeout <= 0)
         return;
 
-    waitForSignal(this, QMetaMethod::fromSignal(&SearchBlobsPrivate::interrupt), timeout);
+    waitForSignal(this, &SearchBlobsPrivate::interrupt, timeout);
 }
 
 
@@ -169,7 +169,7 @@ void SearchBlobsPrivate::run(QString program)
             emit message("capturing ...");
             auto a = QDateTime::currentMSecsSinceEpoch();
             _video->capture();
-            waitForSignal(_video, QMetaMethod::fromSignal(&Video4::captured), 2000);
+            waitForSignal(_video, &Video4::captured, 2000);
             auto b = QDateTime::currentMSecsSinceEpoch();
             emit message(QString("captured %1 ms").arg(b-a));
 

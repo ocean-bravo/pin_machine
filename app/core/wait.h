@@ -17,16 +17,17 @@ inline void wait(int interval)
 }
 
 //// Если вышли по таймауту - результат false
-inline bool waitForSignal(const QObject* object, const QMetaMethod& signal, int timeout)
+template<typename PointerToMemberFunction>
+inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
 {
     bool exitOnSignal = true;
     QEventLoop loop;
     QTimer::singleShot(timeout, &loop, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
 
-    const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
-    const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
+    static const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
+    static const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
 
-    QObject::connect(object, signal, &loop, quitMetaMethod);
+    QObject::connect(object, QMetaMethod::fromSignal(signal), &loop, quitMetaMethod);
     loop.exec();
     return exitOnSignal;
 }
