@@ -49,7 +49,7 @@ Scene::Scene(QWidget *parent)
             qd() << coord;
             double x = coord[0].toDouble();
             double y = coord[1].toDouble();
-            double dia = coord[3].toDouble();
+            double dia = coord[2].toDouble();
 
             QPen pen(Qt::red, 3, Qt::SolidLine);
             QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, pen);
