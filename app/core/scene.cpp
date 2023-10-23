@@ -7,12 +7,13 @@
 #include <QGraphicsScene>
 
 Scene::Scene(QWidget *parent)
-    : QDialog(parent)
+    : QWidget(parent)
     , ui(new Ui::Scene)
 {
     ui->setupUi(this);
     // Только кнопки максимизации и закрытия. Убрал кнопку минимизации.
     //setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
+    setWindowModality(Qt::NonModal);
 
     _scene = new QGraphicsScene(this);
 

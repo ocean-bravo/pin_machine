@@ -8,7 +8,7 @@ class QGraphicsScene;
 namespace Ui { class Scene; }
 
 
-class Scene : public QDialog
+class Scene : public QWidget
 {
     Q_OBJECT
 
