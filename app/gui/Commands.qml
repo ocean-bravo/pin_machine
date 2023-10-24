@@ -351,7 +351,7 @@ Item {
                 SmTextEdit {
                     id: programParams
                     width: 200
-                    text: "6  100  250  250  10  8  5000"
+                    text: "6  100  150  150  10  8  5000"
                 }
                 SmButton {
                     text: qsTr("Generate program")
