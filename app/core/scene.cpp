@@ -31,9 +31,8 @@ Scene::Scene(QWidget *parent)
 //        if (key != "found_blobs3")
 //            return;
 
+        ScopedMeasure ms("add to scene");
         QStringList blobs = db().value("found_blobs3").toStringList();
-
-        qd() <<  "blobs to scene";
 
         _scene->clear();
         QPen pen(Qt::green, 1, Qt::SolidLine);
@@ -42,16 +41,13 @@ Scene::Scene(QWidget *parent)
         // Отправляю все блобы на сцену
         for (const QString& blob : blobs)
         {
-            qd() <<  " blob ";
-            qd() <<  blob;
-
             QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
             qd() << coord;
             double x = coord[0].toDouble();
             double y = coord[1].toDouble();
             double dia = coord[2].toDouble();
 
-            QPen pen(Qt::red, 1, Qt::SolidLine);
+            QPen pen(Qt::red, 0.5, Qt::SolidLine);
             QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, pen);
             item->setPos(x, y);
         }
