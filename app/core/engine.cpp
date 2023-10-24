@@ -3,6 +3,7 @@
 #include "serial.h"
 #include "version.h" // автогенерированный файл qmake из version.h.in
 #include "utils.h"
+#include "utils2.h"
 
 #include <QCoreApplication>
 #include <QQmlContext>
@@ -52,11 +53,12 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
     // Отправляю все блобы на сцену
     for (const QString& blob : blobs)
     {
-        QStringList coord = blob.split(" ");
-        double x = coord[0].toDouble();
-        double y = coord[1].toDouble();
+//        QStringList coord = blob.split(" ");
+//        double x = coord[0].toDouble();
+//        double y = coord[1].toDouble();
+        auto [x, y, dia] = blobToDouble(blob);
 
-        QGraphicsEllipseItem* item = scene.addEllipse(-0.5, -0.5, 1, 1);
+        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
         item->setPos(x, y);
     }
 

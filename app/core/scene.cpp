@@ -1,27 +1,24 @@
 #include "scene.h"
 #include "ui_scene.h"
 #include "utils2.h"
+#include "common.h"
 #include "data_bus.h"
 
 #include <QMessageBox>
 #include <QGraphicsScene>
-#include <QTimer>
+#include <QGraphicsEllipseItem>
+
+#include "dmc_item.h"
 
 Scene::Scene(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Scene)
 {
     ui->setupUi(this);
-    // Только кнопки максимизации и закрытия. Убрал кнопку минимизации.
-    //setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
-    setWindowModality(Qt::NonModal);
 
     _scene = new QGraphicsScene(this);
 
     ui->graphicsView->setScene(_scene);
-
-//    QPen pen(Qt::green, 31, Qt::SolidLine);
-//    _scene->addRect(0, 0, 300, 300, pen);
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
     {
@@ -33,6 +30,9 @@ Scene::Scene(QWidget *parent)
 
         _scene->clear();
         _scene->addRect(0, 0, 300, 300, greenPen);
+        _scene->addItem(new DmcItem({0,0}));
+        setCross();
+
 
         // Отправляю все блобы на сцену
         const QStringList blobs = value.toStringList();
@@ -43,6 +43,14 @@ Scene::Scene(QWidget *parent)
             item->setPos(x, y);
         }
     });
+
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+    {
+        if (key != "xPos" || key != "yPos")
+            return;
+
+        setCross();
+    });
 }
 
 Scene::~Scene()
@@ -50,7 +58,14 @@ Scene::~Scene()
     delete ui;
 }
 
-//void Scene::fitMiniplateInView()
-//{
-//    ui->graphicsView->fit();
-//}
+void Scene::setCross()
+{
+    double x = db().value("xPos").toDouble();
+    double y = db().value("yPos").toDouble();
+
+    for (QGraphicsItem* item : _scene->items())
+    {
+        if (is<DmcItem>(item))
+           item->setPos(x, y);
+    }
+}

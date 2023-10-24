@@ -31,7 +31,7 @@ public:
 
     static QImage drawText(const QImage& img, const QString& text);
 
-    void foundBlobs() const;
+    void updateFoundBlobs() const;
     Q_INVOKABLE void resetFoundBlobs();
 
     static QImage drawCross(const QImage& img);

@@ -537,7 +537,13 @@ Item {
                         function setCurrentFormat() {
                             let resolution = model[currentIndex]
                             Video4.changeCamera(cameraList.currentIndex*2, resolution.width, resolution.height, resolution.fourcc)
-                            DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
+
+                            if (resolution.width === 800)
+                                DataBus.pixel_size = 0.017
+                            else if (resolution.width === 1280)
+                                DataBus.pixel_size = 0.0107
+                            else
+                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
                         }
 
                         function sortResolutions(resolutions) {

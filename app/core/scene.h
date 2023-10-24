@@ -1,12 +1,10 @@
 #pragma once
 
-#include <QDialog>
-#include <QGraphicsItem>
+#include <QWidget>
 
 class QGraphicsScene;
 
 namespace Ui { class Scene; }
-
 
 class Scene : public QWidget
 {
@@ -18,9 +16,10 @@ public:
 
 protected slots:
 
-protected:
 
+private:
 
+    void setCross();
     Ui::Scene* ui;
     QGraphicsScene*  _scene;
 };

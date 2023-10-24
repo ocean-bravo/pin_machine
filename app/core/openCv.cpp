@@ -177,7 +177,7 @@ OpenCv::OpenCv()
         QString y = im.text("y");
 
         _detectBlobResult.push_back({kps, x, y, im.width(), im.height()});
-        foundBlobs();
+        updateFoundBlobs();
     });
 
     QTimer* timer = new QTimer;
@@ -303,7 +303,7 @@ QImage OpenCv::drawCross(const QImage& img)
     return img;
 }
 
-void OpenCv::foundBlobs() const
+void OpenCv::updateFoundBlobs() const
 {
     QStringList s;
 //    for (const auto& result : _detectBlobResult)
