@@ -7,8 +7,8 @@ import QtQuick.Layouts 1.12
 ApplicationWindow {
     id: appWin
     visible: true
-    width: 1800
-    height: 480
+    width: 1920
+    height: 800
     flags: Qt.Window
 
     Commands {
