@@ -1,13 +1,13 @@
 #pragma once
 
-#include <QGraphicsEllipseItem>
+#include <QGraphicsRectItem>
 
-class DmcItem : public QObject, public QGraphicsEllipseItem
+class CameraViewItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 
 public:
-    DmcItem(QPointF pos, QGraphicsItem* parent = nullptr);
+    CameraViewItem(QGraphicsItem* parent = nullptr);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 

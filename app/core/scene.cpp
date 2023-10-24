@@ -8,7 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 
-#include "dmc_item.h"
+#include "camera_view_item.h"
 
 Scene::Scene(QWidget *parent)
     : QWidget(parent)
@@ -30,7 +30,8 @@ Scene::Scene(QWidget *parent)
 
         _scene->clear();
         _scene->addRect(0, 0, 300, 300, greenPen);
-        _scene->addItem(new DmcItem({0,0}));
+        _scene->addItem(new CameraViewItem);
+
         setCross();
 
 
@@ -61,9 +62,16 @@ void Scene::setCross()
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
 
+    double w = db().value("resolution_width").toInt();
+    double h = db().value("resolution_height").toInt();
+
     for (QGraphicsItem* item : _scene->items())
     {
-        if (is<DmcItem>(item))
+        if (is<CameraViewItem>(item))
+        {
            item->setPos(x, y);
+           CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
+           rect->setRect(-w/2, -h/2, w, h);
+        }
     }
 }

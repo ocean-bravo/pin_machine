@@ -544,6 +544,9 @@ Item {
                                 DataBus.pixel_size = 0.0107
                             else
                                 DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
+
+                            DataBus.resolution_width = resolution.width
+                            DataBus.resolution_height = resolution.height
                         }
 
                         function sortResolutions(resolutions) {
