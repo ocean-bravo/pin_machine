@@ -46,10 +46,8 @@ Scene::Scene(QWidget *parent)
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
     {
-        if (key != "xPos" || key != "yPos")
-            return;
-
-        setCross();
+        if (key == "xPos" || key == "yPos")
+            setCross();
     });
 }
 
