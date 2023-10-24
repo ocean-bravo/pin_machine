@@ -42,7 +42,7 @@ Scene::Scene(QWidget *parent)
         for (const QString& blob : blobs)
         {
             QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
-            qd() << coord;
+            //qd() << coord;
             double x = coord[0].toDouble();
             double y = coord[1].toDouble();
             double dia = coord[2].toDouble();
