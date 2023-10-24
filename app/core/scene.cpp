@@ -64,6 +64,7 @@ void Scene::setCross()
 
     double w = db().value("resolution_width").toInt();
     double h = db().value("resolution_height").toInt();
+    double ps = db().value("pixel_size").toDouble();
 
     for (QGraphicsItem* item : _scene->items())
     {
@@ -71,7 +72,7 @@ void Scene::setCross()
         {
            item->setPos(x, y);
            CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
-           rect->setRect(-w/2, -h/2, w, h);
+           rect->setRect(-w*ps/2, -h*ps/2, w*ps, h*ps);
         }
     }
 }
