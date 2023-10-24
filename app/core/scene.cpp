@@ -70,9 +70,9 @@ void Scene::setCross()
     {
         if (is<CameraViewItem>(item))
         {
-           item->setPos(x, y);
-           CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
-           rect->setRect(-w*ps/2, -h*ps/2, w*ps, h*ps);
+            CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
+            rect->setRect(-w*ps/2, -h*ps/2, w*ps, h*ps);
+            item->setPos(x, y);
         }
     }
 }
