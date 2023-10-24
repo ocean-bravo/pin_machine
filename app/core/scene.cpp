@@ -26,20 +26,20 @@ Scene::Scene(QWidget *parent)
 
     QTimer* timer = new QTimer(this);
     timer->start(100);
-    connect(timer, &QTimer::timeout, this, [this]()
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& blobs)
     {
-//        if (key != "found_blobs3")
-//            return;
+        if (key != "found_blobs3")
+            return;
 
         ScopedMeasure ms("add to scene");
-        QStringList blobs = db().value("found_blobs3").toStringList();
+        //QStringList blobs = db().value("found_blobs3").toStringList();
 
         _scene->clear();
         QPen pen(Qt::green, 1, Qt::SolidLine);
         _scene->addRect(0, 0, 300, 300, pen);
 
         // Отправляю все блобы на сцену
-        for (const QString& blob : blobs)
+        for (const QString& blob : blobs.toStringList())
         {
             QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
             //qd() << coord;
