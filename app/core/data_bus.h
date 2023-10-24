@@ -24,6 +24,7 @@ public:
 
 
 
+    void insert(const QString &key, const QVariant &value);
 
 
 protected:
