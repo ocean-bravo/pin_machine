@@ -41,32 +41,9 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 
 OTHER_FILES += ../../opencv/main.py
 
-HEADERS += *.h \
-    #video3.h
-#    serial.h \
-#    engine.h \
-#    utils.h \
-#    singleton.h \
-#    video.h \
-#    video2.h \
-#    context.h \
-#    deviceinfo.h \
-#    logging.h \
-#    stream.h \
+HEADERS += *.h
 
-SOURCES += *.cpp \
-    #video3.cpp
-#    main.cpp \
-#    engine.cpp \
-#    serial.cpp \
-#    utils.cpp \
-#    video.cpp \
-#    video2.cpp \
-#    context.cpp \
-#    libmain.cpp \
-#    logging.cpp \
-#    stream.cpp \
-
+SOURCES += *.cpp
 
 FORMS += *.ui
 

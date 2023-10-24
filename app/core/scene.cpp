@@ -1,6 +1,6 @@
 #include "scene.h"
 #include "ui_scene.h"
-
+#include "utils2.h"
 #include "data_bus.h"
 
 #include <QMessageBox>
@@ -20,37 +20,26 @@ Scene::Scene(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
 
-    QPen pen(Qt::green, 31, Qt::SolidLine);
-    _scene->addRect(0, 0, 300, 300, pen);
+//    QPen pen(Qt::green, 31, Qt::SolidLine);
+//    _scene->addRect(0, 0, 300, 300, pen);
 
-
-    QTimer* timer = new QTimer(this);
-    timer->start(100);
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& blobs)
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
     {
-        qd() << "key " << key;
-
         if (key != "found_blobs3")
             return;
 
-        ScopedMeasure ms("add to scene");
-        //QStringList blobs = db().value("found_blobs3").toStringList();
+        QPen greenPen(Qt::green, 1, Qt::SolidLine);
+        QPen redPen(Qt::red, 0, Qt::SolidLine);
 
         _scene->clear();
-        QPen pen(Qt::green, 1, Qt::SolidLine);
-        _scene->addRect(0, 0, 300, 300, pen);
+        _scene->addRect(0, 0, 300, 300, greenPen);
 
         // Отправляю все блобы на сцену
-        for (const QString& blob : blobs.toStringList())
+        const QStringList blobs = value.toStringList();
+        for (const QString& blob : blobs)
         {
-            QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
-            //qd() << coord;
-            double x = coord[0].toDouble();
-            double y = coord[1].toDouble();
-            double dia = coord[2].toDouble();
-
-            QPen pen(Qt::red, 0, Qt::SolidLine);
-            QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, pen);
+            auto [x, y, dia] = blobToDouble(blob);
+            QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, redPen);
             item->setPos(x, y);
         }
     });
