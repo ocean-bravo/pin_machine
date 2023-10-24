@@ -6,9 +6,9 @@
 CameraViewItem::CameraViewItem(QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
 {
-    setPen({Qt::cyan, 1.5, Qt::SolidLine, Qt::RoundCap});
+    setPen({Qt::cyan, 0, Qt::SolidLine, Qt::RoundCap});
     setZValue(1); // Отметки поверх миниплат
-    setAcceptHoverEvents(true);
+    //setAcceptHoverEvents(true);
 }
 
 void CameraViewItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -17,10 +17,10 @@ void CameraViewItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
     painter->setCompositionMode(QPainter::CompositionMode_Source);
 
     painter->setPen(pen());
-//    painter->drawLine(QLineF( 0,  2.5,  0,  5));
-//    painter->drawLine(QLineF( 0, -2.5,  0, -5));
+    painter->drawLine(QLineF(0,  -rect().width()/2,  0,  rect().width()));
+
 //    painter->drawLine(QLineF( 2.5,  0,  5,  0));
-//    painter->drawLine(QLineF(-2.5,  0, -5,  0));
+    painter->drawLine(QLineF(-rect().height()/2,  0, rect().height(),  0));
 
     QGraphicsRectItem::paint(painter, option, widget);
 }
