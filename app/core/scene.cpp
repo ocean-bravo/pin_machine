@@ -28,6 +28,8 @@ Scene::Scene(QWidget *parent)
     timer->start(100);
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& blobs)
     {
+        qd() << "key " << key;
+
         if (key != "found_blobs3")
             return;
 
