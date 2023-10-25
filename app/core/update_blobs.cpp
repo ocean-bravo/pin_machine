@@ -45,7 +45,9 @@ QStringList removeDuplicatedBlobs(const QStringList& blobs)
     QStringList b;
     for (const QGraphicsItem* item : qAsConst(scene).items())
     {
-        b.append(toReal(item->x()) + " " + toReal(item->y()));
+        const QGraphicsEllipseItem* blob = dynamic_cast<const QGraphicsEllipseItem*>(item);
+
+        b.append(toReal(blob->x()) + " " + toReal(blob->y()) + " " + toReal(blob->rect().width()));
     }
 
     return b;
