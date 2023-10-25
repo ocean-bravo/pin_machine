@@ -221,7 +221,10 @@ void UpdateBlobsPrivate::run()
 //        }
 
         if (isNot<QGraphicsEllipseItem>(item))
-            break;
+        {
+            //qd() << "bad item " << item->x() << item->y();
+            continue;
+        }
 
         ++count;
         QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
