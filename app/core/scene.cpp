@@ -34,7 +34,6 @@ Scene::Scene(QWidget *parent)
 
         setCross();
 
-
         // Отправляю все блобы на сцену
         const QStringList blobs = value.toStringList();
         for (const QString& blob : blobs)

@@ -5,20 +5,19 @@
 #include <QString>
 #include <QAtomicInteger>
 
-
 class Video4;
 
-class SearchBlobsPrivate;
+class UpdateBlobsPrivate;
 
-class SearchBlobs : public QObject
+class UpdateBlobs : public QObject
 {
     Q_OBJECT
 
 public:
-    SearchBlobs(Video4* video, QObject* parent = nullptr);
-    ~SearchBlobs();
+    UpdateBlobs(Video4* video, QObject* parent = nullptr);
+    ~UpdateBlobs();
 
-    Q_INVOKABLE void run(QString program); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
+    Q_INVOKABLE void run();
 
     bool sendNextLine();
 
@@ -36,27 +35,23 @@ private:
     void waitForSignal();
     void sleep(int);
 
-    SearchBlobsPrivate* const _impl;
+    UpdateBlobsPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
 
-class SearchBlobsPrivate : public QObject
+class UpdateBlobsPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    SearchBlobsPrivate(Video4* video);
+    UpdateBlobsPrivate(Video4* video);
     QAtomicInteger<bool> stopProgram = false;
 
 
 public slots:
-     void run(QString program);
-
-    bool sendNextLine();
-
-
+    void run();
 
     void pauseProgram();
 
@@ -66,7 +61,7 @@ signals:
     void interrupt();
 
 private:
-    //void waitForGetPosition(double xTarget, double yTarget);
+    void waitForGetPosition(double xTarget, double yTarget);
     void sleep(int);
 
     Video4* _video = nullptr;

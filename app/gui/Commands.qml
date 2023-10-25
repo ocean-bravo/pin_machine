@@ -64,6 +64,13 @@ Item {
     }
 
     Connections {
+        target: UpdateBlobs
+        function onMessage(msg) {
+            appendLog(msg + '<br>')
+        }
+    }
+
+    Connections {
         target: Serial
 
         property string prevMsg: ""
@@ -382,10 +389,10 @@ Item {
                     id: blobVisitor
 
                     text: qsTr("Visit next blob")
-                    checkable: true
+                    //checkable: true
 
-                    onCheckedChanged: {
-                        checked ? blobVisitorPromise.runAsync() : blobVisitorPromise.abort()
+                    onClicked: {
+                        UpdateBlobs.run()
                     }
                 }
                 SmTextEdit {

@@ -11,3 +11,5 @@ inline std::tuple<double, double, double> blobToDouble(const QString& blob)
     double dia = coord[2].toDouble();
     return {x, y, dia};
 }
+
+void waitForGetPosition(double xTarget, double yTarget);

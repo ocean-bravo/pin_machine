@@ -3,6 +3,7 @@
 #include "video4.h"
 #include "serial.h"
 #include "utils.h"
+#include "utils2.h"
 #include "openCv.h"
 #include "data_bus.h"
 
@@ -95,36 +96,36 @@ void SearchBlobsPrivate::pauseProgram()
 
 }
 
-void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
-{
-    auto condition = [xTarget, yTarget]() -> bool
-    {
-        const QString status = db().value("status").toString();
-        const double xPos = db().value("xPos").toDouble();
-        const double yPos = db().value("yPos").toDouble();
+//void SearchBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
+//{
+//    auto condition = [xTarget, yTarget]() -> bool
+//    {
+//        const QString status = db().value("status").toString();
+//        const double xPos = db().value("xPos").toDouble();
+//        const double yPos = db().value("yPos").toDouble();
 
-        return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
-    };
+//        return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
+//    };
 
-    QEventLoop loop;
-    QTimer::singleShot(10000, &loop, &QEventLoop::quit);
+//    QEventLoop loop;
+//    QTimer::singleShot(10000, &loop, &QEventLoop::quit);
 
-    QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
-    {
-        if ( key == "status" || key == "xPos" || key == "yPos")
-        {
-            if (condition())
-                loop.quit();
-        }
-    });
+//    QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
+//    {
+//        if ( key == "status" || key == "xPos" || key == "yPos")
+//        {
+//            if (condition())
+//                loop.quit();
+//        }
+//    });
 
-    auto guard = qScopeGuard([=]()
-    {
-        disconnect(conn);
-    });
+//    auto guard = qScopeGuard([=]()
+//    {
+//        disconnect(conn);
+//    });
 
-    loop.exec();
-}
+//    loop.exec();
+//}
 
 void SearchBlobsPrivate::wait(int timeout) const
 {
