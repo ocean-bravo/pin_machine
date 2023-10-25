@@ -16,7 +16,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 
-
+#include "common.h"
 
 namespace {
 
@@ -148,6 +148,119 @@ void UpdateBlobsPrivate::wait(int timeout) const
 
 
 void UpdateBlobsPrivate::run()
+{
+    stopProgram = false;
+
+    QStringList blobs = db().value("found_blobs3").toStringList();
+
+    if (blobs.isEmpty()) {
+        emit message("no blobs to visit");
+        return;
+    }
+
+    blobs = removeDuplicatedBlobs(blobs);
+
+    QStringList updatedBlobs;
+
+    QTimer statusTimer;
+    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
+    statusTimer.start(100);
+
+    auto moveTo = [](double x, double y)
+    {
+        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal(x), toReal(y));
+        serial().write(line.toLatin1() + "\n");
+    };
+
+    // point - массив строк. Возвр значение строка с пробелом между координатами
+    auto updateBlobPosition = [&] (QGraphicsEllipseItem* blob) -> bool
+    {
+        double xTarget = blob->x();
+        double yTarget = blob->y();
+
+        moveTo(xTarget, yTarget);
+
+        waitForGetPosition(xTarget, yTarget);
+
+        emit message("capturing ...");
+
+        _video->captureSmallRegion(5.5);
+
+        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
+
+        emit message("captured");
+
+        auto smallRegion = _video->smallRegion();
+        opencv().blobDetectorUpdated(smallRegion);
+
+        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
+
+        const QString coordBlob = opencv().smallRegionBlob();
+
+        if (coordBlob.isEmpty())
+        {
+            emit message("blob NOT found");
+            return false; // диаметр прокидывается насквозь. подумать
+        }
+        else
+        {
+            emit message("blob found");
+            auto [x, y, dia] = blobToDouble(coordBlob);
+            blob->setX(x);
+            blob->setY(y);
+            blob->setRect(-dia/2, -dia/2, dia, dia);
+            return true;
+        }
+    };
+
+        // Может взять все блобы со сцены и посетить их?
+
+    const auto start = QDateTime::currentMSecsSinceEpoch();
+
+    const QGraphicsScene* scene = db().value("scene").value<QGraphicsScene*>();
+
+
+    for (QGraphicsItem* item  : scene->items())
+    {
+        if (stopProgram)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
+        if (isNot<QGraphicsEllipseItem>(item))
+            break;
+
+        QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
+
+
+//        auto [x, y, dia] = blobToDouble(blob);
+
+        updateBlobPosition(blob);
+        bool ok2 = updateBlobPosition(blob);
+
+        if (ok2)
+        {
+//            auto dist = distance(blob, foundPoint2);
+//            updatedBlobs.push(foundPoint2 + " " + dist);
+        }
+        else
+        {
+            //updatedBlobs.push(blob += " NOK")
+        }
+
+        //updatedBlobs.append(QString("%1 %2 %3").arg(x2).arg(y2).arg(dia2));
+    }
+
+    const auto finish = QDateTime::currentMSecsSinceEpoch();
+    emit message("update blobs finished");
+    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
+    emit message("count " + QString::number(updatedBlobs.size()));
+
+    db().insert("found_blobs3", updatedBlobs);
+}
+
+void UpdateBlobsPrivate::run2()
 {
     stopProgram = false;
 

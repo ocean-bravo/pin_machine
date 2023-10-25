@@ -18,6 +18,8 @@ Scene::Scene(QWidget *parent)
 
     _scene = new QGraphicsScene(this);
 
+    db().insert("scene", QVariant::fromValue(_scene));
+
     ui->graphicsView->setScene(_scene);
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
