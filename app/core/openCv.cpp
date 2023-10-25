@@ -237,7 +237,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
         if (kps.empty())
         {
             qd() << "kps is empty";
-            _smallRegionBlob.clear();
+            _smallRegionBlob = {false, 0, 0, 0};
             return;
         }
 
@@ -246,11 +246,13 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         auto kp = kps[0];
 
-        const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-        const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-        const QString diaBlob = toReal(kp.size * db().pixelSize());
+        qd() << "smakl region width " << im.width();
 
-        _smallRegionBlob = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
+        const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+        const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        const double diaBlob = kp.size * db().pixelSize();
+
+        _smallRegionBlob = {true, xBlob, yBlob, diaBlob};
 
         x = "0.000";
         y = "0.000";
@@ -266,7 +268,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
 }
 
-QString OpenCv::smallRegionBlob() const
+std::tuple<bool, double, double, double> OpenCv::smallRegionBlob() const
 {
     return _smallRegionBlob;
 }

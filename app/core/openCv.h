@@ -38,7 +38,7 @@ public:
 
 
     Q_INVOKABLE void blobDetectorUpdated(QImage img);
-    Q_INVOKABLE QString smallRegionBlob() const;
+    std::tuple<bool, double, double, double> smallRegionBlob() const;
 
 signals:
     void circleChanged(QImage);
@@ -58,7 +58,7 @@ private:
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCaptured;
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCapturedSmallRegion;
     QMetaObject::Connection _smallRegConn;
-    QString _smallRegionBlob;
+    std::tuple<bool, double, double, double> _smallRegionBlob;
 
     friend class Singleton<OpenCv>;
 };

@@ -149,7 +149,7 @@ void UpdateBlobsPrivate::wait(int timeout) const
 
 void UpdateBlobsPrivate::run()
 {
-    //stopProgram = false;
+    stopProgram = false;
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -184,17 +184,19 @@ void UpdateBlobsPrivate::run()
 
         waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
 
-        const QString coordBlob = opencv().smallRegionBlob();
+        auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
-        if (coordBlob.isEmpty())
+        if (!ok)
         {
             emit message("blob NOT found");
-            return false; // диаметр прокидывается насквозь. подумать
+            // Как то пометить блоб, что он не найден в этом месте
+            return false;
         }
         else
         {
             emit message("blob found");
-            auto [x, y, dia] = blobToDouble(coordBlob);
+            //auto [x, y, dia] = blobToDouble(coordBlob);
+            // Передвинули блоб
             blob->setX(x);
             blob->setY(y);
             blob->setRect(-dia/2, -dia/2, dia, dia);
@@ -202,35 +204,26 @@ void UpdateBlobsPrivate::run()
         }
     };
 
-        // Может взять все блобы со сцены и посетить их?
-
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     const QGraphicsScene* scene = db().value("scene").value<QGraphicsScene*>();
 
-    qd() << "scnen items " << scene->items().size();
     //blobs = removeDuplicatedBlobs(blobs);
 
     int count  = 0;
     for (QGraphicsItem* item  : scene->items())
     {
-//        if (stopProgram)
-//        {
-//            emit message("program interrupted");
-//            break;
-//        }
+        if (stopProgram)
+        {
+            emit message("program interrupted");
+            break;
+        }
 
         if (isNot<QGraphicsEllipseItem>(item))
-        {
-            //qd() << "bad item " << item->x() << item->y();
             continue;
-        }
 
         ++count;
         QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
-
-
-//        auto [x, y, dia] = blobToDouble(blob);
 
         updateBlobPosition(blob);
         bool ok2 = updateBlobPosition(blob);
@@ -244,8 +237,6 @@ void UpdateBlobsPrivate::run()
         {
             //updatedBlobs.push(blob += " NOK")
         }
-
-        //updatedBlobs.append(QString("%1 %2 %3").arg(x2).arg(y2).arg(dia2));
     }
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
@@ -254,102 +245,102 @@ void UpdateBlobsPrivate::run()
     emit message("count " + QString::number(count));
 }
 
-void UpdateBlobsPrivate::run2()
-{
-    stopProgram = false;
+//void UpdateBlobsPrivate::run2()
+//{
+//    stopProgram = false;
 
-    QStringList blobs = db().value("found_blobs3").toStringList();
+//    QStringList blobs = db().value("found_blobs3").toStringList();
 
-    if (blobs.isEmpty()) {
-        emit message("no blobs to visit");
-        return;
-    }
+//    if (blobs.isEmpty()) {
+//        emit message("no blobs to visit");
+//        return;
+//    }
 
-    blobs = removeDuplicatedBlobs(blobs);
+//    blobs = removeDuplicatedBlobs(blobs);
 
-    QStringList updatedBlobs;
+//    QStringList updatedBlobs;
 
-    QTimer statusTimer;
-    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
-    statusTimer.start(100);
+//    QTimer statusTimer;
+//    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
+//    statusTimer.start(100);
 
-    auto moveTo = [](double x, double y)
-    {
-        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal(x), toReal(y));
-        serial().write(line.toLatin1() + "\n");
-    };
+//    auto moveTo = [](double x, double y)
+//    {
+//        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal(x), toReal(y));
+//        serial().write(line.toLatin1() + "\n");
+//    };
 
-    // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [&] (double xTarget, double yTarget, double dia) -> std::tuple<bool, double, double, double>
-    {
-        moveTo(xTarget, yTarget);
+//    // point - массив строк. Возвр значение строка с пробелом между координатами
+//    auto updateBlobPosition = [&] (double xTarget, double yTarget, double dia) -> std::tuple<bool, double, double, double>
+//    {
+//        moveTo(xTarget, yTarget);
 
-        waitForGetPosition(xTarget, yTarget);
+//        waitForGetPosition(xTarget, yTarget);
 
-        emit message("capturing ...");
+//        emit message("capturing ...");
 
-        _video->captureSmallRegion(5.5);
+//        _video->captureSmallRegion(5.5);
 
-        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
+//        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
 
-        emit message("captured");
+//        emit message("captured");
 
-        auto smallRegion = _video->smallRegion();
-        opencv().blobDetectorUpdated(smallRegion);
+//        auto smallRegion = _video->smallRegion();
+//        opencv().blobDetectorUpdated(smallRegion);
 
-        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
+//        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
 
-        const QString coordBlob = opencv().smallRegionBlob();
+//        const QString coordBlob = opencv().smallRegionBlob();
 
-        if (coordBlob.isEmpty())
-        {
-            emit message("blob NOT found");
-            return {false, xTarget, yTarget, dia}; // диаметр прокидывается насквозь. подумать
-        }
-        else
-        {
-            emit message("blob found");
-            auto [x, y, dia] = blobToDouble(coordBlob);
-            return {true, x, y, dia};
-        }
-    };
+//        if (coordBlob.isEmpty())
+//        {
+//            emit message("blob NOT found");
+//            return {false, xTarget, yTarget, dia}; // диаметр прокидывается насквозь. подумать
+//        }
+//        else
+//        {
+//            emit message("blob found");
+//            auto [x, y, dia] = blobToDouble(coordBlob);
+//            return {true, x, y, dia};
+//        }
+//    };
 
-        // Может взять все блобы со сцены и посетить их?
+//        // Может взять все блобы со сцены и посетить их?
 
-    const auto start = QDateTime::currentMSecsSinceEpoch();
+//    const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    for (const QString& blob : qAsConst(blobs))
-    {
-        if (stopProgram)
-        {
-            emit message("program interrupted");
-            break;
-        }
+//    for (const QString& blob : qAsConst(blobs))
+//    {
+//        if (stopProgram)
+//        {
+//            emit message("program interrupted");
+//            break;
+//        }
 
 
-        auto [x, y, dia] = blobToDouble(blob);
+//        auto [x, y, dia] = blobToDouble(blob);
 
-        auto [ok1, x1, y1, dia1] = updateBlobPosition(x, y, dia);
+//        auto [ok1, x1, y1, dia1] = updateBlobPosition(x, y, dia);
 
-        auto [ok2, x2, y2, dia2] = updateBlobPosition(x1, y1, dia1);
+//        auto [ok2, x2, y2, dia2] = updateBlobPosition(x1, y1, dia1);
 
-        if (ok2)
-        {
-//            auto dist = distance(blob, foundPoint2);
-//            updatedBlobs.push(foundPoint2 + " " + dist);
-        }
-        else
-        {
-            //updatedBlobs.push(blob += " NOK")
-        }
+//        if (ok2)
+//        {
+////            auto dist = distance(blob, foundPoint2);
+////            updatedBlobs.push(foundPoint2 + " " + dist);
+//        }
+//        else
+//        {
+//            //updatedBlobs.push(blob += " NOK")
+//        }
 
-        updatedBlobs.append(QString("%1 %2 %3").arg(x2).arg(y2).arg(dia2));
-    }
+//        updatedBlobs.append(QString("%1 %2 %3").arg(x2).arg(y2).arg(dia2));
+//    }
 
-    const auto finish = QDateTime::currentMSecsSinceEpoch();
-    emit message("update blobs finished");
-    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
-    emit message("count " + QString::number(updatedBlobs.size()));
+//    const auto finish = QDateTime::currentMSecsSinceEpoch();
+//    emit message("update blobs finished");
+//    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
+//    emit message("count " + QString::number(updatedBlobs.size()));
 
-    db().insert("found_blobs3", updatedBlobs);
-}
+//    db().insert("found_blobs3", updatedBlobs);
+//}

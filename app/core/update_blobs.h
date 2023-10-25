@@ -52,7 +52,7 @@ public:
 
 public slots:
     void run();
-    void run2();
+    //void run2();
 
     void pauseProgram();
 
