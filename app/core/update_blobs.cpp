@@ -149,7 +149,7 @@ void UpdateBlobsPrivate::wait(int timeout) const
 
 void UpdateBlobsPrivate::run()
 {
-    stopProgram = false;
+    //stopProgram = false;
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -208,16 +208,17 @@ void UpdateBlobsPrivate::run()
 
     const QGraphicsScene* scene = db().value("scene").value<QGraphicsScene*>();
 
+    qd() << "scnen items " << scene->items().size();
     //blobs = removeDuplicatedBlobs(blobs);
 
     int count  = 0;
     for (QGraphicsItem* item  : scene->items())
     {
-        if (stopProgram)
-        {
-            emit message("program interrupted");
-            break;
-        }
+//        if (stopProgram)
+//        {
+//            emit message("program interrupted");
+//            break;
+//        }
 
         if (isNot<QGraphicsEllipseItem>(item))
             break;
