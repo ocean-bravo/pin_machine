@@ -151,17 +151,6 @@ void UpdateBlobsPrivate::run()
 {
     stopProgram = false;
 
-    QStringList blobs = db().value("found_blobs3").toStringList();
-
-    if (blobs.isEmpty()) {
-        emit message("no blobs to visit");
-        return;
-    }
-
-    blobs = removeDuplicatedBlobs(blobs);
-
-    QStringList updatedBlobs;
-
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
@@ -219,7 +208,9 @@ void UpdateBlobsPrivate::run()
 
     const QGraphicsScene* scene = db().value("scene").value<QGraphicsScene*>();
 
+    //blobs = removeDuplicatedBlobs(blobs);
 
+    int count  = 0;
     for (QGraphicsItem* item  : scene->items())
     {
         if (stopProgram)
@@ -231,6 +222,7 @@ void UpdateBlobsPrivate::run()
         if (isNot<QGraphicsEllipseItem>(item))
             break;
 
+        ++count;
         QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
 
 
@@ -255,9 +247,7 @@ void UpdateBlobsPrivate::run()
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("update blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
-    emit message("count " + QString::number(updatedBlobs.size()));
-
-    db().insert("found_blobs3", updatedBlobs);
+    emit message("count " + QString::number(count));
 }
 
 void UpdateBlobsPrivate::run2()
