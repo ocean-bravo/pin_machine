@@ -389,10 +389,10 @@ Item {
                     id: blobVisitor
 
                     text: qsTr("Visit next blob")
-                    //checkable: true
+                    checkable: true
 
-                    onClicked: {
-                        UpdateBlobs.run()
+                    onCheckedChanged: {
+                        checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
                     }
                 }
                 SmTextEdit {
@@ -403,14 +403,14 @@ Item {
                     onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
                 }
 
-                VisitPromise {
-                    id: blobVisitorPromise
+//                VisitPromise {
+//                    id: blobVisitorPromise
 
-                    onRunningChanged: {
-                        if (running === false)
-                            blobVisitor.checked = false
-                    }
-                }
+//                    onRunningChanged: {
+//                        if (running === false)
+//                            blobVisitor.checked = false
+//                    }
+//                }
 
             }
         }
