@@ -170,7 +170,8 @@ void UpdateBlobsPrivate::run()
         moveTo(xTarget, yTarget);
 
         qd() << "1 ...";
-        waitForGetPosition(xTarget, yTarget);
+        //waitForGetPosition(xTarget, yTarget);
+        ::wait(2000);
         qd() << "...1";
 
         emit message("capturing ...");
