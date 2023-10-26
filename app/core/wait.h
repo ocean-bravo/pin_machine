@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QEventLoop>
 #include <QMetaMethod>
+#include "utils.h"
 
 /// Функция ожидания с обработкой событий потока, в котором она выполняется. Замена QThread::msleep.
 inline void wait(int interval)
