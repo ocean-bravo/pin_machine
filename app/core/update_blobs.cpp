@@ -157,10 +157,12 @@ void UpdateBlobsPrivate::run()
         double yTarget = blob->y();
 
         moveTo(xTarget, yTarget);
+        qd() << "capturing ...";
 
         waitForGetPosition(xTarget, yTarget);
 
         emit message("capturing ...");
+        qd() << "capturing ...";
 
         _video->captureSmallRegion(5.5);
 
@@ -184,6 +186,7 @@ void UpdateBlobsPrivate::run()
         else
         {
             emit message("blob found");
+            qd() << "blob found";
             //auto [x, y, dia] = blobToDouble(coordBlob);
             // Передвинули блоб
             blob->setX(x);

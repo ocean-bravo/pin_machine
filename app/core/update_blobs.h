@@ -19,22 +19,15 @@ public:
 
     Q_INVOKABLE void run();
 
-    bool sendNextLine();
-
-
     void startProgram();
     void pauseProgram();
 
     Q_INVOKABLE void stopProgram();
-signals:
 
+signals:
     void message(QString);
 
 private:
-    void waitForGetPosition();
-    void waitForSignal();
-    void sleep(int);
-
     UpdateBlobsPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
@@ -63,12 +56,8 @@ signals:
 
 private:
     void waitForGetPosition(double xTarget, double yTarget);
-    void sleep(int);
 
     Video4* _video = nullptr;
-
-    QStringList _codeLines;
-    int _lineToSend = 0;
 
     double _xTarget;
     double _yTarget;
