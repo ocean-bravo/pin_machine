@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Scene</class>
- <widget class="QWidget" name="Scene">
+ <class>ScanView</class>
+ <widget class="QWidget" name="ScanView">
   <property name="geometry">
    <rect>
     <x>0</x>

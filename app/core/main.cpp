@@ -16,7 +16,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include "scene.h"
+#include "scan_view.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     //MainWindow w;
     //w.show();
 
-    Scene scene;
+    ScanView scene;
     scene.show();
 
     return app.exec();

@@ -4,15 +4,15 @@
 
 class QGraphicsScene;
 
-namespace Ui { class Scene; }
+namespace Ui { class ScanView; }
 
-class Scene : public QWidget
+class ScanView : public QWidget
 {
     Q_OBJECT
 
 public:
-    Scene(QWidget* parent = nullptr);
-    ~Scene();
+    ScanView(QWidget* parent = nullptr);
+    ~ScanView();
 
 protected slots:
 
@@ -20,6 +20,6 @@ protected slots:
 private:
 
     void setCross();
-    Ui::Scene* ui;
+    Ui::ScanView* ui;
     QGraphicsScene*  _scene;
 };

@@ -1,5 +1,6 @@
-#include "scene.h"
-#include "ui_scene.h"
+#include "scan_view.h"
+#include "ui_scan_view.h"
+
 #include "utils2.h"
 #include "common.h"
 #include "data_bus.h"
@@ -10,9 +11,9 @@
 
 #include "camera_view_item.h"
 
-Scene::Scene(QWidget *parent)
+ScanView::ScanView(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::Scene)
+    , ui(new Ui::ScanView)
 {
     ui->setupUi(this);
 
@@ -46,19 +47,19 @@ Scene::Scene(QWidget *parent)
         }
     });
 
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "xPos" || key == "yPos")
             setCross();
     });
 }
 
-Scene::~Scene()
+ScanView::~ScanView()
 {
     delete ui;
 }
 
-void Scene::setCross()
+void ScanView::setCross()
 {
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
