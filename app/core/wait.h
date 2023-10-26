@@ -19,7 +19,7 @@ inline void wait(int interval)
 
 //// Если вышли по таймауту - результат false
 template<typename PointerToMemberFunction>
-bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
+inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
 {
     qd() << "wait for signal started";
     bool exitOnSignal = true;

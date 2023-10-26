@@ -178,7 +178,8 @@ void UpdateBlobsPrivate::run()
         _video->captureSmallRegion(5.5);
 
         qd() << "2 ...";
-        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
+        //waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
+        ::wait(2000);
         qd() << "...2";
 
 
