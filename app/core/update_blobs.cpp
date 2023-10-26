@@ -151,7 +151,7 @@ void UpdateBlobsPrivate::run()
     };
 
     // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [&] (QGraphicsEllipseItem* blob) -> bool
+    auto updateBlobPosition = [this, &moveTo] (QGraphicsEllipseItem* blob) -> bool
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
