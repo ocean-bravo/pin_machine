@@ -21,18 +21,14 @@ inline void wait(int interval)
 template<typename PointerToMemberFunction>
 inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
 {
-    qd() << "wait for signal started";
     bool exitOnSignal = true;
     QEventLoop loop;
-    QTimer timer;
-    timer.start(timeout);
-    QObject::connect(&timer, &QTimer::timeout, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
+    QTimer::singleShot(timeout, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
 
     static const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
     static const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
 
     QObject::connect(object, QMetaMethod::fromSignal(signal), &loop, quitMetaMethod);
     loop.exec();
-    qd() << "wait for signal stoped";
     return exitOnSignal;
 }

@@ -133,18 +133,7 @@ void UpdateBlobsPrivate::wait(int timeout) const
     if (timeout <= 0)
         return;
 
-    //waitForSignal(this, &UpdateBlobsPrivate::interrupt, timeout);
-
-    bool exitOnSignal = true;
-    QEventLoop loop;
-    QTimer::singleShot(timeout, &loop, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
-
-    static const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
-    static const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
-
-    QObject::connect(this, QMetaMethod::fromSignal(&UpdateBlobsPrivate::interrupt), &loop, quitMetaMethod);
-    loop.exec();
-    //return exitOnSignal;
+    waitForSignal(this, &UpdateBlobsPrivate::interrupt, timeout);
 }
 
 void UpdateBlobsPrivate::run()
@@ -169,20 +158,19 @@ void UpdateBlobsPrivate::run()
 
         moveTo(xTarget, yTarget);
 
-        qd() << "1 ...";
-        //waitForGetPosition(xTarget, yTarget);
-        ::wait(2000);
-        qd() << "...1";
+//        qd() << "1 ...";
+        waitForGetPosition(xTarget, yTarget);
+
+//        qd() << "...1";
 
         emit message("capturing ...");
 
         _video->captureSmallRegion(5.5);
 
         qd() << "2 ...";
-        //waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
-        ::wait(2000);
-        qd() << "...2";
+        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
 
+        qd() << "...2";
 
         emit message("captured");
 
@@ -190,8 +178,8 @@ void UpdateBlobsPrivate::run()
         opencv().blobDetectorUpdated(smallRegion);
 
         qd() << "3 ...";
-        //waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 5000);
-        ::wait(2000);
+        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
+
         qd() << "...3";
 
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
@@ -234,7 +222,7 @@ void UpdateBlobsPrivate::run()
         ++count;
         QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
 
-        //updateBlobPosition(blob);
+        updateBlobPosition(blob);
         bool ok2 = updateBlobPosition(blob);
 
         if (ok2)
