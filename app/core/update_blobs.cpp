@@ -178,7 +178,7 @@ void UpdateBlobsPrivate::run()
         opencv().blobDetectorUpdated(smallRegion);
 
         qd() << "3 ...";
-        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
+        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 500);
 
         qd() << "...3";
 
