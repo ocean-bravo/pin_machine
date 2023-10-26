@@ -20,6 +20,7 @@ inline void wait(int interval)
 template<typename PointerToMemberFunction>
 inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
 {
+    qd() << "wait for signal started";
     bool exitOnSignal = true;
     QEventLoop loop;
     QTimer::singleShot(timeout, &loop, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
@@ -29,5 +30,6 @@ inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal,
 
     QObject::connect(object, QMetaMethod::fromSignal(signal), &loop, quitMetaMethod);
     loop.exec();
+    qd() << "wait for signal stoped";
     return exitOnSignal;
 }
