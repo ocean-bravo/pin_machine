@@ -133,7 +133,18 @@ void UpdateBlobsPrivate::wait(int timeout) const
     if (timeout <= 0)
         return;
 
-    waitForSignal(this, &UpdateBlobsPrivate::interrupt, timeout);
+    //waitForSignal(this, &UpdateBlobsPrivate::interrupt, timeout);
+
+    bool exitOnSignal = true;
+    QEventLoop loop;
+    QTimer::singleShot(timeout, &loop, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
+
+    static const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
+    static const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
+
+    QObject::connect(this, QMetaMethod::fromSignal(&UpdateBlobsPrivate::interrupt), &loop, quitMetaMethod);
+    loop.exec();
+    //return exitOnSignal;
 }
 
 void UpdateBlobsPrivate::run()
