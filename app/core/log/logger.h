@@ -73,10 +73,3 @@ private:
     QScopedPointer<Appender> _udpAppender;
     QMap<Qt::HANDLE, int> _threadAliases;
 };
-
-// number - тип лога, нужен для удобного нахождения всех логов этого типа.
-// Например, cassete data updated - 8 разных сообщений относящихся к этому действию.
-inline void USER([[maybe_unused]] int number, const QString& msg)
-{
-    Logger::instance().user(msg);
-}

@@ -56,15 +56,12 @@ int main(int argc, char* argv[])
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    qd() << "begin";
+    Logger::instance();
 
-
-//    Logger::instance();
-
-//    QEventLoop loop;
-//    QTimer::singleShot(1000, &loop, &QEventLoop::quit);
-//    QObject::connect(&Logger::instance(), &Logger::inited, &loop, &QEventLoop::quit);
-//    loop.exec();
+    QEventLoop loop;
+    QTimer::singleShot(1000, &loop, &QEventLoop::quit);
+    QObject::connect(&Logger::instance(), &Logger::inited, &loop, &QEventLoop::quit);
+    loop.exec();
 
 
     QScopedPointer<Engine> engine(new Engine());
