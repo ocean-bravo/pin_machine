@@ -157,23 +157,27 @@ void UpdateBlobsPrivate::run()
         double yTarget = blob->y();
 
         moveTo(xTarget, yTarget);
-        qd() << "capturing ...";
 
+        qd() << "1 ...";
         waitForGetPosition(xTarget, yTarget);
+        qd() << "...1";
 
         emit message("capturing ...");
-        qd() << "capturing ...";
 
         _video->captureSmallRegion(5.5);
 
+        qd() << "2 ...";
         waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
+        qd() << "...2";
 
         emit message("captured");
 
         auto smallRegion = _video->smallRegion();
         opencv().blobDetectorUpdated(smallRegion);
 
+        qd() << "3 ...";
         waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 2000);
+        qd() << "...3";
 
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
