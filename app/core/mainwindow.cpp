@@ -85,7 +85,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::logMessage(uint32_t level, const char *message)
+void MainWindow::logMessage(uint32_t /*level*/, const char */*message*/)
 {
 
 }

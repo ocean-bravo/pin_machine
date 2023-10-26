@@ -73,7 +73,7 @@ QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
     QStringList b;
     for (const QGraphicsItem* item : qAsConst(scene).items())
     {
-        b.append(toReal(item->x()) + " " + toReal(item->y()));
+        b.append(toReal3(item->x()) + " " + toReal3(item->y()));
     }
 
     return b;

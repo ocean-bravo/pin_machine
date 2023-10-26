@@ -39,7 +39,7 @@ bool LoggerPrivate::logToFile() const
     return _logToFile;
 }
 
-void LoggerPrivate::setLogToFile(bool value)
+void LoggerPrivate::setLogToFile(bool /*value*/)
 {
     //USER(11, QString("parameter %1 changed to: %2").arg("logger/log/log_to_file").arg(value));
     //_logToFile = value;

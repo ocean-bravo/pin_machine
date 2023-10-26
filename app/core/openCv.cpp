@@ -357,9 +357,9 @@ void OpenCv::updateFoundBlobs() const
 
         for (const cv::KeyPoint& kp : kps)
         {
-            const QString xBlob = toReal(pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
-            const QString yBlob = toReal(pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
-            const QString diaBlob = toReal(kp.size * db().pixelSize());
+            const QString xBlob = toReal3(pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
+            const QString yBlob = toReal3(pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
+            const QString diaBlob = toReal3(kp.size * db().pixelSize());
 
             s.append(QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
@@ -421,9 +421,9 @@ OpenCvPrivate::OpenCvPrivate()
         res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal(kp.size * db().pixelSize());
+            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
+            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
+            const QString diaBlob = toReal3(kp.size * db().pixelSize());
 
             res.append(QString("pos: [%1 %2] size: %3 \n").arg(xBlob).arg(yBlob).arg(diaBlob));
         }
@@ -434,9 +434,9 @@ OpenCvPrivate::OpenCvPrivate()
         if (!kps.empty())
         {
             auto kp = kps[0];
-            const QString xBlob = toReal(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal(kp.size * db().pixelSize());
+            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
+            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
+            const QString diaBlob = toReal3(kp.size * db().pixelSize());
 
             res = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
         }

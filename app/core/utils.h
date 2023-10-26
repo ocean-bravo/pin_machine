@@ -18,7 +18,7 @@ const QString beginprevline(csi + "F");
 inline const QString setpos(int column) { return csi + QString("%1C").arg(column); }
 
 
-inline QString toReal(double value)
+inline QString toReal3(double value)
 {
     return QString::number(value, 'f', 3);
 }

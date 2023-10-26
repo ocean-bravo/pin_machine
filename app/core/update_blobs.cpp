@@ -6,6 +6,7 @@
 #include "utils2.h"
 #include "openCv.h"
 #include "data_bus.h"
+#include "scene.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -47,7 +48,7 @@ QStringList removeDuplicatedBlobs(const QStringList& blobs)
     {
         const QGraphicsEllipseItem* blob = dynamic_cast<const QGraphicsEllipseItem*>(item);
 
-        b.append(toReal(blob->x()) + " " + toReal(blob->y()) + " " + toReal(blob->rect().width()));
+        b.append(toReal3(blob->x()) + " " + toReal3(blob->y()) + " " + toReal3(blob->rect().width()));
     }
 
     return b;
@@ -135,18 +136,6 @@ void UpdateBlobsPrivate::wait(int timeout) const
     waitForSignal(this, &UpdateBlobsPrivate::interrupt, timeout);
 }
 
-//function moveTo(x, y) {
-//    if (typeof x === "string" && typeof y === "string")
-//        write("G1 G90 F5000 X" + x + " Y" + y)
-//    else if (typeof x === "number" && typeof y === "number") {
-//        write("G1 G90 F5000 X" + x.toFixed(3) + " Y" + y.toFixed(3))
-//    }
-//    else {
-//        appendLog("error move to point " + x + " " + y + " wrong arguments")
-//    }
-//}
-
-
 void UpdateBlobsPrivate::run()
 {
     stopProgram = false;
@@ -157,7 +146,7 @@ void UpdateBlobsPrivate::run()
 
     auto moveTo = [](double x, double y)
     {
-        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal(x), toReal(y));
+        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
         serial().write(line.toLatin1() + "\n");
     };
 
@@ -206,12 +195,10 @@ void UpdateBlobsPrivate::run()
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    const QGraphicsScene* scene = db().value("scene").value<QGraphicsScene*>();
-
     //blobs = removeDuplicatedBlobs(blobs);
 
     int count  = 0;
-    for (QGraphicsItem* item  : scene->items())
+    for (QGraphicsItem* item  : scene().items())
     {
         if (stopProgram)
         {

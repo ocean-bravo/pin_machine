@@ -42,7 +42,7 @@ void MyImageProvider::setImage(const QImage &image, const QString &id)
     emit imageChanged(id);
 }
 
-QImage MyImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
+QImage MyImageProvider::requestImage(const QString &id, QSize */*size*/, const QSize &/*requestedSize*/)
 {
     //qd() << " request image " << id <<  size << requestedSize;
 

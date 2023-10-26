@@ -5,6 +5,7 @@
 #include "common.h"
 #include "data_bus.h"
 
+#include "scene.h"
 #include <QMessageBox>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
@@ -17,9 +18,7 @@ ScanView::ScanView(QWidget *parent)
 {
     ui->setupUi(this);
 
-    _scene = new QGraphicsScene(this);
-
-    db().insert("scene", QVariant::fromValue(_scene));
+    _scene = &scene();
 
     ui->graphicsView->setScene(_scene);
 
