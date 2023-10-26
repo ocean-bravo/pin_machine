@@ -227,7 +227,7 @@ void UpdateBlobsPrivate::run()
         ++count;
         QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
 
-        updateBlobPosition(blob);
+        //updateBlobPosition(blob);
         bool ok2 = updateBlobPosition(blob);
 
         if (ok2)
