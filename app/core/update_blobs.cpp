@@ -187,7 +187,7 @@ void UpdateBlobsPrivate::run()
         emit message("captured");
 
         auto smallRegion = _video->smallRegion();
-        opencv().blobDetectorUpdated(smallRegion);
+        //opencv().blobDetectorUpdated(smallRegion);
 
         qd() << "3 ...";
         //waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 5000);
