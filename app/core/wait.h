@@ -23,7 +23,7 @@ inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal,
 {
     bool exitOnSignal = true;
     QEventLoop loop;
-    QTimer::singleShot(timeout, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
+    QTimer::singleShot(timeout, &loop, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
 
     static const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
     static const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
