@@ -31,8 +31,8 @@ public:
 
     static QImage drawText(const QImage& img, const QString& text);
 
-    void updateFoundBlobs() const;
-    Q_INVOKABLE void resetFoundBlobs();
+    void placeFoundBlobsOnScene(const BlobInfo2 &blobs) const;
+
 
     static QImage drawCross(const QImage& img);
 
@@ -54,7 +54,7 @@ private:
     QScopedPointer<QThread> _thread;
 
     QQueue<QImage> _detectBlobQueue;
-    QVector<BlobInfo2> _detectBlobResult;
+    //QVector<BlobInfo2> _detectBlobResult;
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCaptured;
     QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCapturedSmallRegion;
     QMetaObject::Connection _smallRegConn;

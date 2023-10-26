@@ -11,6 +11,8 @@ class Scene : public QGraphicsScene, public Singleton<Scene>
     Q_OBJECT
 
 public:
+    void addBlob(double x, double y, double dia);
+
 
 
 private:

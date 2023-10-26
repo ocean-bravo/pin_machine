@@ -2,6 +2,7 @@
 #include "utils.h"
 
 #include "data_bus.h"
+#include "scene.h"
 
 #include <QtConcurrent>
 
@@ -176,8 +177,7 @@ OpenCv::OpenCv()
         QString x = im.text("x");
         QString y = im.text("y");
 
-        _detectBlobResult.push_back({kps, x, y, im.width(), im.height()});
-        updateFoundBlobs();
+        placeFoundBlobsOnScene({kps, x, y, im.width(), im.height()});
     });
 
     QTimer* timer = new QTimer;
@@ -305,74 +305,24 @@ QImage OpenCv::drawCross(const QImage& img)
     return img;
 }
 
-void OpenCv::updateFoundBlobs() const
+void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 {
-    QStringList s;
-//    for (const auto& result : _detectBlobResult)
-//    {
-//        auto kps = std::get<0>(result);
-//        QString x = std::get<1>(result);
-//        QString y = std::get<2>(result);
-//        s.append(QString("[%1 %2]").arg(x, y));
+    auto kps = std::get<0>(blobs);
 
-//        for (const cv::KeyPoint& kp : kps)
-//        {
-//            s.append(QString("\t size: %1 pos: [%2 %3]").arg(kp.size).arg(kp.pt.x).arg(kp.pt.y));
-//        }
-//    }
-//    db().insert("found_blobs", s.join("\n"));
+    const QString imX = std::get<1>(blobs);
+    const QString imY = std::get<2>(blobs);
 
+    const int imWidth = std::get<3>(blobs);
+    const int imHeight = std::get<4>(blobs);
 
-//    s.clear();
-//    for (const auto& result : _detectBlobResult)
-//    {
-//        auto kps = std::get<0>(result);
-//        QString x = std::get<1>(result);
-//        QString y = std::get<2>(result);
-
-//        int w = std::get<3>(result);
-//        int h = std::get<4>(result);
-
-//        for (const cv::KeyPoint& kp : kps)
-//        {
-//            s.append(QString("size: %1 pos: [%2 %3]").arg(kp.size)
-//                     .arg(pixToRealX(x.toDouble(), kp.pt.x, w))
-//                     .arg(pixToRealY(y.toDouble(), kp.pt.y, h)));
-//        }
-//    }
-
-//    db().insert("found_blobs2", s.join("\n"));
-
-
-    s.clear();
-    for (const BlobInfo2& result : _detectBlobResult)
+    for (const cv::KeyPoint& kp : kps)
     {
-        auto kps = std::get<0>(result);
+        const double xBlob = (pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
+        const double yBlob = (pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
+        const double diaBlob = (kp.size * db().pixelSize());
 
-        const QString imX = std::get<1>(result);
-        const QString imY = std::get<2>(result);
-
-        const int imWidth = std::get<3>(result);
-        const int imHeight = std::get<4>(result);
-
-        for (const cv::KeyPoint& kp : kps)
-        {
-            const QString xBlob = toReal3(pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
-            const QString yBlob = toReal3(pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
-            const QString diaBlob = toReal3(kp.size * db().pixelSize());
-
-            s.append(QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob));
-        }
+        scene().addBlob(xBlob, yBlob, diaBlob);
     }
-
-    qd() << "new found blobs";
-
-    db().insert("found_blobs3", s);
-}
-
-void OpenCv::resetFoundBlobs()
-{
-    _detectBlobResult.clear();
 }
 
 OpenCvPrivate::OpenCvPrivate()

@@ -6,6 +6,7 @@
 #include "utils2.h"
 #include "openCv.h"
 #include "data_bus.h"
+#include "scene.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -149,7 +150,7 @@ void SearchBlobsPrivate::run(QString program)
 
     db().insert("capture_number", 0);
     //ImagesStorage.clearCaptured()
-    opencv().resetFoundBlobs();
+    scene().clear();
 
     wait(200);
 
