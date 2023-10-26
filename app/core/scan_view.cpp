@@ -22,29 +22,29 @@ ScanView::ScanView(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
 
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
-    {
-        if (key != "found_blobs3")
-            return;
+//    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+//    {
+//        if (key != "found_blobs3")
+//            return;
 
-        QPen greenPen(Qt::green, 1, Qt::SolidLine);
-        QPen redPen(Qt::red, 0, Qt::SolidLine);
+//        QPen greenPen(Qt::green, 1, Qt::SolidLine);
+//        QPen redPen(Qt::red, 0, Qt::SolidLine);
 
-        _scene->clear();
-        _scene->addRect(0, 0, 300, 300, greenPen);
-        _scene->addItem(new CameraViewItem);
+//        _scene->clear();
+//        _scene->addRect(0, 0, 300, 300, greenPen);
+//        _scene->addItem(new CameraViewItem);
 
-        setCross();
+//        setCross();
 
-        // Отправляю все блобы на сцену
-        const QStringList blobs = value.toStringList();
-        for (const QString& blob : blobs)
-        {
-            auto [x, y, dia] = blobToDouble(blob);
-            QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, redPen);
-            item->setPos(x, y);
-        }
-    });
+//        // Отправляю все блобы на сцену
+//        const QStringList blobs = value.toStringList();
+//        for (const QString& blob : blobs)
+//        {
+//            auto [x, y, dia] = blobToDouble(blob);
+//            QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, redPen);
+//            item->setPos(x, y);
+//        }
+//    });
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {

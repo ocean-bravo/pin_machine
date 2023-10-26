@@ -13,7 +13,7 @@ class Scene : public QGraphicsScene, public Singleton<Scene>
 public:
     void addBlob(double x, double y, double dia);
 
-
+    void addBorder();
 
 private:
     Scene(QObject* parent = nullptr);

@@ -151,6 +151,7 @@ void SearchBlobsPrivate::run(QString program)
     db().insert("capture_number", 0);
     //ImagesStorage.clearCaptured()
     scene().clear();
+    scene().addBorder();
 
     wait(200);
 
