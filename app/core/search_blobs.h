@@ -66,7 +66,7 @@ signals:
     void interrupt();
 
 private:
-    //void waitForGetPosition(double xTarget, double yTarget);
+    void waitForGetPosition(double xTarget, double yTarget);
     void sleep(int);
 
     Video4* _video = nullptr;

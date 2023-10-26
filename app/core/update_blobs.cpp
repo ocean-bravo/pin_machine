@@ -159,7 +159,7 @@ void UpdateBlobsPrivate::run()
         moveTo(xTarget, yTarget);
 
 //        qd() << "1 ...";
-        this->waitForGetPosition(xTarget, yTarget);
+        waitForGetPosition(xTarget, yTarget);
 
 //        qd() << "...1";
 
