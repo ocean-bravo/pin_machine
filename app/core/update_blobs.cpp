@@ -229,6 +229,9 @@ void UpdateBlobsPrivate::run()
 
     //blobs = removeDuplicatedBlobs(blobs);
 
+    auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img); });
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+
     int count  = 0;
     for (QGraphicsItem* item  : scene().items())
     {
