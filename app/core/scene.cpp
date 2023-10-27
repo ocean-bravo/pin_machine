@@ -41,7 +41,7 @@ void Scene::setImage(QImage img)
     double imW = w * pixelSize;
     double imH = h * pixelSize;
 
-    img = img.mirrored(false, true);
+    img = img.mirrored(false, true); // тут копия img
 
     QPixmap pix = QPixmap::fromImage(img);
     //pix.scaled();
@@ -54,7 +54,7 @@ void Scene::setImage(QImage img)
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix);
 
-    //item->setOffset(-pix.rect().width() / 2, -pix.rect().height()/2);
+    item->setOffset(-pix.rect().width() / 2, -pix.rect().height()/2);
     item->setScale(1/ratio);
     //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     item->setPos(x, y);
