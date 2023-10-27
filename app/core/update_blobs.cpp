@@ -109,7 +109,7 @@ void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
     };
 
     QEventLoop loop;
-    QTimer::singleShot(10000, &loop, &QEventLoop::quit);
+    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
 
     QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
     {

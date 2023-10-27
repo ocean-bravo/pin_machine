@@ -14,6 +14,7 @@ public:
     void addBlob(double x, double y, double dia);
 
     void addBorder();
+    void setImage(QImage img);
 
 private:
     Scene(QObject* parent = nullptr);
