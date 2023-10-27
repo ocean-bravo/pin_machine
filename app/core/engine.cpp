@@ -92,12 +92,6 @@ void Engine::createQmlEngine()
     {
         const QString mode = db().value("mode").toString();
 
-        const QString x = db().value("x_coord").toString();
-        const QString y = db().value("y_coord").toString();
-
-        img.setText("x", x);
-        img.setText("y", y);
-
         if (mode == "raw")
             myImageProvider->setImage(OpenCv::drawCross(img), "raw");
 

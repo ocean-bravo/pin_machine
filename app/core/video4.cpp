@@ -242,6 +242,12 @@ void Video4Private::imageDispatch(QImage img)
     //qd() << beginprevline + setpos(30) + "dispatch ...";
     //qd() << "dispatch ...";
 
+    const QString x = db().value("x_coord").toString();
+    const QString y = db().value("y_coord").toString();
+
+    img.setText("x", x);
+    img.setText("y", y);
+
     emit newImage(img.copy());
 
 
