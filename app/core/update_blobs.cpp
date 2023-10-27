@@ -105,31 +105,21 @@ void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
 
-        qd() << "target pos " << xTarget << yTarget;
-        qd() << "condition " << status << xPos << yPos;
+//        qd() << "target pos " << xTarget << yTarget;
+//        qd() << "condition " << status << xPos << yPos;
 
         return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
     };
 
     QEventLoop loop;
-    QTimer timer;
-    timer.start(2000);
-
-    connect(&timer, &QTimer::timeout, this, [&loop]()
-    {
-        loop.quit();
-        qd() << "wait for get position timeout";
-    });
+    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
 
     QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
     {
         if ( key == "status" || key == "xPos" || key == "yPos")
         {
             if (condition())
-            {
                 loop.quit();
-                qd() << "position ok";
-            }
         }
     });
 
@@ -138,6 +128,8 @@ void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         disconnect(conn);
     });
 
+    // у машины есть зона нечувствительности, т.е. она не реагирует на микроперемещения, около 0,002 мм
+    // При уточнении блоба машина просто не поедет никуда, хотя ей задали двигаться. И мы зависнем на таймаут в этой функции
     if (condition())
         return;
 
