@@ -269,91 +269,89 @@ Item {
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
 
-                DoubleSpinBox { id: moveX; }
-                SmButton { text: qsTr("Move X");
-                    onClicked: {
-                        write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F1000 X" + moveX.text) }
-                }
-                SmButton { id: relAbsX; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
 
-                DoubleSpinBox { id: moveY; }
-                SmButton { text: qsTr("Move Y");
-                    onClicked: {
-                        write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F1000 Y" + moveY.text) }
-                }
-                SmButton { id: relAbsY; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
-
-                DoubleSpinBox { id: moveZ; }
-                SmButton { text: qsTr("Move Z");
-                    onClicked: {
-                        write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F1000 Z" + moveZ.text) }
-                }
-                SmButton { id: relAbsZ; checkable: true; text: checked ? "Rel" : "Abs"; width: 50  }
 
                 //Item { height: 20; width: 10}
 
 
-                SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
-                SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
+
 
                 Item { height: 30; width: 10}
 
-                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
-                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
+                //                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
+                //                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
+                Item { height: 30; width: 10}
                 SmButton { text: qsTr("Clear log");  onClicked: { logViewer.clear() } }
-                SmButton {
-                    id: playPauseProgram
-                    text: checked ? qsTr("Pause program") : qsTr("Run program")
-                    onCheckedChanged: {
-                        //checked ? SearchBlobs.run(codeEditor.text) : SearchBlobs.pauseProgram()
-                        if(checked)
-                            SearchBlobs.run(codeEditor.text)
-                    }
-                    checkable: true
-                }
-                SmButton {
-                    text: qsTr("Stop program")
-                    onClicked: {
-                        playPauseProgram.checked = false
-                        SearchBlobs.stopProgram()
-                    }
-                }
-
             }
 
-            JogControl {
+
+            CollPanel {
+                id: moveToPositionPanel
                 width: parent.width
+                height: checked ? 200 : 30
+                text: "Move to position"
+                onCheckedChanged: {
+                    buttons1.visible = checked
+                }
+                Component.onCompleted: {
+                    buttons1.visible = checked
+                }
+
+                Grid {
+                    id: buttons1
+                    width: parent.width
+                    columns: 3
+                    columnSpacing: 5
+                    rowSpacing: 5
+
+                    DoubleSpinBox { id: moveX; }
+                    SmButton { text: qsTr("Move X");
+                        onClicked: {
+                            write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F1000 X" + moveX.text) }
+                    }
+                    SmButton { id: relAbsX; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
+
+                    DoubleSpinBox { id: moveY; }
+                    SmButton { text: qsTr("Move Y");
+                        onClicked: {
+                            write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F1000 Y" + moveY.text) }
+                    }
+                    SmButton { id: relAbsY; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
+
+                    DoubleSpinBox { id: moveZ; }
+                    SmButton { text: qsTr("Move Z");
+                        onClicked: {
+                            write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F1000 Z" + moveZ.text) }
+                    }
+                    SmButton { id: relAbsZ; checkable: true; text: checked ? "Rel" : "Abs"; width: 50  }
+                    SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
+                    SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
+                }
             }
+
+
+            CollPanel {
+                id: jogPanel
+                width: parent.width
+                height: checked ? 360 : 30
+                text: "Jog control"
+                onCheckedChanged: {
+                    jogControl.visible = checked
+                }
+                Component.onCompleted: {
+                    jogControl.visible = checked
+                }
+
+                JogControl {
+                    id: jogControl
+                    width: parent.width
+                }
+            }
+
             Grid {
                 width: parent.width
                 //height: 100
                 columns: 3
-
-                ComboBox {
-                    id: dbKeys
-                    model: DataBus.keys()
-                    onActivated: {
-                        logViewer.append('<br>')
-                        logViewer.append(currentText + '<br>')
-                        let data = DataBus[currentText]
-
-                        if(data === undefined)
-                            return
-
-//                        console.log(typeof data)
-//                        console.log(data.length)
-//                        if (typeof data === "string")
-//                            data = data.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
-
-//                        if (typeof data === "object" && data.length !== undefined)
-//                            data = data.join('<br>')
-
-                        data = JSON.stringify(data).replace(/[,]/g, '<br>')
-                        logViewer.append(data)
-                        logViewer.append('<br>')
-                        model = DataBus.keys()
-                    }
-                }
 
                 SmTextEdit {
                     id: programParams
@@ -368,50 +366,90 @@ Item {
                         codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
                     }
                 }
+                Item { height: 20; width: 10}
 
-                DoubleSpinBox {
-                    decimals: 5
-                    value: DataBus.pixel_size
-                    onValueModified: DataBus.pixel_size = Number(text)
+                SmButton {
+                    id: playPauseProgram
+                    text: checked ? qsTr("Stop fast scan ") : qsTr("Start fast scan")
+                    onCheckedChanged: {
+                        if(checked)
+                            SearchBlobs.run(codeEditor.text)
+                        else
+                            SearchBlobs.stopProgram()
+                    }
+                    checkable: true
                 }
 
-                //                SmButton {
-                //                    text: qsTr("Visit blob")
-
-                //                    onClicked: {
-                //                        var blobInfo = DataBus.blob_info3
-                //                        var points = blobInfo.split(" ");
-                //                        moveTo(points[0], points[1]);
-                //                    }
-                //                }
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
 
                 SmButton {
                     id: blobVisitor
 
-                    text: qsTr("Visit next blob")
+                    text: checked ? qsTr("Stop update") : qsTr("Start update")
                     checkable: true
 
                     onCheckedChanged: {
                         checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
                     }
                 }
-                SmTextEdit {
-                    id: sendDataBus
+            }
+
+            CollPanel {
+                id: debugPanel
+                width: parent.width
+                height: checked ? 150 : 30
+                text: "Debug"
+                onCheckedChanged: {
+                    debugButtons.visible = checked
                 }
-                SmButton {
-                    text: qsTr("Write value")
-                    onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                Component.onCompleted: {
+                    debugButtons.visible = checked
                 }
 
-//                VisitPromise {
-//                    id: blobVisitorPromise
 
-//                    onRunningChanged: {
-//                        if (running === false)
-//                            blobVisitor.checked = false
-//                    }
-//                }
 
+                Grid {
+                    id: debugButtons
+                    width: parent.width
+                    columns: 3
+                    columnSpacing: 5
+                    rowSpacing: 5
+
+                    DoubleSpinBox {
+                        decimals: 5
+                        value: DataBus.pixel_size
+                        onValueModified: DataBus.pixel_size = Number(text)
+                    }
+                    Item { height: 20; width: 10}
+
+                    Item { height: 20; width: 10}
+
+                    ComboBox {
+                        id: dbKeys
+                        model: DataBus.keys()
+                        onActivated: {
+                            logViewer.append('<br>')
+                            logViewer.append(currentText + '<br>')
+                            let data = DataBus[currentText]
+
+                            if(data === undefined)
+                                return
+
+                            data = JSON.stringify(data).replace(/[,]/g, '<br>')
+                            logViewer.append(data)
+                            logViewer.append('<br>')
+                            model = DataBus.keys()
+                        }
+                    }
+                    SmTextEdit {
+                        id: sendDataBus
+                    }
+                    SmButton {
+                        text: qsTr("Write value")
+                        onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                    }
+                }
             }
         }
 
@@ -514,14 +552,14 @@ Item {
                         }
                     }
 
-//                    ComboBox {
-//                        id: captureNumber
-//                        width: 200
-//                        model: DataBus.capture_number
-//                        onActivated: {
-//                            image.setSource("image://camera/captured_" + currentText)
-//                        }
-//                    }
+                    //                    ComboBox {
+                    //                        id: captureNumber
+                    //                        width: 200
+                    //                        model: DataBus.capture_number
+                    //                        onActivated: {
+                    //                            image.setSource("image://camera/captured_" + currentText)
+                    //                        }
+                    //                    }
 
                     ComboBox {
                         width: 200
