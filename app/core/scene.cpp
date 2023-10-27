@@ -46,12 +46,15 @@ void Scene::setImage(QImage img)
 
 
     double ratio = pix.rect().width() / imW;
+
     qd() << "ratio " << ratio;
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix);
 
+    item->setOffset(-pix.rect().width() / 2, -pix.rect().height()/2);
     item->setScale(1/ratio);
     //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     item->setPos(x, y);
+
     addItem(item);
 }
