@@ -138,6 +138,9 @@ void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
         disconnect(conn);
     });
 
+    if (condition())
+        return;
+
     loop.exec();
 }
 
