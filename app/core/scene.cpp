@@ -41,7 +41,7 @@ void Scene::setImage(QImage img)
     double imW = w * pixelSize;
     double imH = h * pixelSize;
 
-    img.mirror(false, true);
+    img = img.mirrored(false, true);
 
     QPixmap pix = QPixmap::fromImage(img);
     //pix.scaled();
