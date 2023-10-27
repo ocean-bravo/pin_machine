@@ -48,7 +48,7 @@ void Scene::setImage(QImage img)
     double ratio = pix.rect().width() / imW;
     qd() << "ratio " << ratio;
 
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem();
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix);
 
     item->setScale(1/ratio);
     //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
