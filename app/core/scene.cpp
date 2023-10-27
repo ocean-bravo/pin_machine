@@ -44,7 +44,7 @@ void Scene::setImage(QImage img)
 
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
-    //item->setScale(0.1);
+    item->setScale(0.1);
     //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     item->setPos(x, y);
     addItem(item);
