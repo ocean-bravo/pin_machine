@@ -238,6 +238,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
         {
             qd() << "kps is empty";
             _smallRegionBlob = {false, 0, 0, 0};
+            emit smallRegionBlobChanged();
             return;
         }
 
@@ -246,7 +247,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         auto kp = kps[0];
 
-        qd() << "smakl region width " << im.width();
+        //qd() << "smakl region width " << im.width();
 
         const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
         const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
