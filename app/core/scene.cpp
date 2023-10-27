@@ -54,7 +54,7 @@ void Scene::setImage(QImage img)
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
     item->setScale(1/ratio);
     item->setPos(x, y);
-    item->setZValue(-1);
+    item->setZValue(-1); // Чтобы изображения были позади блобов
 
     addItem(item);
 }

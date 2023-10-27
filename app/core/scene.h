@@ -14,6 +14,7 @@ public:
     void addBlob(double x, double y, double dia);
 
     void addBorder();
+    // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
 
 private:
