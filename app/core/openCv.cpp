@@ -254,18 +254,13 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         _smallRegionBlob = {true, xBlob, yBlob, diaBlob};
 
-        x = "0.000";
-        y = "0.000";
-
-        const double xBlobError = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-        const double yBlobError = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        const double xBlobError = pixToRealX(0.0, kp.pt.x, im.width());
+        const double yBlobError = pixToRealY(0.0, kp.pt.y, im.height());
 
         qd() << "blob error " << xBlobError << yBlobError;
 
         emit smallRegionBlobChanged();
     });
-
-
 }
 
 std::tuple<bool, double, double, double> OpenCv::smallRegionBlob() const
