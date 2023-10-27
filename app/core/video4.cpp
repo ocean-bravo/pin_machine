@@ -250,7 +250,6 @@ void Video4Private::imageDispatch(QImage img)
 
     emit newImage(img.copy());
 
-
     if (_capture || _captureSmallRegion)
     {
         if (_framesToThrowOut == 0)

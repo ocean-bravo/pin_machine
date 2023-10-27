@@ -38,13 +38,19 @@ void Scene::setImage(QImage img)
     int h = img.height();
     double pixelSize = db().value("pixel_size").toDouble();
 
+    double imW = w * pixelSize;
+    double imH = h * pixelSize;
 
-    const int width = 150;
-    const int height = 200;
+    QPixmap pix = QPixmap::fromImage(img);
+    qd() << "img pix width " << pix.rect();
 
 
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
-    item->setScale(0.1);
+    double ratio = pix.rect().width() / imW;
+    qd() << "ratio " << ratio;
+
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem();
+
+    item->setScale(1/ratio);
     //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     item->setPos(x, y);
     addItem(item);
