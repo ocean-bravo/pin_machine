@@ -32,32 +32,29 @@ void Scene::addBorder()
 
 void Scene::setImage(QImage img)
 {
-    double x = img.text("x").toDouble();
-    double y = img.text("y").toDouble();
-    int w = img.width();
-    int h = img.height();
-    double pixelSize = db().value("pixel_size").toDouble();
+    const double x = img.text("x").toDouble();
+    const double y = img.text("y").toDouble();
+    const int w = img.width();
+    //const int h = img.height();
+    const double pixelSize = db().value("pixel_size").toDouble();
 
-    double imW = w * pixelSize;
-    double imH = h * pixelSize;
+    const double imageWidthMm = w * pixelSize;
+    //const double imageHeightMm = h * pixelSize;
 
+    // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = img.mirrored(false, true); // тут копия img
 
     QPixmap pix = QPixmap::fromImage(img);
-    //pix.scaled();
-    qd() << "img pix width " << pix.rect();
 
-
-    double ratio = pix.rect().width() / imW;
-
-    qd() << "ratio " << ratio;
+    const double ratio = pix.rect().width() / imageWidthMm;
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix);
 
-    item->setOffset(-pix.rect().width() / 2, -pix.rect().height()/2);
+    // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
+    item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
     item->setScale(1/ratio);
-    //item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     item->setPos(x, y);
+    item->setZValue(-1);
 
     addItem(item);
 }
