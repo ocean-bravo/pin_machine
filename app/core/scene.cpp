@@ -4,6 +4,16 @@
 #include "camera_view_item.h"
 #include "data_bus.h"
 
+namespace {
+
+template<typename Function>
+auto runOnThread(QObject* targetObject, Function function)
+{
+    QMetaObject::invokeMethod(targetObject, std::move(function));
+}
+
+}
+
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(parent)
@@ -25,9 +35,10 @@ void Scene::addBlob(double x, double y, double dia)
 
 void Scene::addBorder()
 {
-    QPen greenPen(Qt::green, 1, Qt::SolidLine);
-    addRect(0, 0, 300, 300, greenPen);
-    addItem(new CameraViewItem);
+    static const QPen greenPen(Qt::green, 1, Qt::SolidLine);
+
+    runOnThread(this, [this]() { addRect(0, 0, 300, 300, greenPen); });
+    runOnThread(this, [this]() { addItem(new CameraViewItem); });
 }
 
 void Scene::setImage(QImage img)
@@ -56,5 +67,5 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    addItem(item);
+    runOnThread(this, [this, &item]() { addItem(item); });
 }

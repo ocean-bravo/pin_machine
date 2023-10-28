@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QGraphicsScene>
+#include <QMetaObject>
+
 
 #include "singleton.h"
 
