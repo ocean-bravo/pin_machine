@@ -62,6 +62,7 @@ UpdateBlobs::UpdateBlobs(Video4 *video, QObject* parent)
     , _thread(new QThread)
 {
     connect(_impl, &UpdateBlobsPrivate::message, this, &UpdateBlobs::message, Qt::QueuedConnection);
+    connect(_impl, &UpdateBlobsPrivate::finished, this, &UpdateBlobs::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -185,11 +186,8 @@ void UpdateBlobsPrivate::run()
         QImage smallRegion = _video->smallRegion();
         opencv().blobDetectorUpdated(smallRegion);
 
-        //QMetaObject::invokeMethod(&opencv(), "blobDetectorUpdated", Qt::QueuedConnection, Q_ARG(QImage, smallRegion));
-
         waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 500);
 
-        //qd() << "after fine small blob";
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
         if (!ok)
@@ -202,9 +200,8 @@ void UpdateBlobsPrivate::run()
         {
             emit message("blob found");
             qd() << "blob found";
-            //auto [x, y, dia] = blobToDouble(coordBlob);
-            // Передвинули блоб
 
+            // Передвинули блоб
             runOnThread(&scene(), [blob, x]() { blob->setX(x); });
             runOnThread(&scene(), [blob, y]() { blob->setY(y); });
             runOnThread(&scene(), [blob, dia]() { blob->setRect(-dia/2, -dia/2, dia, dia); });
@@ -252,6 +249,8 @@ void UpdateBlobsPrivate::run()
     emit message("update blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
     emit message("count " + QString::number(count));
+
+    emit finished();
 }
 
 //void UpdateBlobsPrivate::run2()

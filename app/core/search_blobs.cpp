@@ -36,6 +36,7 @@ SearchBlobs::SearchBlobs(Video4 *video, QObject* parent)
     , _thread(new QThread)
 {
     connect(_impl, &SearchBlobsPrivate::message, this, &SearchBlobs::message, Qt::QueuedConnection);
+    connect(_impl, &SearchBlobsPrivate::finished, this, &SearchBlobs::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -180,7 +181,7 @@ void SearchBlobsPrivate::run(QString program)
             emit message("program interrupted");
             break;
         }
-
+void finished();
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
             waitForGetPosition(_xTarget, _yTarget);
@@ -208,4 +209,6 @@ void SearchBlobsPrivate::run(QString program)
 
     emit message("program time " + QString::number((finish - start)/1000) + " sec");
     wait(10);
+
+    emit finished();
 }

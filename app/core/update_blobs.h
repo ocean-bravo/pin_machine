@@ -26,6 +26,7 @@ public:
 
 signals:
     void message(QString);
+    void finished();
 
 private:
     UpdateBlobsPrivate* const _impl;
@@ -53,6 +54,7 @@ signals:
 
     void message(QString);
     void interrupt();
+    void finished();
 
 private:
     //void waitForGetPosition(double xTarget, double yTarget);

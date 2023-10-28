@@ -371,13 +371,9 @@ Item {
                 SmButton {
                     id: playPauseProgram
                     text: checked ? qsTr("Stop fast scan ") : qsTr("Start fast scan")
-                    onCheckedChanged: {
-                        if(checked)
-                            SearchBlobs.run(codeEditor.text)
-                        else
-                            SearchBlobs.stopProgram()
-                    }
                     checkable: true
+                    onCheckedChanged: checked ?  SearchBlobs.run(codeEditor.text) : SearchBlobs.stopProgram()
+                    Connections { target: SearchBlobs; onFinished: playPauseProgram.checked = false }
                 }
 
                 Item { height: 20; width: 10}
@@ -385,13 +381,10 @@ Item {
 
                 SmButton {
                     id: blobVisitor
-
                     text: checked ? qsTr("Stop update") : qsTr("Start update")
                     checkable: true
-
-                    onCheckedChanged: {
-                        checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
-                    }
+                    onCheckedChanged: checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
+                    Connections { target: UpdateBlobs; onFinished: blobVisitor.checked = false }
                 }
             }
 
@@ -532,7 +525,6 @@ Item {
                         text: qsTr("Capture frame")
                         onPressed: {
                             Video4.capture()
-                            //cycle.runAsync()
                         }
                     }
 
