@@ -384,7 +384,7 @@ Item {
                     text: checked ? qsTr("Stop update") : qsTr("Start update")
                     checkable: true
                     onCheckedChanged: checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
-                    Connections { target: UpdateBlobs; onFinished: blobVisitor.checked = false }
+                    Connections { target: UpdateBlobs; function onFinished() { blobVisitor.checked = false } }
                 }
             }
 
