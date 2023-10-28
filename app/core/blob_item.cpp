@@ -14,12 +14,12 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     setAcceptHoverEvents(true);
 }
 
-//void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-//{
+void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
 //    painter->setPen(pen());
 //    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
-//    QGraphicsEllipseItem::paint(painter, option, widget);
-//}
+    QGraphicsEllipseItem::paint(painter, option, widget);
+}
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
