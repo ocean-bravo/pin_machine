@@ -139,6 +139,12 @@ void SearchBlobsPrivate::wait(int timeout) const
 
 void SearchBlobsPrivate::run(QString program)
 {
+    _video->stop();
+
+    db().insert("resolution_width", 800);
+    db().insert("resolution_height", 600);
+    db().insert("pixel_size", 0.017);
+
     _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
     _video->start();
 
