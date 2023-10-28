@@ -67,5 +67,5 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    runOnThread(this, [this, &item]() { addItem(item); });
+    runOnThread(this, [this, item]() { addItem(item); });
 }
