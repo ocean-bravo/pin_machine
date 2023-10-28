@@ -1,6 +1,6 @@
 #include "scene.h"
 
-#include <QGraphicsEllipseItem>
+#include "blob_item.h"
 #include "camera_view_item.h"
 #include "data_bus.h"
 #include "utils2.h"
@@ -19,9 +19,10 @@ Scene::~Scene()
 
 void Scene::addBlob(double x, double y, double dia)
 {
-    static const QPen redPen(Qt::red, 0, Qt::SolidLine);
-    QGraphicsEllipseItem* item = addEllipse(-dia/2, -dia/2, dia, dia, redPen);
-    item->setPos(x, y);
+    //BlobItem* blob = new BlobItem(x, y, dia);//addEllipse(-dia/2, -dia/2, dia, dia, redPen);
+    runOnThread(this, [this, x, y, dia]() { addItem(new BlobItem(x, y, dia)); });
+
+    //item->setPos(x, y);
 }
 
 void Scene::addBorder()
