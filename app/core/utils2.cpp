@@ -20,7 +20,7 @@ void waitForGetPosition(double xTarget, double yTarget)
     QEventLoop loop;
     QTimer::singleShot(10000, &loop, &QEventLoop::quit);
 
-    QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, [&condition, &loop](const QString& key, const QVariant&)
+    QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop](const QString& key, const QVariant&)
     {
         if ( key == "status" || key == "xPos" || key == "yPos")
         {
@@ -33,6 +33,10 @@ void waitForGetPosition(double xTarget, double yTarget)
     {
         QObject::disconnect(conn);
     });
+
+    //у машины есть зона нечувствительности, т.е. она не реагирует на микроперемещения, около 0,002 мм
+    if (condition())
+        return;
 
     loop.exec();
 }

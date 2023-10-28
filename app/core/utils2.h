@@ -1,6 +1,9 @@
 #pragma once
 
+#include <QObject>
 #include <QStringList>
+#include <QMetaObject>
+
 #include <tuple>
 
 inline std::tuple<double, double, double> blobToDouble(const QString& blob)
@@ -13,3 +16,9 @@ inline std::tuple<double, double, double> blobToDouble(const QString& blob)
 }
 
 void waitForGetPosition(double xTarget, double yTarget);
+
+template<typename Function>
+auto runOnThread(QObject* targetObject, Function function)
+{
+    QMetaObject::invokeMethod(targetObject, std::move(function));
+}

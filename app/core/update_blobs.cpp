@@ -97,44 +97,41 @@ void UpdateBlobsPrivate::pauseProgram()
 
 }
 
-void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
-{
-    auto condition = [xTarget, yTarget]() -> bool
-    {
-        const QString status = db().value("status").toString();
-        const double xPos = db().value("xPos").toDouble();
-        const double yPos = db().value("yPos").toDouble();
+//void UpdateBlobsPrivate::waitForGetPosition(double xTarget, double yTarget)
+//{
+//    auto condition = [xTarget, yTarget]() -> bool
+//    {
+//        const QString status = db().value("status").toString();
+//        const double xPos = db().value("xPos").toDouble();
+//        const double yPos = db().value("yPos").toDouble();
 
-//        qd() << "target pos " << xTarget << yTarget;
-//        qd() << "condition " << status << xPos << yPos;
+//        return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
+//    };
 
-        return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
-    };
+//    QEventLoop loop;
+//    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
 
-    QEventLoop loop;
-    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+//    QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
+//    {
+//        if ( key == "status" || key == "xPos" || key == "yPos")
+//        {
+//            if (condition())
+//                loop.quit();
+//        }
+//    });
 
-    QMetaObject::Connection conn = connect(&db(), &DataBus::valueChanged, this, [&condition, &loop](const QString& key, const QVariant&)
-    {
-        if ( key == "status" || key == "xPos" || key == "yPos")
-        {
-            if (condition())
-                loop.quit();
-        }
-    });
+//    auto guard = qScopeGuard([=]()
+//    {
+//        disconnect(conn);
+//    });
 
-    auto guard = qScopeGuard([=]()
-    {
-        disconnect(conn);
-    });
+//    // у машины есть зона нечувствительности, т.е. она не реагирует на микроперемещения, около 0,002 мм
+//    // При уточнении блоба машина просто не поедет никуда, хотя ей задали двигаться. И мы зависнем на таймаут в этой функции
+//    if (condition())
+//        return;
 
-    // у машины есть зона нечувствительности, т.е. она не реагирует на микроперемещения, около 0,002 мм
-    // При уточнении блоба машина просто не поедет никуда, хотя ей задали двигаться. И мы зависнем на таймаут в этой функции
-    if (condition())
-        return;
-
-    loop.exec();
-}
+//    loop.exec();
+//}
 
 void UpdateBlobsPrivate::wait(int timeout) const
 {
@@ -167,25 +164,8 @@ void UpdateBlobsPrivate::run()
         serial().write(line.toLatin1() + "\n");
     };
 
-    auto waitForSignal = [this](const QObject* object, QMetaMethod signal, int timeout) -> bool
-    {
-        bool exitOnSignal = true;
-        QEventLoop loop;
-        QTimer timer;
-        timer.start(timeout);
-
-        connect(&timer, &QTimer::timeout, this, [&loop, &exitOnSignal]() { exitOnSignal = false; loop.quit(); });
-
-        const int index = loop.metaObject()->indexOfMethod(QMetaObject::normalizedSignature("quit()"));
-        const QMetaMethod quitMetaMethod = loop.metaObject()->method(index);
-
-        connect(object, signal, &loop, quitMetaMethod);
-        loop.exec();
-        return exitOnSignal;
-    };
-
     // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [this, &moveTo, &waitForSignal] (QGraphicsEllipseItem* blob) -> bool
+    auto updateBlobPosition = [this, &moveTo] (QGraphicsEllipseItem* blob) -> bool
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
@@ -194,25 +174,22 @@ void UpdateBlobsPrivate::run()
 
         waitForGetPosition(xTarget, yTarget);
 
-        qd() << "capturing ...";
         emit message("capturing ...");
 
         _video->captureSmallRegion(5.5);
 
-        waitForSignal(_video, QMetaMethod::fromSignal(&Video4::capturedSmallRegion), 2000);
+        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
 
-        qd() << "captured";
         emit message("captured");
 
         QImage smallRegion = _video->smallRegion();
-        //opencv().blobDetectorUpdated(smallRegion);
+        opencv().blobDetectorUpdated(smallRegion);
 
-        qd() << "before fine small blob";
-        QMetaObject::invokeMethod(&opencv(), "blobDetectorUpdated", Qt::QueuedConnection, Q_ARG(QImage, smallRegion));
+        //QMetaObject::invokeMethod(&opencv(), "blobDetectorUpdated", Qt::QueuedConnection, Q_ARG(QImage, smallRegion));
 
-        waitForSignal(&opencv(), QMetaMethod::fromSignal(&OpenCv::smallRegionBlobChanged), 500);
+        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 500);
 
-        qd() << "after fine small blob";
+        //qd() << "after fine small blob";
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
         if (!ok)
@@ -227,9 +204,10 @@ void UpdateBlobsPrivate::run()
             qd() << "blob found";
             //auto [x, y, dia] = blobToDouble(coordBlob);
             // Передвинули блоб
-            blob->setX(x);
-            blob->setY(y);
-            blob->setRect(-dia/2, -dia/2, dia, dia);
+
+            runOnThread(&scene(), [blob, x]() { blob->setX(x); });
+            runOnThread(&scene(), [blob, y]() { blob->setY(y); });
+            runOnThread(&scene(), [blob, dia]() { blob->setRect(-dia/2, -dia/2, dia, dia); });
             return true;
         }
     };

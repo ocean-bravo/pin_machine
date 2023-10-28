@@ -3,16 +3,7 @@
 #include <QGraphicsEllipseItem>
 #include "camera_view_item.h"
 #include "data_bus.h"
-
-namespace {
-
-template<typename Function>
-auto runOnThread(QObject* targetObject, Function function)
-{
-    QMetaObject::invokeMethod(targetObject, std::move(function));
-}
-
-}
+#include "utils2.h"
 
 
 Scene::Scene(QObject* parent)
