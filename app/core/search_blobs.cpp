@@ -139,7 +139,7 @@ void SearchBlobsPrivate::wait(int timeout) const
 
 void SearchBlobsPrivate::run(QString program)
 {
-    _video->changeCamera(2, 800, 600, "YUYV");
+    _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
     _video->start();
 
     stopProgram = false;
