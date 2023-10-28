@@ -285,7 +285,7 @@ Item {
             }
 
 
-            CollPanel {
+            CollapsiblePanel {
                 id: moveToPositionPanel
                 width: parent.width
                 height: checked ? 200 : 30
@@ -330,7 +330,7 @@ Item {
             }
 
 
-            CollPanel {
+            CollapsiblePanel {
                 id: jogPanel
                 width: parent.width
                 height: checked ? 360 : 30
@@ -395,7 +395,7 @@ Item {
                 }
             }
 
-            CollPanel {
+            CollapsiblePanel {
                 id: debugPanel
                 width: parent.width
                 height: checked ? 150 : 30
@@ -406,8 +406,6 @@ Item {
                 Component.onCompleted: {
                     debugButtons.visible = checked
                 }
-
-
 
                 Grid {
                     id: debugButtons
