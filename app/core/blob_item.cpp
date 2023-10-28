@@ -41,10 +41,12 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void BlobItem::highlight()
 {
-    setPen({Qt::red, 2.5, Qt::SolidLine, Qt::RoundCap});
+    static const QPen redPen(Qt::red, 0.1, Qt::SolidLine);
+    setPen(redPen);
 }
 
 void BlobItem::unhighlight()
 {
-    setPen({Qt::red, 1.5, Qt::SolidLine, Qt::RoundCap});
+    static const QPen redPen(Qt::red, 0, Qt::SolidLine);
+    setPen(redPen);
 }
