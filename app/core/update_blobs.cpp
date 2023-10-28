@@ -145,11 +145,11 @@ void UpdateBlobsPrivate::run()
 {
     _video->stop();
 
-    db().insert("resolution_width", 800);
-    db().insert("resolution_height", 600);
-    db().insert("pixel_size", 0.017);
+    db().insert("resolution_width", 2592);
+    db().insert("resolution_height", 1944);
+    db().insert("pixel_size", 0.00524);
 
-    _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
+    _video->changeCamera(0, 2592, 1944, "YUYV"); // НУжен номер девайса
     _video->start();
 
     stopProgram = false;
