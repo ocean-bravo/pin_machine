@@ -373,7 +373,7 @@ Item {
                     text: checked ? qsTr("Stop fast scan ") : qsTr("Start fast scan")
                     checkable: true
                     onCheckedChanged: checked ?  SearchBlobs.run(codeEditor.text) : SearchBlobs.stopProgram()
-                    Connections { target: SearchBlobs; onFinished: playPauseProgram.checked = false }
+                    Connections { target: SearchBlobs; function onFinished() { playPauseProgram.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
