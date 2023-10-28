@@ -139,6 +139,9 @@ void SearchBlobsPrivate::wait(int timeout) const
 
 void SearchBlobsPrivate::run(QString program)
 {
+    _video->changeCamera(2, 800, 600, "YUYV");
+    _video->start();
+
     stopProgram = false;
 
     _lineToSend = 0;
