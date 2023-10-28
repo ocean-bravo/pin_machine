@@ -21,6 +21,7 @@ Rectangle {
         text: ""
         anchors.fill: parent
         anchors.margins: 4
+        selectByMouse: true
     }
 //    Layout.preferredWidth: 120
 //    Layout.preferredHeight: 30

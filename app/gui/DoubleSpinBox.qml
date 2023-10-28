@@ -50,6 +50,9 @@ Item {
         valueFromText: function (text, locale) {
             return Number.fromLocaleString(locale, text) * self.factor
         }
+        Component.onCompleted: {
+            contentItem.selectByMouse = true
+        }
     }
     QtObject {
         id: self
