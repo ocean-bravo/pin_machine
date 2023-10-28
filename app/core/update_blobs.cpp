@@ -7,6 +7,7 @@
 #include "openCv.h"
 #include "data_bus.h"
 #include "scene.h"
+#include "blob_item.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -21,38 +22,38 @@
 
 namespace {
 
-QStringList removeDuplicatedBlobs(const QStringList& blobs)
-{
-    //ScopedMeasure("remove duplicated blobs");
+//QStringList removeDuplicatedBlobs(const QStringList& blobs)
+//{
+//    //ScopedMeasure("remove duplicated blobs");
 
-    QGraphicsScene scene;
+//    QGraphicsScene scene;
 
-    // Отправляю все блобы на сцену
-    for (const QString& blob : blobs)
-    {
-        auto [x, y, dia] = blobToDouble(blob);
+//    // Отправляю все блобы на сцену
+//    for (const QString& blob : blobs)
+//    {
+//        auto [x, y, dia] = blobToDouble(blob);
 
-        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
-        item->setPos(x, y);
-    }
+//        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
+//        item->setPos(x, y);
+//    }
 
-    // если есть пересечение с кем то, то удалить его
-    for (QGraphicsItem* item : qAsConst(scene).items())
-    {
-        if (!scene.collidingItems(item).isEmpty())
-            delete item;
-    }
+//    // если есть пересечение с кем то, то удалить его
+//    for (QGraphicsItem* item : qAsConst(scene).items())
+//    {
+//        if (!scene.collidingItems(item).isEmpty())
+//            delete item;
+//    }
 
-    QStringList b;
-    for (const QGraphicsItem* item : qAsConst(scene).items())
-    {
-        const QGraphicsEllipseItem* blob = dynamic_cast<const QGraphicsEllipseItem*>(item);
+//    QStringList b;
+//    for (const QGraphicsItem* item : qAsConst(scene).items())
+//    {
+//        const QGraphicsEllipseItem* blob = dynamic_cast<const QGraphicsEllipseItem*>(item);
 
-        b.append(toReal3(blob->x()) + " " + toReal3(blob->y()) + " " + toReal3(blob->rect().width()));
-    }
+//        b.append(toReal3(blob->x()) + " " + toReal3(blob->y()) + " " + toReal3(blob->rect().width()));
+//    }
 
-    return b;
-}
+//    return b;
+//}
 
 }
 
@@ -211,7 +212,7 @@ void UpdateBlobsPrivate::run()
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    //blobs = removeDuplicatedBlobs(blobs);
+    scene().removeDuplicatedBlobs();
 
     auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
@@ -225,11 +226,11 @@ void UpdateBlobsPrivate::run()
             break;
         }
 
-        if (isNot<QGraphicsEllipseItem>(item))
+        if (isNot<BlobItem>(item))
             continue;
 
         ++count;
-        QGraphicsEllipseItem* blob = dynamic_cast<QGraphicsEllipseItem*>(item);
+        BlobItem* blob = dynamic_cast<BlobItem*>(item);
 
         updateBlobPosition(blob);
         bool ok2 = updateBlobPosition(blob);

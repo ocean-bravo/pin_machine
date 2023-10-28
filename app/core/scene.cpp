@@ -61,3 +61,13 @@ void Scene::setImage(QImage img)
 
     runOnThread(this, [this, item]() { addItem(item); });
 }
+
+void Scene::removeDuplicatedBlobs()
+{
+    // если есть пересечение с кем то, то удалить его
+    for (QGraphicsItem* item : items())
+    {
+        if (!collidingItems(item).isEmpty())
+            delete item;
+    }
+}

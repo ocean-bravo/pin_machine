@@ -18,6 +18,7 @@ public:
     void addBorder();
     // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
+    void removeDuplicatedBlobs();
 
 private:
     Scene(QObject* parent = nullptr);

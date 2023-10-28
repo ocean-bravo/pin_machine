@@ -45,39 +45,39 @@ QStringList Engine::camerasInfo()
     return _info;
 }
 
-QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
-{
-    ScopedMeasure("remove duplicated blobs");
+//QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
+//{
+//    ScopedMeasure("remove duplicated blobs");
 
-    QGraphicsScene scene;
+//    QGraphicsScene scene;
 
-    // Отправляю все блобы на сцену
-    for (const QString& blob : blobs)
-    {
-//        QStringList coord = blob.split(" ");
-//        double x = coord[0].toDouble();
-//        double y = coord[1].toDouble();
-        auto [x, y, dia] = blobToDouble(blob);
+//    // Отправляю все блобы на сцену
+//    for (const QString& blob : blobs)
+//    {
+////        QStringList coord = blob.split(" ");
+////        double x = coord[0].toDouble();
+////        double y = coord[1].toDouble();
+//        auto [x, y, dia] = blobToDouble(blob);
 
-        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
-        item->setPos(x, y);
-    }
+//        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
+//        item->setPos(x, y);
+//    }
 
-    // если есть пересечение с кем то, то удалить его
-    for (QGraphicsItem* item : qAsConst(scene).items())
-    {
-        if (!scene.collidingItems(item).isEmpty())
-            delete item;
-    }
+//    // если есть пересечение с кем то, то удалить его
+//    for (QGraphicsItem* item : qAsConst(scene).items())
+//    {
+//        if (!scene.collidingItems(item).isEmpty())
+//            delete item;
+//    }
 
-    QStringList b;
-    for (const QGraphicsItem* item : qAsConst(scene).items())
-    {
-        b.append(toReal3(item->x()) + " " + toReal3(item->y()));
-    }
+//    QStringList b;
+//    for (const QGraphicsItem* item : qAsConst(scene).items())
+//    {
+//        b.append(toReal3(item->x()) + " " + toReal3(item->y()));
+//    }
 
-    return b;
-}
+//    return b;
+//}
 
 Engine::~Engine()
 {
