@@ -446,7 +446,7 @@ Item {
                         text: qsTr("Begin test")
                         checkable: true
                         checked: false
-                        onCheckableChanged: {
+                        onCheckedChanged: {
                             if (checked)
                                 SearchBlobs.run(codeEditor.text)
                             else {
