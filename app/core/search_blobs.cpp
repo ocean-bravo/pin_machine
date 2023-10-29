@@ -181,7 +181,7 @@ void SearchBlobsPrivate::run(QString program)
             emit message("program interrupted");
             break;
         }
-void finished();
+
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
             waitForGetPosition(_xTarget, _yTarget);
