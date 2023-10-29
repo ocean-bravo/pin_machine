@@ -442,6 +442,7 @@ Item {
                     }
 
                     SmButton {
+                        id: beginTest
                         text: qsTr("Begin test")
                         checkable: true
                         checked: false
@@ -451,11 +452,11 @@ Item {
                         }
 
                         Connections {
-                            enabled: parent.checked
+                            enabled: beginTest.checked
                             target: UpdateBlobs;
                             function onFinished() { playPauseProgram.checked = true }
                         }
-                        Connections { enabled: parent.checked; target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
+                        Connections { enabled: beginTest.checked; target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
                     }
 
 
