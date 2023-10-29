@@ -174,27 +174,6 @@ void SearchBlobsPrivate::run(QString program)
     auto connection = connect(_video, &Video4::captured, this, [](QImage img) { scene().setImage(img); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-
-    scene().addBlob(100, 100, 20);
-    scene().addBlob(120, 115, 10);
-
-    runOnThread(&scene(), [this] {
-
-        scene().addBlob(100, 100, 20);
-        scene().addBlob(120, 115, 10);
-        qd() << "scene thread";
-
-        runOnThread(this, []() {
-            scene().addBlob(110, 100, 20);
-            scene().addBlob(115, 115, 10);
-
-            qd() << "seachr blob thread";
-        });
-    });
-    return;
-
-
-
     while (true)
     {
         if (stopProgram)
