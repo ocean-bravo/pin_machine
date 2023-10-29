@@ -51,7 +51,7 @@ void myterminate()
 
 int main(int argc, char* argv[])
 {
-    std::set_terminate(myterminate);
+    //std::set_terminate(myterminate);
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
