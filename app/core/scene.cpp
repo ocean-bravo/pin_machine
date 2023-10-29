@@ -24,17 +24,24 @@ void Scene::addBlob(double x, double y, double dia)
 {
     QMutexLocker locker(&_mutex);
 
-    //BlobItem* blob = new BlobItem(x, y, dia);//addEllipse(-dia/2, -dia/2, dia, dia, redPen);
-    QEventLoop loop;
-    auto foo = [this, x, y, dia, &loop]()
+    static const QThread* sceneThread = thread();
+    const QThread* executorThread = QThread::currentThread();
+
+    if (sceneThread != executorThread)
+    {
+        QEventLoop loop;
+        auto foo = [this, x, y, dia, &loop]()
+        {
+            addItem(new BlobItem(x, y, dia));
+            loop.quit();
+        };
+        runOnThread(this, foo);
+        loop.exec();
+    }
+    else
     {
         addItem(new BlobItem(x, y, dia));
-        loop.quit();
-    };
-    runOnThread(this, foo);
-    loop.exec();
-
-    //item->setPos(x, y);
+    }
 }
 
 void Scene::addBorder()
