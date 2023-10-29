@@ -22,28 +22,30 @@ Scene::~Scene()
 
 void Scene::addBlob(double x, double y, double dia)
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
+
+    auto foo = [this](double x, double y, double dia)
+    {
+        addItem(new BlobItem(x, y, dia));
+    };
 
     static const QThread* sceneThread = thread();
     const QThread* executorThread = QThread::currentThread();
 
     if (sceneThread != executorThread)
     {
-        qd() << "hello from other thread";
-
         QEventLoop loop;
-        auto foo = [this, x, y, dia, &loop]()
+        runOnThread(this, [this, foo, x, y, dia, &loop]()
         {
-            addItem(new BlobItem(x, y, dia));
+            foo(x, y, dia);
             loop.quit();
-        };
-        runOnThread(this, foo);
+        });
+
         loop.exec();
     }
     else
     {
-        qd() << "hello from scene";
-        addItem(new BlobItem(x, y, dia));
+        foo(x, y, dia);
     }
 }
 
@@ -51,7 +53,7 @@ void Scene::addBorder()
 {
     static const QPen greenPen(Qt::green, 1, Qt::SolidLine);
 
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
     runOnThread(this, [this]() { addRect(0, 0, 300, 300, greenPen); });
     runOnThread(this, [this]() { addItem(new CameraViewItem); });
@@ -59,7 +61,7 @@ void Scene::addBorder()
 
 void Scene::setImage(QImage img)
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
@@ -85,21 +87,36 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    QEventLoop loop;
-    runOnThread(this, [this, item, &loop]()
+    auto foo = [this](QGraphicsPixmapItem* item)
     {
         addItem(item);
-        loop.quit();
-    });
-    loop.exec();
+    };
+
+    static const QThread* sceneThread = thread();
+    const QThread* executorThread = QThread::currentThread();
+
+    if (sceneThread != executorThread)
+    {
+        QEventLoop loop;
+        runOnThread(this, [this, &foo, item, &loop]()
+        {
+            foo(item);
+            loop.quit();
+        });
+
+        loop.exec();
+    }
+    else
+    {
+        foo(item);
+    }
 }
 
 void Scene::removeDuplicatedBlobs()
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
-    QEventLoop loop;
-    auto foo = [this, &loop]()
+    auto foo = [this]()
     {
         // если есть пересечение с кем то, то удалить его
         const auto items = QGraphicsScene::items();
@@ -118,30 +135,61 @@ void Scene::removeDuplicatedBlobs()
                 }
             }
         }
-        loop.quit();
     };
-    runOnThread(this, foo);
-    loop.exec();
+
+    static const QThread* sceneThread = thread();
+    const QThread* executorThread = QThread::currentThread();
+
+    if (sceneThread != executorThread)
+    {
+        QEventLoop loop;
+        runOnThread(this, [this, &foo, &loop]()
+        {
+            foo();
+            loop.quit();
+        });
+
+        loop.exec();
+    }
+    else
+    {
+        foo();
+    }
 }
 
 void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
-    QEventLoop loop;
-    auto foo = [this, blob, x, y, dia, &loop]()
+    auto foo = [](BlobItem* blob, double x, double y, double dia)
     {
         blob->setX(x);
         blob->setY(y);
         blob->setRect(-dia/2, -dia/2, dia, dia);
-        loop.quit();
     };
-    runOnThread(this, foo);
-    loop.exec();
+
+    static const QThread* sceneThread = thread();
+    const QThread* executorThread = QThread::currentThread();
+
+    if (sceneThread != executorThread)
+    {
+        QEventLoop loop;
+        runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
+        {
+            foo(blob, x, y, dia);
+            loop.quit();
+        });
+
+        loop.exec();
+    }
+    else
+    {
+        foo(blob, x, y, dia);
+    }
 }
 
 QList<QGraphicsItem *> Scene::items(Qt::SortOrder order) const
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
     return QGraphicsScene::items(order);
 }
