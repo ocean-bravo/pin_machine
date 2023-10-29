@@ -2,7 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QMetaObject>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 
 #include "singleton.h"
@@ -29,7 +29,7 @@ private:
     Scene(QObject* parent = nullptr);
     ~Scene();
 
-    mutable QMutex _mutex;
+    mutable QRecursiveMutex _mutex;
 
     friend class Singleton<Scene>;
 };
