@@ -19,14 +19,16 @@
 #include <QGraphicsEllipseItem>
 
 #include "common.h"
+#include "search_blobs.h"
+#include "update_blobs.h"
 
 namespace {
 
 }
 
-TestProgram::TestProgram(QObject* parent)
+TestProgram::TestProgram(SearchBlobs *sb, UpdateBlobs *ub, QObject* parent)
     : QObject(parent)
-    , _impl(new TestProgramPrivate)
+    , _impl(new TestProgramPrivate(sb, ub))
     , _thread(new QThread)
 {
     connect(_impl, &TestProgramPrivate::message, this, &TestProgram::message, Qt::QueuedConnection);
@@ -44,9 +46,9 @@ TestProgram::~TestProgram()
     _thread->wait(1000);
 }
 
-void TestProgram::run()
+void TestProgram::run(QString program)
 {
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
 void TestProgram::stopProgram()
@@ -55,9 +57,10 @@ void TestProgram::stopProgram()
 }
 
 
-TestProgramPrivate::TestProgramPrivate()
+TestProgramPrivate::TestProgramPrivate(SearchBlobs *sb, UpdateBlobs *ub)
 {
-
+    _sb = sb;
+    _ub = ub;
 }
 
 void TestProgramPrivate::pauseProgram()
@@ -73,9 +76,32 @@ void TestProgramPrivate::wait(int timeout) const
     waitForSignal(this, &TestProgramPrivate::interrupt, timeout);
 }
 
-void TestProgramPrivate::run()
+void TestProgramPrivate::run(QString program)
 {
 
+    while(true)
+    {
+        if (stopProgram)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
+        _sb->run(program);
+
+        waitForSignal(_sb, &SearchBlobs::finished, 3600*1000);
+
+        if (stopProgram)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
+        _ub->run();
+
+        waitForSignal(_ub, &UpdateBlobs::finished, 3600*1000);
+
+    }
 
     emit finished();
 }

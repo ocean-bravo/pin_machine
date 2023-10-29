@@ -9,15 +9,18 @@ class Video4;
 
 class TestProgramPrivate;
 
+class SearchBlobs;
+class UpdateBlobs;
+
 class TestProgram : public QObject
 {
     Q_OBJECT
 
 public:
-    TestProgram(QObject* parent = nullptr);
+    TestProgram(SearchBlobs* sb, UpdateBlobs* ub, QObject* parent = nullptr);
     ~TestProgram();
 
-    Q_INVOKABLE void run();
+    Q_INVOKABLE void run(QString program);
 
     void startProgram();
     void pauseProgram();
@@ -40,12 +43,12 @@ class TestProgramPrivate : public QObject
     Q_OBJECT
 
 public:
-    TestProgramPrivate();
+    TestProgramPrivate(SearchBlobs* sb, UpdateBlobs* ub);
     QAtomicInteger<bool> stopProgram = false;
 
 
 public slots:
-    void run();
+    void run(QString program);
 
 
     void pauseProgram();
@@ -60,5 +63,8 @@ private:
     //void waitForGetPosition(double xTarget, double yTarget);
 
     void wait(int timeout) const;
+
+    SearchBlobs* _sb = nullptr;
+    UpdateBlobs* _ub = nullptr;
 
 };

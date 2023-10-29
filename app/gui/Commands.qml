@@ -448,20 +448,13 @@ Item {
                         checked: false
                         onCheckedChanged: {
                             if (checked)
-                                SearchBlobs.run(codeEditor.text)
+                                TestProgram.run(codeEditor.text)
                             else {
+                                TestProgram.stopProgram()
                                 SearchBlobs.stopProgram()
                                 UpdateBlobs.stopProgram()
                             }
-
                         }
-
-                        Connections {
-                            enabled: beginTest.checked
-                            target: UpdateBlobs;
-                            function onFinished() { playPauseProgram.checked = true }
-                        }
-                        Connections { enabled: beginTest.checked; target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
                     }
 
 

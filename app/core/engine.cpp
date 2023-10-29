@@ -19,6 +19,7 @@
 #include "data_bus.h"
 #include "search_blobs.h"
 #include "update_blobs.h"
+#include "test_program.h"
 
 #include "openCv.h"
 
@@ -138,6 +139,7 @@ void Engine::createQmlEngine()
 
     SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
     UpdateBlobs* ub = new UpdateBlobs(_videoDriver4, this);
+    TestProgram* tp = new TestProgram(sb, ub, this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -157,6 +159,7 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("SearchBlobs", sb);
     _qmlEngine->rootContext()->setContextProperty("UpdateBlobs", ub);
+    _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
