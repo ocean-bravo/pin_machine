@@ -29,6 +29,8 @@ void Scene::addBlob(double x, double y, double dia)
 
     if (sceneThread != executorThread)
     {
+        qd() << "hello from other thread";
+
         QEventLoop loop;
         auto foo = [this, x, y, dia, &loop]()
         {
@@ -40,6 +42,7 @@ void Scene::addBlob(double x, double y, double dia)
     }
     else
     {
+        qd() << "hello from scene";
         addItem(new BlobItem(x, y, dia));
     }
 }
