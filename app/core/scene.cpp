@@ -45,7 +45,10 @@ void Scene::addBlob(double x, double y, double dia)
     }
     else
     {
-        foo(x, y, dia);
+        runOnThread(this, [this, foo, x, y, dia]()
+        {
+            foo(x, y, dia);
+        });
     }
 }
 
@@ -108,7 +111,10 @@ void Scene::setImage(QImage img)
     }
     else
     {
-        foo(item);
+        runOnThread(this, [this, &foo, item]()
+        {
+            foo(item);
+        });
     }
 }
 
@@ -153,7 +159,10 @@ void Scene::removeDuplicatedBlobs()
     }
     else
     {
-        foo();
+        runOnThread(this, [this, &foo]()
+        {
+            foo();
+        });
     }
 }
 
@@ -184,12 +193,14 @@ void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
     }
     else
     {
-        foo(blob, x, y, dia);
+        runOnThread(this, [this, &foo, blob, x, y, dia]()
+        {
+            foo(blob, x, y, dia);
+        });
     }
 }
 
-QList<QGraphicsItem *> Scene::items(Qt::SortOrder order) const
+QList<QGraphicsItem*> Scene::items(Qt::SortOrder order) const
 {
-    //QMutexLocker locker(&_mutex);
     return QGraphicsScene::items(order);
 }
