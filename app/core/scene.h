@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QMetaObject>
+#include <QMutex>
 
 
 #include "singleton.h"
@@ -20,9 +21,13 @@ public:
     void setImage(QImage img);
     void removeDuplicatedBlobs();
 
+    QList<QGraphicsItem *> items(Qt::SortOrder order = Qt::DescendingOrder) const;
+
 private:
     Scene(QObject* parent = nullptr);
     ~Scene();
+
+    mutable QMutex _mutex;
 
     friend class Singleton<Scene>;
 };

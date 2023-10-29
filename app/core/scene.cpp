@@ -6,6 +6,7 @@
 #include "utils2.h"
 #include "common.h"
 
+#include <QMutexLocker>
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(parent)
@@ -20,6 +21,8 @@ Scene::~Scene()
 
 void Scene::addBlob(double x, double y, double dia)
 {
+    QMutexLocker locker(&_mutex);
+
     //BlobItem* blob = new BlobItem(x, y, dia);//addEllipse(-dia/2, -dia/2, dia, dia, redPen);
     runOnThread(this, [this, x, y, dia]() { addItem(new BlobItem(x, y, dia)); });
 
@@ -30,12 +33,16 @@ void Scene::addBorder()
 {
     static const QPen greenPen(Qt::green, 1, Qt::SolidLine);
 
+    QMutexLocker locker(&_mutex);
+
     runOnThread(this, [this]() { addRect(0, 0, 300, 300, greenPen); });
     runOnThread(this, [this]() { addItem(new CameraViewItem); });
 }
 
 void Scene::setImage(QImage img)
 {
+    QMutexLocker locker(&_mutex);
+
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
     const int w = img.width();
@@ -65,6 +72,8 @@ void Scene::setImage(QImage img)
 
 void Scene::removeDuplicatedBlobs()
 {
+    QMutexLocker locker(&_mutex);
+
     auto foo = [this]() {
         // если есть пересечение с кем то, то удалить его
         const auto items = this->items();
@@ -85,4 +94,10 @@ void Scene::removeDuplicatedBlobs()
         }
     };
     runOnThread(this, foo);
+}
+
+QList<QGraphicsItem *> Scene::items(Qt::SortOrder order) const
+{
+    QMutexLocker locker(&_mutex);
+    return QGraphicsScene::items(order);
 }

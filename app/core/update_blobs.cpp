@@ -213,7 +213,6 @@ void UpdateBlobsPrivate::run()
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     scene().removeDuplicatedBlobs();
-    wait(100);
 
     auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
