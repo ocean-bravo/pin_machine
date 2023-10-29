@@ -73,11 +73,11 @@ void Scene::removeDuplicatedBlobs()
 
         for (QGraphicsItem* collidingItem : collidingItems(item))
         {
-            if (isNot<BlobItem>(collidingItem))
-                continue;
-
-            delete item;
-            break;
+            if (is<BlobItem>(collidingItem))
+            {
+                delete item;
+                break;
+            }
         }
     }
 }
