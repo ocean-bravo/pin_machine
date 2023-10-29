@@ -167,7 +167,7 @@ void UpdateBlobsPrivate::run()
     };
 
     // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [this, &moveTo] (QGraphicsEllipseItem* blob) -> bool
+    auto updateBlobPosition = [this, &moveTo] (BlobItem* blob) -> bool
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
@@ -202,10 +202,8 @@ void UpdateBlobsPrivate::run()
             emit message("blob found");
             qd() << "blob found";
 
-            // Передвинули блоб
-            runOnThread(&scene(), [blob, x]() { blob->setX(x); });
-            runOnThread(&scene(), [blob, y]() { blob->setY(y); });
-            runOnThread(&scene(), [blob, dia]() { blob->setRect(-dia/2, -dia/2, dia, dia); });
+            // Обновили позицию и диаметро блоба
+            scene().updateBlob(blob, x, y, dia);
             return true;
         }
     };

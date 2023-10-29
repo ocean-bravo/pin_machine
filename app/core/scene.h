@@ -7,6 +7,7 @@
 
 #include "singleton.h"
 
+class BlobItem;
 class QGraphicsScene;
 
 class Scene : public QGraphicsScene, public Singleton<Scene>
@@ -20,6 +21,7 @@ public:
     // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
     void removeDuplicatedBlobs();
+    void updateBlob(BlobItem* blob, double x, double y, double dia);
 
     QList<QGraphicsItem *> items(Qt::SortOrder order = Qt::DescendingOrder) const;
 

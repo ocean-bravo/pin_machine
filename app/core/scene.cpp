@@ -7,6 +7,7 @@
 #include "common.h"
 
 #include <QMutexLocker>
+#include <QEventLoop>
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(parent)
@@ -24,7 +25,14 @@ void Scene::addBlob(double x, double y, double dia)
     QMutexLocker locker(&_mutex);
 
     //BlobItem* blob = new BlobItem(x, y, dia);//addEllipse(-dia/2, -dia/2, dia, dia, redPen);
-    runOnThread(this, [this, x, y, dia]() { addItem(new BlobItem(x, y, dia)); });
+    QEventLoop loop;
+    auto foo = [this, x, y, dia, &loop]()
+    {
+        addItem(new BlobItem(x, y, dia));
+        loop.quit();
+    };
+    runOnThread(this, foo);
+    loop.exec();
 
     //item->setPos(x, y);
 }
@@ -67,14 +75,22 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    runOnThread(this, [this, item]() { addItem(item); });
+    QEventLoop loop;
+    runOnThread(this, [this, item, &loop]()
+    {
+        addItem(item);
+        loop.quit();
+    });
+    loop.exec();
 }
 
 void Scene::removeDuplicatedBlobs()
 {
     QMutexLocker locker(&_mutex);
 
-    auto foo = [this]() {
+    QEventLoop loop;
+    auto foo = [this, &loop]()
+    {
         // если есть пересечение с кем то, то удалить его
         const auto items = this->items();
         for (QGraphicsItem* item : items)
@@ -92,8 +108,26 @@ void Scene::removeDuplicatedBlobs()
                 }
             }
         }
+        loop.quit();
     };
     runOnThread(this, foo);
+    loop.exec();
+}
+
+void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
+{
+    QMutexLocker locker(&_mutex);
+
+    QEventLoop loop;
+    auto foo = [this, blob, x, y, dia, &loop]()
+    {
+        blob->setX(x);
+        blob->setY(y);
+        blob->setRect(-dia/2, -dia/2, dia, dia);
+        loop.quit();
+    };
+    runOnThread(this, foo);
+    loop.exec();
 }
 
 QList<QGraphicsItem *> Scene::items(Qt::SortOrder order) const
