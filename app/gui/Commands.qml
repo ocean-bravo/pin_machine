@@ -448,7 +448,12 @@ Item {
                         checked: false
                         onCheckableChanged: {
                             if (checked)
-                                playPauseProgram.checked = true
+                                SearchBlobs.run(codeEditor.text)
+                            else {
+                                SearchBlobs.stopProgram()
+                                UpdateBlobs.stopProgram()
+                            }
+
                         }
 
                         Connections {
