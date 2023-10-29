@@ -10,9 +10,9 @@ String.prototype.log = function() {
 }
 
 
-function generateSteps(x0, y0, xMax, yMax, stepX, stepY, feed) {
-    var x = x0
-    var y = y0
+function generateSteps(xMin, yMin, xMax, yMax, stepX, stepY, feed) {
+    var x = xMin
+    var y = yMin
 
     var cmds = []
 
@@ -21,13 +21,15 @@ function generateSteps(x0, y0, xMax, yMax, stepX, stepY, feed) {
             cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
             y += stepY
         }
+        cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
         x += stepX
-        while (y > y0) {
+        while (y > yMin) {
             cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
             y -= stepY
         }
+        cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
         x += stepX
-        y = y0
+        y = yMin
     }
 
     return cmds
