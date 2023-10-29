@@ -68,6 +68,9 @@ void Scene::removeDuplicatedBlobs()
     // если есть пересечение с кем то, то удалить его
     for (QGraphicsItem* item : items())
     {
+        if (isNot<BlobItem>(item))
+            continue;
+
         for (QGraphicsItem* collidingItem : collidingItems(item))
         {
             if (isNot<BlobItem>(collidingItem))
