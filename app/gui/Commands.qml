@@ -440,6 +440,18 @@ Item {
                         text: qsTr("Write value")
                         onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
                     }
+
+                    SmButton {
+                        text: qsTr("Begin test")
+                        onClicked: {
+                            playPauseProgram.checked = true
+                        }
+
+                        Connections { target: UpdateBlobs; function onFinished() { playPauseProgram.checked = true } }
+                        Connections { target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
+                    }
+
+
                 }
             }
         }
