@@ -179,7 +179,6 @@ void SearchBlobsPrivate::run(QString program)
         if (stopProgram)
         {
             emit message("program interrupted");
-            emit finished();
             break;
         }
 

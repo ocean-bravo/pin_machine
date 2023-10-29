@@ -20,5 +20,5 @@ void waitForGetPosition(double xTarget, double yTarget);
 template<typename Function>
 auto runOnThread(QObject* targetObject, Function function)
 {
-    QMetaObject::invokeMethod(targetObject, std::move(function));
+    QMetaObject::invokeMethod(targetObject, std::move(function), Qt::QueuedConnection);
 }
