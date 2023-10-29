@@ -22,6 +22,11 @@ function generateSteps(x0, y0, xMax, yMax, stepX, stepY, feed) {
             y += stepY
         }
         x += stepX
+        while (y > y0) {
+            cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
+            y -= stepY
+        }
+        x += stepX
         y = y0
     }
 
