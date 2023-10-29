@@ -65,21 +65,24 @@ void Scene::setImage(QImage img)
 
 void Scene::removeDuplicatedBlobs()
 {
-    // если есть пересечение с кем то, то удалить его
-    const auto items = this->items();
-    for (QGraphicsItem* item : items)
-    {
-        if (isNot<BlobItem>(item))
-            continue;
-
-        const auto collidingItems = this->collidingItems(item);
-        for (QGraphicsItem* collidingItem : collidingItems)
+    auto foo = [this]() {
+        // если есть пересечение с кем то, то удалить его
+        const auto items = this->items();
+        for (QGraphicsItem* item : items)
         {
-            if (is<BlobItem>(collidingItem))
+            if (isNot<BlobItem>(item))
+                continue;
+
+            const auto collidingItems = this->collidingItems(item);
+            for (QGraphicsItem* collidingItem : collidingItems)
             {
-                delete item;
-                break;
+                if (is<BlobItem>(collidingItem))
+                {
+                    delete item;
+                    break;
+                }
             }
         }
-    }
+    };
+    runOnThread(this, foo);
 }
