@@ -4,6 +4,7 @@
 #include "camera_view_item.h"
 #include "data_bus.h"
 #include "utils2.h"
+#include "common.h"
 
 
 Scene::Scene(QObject* parent)
@@ -67,7 +68,13 @@ void Scene::removeDuplicatedBlobs()
     // если есть пересечение с кем то, то удалить его
     for (QGraphicsItem* item : items())
     {
-        if (!collidingItems(item).isEmpty())
+        for (QGraphicsItem* collidingItem : collidingItems(item))
+        {
+            if (isNot<BlobItem>(collidingItem))
+                continue;
+
             delete item;
+            break;
+        }
     }
 }
