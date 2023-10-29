@@ -443,12 +443,19 @@ Item {
 
                     SmButton {
                         text: qsTr("Begin test")
-                        onClicked: {
-                            playPauseProgram.checked = true
+                        checkable: true
+                        checked: false
+                        onCheckableChanged: {
+                            if (checked)
+                                playPauseProgram.checked = true
                         }
 
-                        Connections { target: UpdateBlobs; function onFinished() { playPauseProgram.checked = true } }
-                        Connections { target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
+                        Connections {
+                            enabled: parent.checked
+                            target: UpdateBlobs;
+                            function onFinished() { playPauseProgram.checked = true }
+                        }
+                        Connections { enabled: parent.checked; target: SearchBlobs; function onFinished() { blobVisitor.checked = true } }
                     }
 
 
