@@ -193,6 +193,7 @@ void UpdateBlobsPrivate::run()
 
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
+        qd() << "diameter " << dia;
         if (!ok)
         {
             emit message("blob NOT found");
