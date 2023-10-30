@@ -5,6 +5,8 @@
 #include <QString>
 #include <QAtomicInteger>
 
+#include <QMutex>
+
 class Video4;
 
 class TestProgramPrivate;
@@ -44,7 +46,6 @@ class TestProgramPrivate : public QObject
 
 public:
     TestProgramPrivate(SearchBlobs* sb, UpdateBlobs* ub);
-    QAtomicInteger<bool> stopProgram = false;
 
 
 public slots:
@@ -66,5 +67,10 @@ private:
 
     SearchBlobs* _sb = nullptr;
     UpdateBlobs* _ub = nullptr;
+
+    QMutex _mutex;
+    QAtomicInteger<bool> _stop = false;
+
+    friend class TestProgram;
 
 };

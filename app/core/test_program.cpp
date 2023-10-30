@@ -48,12 +48,15 @@ TestProgram::~TestProgram()
 
 void TestProgram::run(QString program)
 {
+    _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
 void TestProgram::stopProgram()
 {
-    _impl->stopProgram = true;
+    _impl->_stop = true;
+    _impl->_sb->stopProgram();
+    _impl->_ub->stopProgram();
 }
 
 
@@ -78,10 +81,12 @@ void TestProgramPrivate::wait(int timeout) const
 
 void TestProgramPrivate::run(QString program)
 {
+    if (!_mutex.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
     while(true)
     {
-        if (stopProgram)
+        if (_stop)
         {
             emit message("program interrupted");
             break;
@@ -91,7 +96,7 @@ void TestProgramPrivate::run(QString program)
 
         waitForSignal(_sb, &SearchBlobs::finished, 3600*1000);
 
-        if (stopProgram)
+        if (_stop)
         {
             emit message("program interrupted");
             break;

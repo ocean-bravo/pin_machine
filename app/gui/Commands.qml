@@ -451,8 +451,6 @@ Item {
                                 TestProgram.run(codeEditor.text)
                             else {
                                 TestProgram.stopProgram()
-                                SearchBlobs.stopProgram()
-                                UpdateBlobs.stopProgram()
                             }
                         }
                     }
