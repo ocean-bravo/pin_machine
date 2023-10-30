@@ -169,7 +169,7 @@ void UpdateBlobsPrivate::run()
     };
 
     // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [this, &moveTo] (BlobItem* blob) -> bool
+    auto updateBlobPosition = [this, &moveTo] (BlobItem* blob) -> int
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
@@ -194,12 +194,15 @@ void UpdateBlobsPrivate::run()
 
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
+        if (ok && (dia / diaTarget > 2)) // неправильный блоб
+            return 2;
+
         //qd() << "diameter " << dia;
         if (!ok)
         {
             emit message("blob NOT found");
             // Как то пометить блоб, что он не найден в этом месте
-            return false;
+            return 1;
         }
         else
         {
@@ -208,7 +211,7 @@ void UpdateBlobsPrivate::run()
 
             // Обновили позицию и диаметро блоба
             scene().updateBlob(blob, x, y, dia);
-            return true;
+            return 0;
         }
     };
 
@@ -239,16 +242,12 @@ void UpdateBlobsPrivate::run()
         BlobItem* blob = dynamic_cast<BlobItem*>(item);
 
         updateBlobPosition(blob);
-        bool ok2 = updateBlobPosition(blob);
-
-        if (ok2)
+        int result = updateBlobPosition(blob);
+        if (result == 2)
         {
-//            auto dist = distance(blob, foundPoint2);
-//            updatedBlobs.push(foundPoint2 + " " + dist);
-        }
-        else
-        {
-            //updatedBlobs.push(blob += " NOK")
+            result = updateBlobPosition(blob);
+            if (result == 2)
+                result = updateBlobPosition(blob);
         }
     }
 
