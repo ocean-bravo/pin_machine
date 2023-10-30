@@ -52,12 +52,13 @@ SearchBlobs::~SearchBlobs()
 
 void SearchBlobs::run(QString program)
 {
+    _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
 void SearchBlobs::stopProgram()
 {
-    _impl->stopProgram = true;
+    _impl->_stop = true;
 }
 
 
@@ -144,6 +145,9 @@ void SearchBlobsPrivate::wait(int timeout) const
 
 void SearchBlobsPrivate::run(QString program)
 {
+    if (!_mutex.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+
     _video->stop();
 
     db().insert("resolution_width", 800);
@@ -152,8 +156,6 @@ void SearchBlobsPrivate::run(QString program)
 
     _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
     _video->start();
-
-    stopProgram = false;
 
     _lineToSend = 0;
     _codeLines = program.split("\n", Qt::KeepEmptyParts);
@@ -176,7 +178,7 @@ void SearchBlobsPrivate::run(QString program)
 
     while (true)
     {
-        if (stopProgram)
+        if (_stop)
         {
             emit message("program interrupted");
             break;

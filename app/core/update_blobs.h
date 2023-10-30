@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QAtomicInteger>
+#include <QMutex>
 
 class Video4;
 
@@ -19,7 +20,7 @@ public:
 
     Q_INVOKABLE void run();
 
-    void startProgram();
+
     void pauseProgram();
 
     Q_INVOKABLE void stopProgram();
@@ -41,7 +42,6 @@ class UpdateBlobsPrivate : public QObject
 
 public:
     UpdateBlobsPrivate(Video4* video);
-    QAtomicInteger<bool> stopProgram = false;
 
 
 public slots:
@@ -64,5 +64,10 @@ private:
     double _xTarget;
     double _yTarget;
     void wait(int timeout) const;
+
+    QMutex _mutex;
+    QAtomicInteger<bool> _stop = false;
+
+    friend class UpdateBlobs;
 
 };

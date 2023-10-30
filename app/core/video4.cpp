@@ -7,6 +7,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QDateTime>
+#include <QScopeGuard>
 
 #include <linux/videodev2.h>
 
@@ -66,29 +67,20 @@ Video4::~Video4()
     _thread->wait(1000);
 }
 
-void Video4::reloadDevices()
-{
-    //   QMetaObject::invokeMethod(_impl.data(), "reloadDevices", Qt::QueuedConnection);
-}
-
 void Video4::changeCamera(int device, int width, int height, QString fourcc)
 {
     QMetaObject::invokeMethod(_impl, "changeCamera", Qt::QueuedConnection, Q_ARG(int, device),Q_ARG(int, width),Q_ARG(int, height),Q_ARG(QString, fourcc));
 }
 
-void Video4::update()
-{
-    QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
-}
-
 void Video4::start()
 {
-    QMetaObject::invokeMethod(_impl, "start", Qt::QueuedConnection);
+    _impl->_stop = false;
+    QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
 }
 
 void Video4::stop()
 {
-    QMetaObject::invokeMethod(_impl, "stop", Qt::QueuedConnection);
+    _impl->_stop = true;
 }
 
 void Video4::capture()
@@ -111,11 +103,6 @@ QImage Video4::smallRegion()
     return _smallRegion;
 }
 
-void Video4Private::reloadDevices()
-{
-
-}
-
 void Video4Private::init()
 {
     _jpegDecompressor = new MjpegHelper;
@@ -123,17 +110,6 @@ void Video4Private::init()
 
     db().insert("jpg_frames_throw", throwFramesJpg);
     db().insert("yuv_frames_throw", throwFramesYuv);
-}
-
-void Video4Private::start()
-{
-    _running = true;
-    QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
-}
-
-void Video4Private::stop()
-{
-    _running = false;
 }
 
 void Video4Private::capture()
@@ -156,6 +132,9 @@ void Video4Private::captureSmallRegion(double width)
 
 void Video4Private::update()
 {
+    if (!_mutex.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+
     std::vector<char> inBuffer;
     inBuffer.reserve(20000000); // должно хватить
 
@@ -171,7 +150,7 @@ void Video4Private::update()
     {
         wait(1);
 
-        if (!_running)
+        if (_stop)
             break;
 
         if (!_videoCapture)
@@ -234,7 +213,7 @@ void Video4Private::update()
         imageDispatch(img);
     }
 
-    emit stopped();
+    emit finished();
 }
 
 void Video4Private::imageDispatch(QImage img)

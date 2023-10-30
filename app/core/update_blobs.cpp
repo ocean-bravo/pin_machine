@@ -79,12 +79,13 @@ UpdateBlobs::~UpdateBlobs()
 
 void UpdateBlobs::run()
 {
+    _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
 void UpdateBlobs::stopProgram()
 {
-    _impl->stopProgram = true;
+    _impl->_stop = true;
 }
 
 
@@ -145,6 +146,9 @@ void UpdateBlobsPrivate::wait(int timeout) const
 
 void UpdateBlobsPrivate::run()
 {
+    if (!_mutex.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+
     _video->stop();
 
     db().insert("resolution_width", 1280);
@@ -153,8 +157,6 @@ void UpdateBlobsPrivate::run()
 
     _video->changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
     _video->start();
-
-    stopProgram = false;
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -218,7 +220,7 @@ void UpdateBlobsPrivate::run()
     int count  = 0;
     for (QGraphicsItem* item  : scene().items())
     {
-        if (stopProgram)
+        if (_stop)
         {
             emit message("program interrupted");
             break;

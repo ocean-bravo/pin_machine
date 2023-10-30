@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QAtomicInteger>
+#include <QMutex>
 
 
 class Video4;
@@ -49,7 +50,6 @@ class SearchBlobsPrivate : public QObject
 
 public:
     SearchBlobsPrivate(Video4* video);
-    QAtomicInteger<bool> stopProgram = false;
 
 
 public slots:
@@ -80,4 +80,7 @@ private:
     double _yTarget;
     void wait(int timeout) const;
 
+    QMutex _mutex;
+    QAtomicInteger<bool> _stop = false;
+    friend class SearchBlobs;
 };

@@ -23,9 +23,7 @@ public:
     Video4();
     ~Video4();
 
-    Q_INVOKABLE void reloadDevices();
     Q_INVOKABLE void changeCamera(int device, int width, int height, QString fourcc);
-    Q_INVOKABLE void update();
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
 
@@ -55,11 +53,8 @@ public:
 
 public slots:
     void init();
-    void reloadDevices();
     void changeCamera(int device, int width, int height, QString fourcc);
     void update();
-    void start();
-    void stop();
 
     void capture();
     void captureSmallRegion(double width);
@@ -68,7 +63,7 @@ signals:
     void newImage(QImage);
     void captured(QImage);
     void capturedSmallRegion(QImage);
-    void stopped();
+    void finished();
 
     //void imageCaptured(QImage); // Private
 
@@ -77,7 +72,9 @@ private:
 
     QScopedPointer<V4l2MmapDevice> _videoCapture;
 
-    QAtomicInteger<bool> _running = false;
+    QMutex _mutex;
+    QAtomicInteger<bool> _stop = false;
+
     QAtomicInteger<bool> _capture = false;
     QAtomicInteger<bool> _captureSmallRegion = false;
     QAtomicInteger<int> _framesToThrowOut = 1;
@@ -85,5 +82,7 @@ private:
     QString _currentFourcc;
     MjpegHelper* _jpegDecompressor = nullptr;
     double _smallRegionWidth = 0;
+
+    friend class Video4;
 };
 
