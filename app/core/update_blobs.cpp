@@ -173,6 +173,7 @@ void UpdateBlobsPrivate::run()
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
+        double dia = blob->rect().width();
 
         moveTo(xTarget, yTarget);
 
@@ -180,7 +181,7 @@ void UpdateBlobsPrivate::run()
 
         emit message("capturing ...");
 
-        _video->captureSmallRegion(5.5);
+        _video->captureSmallRegion(dia + 2);
 
         waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
 
@@ -193,7 +194,7 @@ void UpdateBlobsPrivate::run()
 
         auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
-        qd() << "diameter " << dia;
+        //qd() << "diameter " << dia;
         if (!ok)
         {
             emit message("blob NOT found");
