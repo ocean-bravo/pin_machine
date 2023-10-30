@@ -19,11 +19,13 @@ public:
 
     void addBorder();
     // Координаты изображения идут вместе с изображением
-    void setImage(QImage img);
+
     void removeDuplicatedBlobs();
     void updateBlob(BlobItem* blob, double x, double y, double dia);
 
     QList<QGraphicsItem *> items(Qt::SortOrder order = Qt::DescendingOrder) const;
+public slots:
+    void setImage(QImage img);
 
 private:
     Scene(QObject* parent = nullptr);
