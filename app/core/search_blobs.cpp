@@ -173,10 +173,7 @@ void SearchBlobsPrivate::run(QString program)
 
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    //auto connection = connect(_video, &Video4::captured, this, [](QImage img) { scene().setImage(img); });
-    auto connection = connect(_video, &Video4::captured, this, [](QImage img) {
-            QMetaObject::invokeMethod(&scene(), "setImage", Qt::QueuedConnection, Q_ARG(QImage, img));
-    });
+    auto connection = connect(_video, &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     while (true)

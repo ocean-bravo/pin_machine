@@ -64,8 +64,11 @@ void Scene::addBorder()
 
 void Scene::setImage(QImage img)
 {
-    //QMutexLocker locker(&_mutex);
+    QMetaObject::invokeMethod(this, "setImagePrivate", Qt::QueuedConnection, Q_ARG(QImage, img));
+}
 
+void Scene::setImagePrivate(QImage img)
+{
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
     const int w = img.width();
@@ -90,32 +93,7 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-//    auto foo = [this](QGraphicsPixmapItem* item)
-//    {
-        addItem(item);
-//    };
-
-//    static const QThread* sceneThread = thread();
-//    const QThread* executorThread = QThread::currentThread();
-
-//    if (sceneThread != executorThread)
-//    {
-//        QEventLoop loop;
-//        runOnThread(this, [this, &foo, item, &loop]()
-//        {
-//            foo(item);
-//            loop.quit();
-//        });
-
-//        loop.exec();
-//    }
-//    else
-//    {
-//        runOnThread(this, [this, &foo, item]()
-//        {
-//            foo(item);
-//        });
-//    }
+    addItem(item);
 }
 
 void Scene::removeDuplicatedBlobs()

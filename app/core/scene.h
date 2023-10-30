@@ -24,8 +24,11 @@ public:
     void updateBlob(BlobItem* blob, double x, double y, double dia);
 
     QList<QGraphicsItem *> items(Qt::SortOrder order = Qt::DescendingOrder) const;
-public slots:
+
     void setImage(QImage img);
+
+private slots:
+    void setImagePrivate(QImage img);
 
 private:
     Scene(QObject* parent = nullptr);

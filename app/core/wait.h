@@ -17,6 +17,7 @@ inline void wait(int interval)
     }
 }
 
+// ХОрошо бы получать возвращаемое значение из сигнала
 //// Если вышли по таймауту - результат false
 template<typename PointerToMemberFunction>
 inline bool waitForSignal(const QObject* object, PointerToMemberFunction signal, int timeout)
