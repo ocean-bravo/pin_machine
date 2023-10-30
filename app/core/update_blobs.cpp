@@ -243,10 +243,10 @@ void UpdateBlobsPrivate::run()
 
         updateBlobPosition(blob);
         int result = updateBlobPosition(blob);
-        if (result == 2)
+        if (result > 0)
         {
             result = updateBlobPosition(blob);
-            if (result == 2)
+            if (result > 0)
                 result = updateBlobPosition(blob);
         }
     }
