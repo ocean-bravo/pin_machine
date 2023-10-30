@@ -214,7 +214,10 @@ void UpdateBlobsPrivate::run()
 
     scene().removeDuplicatedBlobs();
 
-    auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img); });
+//    auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img); });
+    auto connection = connect(_video, &Video4::capturedSmallRegion, this, [](QImage img) {
+            QMetaObject::invokeMethod(&scene(), "setImage", Qt::QueuedConnection, Q_ARG(QImage, img));
+    });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     int count  = 0;

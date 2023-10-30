@@ -90,32 +90,32 @@ void Scene::setImage(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    auto foo = [this](QGraphicsPixmapItem* item)
-    {
+//    auto foo = [this](QGraphicsPixmapItem* item)
+//    {
         addItem(item);
-    };
+//    };
 
-    static const QThread* sceneThread = thread();
-    const QThread* executorThread = QThread::currentThread();
+//    static const QThread* sceneThread = thread();
+//    const QThread* executorThread = QThread::currentThread();
 
-    if (sceneThread != executorThread)
-    {
-        QEventLoop loop;
-        runOnThread(this, [this, &foo, item, &loop]()
-        {
-            foo(item);
-            loop.quit();
-        });
+//    if (sceneThread != executorThread)
+//    {
+//        QEventLoop loop;
+//        runOnThread(this, [this, &foo, item, &loop]()
+//        {
+//            foo(item);
+//            loop.quit();
+//        });
 
-        loop.exec();
-    }
-    else
-    {
-        runOnThread(this, [this, &foo, item]()
-        {
-            foo(item);
-        });
-    }
+//        loop.exec();
+//    }
+//    else
+//    {
+//        runOnThread(this, [this, &foo, item]()
+//        {
+//            foo(item);
+//        });
+//    }
 }
 
 void Scene::removeDuplicatedBlobs()
