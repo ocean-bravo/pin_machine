@@ -173,7 +173,7 @@ void UpdateBlobsPrivate::run()
     {
         double xTarget = blob->x();
         double yTarget = blob->y();
-        double dia = blob->rect().width();
+        double diaTarget = blob->rect().width();
 
         moveTo(xTarget, yTarget);
 
@@ -181,7 +181,7 @@ void UpdateBlobsPrivate::run()
 
         emit message("capturing ...");
 
-        _video->captureSmallRegion(dia + 2);
+        _video->captureSmallRegion(diaTarget + 2);
 
         waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
 
