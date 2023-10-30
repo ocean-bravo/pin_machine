@@ -75,7 +75,7 @@ void Video4::changeCamera(int device, int width, int height, QString fourcc)
 void Video4::start()
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "update", Qt::QueuedConnection);
 }
 
 void Video4::stop()
