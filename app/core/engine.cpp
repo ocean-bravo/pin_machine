@@ -137,6 +137,11 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "blob");
     });
 
+    connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [myImageProvider](QImage img)
+    {
+        myImageProvider->setImage(img, "small_blob_captured");
+    });
+
     SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
     UpdateBlobs* ub = new UpdateBlobs(_videoDriver4, this);
     TestProgram* tp = new TestProgram(sb, ub, this);

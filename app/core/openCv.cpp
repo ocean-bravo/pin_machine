@@ -158,6 +158,7 @@ OpenCv::OpenCv()
 {
     connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
     connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
+    connect(_impl, &OpenCvPrivate::smallRegionBlobImage,   this, &OpenCv::smallRegionBlobImage, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
     connect(_thread.data(), &QThread::started,  _impl, &OpenCvPrivate::init, Qt::QueuedConnection);
@@ -244,6 +245,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         QString x = im.text("x");
         QString y = im.text("y");
+        emit smallRegionBlobImage(im);
 
         auto kp = kps[0];
 

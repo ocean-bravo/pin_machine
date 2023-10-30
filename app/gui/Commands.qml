@@ -547,7 +547,7 @@ Item {
                     ComboBox {
                         id: imgType
                         width: 200
-                        model: ["raw", "circle", "blob", "raw captured" ]
+                        model: ["raw", "circle", "blob", "raw captured", "small_blob_captured"]
                         onActivated: {
                             image.setSource("image://camera/" + currentText)
                             DataBus.mode = currentText

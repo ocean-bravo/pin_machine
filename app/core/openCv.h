@@ -46,6 +46,8 @@ signals:
 
     void smallRegionBlobChanged();
 
+    void smallRegionBlobImage(QImage);
+
 private:
     OpenCv();
     ~OpenCv();
@@ -78,6 +80,7 @@ public slots:
 signals:
     void circleChanged(QImage);
     void blobChanged(QImage);
+    void smallRegionBlobImage(QImage);
 
 private:
     QImage searchCirclesWorker(QImage img);
