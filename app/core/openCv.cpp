@@ -247,6 +247,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         auto kp = kps[0];
 
+        qd() << "kp size " << kp.size;
         //qd() << "smakl region width " << im.width();
 
         const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
