@@ -80,6 +80,8 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         const bool selected = value.toBool();
 
+        qd() << "item changed " << selected;
+
         setBrush(selected ? Qt::blue : QBrush());
     }
     return QGraphicsItem::itemChange(change, value);
