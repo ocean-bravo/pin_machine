@@ -24,19 +24,24 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     // Передаю дальше отрисовку невыделенного состояния.
     QStyleOptionGraphicsItem savedOption = *option;
     savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
+
+
+    // Сам отрисую как надо выделенное состояние.
+    const bool selected = option->state & QStyle::State_Selected;
+//    if (selected)
+//    {
+//        painter->save();
+//        //painter->setBrush(QBrush(Qt::blue));
+//        painter->setPen(QPen(Qt::blue, 0));
+//        painter->drawPath(shape());
+//        painter->restore();
+//    }
+
+    QPen pen = painter->pen();
+    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+    painter->setPen(pen);
+
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
-
-        // Сам отрисую как надо выделенное состояние.
-        const bool selected = option->state & QStyle::State_Selected;
-        if (selected)
-        {
-            painter->save();
-            //painter->setBrush(QBrush(Qt::blue));
-            painter->setPen(QPen(Qt::blue, 0));
-            painter->drawPath(shape());
-            painter->restore();
-        }
-
 
 //    QPen pen = painter->pen();
 //    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
