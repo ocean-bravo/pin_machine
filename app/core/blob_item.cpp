@@ -1,5 +1,7 @@
 #include "blob_item.h"
 
+#include "utils.h"
+
 #include <QPen>
 #include <QPainter>
 
@@ -100,6 +102,7 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
     {
+        qd() << " is selected " << isSelected();
         setSelected(!isSelected());
     }
 
