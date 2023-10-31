@@ -37,9 +37,15 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 //        painter->restore();
 //    }
 
-    QPen pen = painter->pen();
-    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-    painter->setPen(pen);
+//    QPen pen = painter->pen();
+//    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+//    painter->setPen(pen);
+
+    QPen p = pen();
+    p.setColor(Qt::blue);
+    setPen(p);
+
+
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 
