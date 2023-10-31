@@ -5,6 +5,8 @@
 
 #include <QGraphicsSceneMouseEvent>
 
+#include <QStyleOptionGraphicsItem>
+
 BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     : QGraphicsEllipseItem(parent)
 {
@@ -19,14 +21,46 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
 
 void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    QPen pen = painter->pen();
-    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-    painter->setPen(pen);
+    // Передаю дальше отрисовку невыделенного состояния.
+    QStyleOptionGraphicsItem savedOption = *option;
+    savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
+    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
+
+        // Сам отрисую как надо выделенное состояние.
+        const bool selected = option->state & QStyle::State_Selected;
+        if (selected)
+        {
+            painter->save();
+            //painter->setBrush(QBrush(Qt::blue));
+            painter->setPen(QPen(Qt::blue, 0));
+            painter->drawPath(shape());
+            painter->restore();
+        }
+
+
+//    QPen pen = painter->pen();
+//    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+//    painter->setPen(pen);
 
 
 
 //    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
-    QGraphicsEllipseItem::paint(painter, option, widget);
+//    QGraphicsEllipseItem::paint(painter, option, widget);
+
+
+
+
+
+//    // Сам отрисую как надо выделенное состояние.
+//    const bool selected = option->state & QStyle::State_Selected;
+//    if (selected)
+//    {
+//        painter->save();
+//        painter->setBrush(QBrush(Qt::green));
+//        painter->setPen(QPen(Qt::red, 0));
+//        painter->drawPath(shape());
+//        painter->restore();
+//    }
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
