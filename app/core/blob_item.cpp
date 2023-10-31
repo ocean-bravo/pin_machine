@@ -42,7 +42,8 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 //    painter->setPen(pen);
 
     QPen p = pen();
-    p.setColor(Qt::blue);
+
+    selected ? p.setColor(Qt::blue) : p.setColor(Qt::red);
     setPen(p);
 
 
