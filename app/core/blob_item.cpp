@@ -19,58 +19,58 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
 
-//void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-//{
-//    // Передаю дальше отрисовку невыделенного состояния.
-//    QStyleOptionGraphicsItem savedOption = *option;
-//    savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
+void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    // Передаю дальше отрисовку невыделенного состояния.
+    QStyleOptionGraphicsItem savedOption = *option;
+    savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
 
 
-//    // Сам отрисую как надо выделенное состояние.
+    // Сам отрисую как надо выделенное состояние.
 //    const bool selected = option->state & QStyle::State_Selected;
-////    if (selected)
-////    {
-////        painter->save();
-////        //painter->setBrush(QBrush(Qt::blue));
-////        painter->setPen(QPen(Qt::blue, 0));
-////        painter->drawPath(shape());
-////        painter->restore();
-////    }
+//    if (selected)
+//    {
+//        painter->save();
+//        //painter->setBrush(QBrush(Qt::blue));
+//        painter->setPen(QPen(Qt::blue, 0));
+//        painter->drawPath(shape());
+//        painter->restore();
+//    }
 
-////    QPen pen = painter->pen();
-////    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-////    painter->setPen(pen);
+//    QPen pen = painter->pen();
+//    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+//    painter->setPen(pen);
 
 //    QPen p = pen();
 //    p.setColor(selected ? Qt::blue : Qt::red);
 //    setPen(p);
 
-//    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
+    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 
-////    QPen pen = painter->pen();
-////    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-////    painter->setPen(pen);
-
-
-
-////    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
-////    QGraphicsEllipseItem::paint(painter, option, widget);
+//    QPen pen = painter->pen();
+//    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+//    painter->setPen(pen);
 
 
 
+//    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
+//    QGraphicsEllipseItem::paint(painter, option, widget);
 
 
-////    // Сам отрисую как надо выделенное состояние.
-////    const bool selected = option->state & QStyle::State_Selected;
-////    if (selected)
-////    {
-////        painter->save();
-////        painter->setBrush(QBrush(Qt::green));
-////        painter->setPen(QPen(Qt::red, 0));
-////        painter->drawPath(shape());
-////        painter->restore();
-////    }
-//}
+
+
+
+//    // Сам отрисую как надо выделенное состояние.
+//    const bool selected = option->state & QStyle::State_Selected;
+//    if (selected)
+//    {
+//        painter->save();
+//        painter->setBrush(QBrush(Qt::green));
+//        painter->setPen(QPen(Qt::red, 0));
+//        painter->drawPath(shape());
+//        painter->restore();
+//    }
+}
 
 QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
