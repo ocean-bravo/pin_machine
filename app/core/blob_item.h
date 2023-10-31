@@ -9,7 +9,7 @@ class BlobItem : public QObject, public QGraphicsEllipseItem
 public:
     BlobItem(double x, double y, double dia, QGraphicsItem* parent = nullptr);
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
+    //void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
 signals:
     void pressed();
@@ -18,6 +18,8 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
     void highlight();
