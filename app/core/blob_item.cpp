@@ -42,11 +42,8 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 //    painter->setPen(pen);
 
     QPen p = pen();
-
-    selected ? p.setColor(Qt::blue) : p.setColor(Qt::red);
+    p.setColor(selected ? Qt::blue : Qt::red);
     setPen(p);
-
-
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 
@@ -100,12 +97,20 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void BlobItem::highlight()
 {
-    static const QPen redPen(Qt::red, 0.1, Qt::SolidLine);
-    setPen(redPen);
+//    static const QPen redPen(Qt::red, 0.1, Qt::SolidLine);
+//    setPen(redPen);
+
+    QPen p = pen();
+    //p.setColor(isSelected() ? _selectedColor : _nonselectedColor);
+    p.setWidthF(0.1);
+    setPen(p);
 }
 
 void BlobItem::unhighlight()
 {
-    static const QPen redPen(Qt::red, 0, Qt::SolidLine);
-    setPen(redPen);
+    //static const QPen redPen(Qt::red, 0, Qt::SolidLine);
+    QPen p = pen();
+    //p.setColor(isSelected() ? _selectedColor : _nonselectedColor);
+    p.setWidthF(0);
+    setPen(p);
 }

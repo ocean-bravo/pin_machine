@@ -22,4 +22,7 @@ protected:
 private:
     void highlight();
     void unhighlight();
+
+    QColor _selectedColor = Qt::blue;
+    QColor _nonselectedColor = Qt::red;
 };
