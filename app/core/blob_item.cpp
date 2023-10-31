@@ -3,6 +3,8 @@
 #include <QPen>
 #include <QPainter>
 
+#include <QGraphicsSceneMouseEvent>
+
 BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     : QGraphicsEllipseItem(parent)
 {
@@ -16,7 +18,12 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
 
 void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-//    painter->setPen(pen());
+    QPen pen = painter->pen();
+    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
+    painter->setPen(pen);
+
+
+
 //    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
     QGraphicsEllipseItem::paint(painter, option, widget);
 }
@@ -35,8 +42,13 @@ void BlobItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
+    {
+        setSelected(!isSelected());
+    }
+
     emit pressed();
-    QGraphicsItem::mousePressEvent(event);
+    QGraphicsEllipseItem::mousePressEvent(event);
 }
 
 void BlobItem::highlight()
