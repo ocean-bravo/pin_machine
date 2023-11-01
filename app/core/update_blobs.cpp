@@ -134,8 +134,17 @@ void UpdateBlobsPrivate::run()
     auto connection = connect(_video, &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
+
+    QList<QGraphicsItem*> itemsToUpdate;
+
+    if (!scene().selectedItems().isEmpty())
+        itemsToUpdate = scene().selectedItems();
+    else
+        itemsToUpdate = scene().items();
+
+
     int count  = 0;
-    for (QGraphicsItem* item  : scene().items())
+    for (QGraphicsItem* item  : qAsConst(itemsToUpdate))
     {
         if (_stop)
         {
