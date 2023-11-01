@@ -3,7 +3,10 @@
 //#include "core/common.h"
 //#include "core/message.h"
 
+#include "utils.h"
+#include "data_bus.h"
 #include <QTimer>
+#include <QJsonObject>
 #include <QWheelEvent>
 #include <QGraphicsTextItem>
 
@@ -102,11 +105,12 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
 
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
     {
-        //qd() << "view event";
+        //qd() << "rubber band";
 
         emit selectModeChanged(true);
 
         _origin = event->pos();
+        //qd() << "rubber band pos " << _origin;
         _rb.reset(new QRubberBand(QRubberBand::Rectangle, this));
         _rb->setGeometry(QRect(_origin, QSize()));
         _rb->show();
@@ -146,9 +150,11 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
     const QPoint pos = event->pos();
 
-    //qDebug() << "mouse " <<  mapToScene(pos);
+    QJsonObject jo;
+    jo.insert("label_number", 0);
+    jo.insert("text", QString("%1 %2").arg(toReal3(mapToScene(pos).x())).arg(toReal3(mapToScene(pos).y())));
 
-    //showMessage(1, QString("%1 %2").arg(toReal(mapToScene(pos).x())).arg(toReal(mapToScene(pos).y())));
+    db().insert("message", jo);
 
     if (_rb)
     {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <QWidget>
+#include <QMainWindow>
 
 class QGraphicsScene;
 
 namespace Ui { class ScanView; }
 
-class ScanView : public QWidget
+class ScanView : public QMainWindow
 {
     Q_OBJECT
 

@@ -9,11 +9,13 @@
 #include <QMessageBox>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
+#include <QLabel>
+#include <QJsonObject>
 
 #include "camera_view_item.h"
 
 ScanView::ScanView(QWidget *parent)
-    : QWidget(parent)
+    : QMainWindow(parent)
     , ui(new Ui::ScanView)
 {
     ui->setupUi(this);
@@ -22,34 +24,64 @@ ScanView::ScanView(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
 
-//    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
-//    {
-//        if (key != "found_blobs3")
-//            return;
-
-//        QPen greenPen(Qt::green, 1, Qt::SolidLine);
-//        QPen redPen(Qt::red, 0, Qt::SolidLine);
-
-//        _scene->clear();
-//        _scene->addRect(0, 0, 300, 300, greenPen);
-//        _scene->addItem(new CameraViewItem);
-
-//        setCross();
-
-//        // Отправляю все блобы на сцену
-//        const QStringList blobs = value.toStringList();
-//        for (const QString& blob : blobs)
-//        {
-//            auto [x, y, dia] = blobToDouble(blob);
-//            QGraphicsEllipseItem* item = _scene->addEllipse(-dia/2, -dia/2, dia, dia, redPen);
-//            item->setPos(x, y);
-//        }
-//    });
-
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "xPos" || key == "yPos")
             setCross();
+    });
+
+    QLabel* message1 = new QLabel;
+    message1->setFixedWidth(150);
+    message1->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message1);
+
+    QLabel* message2 = new QLabel;
+    message2->setFixedWidth(150);
+    message2->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message2);
+
+    QLabel* message3 = new QLabel;
+    message3->setFixedWidth(150);
+    message3->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message3);
+
+    QLabel* message4 = new QLabel;
+    message4->setFixedWidth(150);
+    message4->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message4);
+
+    QLabel* message5 = new QLabel;
+    message5->setFixedWidth(150);
+    message5->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message5);
+
+    QLabel* message6 = new QLabel;
+    message6->setFixedWidth(150);
+    message6->setStyleSheet("QLabel { background-color : lightgrey; }");
+    ui->statusBar->addWidget(message6);
+
+    connect(&db(), &DataBus::valueChanged, this, [=](const QString& key, const QVariant& value)
+    {
+        if (key != "message")
+            return;
+
+        const QJsonObject msg = value.toJsonObject();
+
+        const int labelNumber = msg.value("label_number").toInt();
+        const QString text = msg.value("text").toString();
+
+        if (labelNumber == 0)
+            message1->setText(text);
+        else if (labelNumber == 1)
+            message2->setText(text);
+        else if (labelNumber == 2)
+            message3->setText(text);
+        else if (labelNumber == 3)
+            message4->setText(text);
+        else if (labelNumber == 4)
+            message5->setText(text);
+        else if (labelNumber == 5)
+            message6->setText(text);
     });
 }
 

@@ -1,9 +1,11 @@
 #include "blob_item.h"
 
 #include "utils.h"
+#include "data_bus.h"
 
 #include <QPen>
 #include <QPainter>
+#include <QJsonObject>
 
 #include <QGraphicsSceneMouseEvent>
 
@@ -12,8 +14,10 @@
 BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     : QGraphicsEllipseItem(parent)
 {
-    static const QPen redPen(Qt::red, 0, Qt::SolidLine);
+    static QPen redPen(Qt::red, _nonhighlightedThickness, Qt::SolidLine);
+    redPen.setCosmetic(true);
     setPen(redPen);
+
     setRect(-dia/2, -dia/2, dia, dia);
     setPos(x, y);
     setZValue(1); // Отметки поверх платы
@@ -80,7 +84,7 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         const bool selected = value.toBool();
 
-        qd() << "item changed " << selected;
+        //qd() << "item changed " << selected;
 
         setBrush(selected ? Qt::blue : QBrush());
     }
@@ -90,12 +94,36 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
+    {
+        QJsonObject jo;
+        jo.insert("label_number", 1);
+        jo.insert("text", QString("pos: %1 %2").arg(toReal3(pos().x())).arg(toReal3(pos().y())));
+        db().insert("message", jo);
+    }
+
+    {
+        QJsonObject jo;
+        jo.insert("label_number", 2);
+        jo.insert("text", QString("dia: %1").arg(toReal3(rect().width())));
+        db().insert("message", jo);
+    }
+
     highlight();
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void BlobItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
+    {
+        QJsonObject jo {{"label_number", 1}};
+        db().insert("message", jo);
+    }
+
+    {
+        QJsonObject jo {{"label_number", 2}};
+        db().insert("message", jo);
+    }
+
     unhighlight();
     QGraphicsItem::hoverLeaveEvent(event);
 }
@@ -104,30 +132,33 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
     {
-        qd() << " is selected " << isSelected();
+        //qd() << " is selected " << isSelected();
         setSelected(!isSelected());
     }
+    return;
 
-    emit pressed();
     QGraphicsEllipseItem::mousePressEvent(event);
+}
+
+void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    // В базовом классе какое-то действие, которое снимает выделение
+    // Не прокидываю дальше событие
+    return;
+
+    //QGraphicsEllipseItem::mouseReleaseEvent(event);
 }
 
 void BlobItem::highlight()
 {
-//    static const QPen redPen(Qt::red, 0.1, Qt::SolidLine);
-//    setPen(redPen);
-
     QPen p = pen();
-    //p.setColor(isSelected() ? _selectedColor : _nonselectedColor);
-    p.setWidthF(0.1);
+    p.setWidthF(_highlightedThickness);
     setPen(p);
 }
 
 void BlobItem::unhighlight()
 {
-    //static const QPen redPen(Qt::red, 0, Qt::SolidLine);
     QPen p = pen();
-    //p.setColor(isSelected() ? _selectedColor : _nonselectedColor);
-    p.setWidthF(0);
+    p.setWidthF(_nonhighlightedThickness);
     setPen(p);
 }

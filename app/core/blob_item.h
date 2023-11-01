@@ -18,6 +18,7 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
@@ -25,6 +26,6 @@ private:
     void highlight();
     void unhighlight();
 
-    QColor _selectedColor = Qt::blue;
-    QColor _nonselectedColor = Qt::red;
+    double _highlightedThickness = 3.0;
+    double _nonhighlightedThickness = 1.0;
 };

@@ -169,6 +169,11 @@ void SearchBlobsPrivate::run(QString program)
     scene().clear();
     scene().addBorder();
 
+//    scene().addBlob(5,5,25);
+
+//    scene().addBlob(35,5,25);
+//    scene().addBlob(5,35,25);
+
     wait(200);
 
     auto start = QDateTime::currentMSecsSinceEpoch();
