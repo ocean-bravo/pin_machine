@@ -142,7 +142,6 @@ void UpdateBlobsPrivate::run()
     else
         itemsToUpdate = scene().items();
 
-
     int count  = 0;
     for (QGraphicsItem* item  : qAsConst(itemsToUpdate))
     {

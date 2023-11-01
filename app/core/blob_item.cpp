@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QJsonObject>
 
+
+#include <QMenu>
 #include <QGraphicsSceneMouseEvent>
 
 #include <QStyleOptionGraphicsItem>
@@ -63,7 +65,12 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 //    QGraphicsEllipseItem::paint(painter, option, widget);
 
 
-
+    if (_fiducial)
+        setBrush(Qt::magenta);
+    else if (isSelected())
+        setBrush(Qt::blue);
+    else
+        setBrush(QBrush());
 
 
 //    // Сам отрисую как надо выделенное состояние.
@@ -84,9 +91,19 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         const bool selected = value.toBool();
 
-        //qd() << "item changed " << selected;
+        if (!selected)
+            _fiducial = false;
 
-        setBrush(selected ? Qt::blue : QBrush());
+        update();
+
+//        if (_fiducial)
+//            setBrush(Qt::magenta);
+//        else if (isSelected())
+//            setBrush(Qt::blue);
+//        else
+//            setBrush(QBrush());
+
+
     }
     return QGraphicsItem::itemChange(change, value);
 }
@@ -132,10 +149,9 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
     {
-        //qd() << " is selected " << isSelected();
+        qd() << " is selected " << isSelected();
         setSelected(!isSelected());
     }
-    return;
 
     QGraphicsEllipseItem::mousePressEvent(event);
 }
@@ -147,6 +163,32 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     return;
 
     //QGraphicsEllipseItem::mouseReleaseEvent(event);
+}
+
+void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
+{
+    if (!isSelected())
+        return;
+
+    QMenu menu;
+
+    QString menuText = _fiducial ? tr("Reset fiducial") : tr("Set fiducial");
+
+    menu.addAction(menuText, this, [this]()
+    {
+        _fiducial = !_fiducial;
+
+        update();
+
+//        if (_fiducial)
+//            setBrush(Qt::magenta);
+//        else if (isSelected())
+//            setBrush(Qt::blue);
+//        else
+//            setBrush(QBrush());
+    });
+
+    menu.exec(event->screenPos());
 }
 
 void BlobItem::highlight()

@@ -20,12 +20,15 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
+
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
     void highlight();
     void unhighlight();
 
+    bool _fiducial = false;
     double _highlightedThickness = 3.0;
     double _nonhighlightedThickness = 1.0;
 };

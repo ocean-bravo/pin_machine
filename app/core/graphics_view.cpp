@@ -91,6 +91,17 @@ void GraphicsView::wheelEvent(QWheelEvent* event)
 
 void GraphicsView::mousePressEvent(QMouseEvent* event)
 {
+    auto isItemSelectable = [this](QMouseEvent* event)
+    {
+        for (QGraphicsItem* item : items(event->pos()))
+        {
+            if (item->flags() & QGraphicsItem::ItemIsSelectable)
+                return true;
+        }
+        return false;
+    };
+
+
     if (event->button() == Qt::MiddleButton)
     {
         fit();
@@ -98,16 +109,9 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    if (!(event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL))
-    {
-        emit selectModeChanged(false);
-    }
-
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
     {
         //qd() << "rubber band";
-
-        emit selectModeChanged(true);
 
         _origin = event->pos();
         //qd() << "rubber band pos " << _origin;
@@ -116,21 +120,44 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
         _rb->show();
         event->accept();
 
+        if (!isItemSelectable(event))
+        {
+            QGraphicsView::mousePressEvent(event);
+            return;
+        }
+
         // Если передать сигнал дальше, т.е. без return, то миниплата выделится по клику, она сама это сделает.
         // Но если в месте клика будет элемент, который можно двигать, например fake pin, надо чтобы он не двигался.
         // Для этого, событие mouseMove дальше не прокидывается, когда есть резиновый квадрат.
         // Как альтернативный вариант, выделять миниплату прямо здесь - создать функцию с вызовом setSelectionArea
         // размером с 1 пиксель.
-        //return;
+        //QAbstractScrollArea::mousePressEvent(event);
+
     }
 
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::SHIFT)
     {
         setDragMode(DragMode::ScrollHandDrag);
         event->accept();
+        return;
+    }
+
+    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && (event->modifiers() == Qt::NoModifier))
+    {
+        //event->accept();
+        //QGraphicsView::mousePressEvent(event);
+        //return;
+
+        // Кликнули мимо всех элементов
+        return;
     }
 
     QGraphicsView::mousePressEvent(event);
+}
+
+void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    QAbstractScrollArea::mouseReleaseEvent(event);
 }
 
 void GraphicsView::mouseReleaseEvent(QMouseEvent* event)
