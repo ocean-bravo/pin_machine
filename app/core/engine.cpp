@@ -17,13 +17,19 @@
 #include <QQuickStyle>
 
 #include "data_bus.h"
-#include "search_blobs.h"
-#include "update_blobs.h"
-#include "test_program.h"
+#include "task_scan.h"
+#include "task_update.h"
+#include "task_test_scan_update_cycle.h"
+#include "task_test_algo.h"
+#include "task_check_camera.h"
+#include "task_punch.h"
 
 #include "openCv.h"
 
 #include "my_image_provider.h"
+
+#include "scene.h"
+
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
@@ -35,7 +41,7 @@ Engine::Engine(QObject* parent)
     OpenCv::instance();
 
     _videoDriver3 = new Video3();
-    _videoDriver4 = new Video4();
+    Video4::instance();
 
     createQmlEngine();
 }
@@ -46,39 +52,19 @@ QStringList Engine::camerasInfo()
     return _info;
 }
 
-//QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
-//{
-//    ScopedMeasure("remove duplicated blobs");
+void Engine::save()
+{
+    scene().saveScene();
 
-//    QGraphicsScene scene;
+}
 
-//    // Отправляю все блобы на сцену
-//    for (const QString& blob : blobs)
-//    {
-////        QStringList coord = blob.split(" ");
-////        double x = coord[0].toDouble();
-////        double y = coord[1].toDouble();
-//        auto [x, y, dia] = blobToDouble(blob);
+void Engine::load()
+{
+    scene().loadScene();
 
-//        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
-//        item->setPos(x, y);
-//    }
+}
 
-//    // если есть пересечение с кем то, то удалить его
-//    for (QGraphicsItem* item : qAsConst(scene).items())
-//    {
-//        if (!scene.collidingItems(item).isEmpty())
-//            delete item;
-//    }
 
-//    QStringList b;
-//    for (const QGraphicsItem* item : qAsConst(scene).items())
-//    {
-//        b.append(toReal3(item->x()) + " " + toReal3(item->y()));
-//    }
-
-//    return b;
-//}
 
 Engine::~Engine()
 {
@@ -89,7 +75,7 @@ void Engine::createQmlEngine()
 {
     MyImageProvider* myImageProvider = new MyImageProvider;
 
-    connect(_videoDriver4, &Video4::newImage, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::newImage, this, [myImageProvider](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
@@ -103,12 +89,12 @@ void Engine::createQmlEngine()
             opencv().blobDetectorLive(img);
     });
 
-    connect(_videoDriver4, &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(opencv().drawCross(img.copy()), "raw captured");
     });
 
-    connect(_videoDriver4, &Video4::captured, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::captured, this, [myImageProvider](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
         const QString x = db().value("x_coord").toString();
@@ -142,9 +128,12 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "small_blob_captured");
     });
 
-    SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
-    UpdateBlobs* ub = new UpdateBlobs(_videoDriver4, this);
-    TestProgram* tp = new TestProgram(sb, ub, this);
+    TaskScan* taskScan = new TaskScan(this);
+    TaskUpdate* taskUpdate = new TaskUpdate(this);
+    TaskTestScanUpdateCycle* tp = new TaskTestScanUpdateCycle(taskScan, taskUpdate, this);
+    TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);
+    TaskTestAlgo* ta = new TaskTestAlgo(this);
+    TaskPunch* taskPunch = new TaskPunch(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -157,14 +146,17 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
-    _qmlEngine->rootContext()->setContextProperty("Video4", _videoDriver4);
+    _qmlEngine->rootContext()->setContextProperty("Video4", &video());
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
 
-    _qmlEngine->rootContext()->setContextProperty("SearchBlobs", sb);
-    _qmlEngine->rootContext()->setContextProperty("UpdateBlobs", ub);
-    _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
+    _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
+    _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
+    _qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCycle", tp);
+    _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
+    _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
+    _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

@@ -11,18 +11,17 @@
 #include <QMutex>
 #include "V4l2MmapDevice.h"
 
+#include "singleton.h"
+
 class Video4Private;
 class MjpegHelper;
 
 
-class Video4 : public QObject
+class Video4 : public QObject, public Singleton<Video4>
 {
     Q_OBJECT
 
 public:
-    Video4();
-    ~Video4();
-
     Q_INVOKABLE void changeCamera(int device, int width, int height, QString fourcc);
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
@@ -39,10 +38,15 @@ signals:
     void capturedSmallRegion(QImage);
 
 private:
+    Video4();
+    ~Video4();
+
     Video4Private* _impl = nullptr;
     QThread* _thread = nullptr;
 
     QImage _smallRegion;
+
+    friend class Singleton<Video4>;
 };
 
 class Video4Private : public QObject
@@ -85,4 +89,11 @@ private:
 
     friend class Video4;
 };
+
+inline Video4& video()
+{
+    return Video4::instance();
+}
+
+
 

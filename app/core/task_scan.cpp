@@ -1,4 +1,4 @@
-#include "search_blobs.h"
+#include "task_scan.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -7,6 +7,8 @@
 #include "openCv.h"
 #include "data_bus.h"
 #include "scene.h"
+#include "blob_item.h"
+#include "graphics_view.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -18,25 +20,15 @@
 
 namespace {
 
-double extractFromGcodeX(QString line)
-{
-    return line.split(' ', Qt::SkipEmptyParts)[3].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
 }
 
-double extractFromGcodeY(QString line)
-{
-    return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
-}
-
-}
-
-SearchBlobs::SearchBlobs(Video4 *video, QObject* parent)
+TaskScan::TaskScan(QObject* parent)
     : QObject(parent)
-    , _impl(new SearchBlobsPrivate(video))
+    , _impl(new TaskScanPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &SearchBlobsPrivate::message, this, &SearchBlobs::message, Qt::QueuedConnection);
-    connect(_impl, &SearchBlobsPrivate::finished, this, &SearchBlobs::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskScanPrivate::message, this, &TaskScan::message, Qt::QueuedConnection);
+    connect(_impl, &TaskScanPrivate::finished, this, &TaskScan::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -44,31 +36,30 @@ SearchBlobs::SearchBlobs(Video4 *video, QObject* parent)
     _thread->start();
 }
 
-SearchBlobs::~SearchBlobs()
+TaskScan::~TaskScan()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void SearchBlobs::run(QString program)
+void TaskScan::run(QString program)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
-void SearchBlobs::stopProgram()
+void TaskScan::stopProgram()
 {
     _impl->_stop = true;
 }
 
 
-SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
-    : _video(video)
+TaskScanPrivate::TaskScanPrivate()
 {
 
 }
 
-bool SearchBlobsPrivate::sendNextLine()
+bool TaskScanPrivate::sendNextLine()
 {
     QString line = _codeLines[_lineToSend];
     int lineNumber = _lineToSend+1;
@@ -94,7 +85,7 @@ bool SearchBlobsPrivate::sendNextLine()
     return line.length() > 0;
 }
 
-void SearchBlobsPrivate::pauseProgram()
+void TaskScanPrivate::pauseProgram()
 {
 
 }
@@ -134,28 +125,19 @@ void SearchBlobsPrivate::pauseProgram()
 //    loop.exec();
 //}
 
-void SearchBlobsPrivate::wait(int timeout) const
-{
-    if (timeout <= 0)
-        return;
-
-    waitForSignal(this, &SearchBlobsPrivate::interrupt, timeout);
-}
-
-
-void SearchBlobsPrivate::run(QString program)
+void TaskScanPrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
-    _video->stop();
+    video().stop();
 
     db().insert("resolution_width", 800);
     db().insert("resolution_height", 600);
     db().insert("pixel_size", 0.017);
 
-    _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
-    _video->start();
+    video().changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
+    video().start();
 
     _lineToSend = 0;
     _codeLines = program.split("\n", Qt::KeepEmptyParts);
@@ -167,18 +149,37 @@ void SearchBlobsPrivate::run(QString program)
     db().insert("capture_number", 0);
     //ImagesStorage.clearCaptured()
     scene().clear();
-    scene().addBorder();
+    scene().addBoard();
+
+    // Костыль. Чтобы плата показывалась во весь экран. Иначе плата была неизвестно где, на сцене ее было не видно.
+    for (QGraphicsView* view : scene().views())
+    {
+        GraphicsView* v = dynamic_cast<GraphicsView*>(view);
+        if (v)
+            v->fit();
+    }
 
 //    scene().addBlob(5,5,25);
 
 //    scene().addBlob(35,5,25);
-//    scene().addBlob(5,35,25);
+//    {
+//        BlobItem* bl = scene().addBlob(5,35,2);
+//        bl->setFiducial(true);
+//        //bl->setRotation(45);
+//    }
+//    {
+//        BlobItem* bl = scene().addBlob(5.05,35.05,2);
+//        bl->setRealFiducial(true);
+//        //bl->setRotation(0);
+//    }
+
+//    return;
 
     wait(200);
 
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(_video, &Video4::captured, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     while (true)
@@ -191,12 +192,12 @@ void SearchBlobsPrivate::run(QString program)
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
-            waitForGetPosition(_xTarget, _yTarget);
+            waitPosXY(_xTarget, _yTarget);
 
             emit message("capturing ...");
             auto a = QDateTime::currentMSecsSinceEpoch();
-            _video->capture();
-            waitForSignal(_video, &Video4::captured, 2000);
+            video().capture();
+            waitForSignal(&video(), &Video4::captured, 2000);
             auto b = QDateTime::currentMSecsSinceEpoch();
             emit message(QString("captured %1 ms").arg(b-a));
 
@@ -211,6 +212,8 @@ void SearchBlobsPrivate::run(QString program)
             break;
         }
     }
+
+    scene().removeDuplicatedBlobs();
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 

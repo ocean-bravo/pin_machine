@@ -15,18 +15,22 @@ Item {
 
     property real xPos
     property real yPos
+    property real zPos
 
     function write(msg) {
         Serial.write(msg+"\n")
         appendLog(msg+"\n")
     }
 
-    function appendLog(message) {
+    function appendLog(message, color) {
+        if (color === undefined)
+            color = 'red'
+
         let msg = message.split('').join('') // Копирую строку фактически
         msg = msg.replace(/\r?\n/g, '<br>')
 
         msg = String(Date.now()).slice(-4) + ": " + msg
-        logViewer.append("<font color='red'>" + msg + "</font>")
+        logViewer.append("<font color=" + color + ">" + msg + "</font>")
     }
 
     function moveTo(x, y) {
@@ -40,35 +44,11 @@ Item {
         }
     }
 
-
-    function extractFromGcodeX(line) {
-        return Number(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
-    }
-
-    function extractFromGcodeY(line) {
-        return Number(line.split(' ').filter(e => e)[4].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
-    }
-
-    Connections {
-        target: Serial
-        function onMessage(msg) {
-            logViewer.append("<font color='darkgrey'>" + msg + "</font><br>")
-        }
-    }
-
-    Connections {
-        target: SearchBlobs
-        function onMessage(msg) {
-            appendLog(msg + '<br>')
-        }
-    }
-
-    Connections {
-        target: UpdateBlobs
-        function onMessage(msg) {
-            appendLog(msg + '<br>')
-        }
-    }
+    Connections { target: Serial;          function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
+    Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskCheckCamera; function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskPunch;       function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial
@@ -119,12 +99,17 @@ Item {
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
-                    fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
+                    DataBus.z_coord = pos[2]
+                    fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
+
                     xPos = parseFloat(pos[0])
                     yPos = parseFloat(pos[1])
+                    zPos = parseFloat(pos[2])
 
                     DataBus.xPos = xPos
                     DataBus.yPos = yPos
+                    DataBus.zPos = zPos
+
                 }
 
                 //                for (let k = 0; k < modes.length; ++k) {
@@ -153,11 +138,6 @@ Item {
             }
         }
     }
-
-    CyclePromise {
-        id: cycle
-    }
-
 
     RowLayout {
         anchors.fill: parent
@@ -270,12 +250,6 @@ Item {
                 Item { height: 20; width: 10}
 
 
-
-                //Item { height: 20; width: 10}
-
-
-
-
                 Item { height: 30; width: 10}
 
                 //                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
@@ -369,29 +343,122 @@ Item {
                 Item { height: 20; width: 10}
 
                 SmButton {
-                    id: playPauseProgram
-                    text: checked ? qsTr("Stop fast scan ") : qsTr("Start fast scan")
+                    id: scan
+                    text: qsTr("Fast scan")
                     checkable: true
-                    onCheckedChanged: checked ?  SearchBlobs.run(codeEditor.text) : SearchBlobs.stopProgram()
-                    Connections { target: SearchBlobs; function onFinished() { playPauseProgram.checked = false } }
+                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text) : TaskScan.stopProgram()
+                    Connections { target: TaskScan; function onFinished() { scan.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
                 Item { height: 30; width: 10}
 
                 SmButton {
-                    id: blobVisitor
-                    text: checked ? qsTr("Stop update") : qsTr("Start update")
+                    id: update
+                    text: qsTr("Update selected")
                     checkable: true
-                    onCheckedChanged: checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
-                    Connections { target: UpdateBlobs; function onFinished() { blobVisitor.checked = false } }
+                    onCheckedChanged: checked ? TaskUpdate.run() : TaskUpdate.stopProgram()
+                    Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
+                }
+
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
+
+                SmButton {
+                    id: save
+                    text: qsTr("Save")
+                    onClicked: {Engine.save()}
+                }
+                SmButton {
+                    id: load
+                    text: qsTr("Load")
+                    onClicked: {Engine.load()}
+                }
+
+                Item { height: 30; width: 10}
+
+                SmButton {
+                    id: checkCamera
+                    text: qsTr("Check camera")
+                    checkable: true
+                    onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
+                    Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
+                }
+            }
+
+            CollapsiblePanel {
+                id: punchPanel
+                width: parent.width
+                height: checked ? 200 : 30
+                text: "Punch"
+                onCheckedChanged: {
+                    punchGrid.visible = checked
+                }
+                Component.onCompleted: {
+                    punchGrid.visible = checked
+                }
+
+                GridLayout {
+                    id: punchGrid
+                    width: parent.width
+                    columns: 10
+                    columnSpacing: 5
+                    rowSpacing: 5
+
+
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 100
+                        Layout.columnSpan: 10
+
+                        CodeEditor2 {
+                            id: punchCode
+                            anchors.fill: parent
+                            text: "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0"
+                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                            // https://github.com/SakamotoMari/FileIO
+                            // https://github.com/chili-epfl/qml-fileio
+                        }
+                    }
+                    Text {
+                        text: qsTr("dx")
+                    }
+
+                    DoubleSpinBox {
+                        value: DataBus.punch_dx
+                        onValueModified: DataBus.punch_dx = value
+                        Layout.preferredWidth: 100
+                    }
+
+                    Text {
+                        text: qsTr("dy")
+                    }
+                    DoubleSpinBox {
+                        value: DataBus.punch_dy
+                        onValueModified: DataBus.punch_dy = value
+                        Layout.preferredWidth: 100
+                    }
+
+                    SmButton {
+                        id: punch
+                        text: qsTr("Punch")
+                        checkable: true
+                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
+                        Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+
+                        Layout.row: 1
+                        Layout.column: 9
+                    }
                 }
             }
 
             CollapsiblePanel {
                 id: debugPanel
                 width: parent.width
-                height: checked ? 150 : 30
+                height: checked ? 200 : 30
                 text: "Debug"
                 onCheckedChanged: {
                     debugButtons.visible = checked
@@ -400,25 +467,31 @@ Item {
                     debugButtons.visible = checked
                 }
 
-                Grid {
+                GridLayout {
                     id: debugButtons
                     width: parent.width
-                    columns: 3
+                    columns: 10
                     columnSpacing: 5
                     rowSpacing: 5
 
                     DoubleSpinBox {
                         decimals: 5
                         value: DataBus.pixel_size
-                        onValueModified: DataBus.pixel_size = Number(text)
-                    }
-                    Item { height: 20; width: 10}
+                        onValueModified: DataBus.pixel_size = value
 
-                    Item { height: 20; width: 10}
+                        Layout.row: 0
+                        Layout.column: 0
+                        Layout.columnSpan: 3
+                    }
 
                     ComboBox {
                         id: dbKeys
                         model: DataBus.keys()
+                        onDownChanged: {
+                            if (down)
+                                model = DataBus.keys()
+                        }
+
                         onActivated: {
                             logViewer.append('<br>')
                             logViewer.append(currentText + '<br>')
@@ -430,32 +503,61 @@ Item {
                             data = JSON.stringify(data).replace(/[,]/g, '<br>')
                             logViewer.append(data)
                             logViewer.append('<br>')
-                            model = DataBus.keys()
                         }
+
+                        Layout.row: 1
+                        Layout.column: 0
+                        Layout.columnSpan: 6
+
+                        Layout.preferredWidth: 140
                     }
                     SmTextEdit {
                         id: sendDataBus
+                        Layout.row: 1
+                        Layout.column: 6
+                        Layout.columnSpan: 2
+                        Layout.preferredWidth: 90
                     }
-                    SmButton {
-                        text: qsTr("Write value")
-                        onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                    ComboBox {
+                        id: dataType
+                        model: ["text", "int", "double"]
+                        Layout.row: 1
+                        Layout.column: 8
+                        Layout.preferredWidth: 60
+                        //Layout.columnSpan: 1
+                        //Layout.fillWidth: true
                     }
 
                     SmButton {
-                        id: beginTest
+                        text: qsTr("Write value")
+                        onClicked: {
+                            if (dataType.currentText === "int")    DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                            if (dataType.currentText === "double") DataBus[dbKeys.currentText] = parseFloat(sendDataBus.text)
+                            if (dataType.currentText === "text")   DataBus[dbKeys.currentText] = sendDataBus.text
+                        }
+                        Layout.row: 1
+                        Layout.column: 9
+                        //Layout.columnSpan: 1
+                        //Layout.fillWidth: true
+                    }
+
+                    SmButton {
+                        id: testScanUpdateCycle
                         text: qsTr("Begin test")
                         checkable: true
                         checked: false
-                        onCheckedChanged: {
-                            if (checked)
-                                TestProgram.run(codeEditor.text)
-                            else {
-                                TestProgram.stopProgram()
-                            }
-                        }
+                        onCheckedChanged: checked ? TaskTestScanUpdateCycle.run(codeEditor.text) : TaskTestScanUpdateCycle.stopProgram()
+                        Layout.row: 2
                     }
 
-
+                    SmButton {
+                        id: testAlgo
+                        text: qsTr("Test match points")
+                        checkable: true
+                        checked: false
+                        onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
+                        Layout.row: 3
+                    }
                 }
             }
         }

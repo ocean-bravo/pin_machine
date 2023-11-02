@@ -1,4 +1,4 @@
-#include "test_program.h"
+#include "task_test_scan_update_cycle.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -19,20 +19,17 @@
 #include <QGraphicsEllipseItem>
 
 #include "common.h"
-#include "search_blobs.h"
-#include "update_blobs.h"
+#include "task_scan.h"
+#include "task_update.h"
 
-namespace {
 
-}
-
-TestProgram::TestProgram(SearchBlobs *sb, UpdateBlobs *ub, QObject* parent)
+TaskTestScanUpdateCycle::TaskTestScanUpdateCycle(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     : QObject(parent)
-    , _impl(new TestProgramPrivate(sb, ub))
+    , _impl(new TaskTestScanUpdateCyclePrivate(sb, ub))
     , _thread(new QThread)
 {
-    connect(_impl, &TestProgramPrivate::message, this, &TestProgram::message, Qt::QueuedConnection);
-    connect(_impl, &TestProgramPrivate::finished, this, &TestProgram::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskTestScanUpdateCyclePrivate::message, this, &TaskTestScanUpdateCycle::message, Qt::QueuedConnection);
+    connect(_impl, &TaskTestScanUpdateCyclePrivate::finished, this, &TaskTestScanUpdateCycle::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -40,19 +37,19 @@ TestProgram::TestProgram(SearchBlobs *sb, UpdateBlobs *ub, QObject* parent)
     _thread->start();
 }
 
-TestProgram::~TestProgram()
+TaskTestScanUpdateCycle::~TaskTestScanUpdateCycle()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void TestProgram::run(QString program)
+void TaskTestScanUpdateCycle::run(QString program)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
-void TestProgram::stopProgram()
+void TaskTestScanUpdateCycle::stopProgram()
 {
     _impl->_stop = true;
     _impl->_sb->stopProgram();
@@ -60,26 +57,13 @@ void TestProgram::stopProgram()
 }
 
 
-TestProgramPrivate::TestProgramPrivate(SearchBlobs *sb, UpdateBlobs *ub)
+TaskTestScanUpdateCyclePrivate::TaskTestScanUpdateCyclePrivate(TaskScan *sb, TaskUpdate *ub)
 {
     _sb = sb;
     _ub = ub;
 }
 
-void TestProgramPrivate::pauseProgram()
-{
-
-}
-
-void TestProgramPrivate::wait(int timeout) const
-{
-    if (timeout <= 0)
-        return;
-
-    waitForSignal(this, &TestProgramPrivate::interrupt, timeout);
-}
-
-void TestProgramPrivate::run(QString program)
+void TaskTestScanUpdateCyclePrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -94,7 +78,7 @@ void TestProgramPrivate::run(QString program)
 
         _sb->run(program);
 
-        waitForSignal(_sb, &SearchBlobs::finished, 3600*1000);
+        waitForSignal(_sb, &TaskScan::finished, 3600*1000);
 
         if (_stop)
         {
@@ -104,11 +88,9 @@ void TestProgramPrivate::run(QString program)
 
         _ub->run();
 
-        waitForSignal(_ub, &UpdateBlobs::finished, 3600*1000);
+        waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 
     }
 
     emit finished();
 }
-
-

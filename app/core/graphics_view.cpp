@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QWheelEvent>
 #include <QGraphicsTextItem>
+#include <QScrollBar>
 
 GraphicsView::GraphicsView(QWidget* parent)
     : QGraphicsView(parent)
@@ -28,17 +29,6 @@ GraphicsView::GraphicsView(QWidget* parent)
     //setAttribute(Qt::WA_Hover);
 
     setMouseTracking(true); // Для отображения координат курсора мыши
-
-    //    QTimer* timer = new QTimer(this);
-    //    connect(timer, &QTimer::timeout, this, [this]()
-    //    {
-    //        static int i = 0;
-    //        translate(i%99,i%99);
-    //        qDebug() << "translate " << i;
-    //        ++i;
-
-    //    });
-    //    timer->start(1000);
 }
 
 void GraphicsView::fit()
@@ -51,7 +41,7 @@ void GraphicsView::fit()
     fitInView(scRect.adjusted(-margin,-margin, margin, margin), Qt::KeepAspectRatio); // Это подгоняет размер платы
 
     // Не дает подвинуть сцену за пределы максиплаты
-    setSceneRect(scRect.adjusted(-margin,-margin, margin, margin)); // Это центрует миниплату
+    //setSceneRect(scRect.adjusted(-margin,-margin, margin, margin)); // Это центрует миниплату
 }
 
 void GraphicsView::setSizeToFit(QSizeF size)
@@ -91,17 +81,6 @@ void GraphicsView::wheelEvent(QWheelEvent* event)
 
 void GraphicsView::mousePressEvent(QMouseEvent* event)
 {
-    auto isItemSelectable = [this](QMouseEvent* event)
-    {
-        for (QGraphicsItem* item : items(event->pos()))
-        {
-            if (item->flags() & QGraphicsItem::ItemIsSelectable)
-                return true;
-        }
-        return false;
-    };
-
-
     if (event->button() == Qt::MiddleButton)
     {
         fit();
@@ -118,7 +97,19 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
         _rb.reset(new QRubberBand(QRubberBand::Rectangle, this));
         _rb->setGeometry(QRect(_origin, QSize()));
         _rb->show();
+
+        QCursor c = cursor(); c.setShape(Qt::CrossCursor); setCursor(c);
         event->accept();
+
+        auto isItemSelectable = [this](QMouseEvent* event)
+        {
+            for (QGraphicsItem* item : items(event->pos()))
+            {
+                if (item->flags() & QGraphicsItem::ItemIsSelectable)
+                    return true;
+            }
+            return false;
+        };
 
         if (!isItemSelectable(event))
         {
@@ -135,9 +126,12 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
 
     }
 
-    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::SHIFT)
+    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier)
     {
-        setDragMode(DragMode::ScrollHandDrag);
+        _dragMode = true;
+        _lastMouseEvent = QMouseEvent(QEvent::MouseMove, event->localPos(), event->windowPos(), event->screenPos(),
+                                                           event->button(), event->buttons(), event->modifiers());
+        setCursor(Qt::ClosedHandCursor);
         event->accept();
         return;
     }
@@ -160,12 +154,16 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent* event)
 {
     _rb.reset();
 
-    if (dragMode() == DragMode::ScrollHandDrag)
+    QCursor c = cursor(); c.setShape(Qt::ArrowCursor); setCursor(c);
+
+    if (_dragMode)
     {
-        cursor().setShape(Qt::ArrowCursor);
-        setDragMode(DragMode::NoDrag);
+        _dragMode = false;
+        //setCursor(Qt::ArrowCursor);
         event->accept();
+        return;
     }
+
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -178,6 +176,42 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event)
     jo.insert("text", QString("%1 %2").arg(toReal3(mapToScene(pos).x())).arg(toReal3(mapToScene(pos).y())));
 
     db().insert("message", jo);
+
+
+//    if (_dragMode)
+//    {
+
+//        event->ignore();
+
+//    }
+
+    if (_dragMode)
+    {
+//        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _panStartX));
+//        verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _panStartY));
+////        _panStartX = event->x();
+////        _panStartY = event->y();
+//        event->accept();
+
+
+//        QPointF delta = _lastScreenPos - event->screenPos();
+//        int newX = horizontalScrollBar()->value() + delta.x();
+//        int newY = verticalScrollBar()->value() + delta.y();
+//        horizontalScrollBar()->setValue(newX);
+//        verticalScrollBar()->setValue(newY);
+
+
+                    QScrollBar *hBar = horizontalScrollBar();
+                    QScrollBar *vBar = verticalScrollBar();
+                    QPoint delta = event->pos() - _lastMouseEvent.pos();
+                    hBar->setValue(hBar->value() + (isRightToLeft() ? delta.x() : -delta.x()));
+                    vBar->setValue(vBar->value() - delta.y());
+                    _lastMouseEvent = QMouseEvent(QEvent::MouseMove, event->localPos(), event->windowPos(), event->screenPos(),
+                                                                   event->button(), event->buttons(), event->modifiers());
+        return;
+    }
+
+
 
     if (_rb)
     {
@@ -197,6 +231,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event)
 
 void GraphicsView::resizeEvent(QResizeEvent* event)
 {
+    _dragMode = false;
     emit sizeChanged(event->size());
     QGraphicsView::resizeEvent(event);
 }

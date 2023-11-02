@@ -72,8 +72,8 @@ Item {
                         font.pointSize: fontPointSize
                         font.family: fontFamily
                         onVisibleChanged: {
-                            if (visible)
-                                console.log("visible ", index)
+//                            if (visible)
+//                                console.log("visible ", index)
                         }
                     }
                 }
