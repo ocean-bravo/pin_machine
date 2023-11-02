@@ -144,10 +144,6 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
 
     if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && (event->modifiers() == Qt::NoModifier))
     {
-        //event->accept();
-        //QGraphicsView::mousePressEvent(event);
-        //return;
-
         // Кликнули мимо всех элементов
         return;
     }

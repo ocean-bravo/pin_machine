@@ -22,3 +22,9 @@ auto runOnThread(QObject* targetObject, Function function)
 {
     QMetaObject::invokeMethod(targetObject, std::move(function), Qt::QueuedConnection);
 }
+
+template<typename PointerToMemberFunction>
+inline void runLater(const QObject* object, PointerToMemberFunction member)
+{
+    runOnThread(object, [object, member]() { object->*member(); });
+}

@@ -1,6 +1,7 @@
 #include "blob_item.h"
 
 #include "utils.h"
+#include "utils2.h"
 #include "data_bus.h"
 
 #include <QPen>
@@ -94,7 +95,8 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
         if (!selected)
             _fiducial = false;
 
-        update();
+        // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
+        runOnThread(this, [this](){ update(); });
 
 //        if (_fiducial)
 //            setBrush(Qt::magenta);
@@ -178,7 +180,8 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
     {
         _fiducial = !_fiducial;
 
-        update();
+        // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
+        runOnThread(this, [this](){ update(); });
 
 //        if (_fiducial)
 //            setBrush(Qt::magenta);
