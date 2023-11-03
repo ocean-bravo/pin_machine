@@ -58,6 +58,9 @@ PunchPrivate::PunchPrivate(Video4 *video)
 
 void PunchPrivate::run()
 {
+    // Разница в диаметрах блобов, больше которой считается что блоб неправильный
+    static const double wrongBlobDiaError = 0.3;
+
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
@@ -80,7 +83,6 @@ void PunchPrivate::run()
         serial().write(line.toLatin1() + "\n");
     };
 
-    // point - массив строк. Возвр значение строка с пробелом между координатами
     auto updateBlobPosition = [this, &moveTo] (BlobItem* blob) -> int
     {
         double xTarget = blob->x();
@@ -129,20 +131,11 @@ void PunchPrivate::run()
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    scene().removeDuplicatedBlobs();
-
     auto connection = connect(_video, &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 
-    QList<QGraphicsItem*> itemsToUpdate;
-
-    if (!scene().selectedItems().isEmpty())
-        itemsToUpdate = scene().selectedItems();
-    else
-        itemsToUpdate = scene().items();
-
-    int count  = 0;
+    QList<BlobItem*> itemsToUpdate;
     for (QGraphicsItem* item  : qAsConst(itemsToUpdate))
     {
         if (_stop)
@@ -154,21 +147,44 @@ void PunchPrivate::run()
         if (isNot<BlobItem>(item))
             continue;
 
-        ++count;
         BlobItem* blob = dynamic_cast<BlobItem*>(item);
 
-        updateBlobPosition(blob);
-        int result = updateBlobPosition(blob);
+        if (!blob->data(0).toBool()) // не fiducial точка
+            continue;
+
+        itemsToUpdate.append(blob);
+    }
+
+    int count  = 0;
+    for (BlobItem* refBlob  : qAsConst(itemsToUpdate))
+    {
+        if (_stop)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
+        ++count;
+
+        double xRef = refBlob->x();
+        double yRef = refBlob->y();
+        double diaRef = refBlob->rect().width();
+
+        BlobItem* workBlob = scene().addBlob(xRef, yRef, diaRef);
+        workBlob->setData(1, true); // work blob
+
+        updateBlobPosition(workBlob);
+        int result = updateBlobPosition(workBlob);
         if (result > 0)
         {
-            result = updateBlobPosition(blob);
+            result = updateBlobPosition(workBlob);
             if (result > 0)
-                result = updateBlobPosition(blob);
+                result = updateBlobPosition(workBlob);
         }
     }
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
-    emit message("update blobs finished");
+    emit message("punch blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
     emit message("count " + QString::number(count));
 

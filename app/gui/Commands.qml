@@ -71,6 +71,13 @@ Item {
     }
 
     Connections {
+        target: Punch
+        function onMessage(msg) {
+            appendLog(msg + '<br>')
+        }
+    }
+
+    Connections {
         target: Serial
 
         property string prevMsg: ""
@@ -370,7 +377,7 @@ Item {
 
                 SmButton {
                     id: playPauseProgram
-                    text: checked ? qsTr("Stop fast scan ") : qsTr("Start fast scan")
+                    text: qsTr("Fast scan")
                     checkable: true
                     onCheckedChanged: checked ?  SearchBlobs.run(codeEditor.text) : SearchBlobs.stopProgram()
                     Connections { target: SearchBlobs; function onFinished() { playPauseProgram.checked = false } }
@@ -381,11 +388,24 @@ Item {
 
                 SmButton {
                     id: blobVisitor
-                    text: checked ? qsTr("Stop update") : qsTr("Start update")
+                    text: qsTr("Update selected")
                     checkable: true
                     onCheckedChanged: checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
                     Connections { target: UpdateBlobs; function onFinished() { blobVisitor.checked = false } }
                 }
+
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
+
+                SmButton {
+                    id: punchBlobs
+                    text: qsTr("Punch")
+                    checkable: true
+                    onCheckedChanged: checked ? Punch.run() : Punch.stopProgram()
+                    Connections { target: Punch; function onFinished() { punchBlobs.checked = false } }
+                }
+
+
             }
 
             CollapsiblePanel {

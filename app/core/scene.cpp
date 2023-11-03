@@ -20,13 +20,15 @@ Scene::~Scene()
 
 }
 
-void Scene::addBlob(double x, double y, double dia)
+BlobItem* Scene::addBlob(double x, double y, double dia)
 {
     //QMutexLocker locker(&_mutex);
 
-    auto foo = [this](double x, double y, double dia)
+    BlobItem* blob = new BlobItem(x, y, dia);
+
+    auto foo = [this, blob]()
     {
-        addItem(new BlobItem(x, y, dia));
+        addItem(blob);
     };
 
     static const QThread* sceneThread = thread();
@@ -35,9 +37,9 @@ void Scene::addBlob(double x, double y, double dia)
     if (sceneThread != executorThread)
     {
         QEventLoop loop;
-        runOnThread(this, [this, foo, x, y, dia, &loop]()
+        runOnThread(this, [this, foo, &loop]()
         {
-            foo(x, y, dia);
+            foo();
             loop.quit();
         });
 
@@ -45,11 +47,12 @@ void Scene::addBlob(double x, double y, double dia)
     }
     else
     {
-        runOnThread(this, [this, foo, x, y, dia]()
+        runOnThread(this, [this, foo]()
         {
-            foo(x, y, dia);
+            foo();
         });
     }
+    return blob;
 }
 
 void Scene::addBorder()

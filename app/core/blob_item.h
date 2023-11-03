@@ -28,7 +28,6 @@ private:
     void highlight();
     void unhighlight();
 
-    bool _fiducial = false;
     double _highlightedThickness = 3.0;
     double _nonhighlightedThickness = 1.0;
 };
