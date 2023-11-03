@@ -9,7 +9,6 @@
 #include "stream.h"
 #include "mjpeghelper.h"
 
-
 class Context;          // pre-declaration
 class PlatformStream;  // pre-declaration
 

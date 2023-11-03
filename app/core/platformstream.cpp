@@ -38,7 +38,7 @@
 #include <sys/mman.h>
 #include <memory.h>
 #include <string>
-#include "scopedptr.h"
+//#include "scopedptr.h"
 
 #include "platformdeviceinfo.h"
 #include "platformstream.h"
@@ -48,6 +48,8 @@
 #include "utils.h"
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
+
+#include <QScopedPointer>
 
 Stream* createPlatformStream()
 {
@@ -242,7 +244,8 @@ void captureThreadFunctionAsync(PlatformStream *stream, int fd, size_t bufferSiz
     LOG(LOG_DEBUG, "captureThreadFunctionAsync started\n");
 
     PlatformStreamHelper *pHelper = new PlatformStreamHelper(fd);
-    ScopedPtr<PlatformStreamHelper> helper(pHelper);
+    QScopedPointer<PlatformStreamHelper> helper(pHelper);
+
 
     if (!helper->createAndMapBuffers(nBuffers))
     {
