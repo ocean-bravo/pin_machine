@@ -7,8 +7,6 @@
 #include <QPen>
 #include <QPainter>
 #include <QJsonObject>
-
-
 #include <QMenu>
 #include <QGraphicsSceneMouseEvent>
 
@@ -34,38 +32,6 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     QStyleOptionGraphicsItem savedOption = *option;
     savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
 
-
-    // Сам отрисую как надо выделенное состояние.
-//    const bool selected = option->state & QStyle::State_Selected;
-//    if (selected)
-//    {
-//        painter->save();
-//        //painter->setBrush(QBrush(Qt::blue));
-//        painter->setPen(QPen(Qt::blue, 0));
-//        painter->drawPath(shape());
-//        painter->restore();
-//    }
-
-//    QPen pen = painter->pen();
-//    selected ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-//    painter->setPen(pen);
-
-//    QPen p = pen();
-//    p.setColor(selected ? Qt::blue : Qt::red);
-//    setPen(p);
-
-    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
-
-//    QPen pen = painter->pen();
-//    isSelected() ? pen.setColor(Qt::blue) : pen.setColor(Qt::red);
-//    painter->setPen(pen);
-
-
-
-//    painter->drawEllipse(QRectF(-2.5, -2.5, 5, 5));
-//    QGraphicsEllipseItem::paint(painter, option, widget);
-
-
     if (_fiducial)
         setBrush(Qt::magenta);
     else if (isSelected())
@@ -73,17 +39,7 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     else
         setBrush(QBrush());
 
-
-//    // Сам отрисую как надо выделенное состояние.
-//    const bool selected = option->state & QStyle::State_Selected;
-//    if (selected)
-//    {
-//        painter->save();
-//        painter->setBrush(QBrush(Qt::green));
-//        painter->setPen(QPen(Qt::red, 0));
-//        painter->drawPath(shape());
-//        painter->restore();
-//    }
+    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
 
 QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -97,15 +53,6 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
 
         // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
         runOnThread(this, [this](){ update(); });
-
-//        if (_fiducial)
-//            setBrush(Qt::magenta);
-//        else if (isSelected())
-//            setBrush(Qt::blue);
-//        else
-//            setBrush(QBrush());
-
-
     }
     return QGraphicsItem::itemChange(change, value);
 }
@@ -150,11 +97,7 @@ void BlobItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
-    {
-        qd() << " is selected " << isSelected();
         setSelected(!isSelected());
-    }
-
     QGraphicsEllipseItem::mousePressEvent(event);
 }
 
@@ -163,8 +106,6 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     // В базовом классе какое-то действие, которое снимает выделение
     // Не прокидываю дальше событие
     return;
-
-    //QGraphicsEllipseItem::mouseReleaseEvent(event);
 }
 
 void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
@@ -182,13 +123,6 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 
         // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
         runOnThread(this, [this](){ update(); });
-
-//        if (_fiducial)
-//            setBrush(Qt::magenta);
-//        else if (isSelected())
-//            setBrush(Qt::blue);
-//        else
-//            setBrush(QBrush());
     });
 
     menu.exec(event->screenPos());
