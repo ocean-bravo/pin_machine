@@ -11,6 +11,12 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
+    bool isFiducial() const;
+    void setFiducal(bool state);
+
+    bool isWork() const;
+    void setWork(bool state);
+
 signals:
     void pressed();
 

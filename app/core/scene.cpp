@@ -55,6 +55,14 @@ BlobItem* Scene::addBlob(double x, double y, double dia)
     return blob;
 }
 
+BlobItem* Scene::addBlobCopy(const BlobItem* blob)
+{
+    double x = blob->x();
+    double y = blob->y();
+    double dia = blob->rect().width();
+    return addBlob(x, y, dia);
+}
+
 void Scene::addBorder()
 {
     static const QPen greenPen(Qt::green, 1, Qt::SolidLine);

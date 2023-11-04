@@ -16,6 +16,7 @@ class Scene : public QGraphicsScene, public Singleton<Scene>
 
 public:
     BlobItem* addBlob(double x, double y, double dia);
+    BlobItem* addBlobCopy(const BlobItem* blob);
 
     void addBorder();
     // Координаты изображения идут вместе с изображением

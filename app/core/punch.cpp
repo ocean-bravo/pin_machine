@@ -135,28 +135,16 @@ void PunchPrivate::run()
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 
-    QList<BlobItem*> itemsToUpdate;
-    for (QGraphicsItem* item  : qAsConst(itemsToUpdate))
+    QList<BlobItem*> referenceBlobs;
+
+    every<BlobItem>(scene().items(), [&referenceBlobs](BlobItem* blob)
     {
-        if (_stop)
-        {
-            emit message("program interrupted");
-            break;
-        }
-
-        if (isNot<BlobItem>(item))
-            continue;
-
-        BlobItem* blob = dynamic_cast<BlobItem*>(item);
-
-        if (!blob->data(0).toBool()) // не fiducial точка
-            continue;
-
-        itemsToUpdate.append(blob);
-    }
+        if (blob->isFiducial())
+            referenceBlobs.append(blob);
+    });
 
     int count  = 0;
-    for (BlobItem* refBlob  : qAsConst(itemsToUpdate))
+    for (BlobItem* refBlob  : qAsConst(referenceBlobs))
     {
         if (_stop)
         {
@@ -166,12 +154,8 @@ void PunchPrivate::run()
 
         ++count;
 
-        double xRef = refBlob->x();
-        double yRef = refBlob->y();
-        double diaRef = refBlob->rect().width();
-
-        BlobItem* workBlob = scene().addBlob(xRef, yRef, diaRef);
-        workBlob->setData(1, true); // work blob
+        BlobItem* workBlob = scene().addBlobCopy(refBlob);
+        workBlob->setWork(true);
 
         updateBlobPosition(workBlob);
         int result = updateBlobPosition(workBlob);
