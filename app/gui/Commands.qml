@@ -398,6 +398,24 @@ Item {
                 Item { height: 30; width: 10}
 
                 SmButton {
+                    id: save
+                    text: qsTr("Save")
+                    onClicked: {}
+                }
+
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
+
+                SmButton {
+                    id: load
+                    text: qsTr("Load")
+                    onClicked: {}
+                }
+
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
+
+                SmButton {
                     id: punchBlobs
                     text: qsTr("Punch")
                     checkable: true
