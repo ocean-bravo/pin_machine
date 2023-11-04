@@ -16,7 +16,7 @@ class UpdateBlobs : public QObject
     Q_OBJECT
 
 public:
-    UpdateBlobs(Video4* video, QObject* parent = nullptr);
+    UpdateBlobs(QObject* parent = nullptr);
     ~UpdateBlobs();
 
     Q_INVOKABLE void run();
@@ -37,7 +37,7 @@ class UpdateBlobsPrivate : public Task
     Q_OBJECT
 
 public:
-    UpdateBlobsPrivate(Video4* video);
+    UpdateBlobsPrivate();
 
 public slots:
     void run();
@@ -45,8 +45,6 @@ public slots:
 signals:
 
 private:
-    Video4* _video = nullptr;
-
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
 

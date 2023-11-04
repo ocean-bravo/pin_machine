@@ -17,7 +17,7 @@ class SearchBlobs : public QObject
     Q_OBJECT
 
 public:
-    SearchBlobs(Video4* video, QObject* parent = nullptr);
+    SearchBlobs(QObject* parent = nullptr);
     ~SearchBlobs();
 
     Q_INVOKABLE void run(QString program); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
@@ -50,7 +50,7 @@ class SearchBlobsPrivate : public Task
     Q_OBJECT
 
 public:
-    SearchBlobsPrivate(Video4* video);
+    SearchBlobsPrivate();
 
 public slots:
     void run(QString program);
@@ -63,8 +63,6 @@ signals:
 private:
     //void waitForGetPosition(double xTarget, double yTarget);
     void sleep(int);
-
-    Video4* _video = nullptr;
 
     QStringList _codeLines;
     int _lineToSend = 0;

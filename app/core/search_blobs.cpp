@@ -30,9 +30,9 @@ double extractFromGcodeY(QString line)
 
 }
 
-SearchBlobs::SearchBlobs(Video4 *video, QObject* parent)
+SearchBlobs::SearchBlobs(QObject* parent)
     : QObject(parent)
-    , _impl(new SearchBlobsPrivate(video))
+    , _impl(new SearchBlobsPrivate)
     , _thread(new QThread)
 {
     connect(_impl, &SearchBlobsPrivate::message, this, &SearchBlobs::message, Qt::QueuedConnection);
@@ -62,8 +62,7 @@ void SearchBlobs::stopProgram()
 }
 
 
-SearchBlobsPrivate::SearchBlobsPrivate(Video4 *video)
-    : _video(video)
+SearchBlobsPrivate::SearchBlobsPrivate()
 {
 
 }
@@ -148,14 +147,14 @@ void SearchBlobsPrivate::run(QString program)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
-    _video->stop();
+    video().stop();
 
     db().insert("resolution_width", 800);
     db().insert("resolution_height", 600);
     db().insert("pixel_size", 0.017);
 
-    _video->changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
-    _video->start();
+    video().changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
+    video().start();
 
     _lineToSend = 0;
     _codeLines = program.split("\n", Qt::KeepEmptyParts);
@@ -178,7 +177,7 @@ void SearchBlobsPrivate::run(QString program)
 
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(_video, &Video4::captured, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     while (true)
@@ -195,8 +194,8 @@ void SearchBlobsPrivate::run(QString program)
 
             emit message("capturing ...");
             auto a = QDateTime::currentMSecsSinceEpoch();
-            _video->capture();
-            waitForSignal(_video, &Video4::captured, 2000);
+            video().capture();
+            waitForSignal(&video(), &Video4::captured, 2000);
             auto b = QDateTime::currentMSecsSinceEpoch();
             emit message(QString("captured %1 ms").arg(b-a));
 

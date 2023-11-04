@@ -17,7 +17,7 @@ class Punch : public QObject
     Q_OBJECT
 
 public:
-    Punch(Video4* video, QObject* parent = nullptr);
+    Punch(QObject* parent = nullptr);
     ~Punch();
 
     Q_INVOKABLE void run();
@@ -38,7 +38,7 @@ class PunchPrivate : public Task
     Q_OBJECT
 
 public:
-    PunchPrivate(Video4* video);
+    PunchPrivate();
 
 public slots:
     void run();
@@ -46,8 +46,6 @@ public slots:
 signals:
 
 private:
-    Video4* _video = nullptr;
-
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
 

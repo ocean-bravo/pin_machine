@@ -18,9 +18,9 @@
 
 #include "common.h"
 
-Punch::Punch(Video4 *video, QObject* parent)
+Punch::Punch(QObject* parent)
     : QObject(parent)
-    , _impl(new PunchPrivate(video))
+    , _impl(new PunchPrivate)
     , _thread(new QThread)
 {
     connect(_impl, &PunchPrivate::message, this, &Punch::message, Qt::QueuedConnection);
@@ -50,8 +50,7 @@ void Punch::stopProgram()
 }
 
 
-PunchPrivate::PunchPrivate(Video4 *video)
-    : _video(video)
+PunchPrivate::PunchPrivate()
 {
 
 }
@@ -64,14 +63,14 @@ void PunchPrivate::run()
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
-    _video->stop();
+    video().stop();
 
     db().insert("resolution_width", 1280);
     db().insert("resolution_height", 960);
     db().insert("pixel_size", 0.0107);
 
-    _video->changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
-    _video->start();
+    video().changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
+    video().start();
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -79,7 +78,7 @@ void PunchPrivate::run()
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(_video, &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 

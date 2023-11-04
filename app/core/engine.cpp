@@ -90,7 +90,7 @@ void Engine::createQmlEngine()
 {
     MyImageProvider* myImageProvider = new MyImageProvider;
 
-    connect(_videoDriver4, &Video4::newImage, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::newImage, this, [myImageProvider](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
@@ -104,12 +104,12 @@ void Engine::createQmlEngine()
             opencv().blobDetectorLive(img);
     });
 
-    connect(_videoDriver4, &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
     {
         myImageProvider->setImage(opencv().drawCross(img.copy()), "raw captured");
     });
 
-    connect(_videoDriver4, &Video4::captured, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::captured, this, [myImageProvider](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
         const QString x = db().value("x_coord").toString();
@@ -143,10 +143,10 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "small_blob_captured");
     });
 
-    SearchBlobs* sb = new SearchBlobs(_videoDriver4, this);
-    UpdateBlobs* ub = new UpdateBlobs(_videoDriver4, this);
+    SearchBlobs* sb = new SearchBlobs(this);
+    UpdateBlobs* ub = new UpdateBlobs(this);
     TestProgram* tp = new TestProgram(sb, ub, this);
-    Punch* pu = new Punch(_videoDriver4, this);
+    Punch* pu = new Punch(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -159,7 +159,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
-    _qmlEngine->rootContext()->setContextProperty("Video4", _videoDriver4);
+    _qmlEngine->rootContext()->setContextProperty("Video4", &video());
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());

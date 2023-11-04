@@ -35,7 +35,7 @@ private:
 
     V4L2 _videoDriver;
     Video3* _videoDriver3;
-    Video4* _videoDriver4;
+//    Video4* _videoDriver4;
     QImage _image;
 
     QByteArray _imgPpm;

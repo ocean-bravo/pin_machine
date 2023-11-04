@@ -18,9 +18,9 @@
 
 #include "common.h"
 
-UpdateBlobs::UpdateBlobs(Video4 *video, QObject* parent)
+UpdateBlobs::UpdateBlobs(QObject* parent)
     : QObject(parent)
-    , _impl(new UpdateBlobsPrivate(video))
+    , _impl(new UpdateBlobsPrivate)
     , _thread(new QThread)
 {
     connect(_impl, &UpdateBlobsPrivate::message, this, &UpdateBlobs::message, Qt::QueuedConnection);
@@ -50,8 +50,7 @@ void UpdateBlobs::stopProgram()
 }
 
 
-UpdateBlobsPrivate::UpdateBlobsPrivate(Video4 *video)
-    : _video(video)
+UpdateBlobsPrivate::UpdateBlobsPrivate()
 {
 
 }
@@ -61,14 +60,14 @@ void UpdateBlobsPrivate::run()
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
-    _video->stop();
+    video().stop();
 
     db().insert("resolution_width", 1280);
     db().insert("resolution_height", 960);
     db().insert("pixel_size", 0.0107);
 
-    _video->changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
-    _video->start();
+    video().changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
+    video().start();
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -79,7 +78,7 @@ void UpdateBlobsPrivate::run()
 
     scene().removeDuplicatedBlobs();
 
-    auto connection = connect(_video, &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 
