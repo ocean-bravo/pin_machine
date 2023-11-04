@@ -6,6 +6,8 @@
 #include <QAtomicInteger>
 #include <QMutex>
 
+#include "task.h"
+
 class Video4;
 
 class PunchPrivate;
@@ -31,7 +33,7 @@ private:
 };
 
 
-class PunchPrivate : public QObject
+class PunchPrivate : public Task
 {
     Q_OBJECT
 
@@ -42,8 +44,6 @@ public slots:
     void run();
 
 signals:
-    void message(QString);
-    void finished();
 
 private:
     Video4* _video = nullptr;

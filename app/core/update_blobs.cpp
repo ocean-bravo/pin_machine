@@ -74,58 +74,6 @@ void UpdateBlobsPrivate::run()
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
 
-    auto moveTo = [](double x, double y)
-    {
-        const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
-        serial().write(line.toLatin1() + "\n");
-    };
-
-    // point - массив строк. Возвр значение строка с пробелом между координатами
-    auto updateBlobPosition = [this, &moveTo] (BlobItem* blob) -> int
-    {
-        double xTarget = blob->x();
-        double yTarget = blob->y();
-        double diaTarget = blob->rect().width();
-
-        moveTo(xTarget, yTarget);
-
-        waitForGetPosition(xTarget, yTarget);
-
-        emit message("capturing ...");
-
-        _video->captureSmallRegion(diaTarget + 2);
-
-        waitForSignal(_video, &Video4::capturedSmallRegion, 2000);
-
-        emit message("captured");
-
-        QImage smallRegion = _video->smallRegion();
-        opencv().blobDetectorUpdated(smallRegion);
-
-        waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 500);
-
-        auto [ok, x, y, dia] = opencv().smallRegionBlob();
-
-        if (ok && (dia / diaTarget > 2)) // неправильный блоб
-            return 2;
-
-        //qd() << "diameter " << dia;
-        if (!ok)
-        {
-            emit message("blob NOT found");
-            // Как то пометить блоб, что он не найден в этом месте
-            return 1;
-        }
-        else
-        {
-            emit message("blob found");
-            qd() << "blob found";
-
-            // Обновили позицию и диаметро блоба
-            scene().updateBlob(blob, x, y, dia);
-            return 0;
-        }
-    };
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 

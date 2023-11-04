@@ -6,6 +6,7 @@
 #include <QAtomicInteger>
 #include <QMutex>
 
+#include "task.h"
 
 class Video4;
 
@@ -44,28 +45,20 @@ private:
 
 
 
-class SearchBlobsPrivate : public QObject
+class SearchBlobsPrivate : public Task
 {
     Q_OBJECT
 
 public:
     SearchBlobsPrivate(Video4* video);
 
-
 public slots:
-     void run(QString program);
-
+    void run(QString program);
     bool sendNextLine();
-
-
-
     void pauseProgram();
 
 signals:
-
-    void message(QString);
     void interrupt();
-    void finished();
 
 private:
     //void waitForGetPosition(double xTarget, double yTarget);

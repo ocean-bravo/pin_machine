@@ -36,7 +36,7 @@ Engine::Engine(QObject* parent)
     OpenCv::instance();
 
     _videoDriver3 = new Video3();
-    _videoDriver4 = new Video4();
+    Video4::instance();
 
     createQmlEngine();
 }

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QAtomicInteger>
 #include <QMutex>
+#include "task.h"
 
 class Video4;
 
@@ -31,7 +32,7 @@ private:
 };
 
 
-class UpdateBlobsPrivate : public QObject
+class UpdateBlobsPrivate : public Task
 {
     Q_OBJECT
 
@@ -42,8 +43,6 @@ public slots:
     void run();
 
 signals:
-    void message(QString);
-    void finished();
 
 private:
     Video4* _video = nullptr;
