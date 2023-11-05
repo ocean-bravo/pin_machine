@@ -1,4 +1,4 @@
-#include "task.h"
+#include "task_base.h"
 #include "serial.h"
 #include "utils.h"
 #include "utils2.h"
@@ -10,14 +10,14 @@
 
 #include <QString>
 
-void Task::moveTo(double x, double y)
+void TaskBase::moveTo(double x, double y)
 {
     const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
     serial().write(line.toLatin1() + "\n");
 
 }
 
-int Task::updateBlobPosition(BlobItem *blob)
+int TaskBase::updateBlobPosition(BlobItem *blob)
 {
     double xTarget = blob->x();
     double yTarget = blob->y();

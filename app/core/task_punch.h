@@ -6,15 +6,15 @@
 
 #include "task_base.h"
 
-class TaskUpdatePrivate;
+class TaskPunchPrivate;
 
-class TaskUpdate : public QObject
+class TaskPunch : public QObject
 {
     Q_OBJECT
 
 public:
-    TaskUpdate(QObject* parent = nullptr);
-    ~TaskUpdate();
+    TaskPunch(QObject* parent = nullptr);
+    ~TaskPunch();
 
     Q_INVOKABLE void run();
     Q_INVOKABLE void stopProgram();
@@ -24,21 +24,21 @@ signals:
     void finished();
 
 private:
-    TaskUpdatePrivate* const _impl;
+    TaskPunchPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
-class TaskUpdatePrivate : public TaskBase
+class TaskPunchPrivate : public TaskBase
 {
     Q_OBJECT
 
 public:
-    TaskUpdatePrivate();
+    TaskPunchPrivate();
 
 public slots:
     void run();
 
 private:
-    friend class TaskUpdate;
+    friend class TaskPunch;
 };

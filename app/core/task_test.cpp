@@ -1,4 +1,4 @@
-#include "test_program.h"
+#include "task_test.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -22,17 +22,14 @@
 #include "task_scan.h"
 #include "task_update.h"
 
-namespace {
 
-}
-
-TestProgram::TestProgram(TaskScan *sb, TaskUpdate *ub, QObject* parent)
+TaskTest::TaskTest(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     : QObject(parent)
-    , _impl(new TestProgramPrivate(sb, ub))
+    , _impl(new TaskTestPrivate(sb, ub))
     , _thread(new QThread)
 {
-    connect(_impl, &TestProgramPrivate::message, this, &TestProgram::message, Qt::QueuedConnection);
-    connect(_impl, &TestProgramPrivate::finished, this, &TestProgram::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskTestPrivate::message, this, &TaskTest::message, Qt::QueuedConnection);
+    connect(_impl, &TaskTestPrivate::finished, this, &TaskTest::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -40,19 +37,19 @@ TestProgram::TestProgram(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     _thread->start();
 }
 
-TestProgram::~TestProgram()
+TaskTest::~TaskTest()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void TestProgram::run(QString program)
+void TaskTest::run(QString program)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
-void TestProgram::stopProgram()
+void TaskTest::stopProgram()
 {
     _impl->_stop = true;
     _impl->_sb->stopProgram();
@@ -60,26 +57,13 @@ void TestProgram::stopProgram()
 }
 
 
-TestProgramPrivate::TestProgramPrivate(TaskScan *sb, TaskUpdate *ub)
+TaskTestPrivate::TaskTestPrivate(TaskScan *sb, TaskUpdate *ub)
 {
     _sb = sb;
     _ub = ub;
 }
 
-void TestProgramPrivate::pauseProgram()
-{
-
-}
-
-void TestProgramPrivate::wait(int timeout) const
-{
-    if (timeout <= 0)
-        return;
-
-    waitForSignal(this, &TestProgramPrivate::interrupt, timeout);
-}
-
-void TestProgramPrivate::run(QString program)
+void TaskTestPrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -110,5 +94,3 @@ void TestProgramPrivate::run(QString program)
 
     emit finished();
 }
-
-

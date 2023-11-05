@@ -133,15 +133,6 @@ void TaskScanPrivate::pauseProgram()
 //    loop.exec();
 //}
 
-void TaskScanPrivate::wait(int timeout) const
-{
-    if (timeout <= 0)
-        return;
-
-    waitForSignal(this, &TaskScanPrivate::interrupt, timeout);
-}
-
-
 void TaskScanPrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;

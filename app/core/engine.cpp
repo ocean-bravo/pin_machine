@@ -19,8 +19,8 @@
 #include "data_bus.h"
 #include "task_scan.h"
 #include "task_update.h"
-#include "test_program.h"
-#include "punch.h"
+#include "task_test.h"
+#include "task_punch.h"
 
 #include "openCv.h"
 
@@ -145,8 +145,8 @@ void Engine::createQmlEngine()
 
     TaskScan* sb = new TaskScan(this);
     TaskUpdate* ub = new TaskUpdate(this);
-    TestProgram* tp = new TestProgram(sb, ub, this);
-    Punch* pu = new Punch(this);
+    TaskTest* tp = new TaskTest(sb, ub, this);
+    TaskPunch* pu = new TaskPunch(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");

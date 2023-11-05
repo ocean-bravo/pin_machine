@@ -3,12 +3,8 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
-#include <QAtomicInteger>
-#include <QMutex>
 
-#include "task.h"
-
-class Video4;
+#include "task_base.h"
 
 class TaskScanPrivate;
 
@@ -31,17 +27,12 @@ signals:
     void finished();
 
 private:
-    //void waitForGetPosition();
-    void waitForSignal();
-    void sleep(int);
-
     TaskScanPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
-
-class TaskScanPrivate : public Task
+class TaskScanPrivate : public TaskBase
 {
     Q_OBJECT
 
@@ -53,21 +44,12 @@ public slots:
     bool sendNextLine();
     void pauseProgram();
 
-signals:
-    void interrupt();
-
 private:
-    //void waitForGetPosition(double xTarget, double yTarget);
-    void sleep(int);
-
     QStringList _codeLines;
     int _lineToSend = 0;
 
     double _xTarget;
     double _yTarget;
-    void wait(int timeout) const;
 
-    QMutex _mutex;
-    QAtomicInteger<bool> _stop = false;
     friend class TaskScan;
 };

@@ -1,4 +1,4 @@
-#include "punch.h"
+#include "task_punch.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -15,16 +15,15 @@
 #include <QScopeGuard>
 #include <QDateTime>
 
-
 #include "common.h"
 
-Punch::Punch(QObject* parent)
+TaskPunch::TaskPunch(QObject* parent)
     : QObject(parent)
-    , _impl(new PunchPrivate)
+    , _impl(new TaskPunchPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &PunchPrivate::message, this, &Punch::message, Qt::QueuedConnection);
-    connect(_impl, &PunchPrivate::finished, this, &Punch::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -32,30 +31,30 @@ Punch::Punch(QObject* parent)
     _thread->start();
 }
 
-Punch::~Punch()
+TaskPunch::~TaskPunch()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void Punch::run()
+void TaskPunch::run()
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
-void Punch::stopProgram()
+void TaskPunch::stopProgram()
 {
     _impl->_stop = true;
 }
 
 
-PunchPrivate::PunchPrivate()
+TaskPunchPrivate::TaskPunchPrivate()
 {
 
 }
 
-void PunchPrivate::run()
+void TaskPunchPrivate::run()
 {
     // Разница в диаметрах блобов, больше которой считается что блоб неправильный
     static const double wrongBlobDiaError = 0.3;
