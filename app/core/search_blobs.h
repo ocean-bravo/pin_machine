@@ -10,27 +10,23 @@
 
 class Video4;
 
-class SearchBlobsPrivate;
+class TaskScanPrivate;
 
-class SearchBlobs : public QObject
+class TaskScan : public QObject
 {
     Q_OBJECT
 
 public:
-    SearchBlobs(QObject* parent = nullptr);
-    ~SearchBlobs();
+    TaskScan(QObject* parent = nullptr);
+    ~TaskScan();
 
     Q_INVOKABLE void run(QString program); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
 
     bool sendNextLine();
 
-
-    void startProgram();
-    void pauseProgram();
-
     Q_INVOKABLE void stopProgram();
-signals:
 
+signals:
     void message(QString);
     void finished();
 
@@ -39,18 +35,18 @@ private:
     void waitForSignal();
     void sleep(int);
 
-    SearchBlobsPrivate* const _impl;
+    TaskScanPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
 
-class SearchBlobsPrivate : public Task
+class TaskScanPrivate : public Task
 {
     Q_OBJECT
 
 public:
-    SearchBlobsPrivate();
+    TaskScanPrivate();
 
 public slots:
     void run(QString program);
@@ -73,5 +69,5 @@ private:
 
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
-    friend class SearchBlobs;
+    friend class TaskScan;
 };

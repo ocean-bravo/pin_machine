@@ -30,13 +30,13 @@ double extractFromGcodeY(QString line)
 
 }
 
-SearchBlobs::SearchBlobs(QObject* parent)
+TaskScan::TaskScan(QObject* parent)
     : QObject(parent)
-    , _impl(new SearchBlobsPrivate)
+    , _impl(new TaskScanPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &SearchBlobsPrivate::message, this, &SearchBlobs::message, Qt::QueuedConnection);
-    connect(_impl, &SearchBlobsPrivate::finished, this, &SearchBlobs::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskScanPrivate::message, this, &TaskScan::message, Qt::QueuedConnection);
+    connect(_impl, &TaskScanPrivate::finished, this, &TaskScan::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -44,30 +44,30 @@ SearchBlobs::SearchBlobs(QObject* parent)
     _thread->start();
 }
 
-SearchBlobs::~SearchBlobs()
+TaskScan::~TaskScan()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void SearchBlobs::run(QString program)
+void TaskScan::run(QString program)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
-void SearchBlobs::stopProgram()
+void TaskScan::stopProgram()
 {
     _impl->_stop = true;
 }
 
 
-SearchBlobsPrivate::SearchBlobsPrivate()
+TaskScanPrivate::TaskScanPrivate()
 {
 
 }
 
-bool SearchBlobsPrivate::sendNextLine()
+bool TaskScanPrivate::sendNextLine()
 {
     QString line = _codeLines[_lineToSend];
     int lineNumber = _lineToSend+1;
@@ -93,7 +93,7 @@ bool SearchBlobsPrivate::sendNextLine()
     return line.length() > 0;
 }
 
-void SearchBlobsPrivate::pauseProgram()
+void TaskScanPrivate::pauseProgram()
 {
 
 }
@@ -133,16 +133,16 @@ void SearchBlobsPrivate::pauseProgram()
 //    loop.exec();
 //}
 
-void SearchBlobsPrivate::wait(int timeout) const
+void TaskScanPrivate::wait(int timeout) const
 {
     if (timeout <= 0)
         return;
 
-    waitForSignal(this, &SearchBlobsPrivate::interrupt, timeout);
+    waitForSignal(this, &TaskScanPrivate::interrupt, timeout);
 }
 
 
-void SearchBlobsPrivate::run(QString program)
+void TaskScanPrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });

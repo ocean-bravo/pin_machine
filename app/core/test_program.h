@@ -11,7 +11,7 @@ class Video4;
 
 class TestProgramPrivate;
 
-class SearchBlobs;
+class TaskScan;
 class UpdateBlobs;
 
 class TestProgram : public QObject
@@ -19,7 +19,7 @@ class TestProgram : public QObject
     Q_OBJECT
 
 public:
-    TestProgram(SearchBlobs* sb, UpdateBlobs* ub, QObject* parent = nullptr);
+    TestProgram(TaskScan* sb, UpdateBlobs* ub, QObject* parent = nullptr);
     ~TestProgram();
 
     Q_INVOKABLE void run(QString program);
@@ -45,7 +45,7 @@ class TestProgramPrivate : public QObject
     Q_OBJECT
 
 public:
-    TestProgramPrivate(SearchBlobs* sb, UpdateBlobs* ub);
+    TestProgramPrivate(TaskScan* sb, UpdateBlobs* ub);
 
 
 public slots:
@@ -65,7 +65,7 @@ private:
 
     void wait(int timeout) const;
 
-    SearchBlobs* _sb = nullptr;
+    TaskScan* _sb = nullptr;
     UpdateBlobs* _ub = nullptr;
 
     QMutex _mutex;

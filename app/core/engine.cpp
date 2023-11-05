@@ -143,7 +143,7 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "small_blob_captured");
     });
 
-    SearchBlobs* sb = new SearchBlobs(this);
+    TaskScan* sb = new TaskScan(this);
     UpdateBlobs* ub = new UpdateBlobs(this);
     TestProgram* tp = new TestProgram(sb, ub, this);
     Punch* pu = new Punch(this);

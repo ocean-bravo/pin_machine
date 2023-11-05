@@ -26,7 +26,7 @@ namespace {
 
 }
 
-TestProgram::TestProgram(SearchBlobs *sb, UpdateBlobs *ub, QObject* parent)
+TestProgram::TestProgram(TaskScan *sb, UpdateBlobs *ub, QObject* parent)
     : QObject(parent)
     , _impl(new TestProgramPrivate(sb, ub))
     , _thread(new QThread)
@@ -60,7 +60,7 @@ void TestProgram::stopProgram()
 }
 
 
-TestProgramPrivate::TestProgramPrivate(SearchBlobs *sb, UpdateBlobs *ub)
+TestProgramPrivate::TestProgramPrivate(TaskScan *sb, UpdateBlobs *ub)
 {
     _sb = sb;
     _ub = ub;
@@ -94,7 +94,7 @@ void TestProgramPrivate::run(QString program)
 
         _sb->run(program);
 
-        waitForSignal(_sb, &SearchBlobs::finished, 3600*1000);
+        waitForSignal(_sb, &TaskScan::finished, 3600*1000);
 
         if (_stop)
         {
