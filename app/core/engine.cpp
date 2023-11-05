@@ -17,7 +17,7 @@
 #include <QQuickStyle>
 
 #include "data_bus.h"
-#include "search_blobs.h"
+#include "task_scan.h"
 #include "update_blobs.h"
 #include "test_program.h"
 #include "punch.h"

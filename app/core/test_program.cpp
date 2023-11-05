@@ -19,7 +19,7 @@
 #include <QGraphicsEllipseItem>
 
 #include "common.h"
-#include "search_blobs.h"
+#include "task_scan.h"
 #include "update_blobs.h"
 
 namespace {
