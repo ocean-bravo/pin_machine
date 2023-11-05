@@ -9,15 +9,15 @@
 
 class Video4;
 
-class UpdateBlobsPrivate;
+class TaskUpdatePrivate;
 
-class UpdateBlobs : public QObject
+class TaskUpdate : public QObject
 {
     Q_OBJECT
 
 public:
-    UpdateBlobs(QObject* parent = nullptr);
-    ~UpdateBlobs();
+    TaskUpdate(QObject* parent = nullptr);
+    ~TaskUpdate();
 
     Q_INVOKABLE void run();
     Q_INVOKABLE void stopProgram();
@@ -27,17 +27,17 @@ signals:
     void finished();
 
 private:
-    UpdateBlobsPrivate* const _impl;
+    TaskUpdatePrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
-class UpdateBlobsPrivate : public Task
+class TaskUpdatePrivate : public Task
 {
     Q_OBJECT
 
 public:
-    UpdateBlobsPrivate();
+    TaskUpdatePrivate();
 
 public slots:
     void run();
@@ -48,5 +48,5 @@ private:
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
 
-    friend class UpdateBlobs;
+    friend class TaskUpdate;
 };

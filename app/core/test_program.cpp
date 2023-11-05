@@ -20,13 +20,13 @@
 
 #include "common.h"
 #include "task_scan.h"
-#include "update_blobs.h"
+#include "task_update.h"
 
 namespace {
 
 }
 
-TestProgram::TestProgram(TaskScan *sb, UpdateBlobs *ub, QObject* parent)
+TestProgram::TestProgram(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     : QObject(parent)
     , _impl(new TestProgramPrivate(sb, ub))
     , _thread(new QThread)
@@ -60,7 +60,7 @@ void TestProgram::stopProgram()
 }
 
 
-TestProgramPrivate::TestProgramPrivate(TaskScan *sb, UpdateBlobs *ub)
+TestProgramPrivate::TestProgramPrivate(TaskScan *sb, TaskUpdate *ub)
 {
     _sb = sb;
     _ub = ub;
@@ -104,7 +104,7 @@ void TestProgramPrivate::run(QString program)
 
         _ub->run();
 
-        waitForSignal(_ub, &UpdateBlobs::finished, 3600*1000);
+        waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 
     }
 

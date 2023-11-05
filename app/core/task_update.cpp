@@ -1,4 +1,4 @@
-#include "update_blobs.h"
+#include "task_update.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -18,13 +18,13 @@
 
 #include "common.h"
 
-UpdateBlobs::UpdateBlobs(QObject* parent)
+TaskUpdate::TaskUpdate(QObject* parent)
     : QObject(parent)
-    , _impl(new UpdateBlobsPrivate)
+    , _impl(new TaskUpdatePrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &UpdateBlobsPrivate::message, this, &UpdateBlobs::message, Qt::QueuedConnection);
-    connect(_impl, &UpdateBlobsPrivate::finished, this, &UpdateBlobs::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskUpdatePrivate::message, this, &TaskUpdate::message, Qt::QueuedConnection);
+    connect(_impl, &TaskUpdatePrivate::finished, this, &TaskUpdate::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -32,30 +32,30 @@ UpdateBlobs::UpdateBlobs(QObject* parent)
     _thread->start();
 }
 
-UpdateBlobs::~UpdateBlobs()
+TaskUpdate::~TaskUpdate()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void UpdateBlobs::run()
+void TaskUpdate::run()
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
-void UpdateBlobs::stopProgram()
+void TaskUpdate::stopProgram()
 {
     _impl->_stop = true;
 }
 
 
-UpdateBlobsPrivate::UpdateBlobsPrivate()
+TaskUpdatePrivate::TaskUpdatePrivate()
 {
 
 }
 
-void UpdateBlobsPrivate::run()
+void TaskUpdatePrivate::run()
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });

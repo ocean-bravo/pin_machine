@@ -18,7 +18,7 @@
 
 #include "data_bus.h"
 #include "task_scan.h"
-#include "update_blobs.h"
+#include "task_update.h"
 #include "test_program.h"
 #include "punch.h"
 
@@ -144,7 +144,7 @@ void Engine::createQmlEngine()
     });
 
     TaskScan* sb = new TaskScan(this);
-    UpdateBlobs* ub = new UpdateBlobs(this);
+    TaskUpdate* ub = new TaskUpdate(this);
     TestProgram* tp = new TestProgram(sb, ub, this);
     Punch* pu = new Punch(this);
 
