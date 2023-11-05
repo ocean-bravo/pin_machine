@@ -81,6 +81,13 @@ void TaskPunchPrivate::run()
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 
+    // Удаляю все рабочие блобы
+    every<BlobItem>(scene().items(), [](BlobItem* blob)
+    {
+        if (blob->isWork())
+            delete blob;
+    });
+
     QList<BlobItem*> referenceBlobs;
 
     every<BlobItem>(scene().items(), [&referenceBlobs](BlobItem* blob)

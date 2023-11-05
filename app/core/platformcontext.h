@@ -40,7 +40,6 @@
 
 #include "openpnp-capture.h"
 
-#pragma comment(lib, "strmiids")
 #include "platformdeviceinfo.h"
 #include "context.h"
 
