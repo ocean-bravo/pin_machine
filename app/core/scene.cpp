@@ -22,16 +22,18 @@ Scene::~Scene()
 
 }
 
-BlobItem* Scene::addBlob(double x, double y, double dia)
+BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 {
     //QMutexLocker locker(&_mutex);
 
     BlobItem* blob = new BlobItem(x, y, dia);
 
-    auto foo = [this, blob]()
+    auto foo = [this, blob, sceneIsParent]()
     {
-        blob->setParentItem(_board);
-        addItem(blob);
+        if (sceneIsParent)
+            addItem(blob);
+        else
+            blob->setParentItem(_board);
     };
 
     static const QThread* sceneThread = thread();

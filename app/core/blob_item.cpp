@@ -104,7 +104,7 @@ void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
     {
         QJsonObject jo;
         jo.insert("label_number", 1);
-        jo.insert("text", QString("pos: %1 %2").arg(toReal3(pos().x())).arg(toReal3(pos().y())));
+        jo.insert("text", QString("pos: %1 %2").arg(toReal3(scenePos().x())).arg(toReal3(scenePos().y())));
         db().insert("message", jo);
     }
 
