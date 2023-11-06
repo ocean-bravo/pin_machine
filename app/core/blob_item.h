@@ -14,8 +14,8 @@ public:
     bool isFiducial() const;
     void setFiducal(bool state);
 
-    bool isWork() const;
-    void setWork(bool state);
+    bool isPunch() const;
+    void setPunch(bool state);
 
 signals:
     void pressed();
@@ -29,6 +29,8 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
+    QRectF boundingRect() const override;
 
 private:
     void highlight();

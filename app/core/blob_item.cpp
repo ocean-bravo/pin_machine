@@ -32,15 +32,32 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     QStyleOptionGraphicsItem savedOption = *option;
     savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
 
+    QPen p = pen();
     if (isFiducial())
-        setBrush(Qt::magenta);
-    else if (isSelected())
+        p.setColor(Qt::magenta);
+    else
+        p.setColor(Qt::red);
+
+    setPen(p);
+
+    if (isFiducial())
+    {
+        // элемент выглядит единым целым, прозрачности не накладываются
+        painter->setPen(p);
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
+
+        double rad = rect().width()/2;
+
+        painter->drawLine(QLineF( 0,  rad,  0,  2*rad));
+        painter->drawLine(QLineF( 0, -rad,  0, -2*rad));
+        painter->drawLine(QLineF( rad,  0,  2*rad,  0));
+        painter->drawLine(QLineF(-rad,  0, -2*rad,  0));
+    }
+
+    if (isSelected())
         setBrush(Qt::blue);
     else
         setBrush(QBrush());
-
-    if (isWork())
-        setBrush(Qt::yellow);
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
@@ -51,13 +68,22 @@ QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         const bool selected = value.toBool();
 
-        if (!selected)
-            setFiducal(false);
-
         // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
         runOnThread(this, [this](){ update(); });
     }
     return QGraphicsItem::itemChange(change, value);
+}
+
+QRectF BlobItem::boundingRect() const
+{
+    QRectF boundRect = QGraphicsEllipseItem::boundingRect();
+
+    // Увеличиваю bounding rect, всегда, не только когда элемент fiducial, чтобы не оставались артефакты
+    // после снятия fiducial свойства
+    double rad = rect().width()/2;
+    boundRect.adjust(-rad, -rad, rad, rad);
+
+    return boundRect;
 }
 
 bool BlobItem::isFiducial() const
@@ -70,12 +96,12 @@ void BlobItem::setFiducal(bool state)
     setData(0, state);
 }
 
-bool BlobItem::isWork() const
+bool BlobItem::isPunch() const
 {
     return data(1).toBool();
 }
 
-void BlobItem::setWork(bool state)
+void BlobItem::setPunch(bool state)
 {
     setData(1, state);
 }
@@ -133,9 +159,6 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
-    if (!isSelected())
-        return;
-
     QMenu menu;
 
     QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");

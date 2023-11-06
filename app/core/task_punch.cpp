@@ -84,11 +84,13 @@ void TaskPunchPrivate::run()
     // Удаляю все рабочие блобы
     every<BlobItem>(scene().items(), [](BlobItem* blob)
     {
-        if (blob->isWork())
+        if (blob->isPunch())
             delete blob;
     });
 
+
     QList<BlobItem*> referenceBlobs;
+
 
     every<BlobItem>(scene().items(), [&referenceBlobs](BlobItem* blob)
     {
@@ -108,7 +110,7 @@ void TaskPunchPrivate::run()
         ++count;
 
         BlobItem* workBlob = scene().addBlobCopy(refBlob);
-        workBlob->setWork(true);
+        workBlob->setPunch(true);
 
         updateBlobPosition(workBlob);
         int result = updateBlobPosition(workBlob);
