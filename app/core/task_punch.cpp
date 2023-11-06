@@ -81,25 +81,17 @@ void TaskPunchPrivate::run()
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
 
-    // Удаляю все рабочие блобы
-    every<BlobItem>(scene().items(), [](BlobItem* blob)
-    {
-        if (blob->isPunch())
-            delete blob;
-    });
+    QList<BlobItem*> referenceFiducialBlobs;
 
-
-    QList<BlobItem*> referenceBlobs;
-
-
-    every<BlobItem>(scene().items(), [&referenceBlobs](BlobItem* blob)
+    every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
     {
         if (blob->isFiducial())
-            referenceBlobs.append(blob);
+            referenceFiducialBlobs.append(blob);
     });
 
     int count  = 0;
-    for (BlobItem* refBlob  : qAsConst(referenceBlobs))
+    QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
+    for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
         if (_stop)
         {
@@ -109,18 +101,60 @@ void TaskPunchPrivate::run()
 
         ++count;
 
-        BlobItem* workBlob = scene().addBlobCopy(refBlob);
-        workBlob->setPunch(true);
+        BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob);
+        realFiducialBlob->setFiducial(true);
+        realFiducialBlob->setRotation(45); // чтобы его отличать от идеальной опорной точки
 
-        updateBlobPosition(workBlob);
-        int result = updateBlobPosition(workBlob);
+        updateBlobPosition(realFiducialBlob);
+        int result = updateBlobPosition(realFiducialBlob);
         if (result > 0)
         {
-            result = updateBlobPosition(workBlob);
+            result = updateBlobPosition(realFiducialBlob);
             if (result > 0)
-                result = updateBlobPosition(workBlob);
+                result = updateBlobPosition(realFiducialBlob);
         }
+        fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
     }
+
+    // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
+    // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
+    // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
+    // realFiducialBlob  не привязана никуда.
+
+    // Получаем плату со сцены
+    QGraphicsItem* board = scene().board();
+
+    QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
+    QPointF firstReal = std::get<1>(fiducialBlobs[0])->pos();
+
+    QPointF secondRef = std::get<0>(fiducialBlobs[1])->pos();
+    QPointF secondReal = std::get<1>(fiducialBlobs[1])->pos();
+
+    // Помещаем transform origin всей платы в первую идеальную fid точку.
+    board->setTransformOriginPoint(firstRef);
+
+    // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
+    board->setPos(firstReal);
+
+    double angleReal = QLineF(firstReal, secondReal).angle();
+    double angleRef = QLineF(firstRef, secondRef).angle();
+
+    double deltaAngle = angleReal - angleRef;
+
+    // Довернули плату до реального угла
+    board->setRotation(deltaAngle); // TODO: По тестам определить знак угла
+
+
+
+
+
+    // Двигаем плату до совпадения с реальной fid точки.
+    // Получается надо иметь пары - идеальная fid точка и реальная fid точки.
+    // дальше определяем угол между реальными fid точками и доворачиваем плату до этого угла
+    // Чтобы идеальные fid точки имели этот же угол.
+
+
+
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("punch blobs finished");

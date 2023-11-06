@@ -12,7 +12,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
     bool isFiducial() const;
-    void setFiducal(bool state);
+    void setFiducial(bool state);
 
     bool isPunch() const;
     void setPunch(bool state);

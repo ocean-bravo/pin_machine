@@ -7,6 +7,7 @@
 #include "openCv.h"
 #include "data_bus.h"
 #include "scene.h"
+#include "blob_item.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -157,12 +158,14 @@ void TaskScanPrivate::run(QString program)
     db().insert("capture_number", 0);
     //ImagesStorage.clearCaptured()
     scene().clear();
-    scene().addBorder();
+    scene().addBoard();
 
     scene().addBlob(5,5,25);
 
     scene().addBlob(35,5,25);
-    scene().addBlob(5,35,25);
+    BlobItem* bl = scene().addBlob(5,35,25);
+    bl->setFiducial(true);
+    bl->setRotation(45);
 
     wait(200);
 

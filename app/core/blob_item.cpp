@@ -33,11 +33,7 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     savedOption.state &= ~QStyle::State_Selected; // сбрасываю состояние выделения
 
     QPen p = pen();
-    if (isFiducial())
-        p.setColor(Qt::magenta);
-    else
-        p.setColor(Qt::red);
-
+    p.setColor(isFiducial() ? Qt::magenta : Qt::red);
     setPen(p);
 
     if (isFiducial())
@@ -54,10 +50,7 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
         painter->drawLine(QLineF(-rad,  0, -2*rad,  0));
     }
 
-    if (isSelected())
-        setBrush(Qt::blue);
-    else
-        setBrush(QBrush());
+    setBrush(isPunch() ? Qt::blue : QBrush());
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
@@ -91,19 +84,19 @@ bool BlobItem::isFiducial() const
     return data(0).toBool();
 }
 
-void BlobItem::setFiducal(bool state)
+void BlobItem::setFiducial(bool state)
 {
     setData(0, state);
 }
 
 bool BlobItem::isPunch() const
 {
-    return data(1).toBool();
+    return isSelected();
 }
 
 void BlobItem::setPunch(bool state)
 {
-    setData(1, state);
+    setSelected(state);
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
@@ -165,7 +158,7 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 
     menu.addAction(menuText, this, [this]()
     {
-        setFiducal(!isFiducial());
+        setFiducial(!isFiducial());
 
         // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
         runOnThread(this, [this](){ update(); });

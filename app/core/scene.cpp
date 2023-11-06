@@ -2,6 +2,8 @@
 
 #include "blob_item.h"
 #include "camera_view_item.h"
+#include "board_item.h"
+
 #include "data_bus.h"
 #include "utils2.h"
 #include "common.h"
@@ -28,6 +30,7 @@ BlobItem* Scene::addBlob(double x, double y, double dia)
 
     auto foo = [this, blob]()
     {
+        blob->setParentItem(_board);
         addItem(blob);
     };
 
@@ -63,14 +66,17 @@ BlobItem* Scene::addBlobCopy(const BlobItem* blob)
     return addBlob(x, y, dia);
 }
 
-void Scene::addBorder()
+void Scene::addBoard()
 {
-    static const QPen greenPen(Qt::green, 1, Qt::SolidLine);
-
-    //QMutexLocker locker(&_mutex);
-
-    runOnThread(this, [this]() { addRect(0, 0, 300, 300, greenPen); });
+   //QMutexLocker locker(&_mutex);
+    _board = new BoardItem;
+    runOnThread(this, [this]() { addItem(_board); });
     runOnThread(this, [this]() { addItem(new CameraViewItem); });
+}
+
+QGraphicsItem* Scene::board() const
+{
+    return _board;
 }
 
 void Scene::setImage(QImage img)
@@ -96,7 +102,7 @@ void Scene::setImagePrivate(QImage img)
 
     const double ratio = pix.rect().width() / imageWidthMm;
 
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix);
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
