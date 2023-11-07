@@ -88,8 +88,10 @@ void TaskPunchPrivate::run()
     // Восстанавливаю поворот и позицию платы с предудущего раза.
     //scene().board()->setTransformOriginPoint({0,0});
     runOnThread(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
-    scene().board()->setRotation(0);
-    scene().board()->setPos({0,0});
+    runOnThread(&scene(), []() { scene().board()->setRotation(0);});
+    runOnThread(&scene(), []() { scene().board()->setPos({0,0});});
+//    scene().board()->setRotation(0);
+//    scene().board()->setPos({0,0});
 
 
 
