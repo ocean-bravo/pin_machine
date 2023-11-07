@@ -3,7 +3,6 @@
 #include <QGraphicsScene>
 #include <QMetaObject>
 #include <QMutex>
-#include <QScopedPointer>
 
 #include "singleton.h"
 
@@ -37,7 +36,7 @@ private:
     Scene(QObject* parent = nullptr);
     ~Scene();
 
-    QScopedPointer<QGraphicsItem> _board;
+    QGraphicsItem* _board = nullptr;
 
     mutable QMutex _mutex;
 

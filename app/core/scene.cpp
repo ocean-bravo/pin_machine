@@ -33,7 +33,7 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
         if (sceneIsParent)
             addItem(blob);
         else
-            blob->setParentItem(_board.data());
+            blob->setParentItem(_board);
     };
 
     runOnThreadWait(this, foo);
@@ -73,17 +73,24 @@ BlobItem* Scene::addBlobCopy(const BlobItem* blob, bool sceneIsParent)
 void Scene::addBoard()
 {
    //QMutexLocker locker(&_mutex);
-    _board.reset(new BoardItem);
+    //_board.reset(new BoardItem);
+
 //    runOnThread(this, [this]() { addItem(_board.data()); });
 //    runOnThread(this, [this]() { addItem(new CameraViewItem); });
 
-    runOnThreadWait(this, [this]() { addItem(_board.data()); });
-    runOnThreadWait(this, [this]() { addItem(new CameraViewItem); });
+    runOnThreadWait(this, [this]()
+    {
+        every<BoardItem>(scene().items(), [](BoardItem* board) { delete board; });
+        _board = new BoardItem;
+        addItem(_board);
+        every<CameraViewItem>(scene().items(), [](CameraViewItem* camera) { delete camera; });
+        addItem(new CameraViewItem);
+    });
 }
 
 QGraphicsItem* Scene::board() const
 {
-    return _board.data();
+    return _board;
 }
 
 void Scene::setImage(QImage img)
@@ -109,7 +116,7 @@ void Scene::setImagePrivate(QImage img)
 
     const double ratio = pix.rect().width() / imageWidthMm;
 
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board.data());
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
