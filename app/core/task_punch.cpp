@@ -80,6 +80,13 @@ void TaskPunchPrivate::run()
     auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
+    every<BlobItem>(scene().items(), [](BlobItem* blob)
+    {
+        if (blob->isRealFiducial())
+            delete blob;
+    });
+
+
     QList<BlobItem*> referenceFiducialBlobs;
 
     every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
