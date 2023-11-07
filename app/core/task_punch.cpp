@@ -80,11 +80,13 @@ void TaskPunchPrivate::run()
     auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    every<BlobItem>(scene().items(), [](BlobItem* blob)
-    {
-        if (blob->isRealFiducial())
-            delete blob;
-    });
+    // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
+    every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) delete blob; });
+
+    // Восстанавливаю поворот и позицию платы с предудущего раза.
+    scene().board()->setTransformOriginPoint({0,0});
+    scene().board()->setRotation(0);
+    scene().board()->setPos({0,0});
 
 
     QList<BlobItem*> referenceFiducialBlobs;
@@ -142,9 +144,6 @@ void TaskPunchPrivate::run()
     // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
     // realFiducialBlob  не привязана никуда.
 
-    // Получаем плату со сцены
-    QGraphicsItem* board = scene().board();
-
     QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
     QPointF firstReal = std::get<1>(fiducialBlobs[0])->pos();
 
@@ -153,10 +152,10 @@ void TaskPunchPrivate::run()
 
     // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
     // Реальная точка стоит, к ней двигаем плату с идеальной точкой
-    board->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y());
+    scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y());
 
     // Помещаем transform origin всей платы в первую идеальную fid точку.
-    board->setTransformOriginPoint(firstRef);
+    scene().board()->setTransformOriginPoint(firstRef);
 
     double angleReal = QLineF(firstReal, secondReal).angle();
     double angleRef = QLineF(firstRef, secondRef).angle();
@@ -164,7 +163,7 @@ void TaskPunchPrivate::run()
     double deltaAngle = angleReal - angleRef;
 
     // Довернули плату до реального угла
-    board->setRotation(-deltaAngle); // TODO: По тестам определить знак угла
+    scene().board()->setRotation(-deltaAngle); // TODO: По тестам определить знак угла
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     every<BlobItem>(scene().items(), [this](BlobItem* blob)
@@ -176,6 +175,8 @@ void TaskPunchPrivate::run()
             wait(500);
         }
     });
+
+    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("punch blobs finished");
