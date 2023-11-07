@@ -39,7 +39,7 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
     static const QThread* sceneThread = thread();
     const QThread* executorThread = QThread::currentThread();
 
-    if (sceneThread != executorThread)
+    //if (sceneThread != executorThread)
     {
         QEventLoop loop;
         runOnThread(this, [this, foo, &loop]()
@@ -50,13 +50,13 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 
         loop.exec();
     }
-    else
-    {
-        runOnThread(this, [this, foo]()
-        {
-            foo();
-        });
-    }
+//    else
+//    {
+//        runOnThread(this, [this, foo]()
+//        {
+//            foo();
+//        });
+//    }
     return blob;
 }
 
@@ -143,7 +143,7 @@ void Scene::removeDuplicatedBlobs()
     static const QThread* sceneThread = thread();
     const QThread* executorThread = QThread::currentThread();
 
-    if (sceneThread != executorThread)
+    //if (sceneThread != executorThread)
     {
         QEventLoop loop;
         runOnThread(this, [this, &foo, &loop]()
@@ -154,13 +154,13 @@ void Scene::removeDuplicatedBlobs()
 
         loop.exec();
     }
-    else
-    {
-        runOnThread(this, [this, &foo]()
-        {
-            foo();
-        });
-    }
+//    else
+//    {
+//        runOnThread(this, [this, &foo]()
+//        {
+//            foo();
+//        });
+//    }
 }
 
 void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
@@ -177,7 +177,7 @@ void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
     static const QThread* sceneThread = thread();
     const QThread* executorThread = QThread::currentThread();
 
-    if (sceneThread != executorThread)
+    //if (sceneThread != executorThread)
     {
         QEventLoop loop;
         runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
@@ -188,13 +188,13 @@ void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
 
         loop.exec();
     }
-    else
-    {
-        runOnThread(this, [this, &foo, blob, x, y, dia]()
-        {
-            foo(blob, x, y, dia);
-        });
-    }
+//    else
+//    {
+//        runOnThread(this, [this, &foo, blob, x, y, dia]()
+//        {
+//            foo(blob, x, y, dia);
+//        });
+//    }
 }
 
 QList<QGraphicsItem*> Scene::items(Qt::SortOrder order) const
