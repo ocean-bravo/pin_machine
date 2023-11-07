@@ -160,10 +160,14 @@ void TaskPunchPrivate::run()
 
     // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
     // Реальная точка стоит, к ней двигаем плату с идеальной точкой
-    scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y());
+    //scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y());
+    runOnThread(&scene(), [=]() { scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y()); });
+    wait(10);
 
     // Помещаем transform origin всей платы в первую идеальную fid точку.
-    scene().board()->setTransformOriginPoint(firstRef);
+//    scene().board()->setTransformOriginPoint(firstRef);
+    runOnThread(&scene(), [=]() { scene().board()->setTransformOriginPoint(firstRef); });
+    wait(10);
 
     double angleReal = QLineF(firstReal, secondReal).angle();
     double angleRef = QLineF(firstRef, secondRef).angle();
@@ -171,7 +175,9 @@ void TaskPunchPrivate::run()
     double deltaAngle = angleReal - angleRef;
 
     // Довернули плату до реального угла
-    scene().board()->setRotation(-deltaAngle); // TODO: По тестам определить знак угла
+    //scene().board()->setRotation(-deltaAngle); // TODO: По тестам определить знак угла
+    runOnThread(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
+    wait(10);
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     every<BlobItem>(scene().items(), [this](BlobItem* blob)
