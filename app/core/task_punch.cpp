@@ -81,7 +81,7 @@ void TaskPunchPrivate::run()
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
-    every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) delete blob; });
+    every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) blob->deleteLater(); });
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
