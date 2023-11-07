@@ -139,6 +139,7 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
     {
         setDragMode(DragMode::ScrollHandDrag);
         event->accept();
+        QGraphicsView::mousePressEvent(event);
         return;
     }
 
