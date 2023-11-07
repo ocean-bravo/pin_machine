@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QMetaObject>
+#include <QEventLoop>
 
 #include <tuple>
 
@@ -22,3 +23,17 @@ auto runOnThread(QObject* targetObject, Function function)
 {
     QMetaObject::invokeMethod(targetObject, std::move(function), Qt::QueuedConnection);
 }
+
+template<typename Function>
+auto runOnThreadWait(QObject* targetObject, Function foo)
+{
+    QEventLoop loop;
+    runOnThread(targetObject, [foo, &loop]()
+    {
+        foo();
+        loop.quit();
+    });
+
+    loop.exec();
+}
+

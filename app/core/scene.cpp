@@ -36,20 +36,22 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
             blob->setParentItem(_board.data());
     };
 
-    static const QThread* sceneThread = thread();
-    const QThread* executorThread = QThread::currentThread();
+    runOnThreadWait(this, foo);
+
+//    static const QThread* sceneThread = thread();
+//    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-    {
-        QEventLoop loop;
-        runOnThread(this, [this, foo, &loop]()
-        {
-            foo();
-            loop.quit();
-        });
+//    {
+//        QEventLoop loop;
+//        runOnThread(this, [this, foo, &loop]()
+//        {
+//            foo();
+//            loop.quit();
+//        });
 
-        loop.exec();
-    }
+//        loop.exec();
+//    }
 //    else
 //    {
 //        runOnThread(this, [this, foo]()
@@ -72,8 +74,11 @@ void Scene::addBoard()
 {
    //QMutexLocker locker(&_mutex);
     _board.reset(new BoardItem);
-    runOnThread(this, [this]() { addItem(_board.data()); });
-    runOnThread(this, [this]() { addItem(new CameraViewItem); });
+//    runOnThread(this, [this]() { addItem(_board.data()); });
+//    runOnThread(this, [this]() { addItem(new CameraViewItem); });
+
+    runOnThreadWait(this, [this]() { addItem(_board.data()); });
+    runOnThreadWait(this, [this]() { addItem(new CameraViewItem); });
 }
 
 QGraphicsItem* Scene::board() const
@@ -140,20 +145,22 @@ void Scene::removeDuplicatedBlobs()
         }
     };
 
-    static const QThread* sceneThread = thread();
-    const QThread* executorThread = QThread::currentThread();
+    runOnThreadWait(this, foo);
+
+//    static const QThread* sceneThread = thread();
+//    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-    {
-        QEventLoop loop;
-        runOnThread(this, [this, &foo, &loop]()
-        {
-            foo();
-            loop.quit();
-        });
+//    {
+//        QEventLoop loop;
+//        runOnThread(this, [this, &foo, &loop]()
+//        {
+//            foo();
+//            loop.quit();
+//        });
 
-        loop.exec();
-    }
+//        loop.exec();
+//    }
 //    else
 //    {
 //        runOnThread(this, [this, &foo]()
@@ -167,27 +174,29 @@ void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
 {
     //QMutexLocker locker(&_mutex);
 
-    auto foo = [](BlobItem* blob, double x, double y, double dia)
+    auto foo = [blob, x, y, dia]()
     {
         blob->setX(x);
         blob->setY(y);
         blob->setRect(-dia/2, -dia/2, dia, dia);
     };
 
-    static const QThread* sceneThread = thread();
-    const QThread* executorThread = QThread::currentThread();
+    runOnThreadWait(this, foo);
+
+//    static const QThread* sceneThread = thread();
+//    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-    {
-        QEventLoop loop;
-        runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
-        {
-            foo(blob, x, y, dia);
-            loop.quit();
-        });
+//    {
+//        QEventLoop loop;
+//        runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
+//        {
+//            foo(blob, x, y, dia);
+//            loop.quit();
+//        });
 
-        loop.exec();
-    }
+//        loop.exec();
+//    }
 //    else
 //    {
 //        runOnThread(this, [this, &foo, blob, x, y, dia]()
