@@ -60,12 +60,12 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
     return blob;
 }
 
-BlobItem* Scene::addBlobCopy(const BlobItem* blob)
+BlobItem* Scene::addBlobCopy(const BlobItem* blob, bool sceneIsParent)
 {
     double x = blob->x();
     double y = blob->y();
     double dia = blob->rect().width();
-    return addBlob(x, y, dia);
+    return addBlob(x, y, dia, sceneIsParent);
 }
 
 void Scene::addBoard()

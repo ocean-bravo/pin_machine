@@ -83,11 +83,14 @@ void TaskPunchPrivate::run()
     // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
     every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) delete blob; });
 
+    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+
     // Восстанавливаю поворот и позицию платы с предудущего раза.
     scene().board()->setTransformOriginPoint({0,0});
     scene().board()->setRotation(0);
     scene().board()->setPos({0,0});
 
+    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
     QList<BlobItem*> referenceFiducialBlobs;
 
@@ -109,7 +112,7 @@ void TaskPunchPrivate::run()
 
         ++count;
 
-        BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob);
+        BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         realFiducialBlob->setRealFiducial(true);
 
         updateBlobPosition(realFiducialBlob);

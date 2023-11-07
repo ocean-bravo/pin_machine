@@ -17,7 +17,7 @@ class Scene : public QGraphicsScene, public Singleton<Scene>
 
 public:
     BlobItem* addBlob(double x, double y, double dia, bool sceneIsParent = false);
-    BlobItem* addBlobCopy(const BlobItem* blob);
+    BlobItem* addBlobCopy(const BlobItem* blob, bool sceneIsParent = false);
 
     void addBoard();
     QGraphicsItem* board() const;
