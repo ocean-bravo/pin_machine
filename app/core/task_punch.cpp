@@ -90,7 +90,7 @@ void TaskPunchPrivate::run()
     runOnThread(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
     runOnThread(&scene(), []() { scene().board()->setRotation(0);});
     runOnThread(&scene(), []() { scene().board()->setPos({0,0});});
-    wait(5);
+    wait(50);
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
