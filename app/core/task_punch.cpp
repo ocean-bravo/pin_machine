@@ -108,8 +108,7 @@ void TaskPunchPrivate::run()
         ++count;
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob);
-        realFiducialBlob->setFiducial(true);
-        realFiducialBlob->setRotation(45); // чтобы его отличать от идеальной опорной точки
+        realFiducialBlob->setRealFiducial(true);
 
         updateBlobPosition(realFiducialBlob);
         int result = updateBlobPosition(realFiducialBlob);
