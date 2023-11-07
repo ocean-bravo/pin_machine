@@ -86,14 +86,11 @@ void TaskPunchPrivate::run()
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
     // Восстанавливаю поворот и позицию платы с предудущего раза.
-    //scene().board()->setTransformOriginPoint({0,0});
+    // Надо выполнять в потоке сцены, там внутри запускается какой то таймер
     runOnThread(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
     runOnThread(&scene(), []() { scene().board()->setRotation(0);});
     runOnThread(&scene(), []() { scene().board()->setPos({0,0});});
-//    scene().board()->setRotation(0);
-//    scene().board()->setPos({0,0});
-
-
+    wait(5);
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
@@ -151,6 +148,9 @@ void TaskPunchPrivate::run()
     // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
     // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
     // realFiducialBlob  не привязана никуда.
+
+    if (fiducialBlobs.isEmpty())
+        return;
 
     QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
     QPointF firstReal = std::get<1>(fiducialBlobs[0])->pos();
