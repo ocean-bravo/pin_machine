@@ -36,7 +36,7 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     p.setColor(isFiducial() ? Qt::magenta : Qt::red);
     setPen(p);
 
-    if (isFiducial())
+    if (isFiducial() || isRealFiducial())
     {
         // элемент выглядит единым целым, прозрачности не накладываются
         painter->setPen(p);
@@ -55,17 +55,15 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
 
-QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == ItemSelectedHasChanged && scene())
-    {
-        const bool selected = value.toBool();
-
-        // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
-        runOnThread(this, [this](){ update(); });
-    }
-    return QGraphicsItem::itemChange(change, value);
-}
+//QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
+//{
+//    if (change == ItemSelectedHasChanged && scene())
+//    {
+//        const bool selected = value.toBool();
+//        repaintLater();
+//    }
+//    return QGraphicsItem::itemChange(change, value);
+//}
 
 QRectF BlobItem::boundingRect() const
 {
@@ -87,6 +85,7 @@ bool BlobItem::isFiducial() const
 void BlobItem::setFiducial(bool state)
 {
     setData(0, state);
+    repaintLater();
 }
 
 bool BlobItem::isPunch() const
@@ -97,6 +96,19 @@ bool BlobItem::isPunch() const
 void BlobItem::setPunch(bool state)
 {
     setSelected(state);
+    repaintLater();
+}
+
+bool BlobItem::isRealFiducial() const
+{
+    return data(1).toBool();
+}
+
+void BlobItem::setRealFiducial(bool state)
+{
+    setData(1, state);
+    state ? setRotation(45) : setRotation(0);
+    repaintLater();
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
@@ -159,9 +171,6 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
     menu.addAction(menuText, this, [this]()
     {
         setFiducial(!isFiducial());
-
-        // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
-        runOnThread(this, [this](){ update(); });
     });
 
     menu.exec(event->screenPos());
@@ -179,4 +188,10 @@ void BlobItem::unhighlight()
     QPen p = pen();
     p.setWidthF(_nonhighlightedThickness);
     setPen(p);
+}
+
+void BlobItem::repaintLater()
+{
+    // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
+    runOnThread(this, [this](){ update(); });
 }

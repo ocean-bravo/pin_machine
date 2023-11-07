@@ -17,6 +17,9 @@ public:
     bool isPunch() const;
     void setPunch(bool state);
 
+    bool isRealFiducial() const;
+    void setRealFiducial(bool state);
+
 signals:
     void pressed();
 
@@ -28,13 +31,14 @@ protected:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
 
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    //QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     QRectF boundingRect() const override;
 
 private:
     void highlight();
     void unhighlight();
+    void repaintLater();
 
     double _highlightedThickness = 3.0;
     double _nonhighlightedThickness = 1.0;
