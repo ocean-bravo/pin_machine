@@ -112,7 +112,7 @@ void Scene::setImagePrivate(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    addItem(item);
+    //addItem(item);
 }
 
 void Scene::removeDuplicatedBlobs()
