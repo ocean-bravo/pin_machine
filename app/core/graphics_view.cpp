@@ -139,7 +139,7 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
     {
         setDragMode(DragMode::ScrollHandDrag);
         event->accept();
-        QGraphicsView::mousePressEvent(event);
+        QGraphicsView::mousePressEvent(event); // Плохо. Выделяет блоб. А без это строки не передвигает плату.
         return;
     }
 
