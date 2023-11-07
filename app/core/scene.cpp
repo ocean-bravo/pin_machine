@@ -33,7 +33,7 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
         if (sceneIsParent)
             addItem(blob);
         else
-            blob->setParentItem(_board);
+            blob->setParentItem(_board.data());
     };
 
     static const QThread* sceneThread = thread();
@@ -71,14 +71,14 @@ BlobItem* Scene::addBlobCopy(const BlobItem* blob, bool sceneIsParent)
 void Scene::addBoard()
 {
    //QMutexLocker locker(&_mutex);
-    _board = new BoardItem;
-    runOnThread(this, [this]() { addItem(_board); });
+    _board.reset(new BoardItem);
+    runOnThread(this, [this]() { addItem(_board.data()); });
     runOnThread(this, [this]() { addItem(new CameraViewItem); });
 }
 
 QGraphicsItem* Scene::board() const
 {
-    return _board;
+    return _board.data();
 }
 
 void Scene::setImage(QImage img)
@@ -104,7 +104,7 @@ void Scene::setImagePrivate(QImage img)
 
     const double ratio = pix.rect().width() / imageWidthMm;
 
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board.data());
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
