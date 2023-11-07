@@ -115,7 +115,8 @@ void TaskPunchPrivate::run()
         ++count;
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
-        realFiducialBlob->setRealFiducial(true);
+        //realFiducialBlob->setRealFiducial(true);
+        runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
         updateBlobPosition(realFiducialBlob);
         int result = updateBlobPosition(realFiducialBlob);
