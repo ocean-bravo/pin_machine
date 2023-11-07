@@ -149,7 +149,7 @@ void TaskPunchPrivate::run()
     // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
     // realFiducialBlob  не привязана никуда.
 
-    if (fiducialBlobs.isEmpty())
+    if (fiducialBlobs.size() != 2)
         return;
 
     QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
