@@ -23,6 +23,9 @@ const QString defaultCommonLogPath = "logs/common.log";
 
 void loggerMessageHandler(QtMsgType, const QMessageLogContext&, const QString& msg)
 {
+    if (msg == "QObject::startTimer: Timers cannot be started from another thread")
+        qt_noop();
+
     const Qt::HANDLE currentTheadId = QThread::currentThreadId();
     Logger::instance().common(msg, QDateTime::currentMSecsSinceEpoch(), currentTheadId);
 }
@@ -102,9 +105,6 @@ void LoggerPrivate::common(const QString& message, qint64 time, Qt::HANDLE threa
     // Надоевшее сообщение от модуля Камеры: Unable to query the parameter info: "Invalid argument"
     if (message.contains("Unable to query"))
         return;
-
-    if (message == "QObject::startTimer: Timers cannot be started from another thread")
-        qt_noop();
 
     if (_logToRemoteHost)
         _udpAppender->append(QDateTime::fromMSecsSinceEpoch(time).toString("HH:mm:ss.zzz '[%1]' ").arg(threadIdToAlias(threadId)) + message);
