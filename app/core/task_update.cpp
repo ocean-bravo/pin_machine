@@ -73,36 +73,33 @@ void TaskUpdatePrivate::run()
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
 
-
     const auto start = QDateTime::currentMSecsSinceEpoch();
-
-    scene().removeDuplicatedBlobs();
 
     auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-
     QList<QGraphicsItem*> itemsToUpdate;
 
-    if (!scene().selectedItems().isEmpty())
-        itemsToUpdate = scene().selectedItems();
-    else
+    every<BlobItem>(scene().items(), [&itemsToUpdate](BlobItem* blob)
+    {
+        if (blob->isFiducial() || blob->isPunch())
+            itemsToUpdate.append(blob);
+    });
+
+    if (itemsToUpdate.isEmpty())
         itemsToUpdate = scene().items();
 
     int count  = 0;
-    for (QGraphicsItem* item  : qAsConst(itemsToUpdate))
+
+    every<BlobItem>(itemsToUpdate, [this, &count](BlobItem* blob)
     {
         if (_stop)
         {
             emit message("program interrupted");
-            break;
+            return;
         }
 
-        if (isNot<BlobItem>(item))
-            continue;
-
         ++count;
-        BlobItem* blob = dynamic_cast<BlobItem*>(item);
 
         updateBlobPosition(blob);
         int result = updateBlobPosition(blob);
@@ -112,7 +109,7 @@ void TaskUpdatePrivate::run()
             if (result > 0)
                 result = updateBlobPosition(blob);
         }
-    }
+    });
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("update blobs finished");

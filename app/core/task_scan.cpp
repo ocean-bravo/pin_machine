@@ -205,6 +205,8 @@ void TaskScanPrivate::run(QString program)
         }
     }
 
+    scene().removeDuplicatedBlobs();
+
     auto finish = QDateTime::currentMSecsSinceEpoch();
 
     emit message("program time " + QString::number((finish - start)/1000) + " sec");
