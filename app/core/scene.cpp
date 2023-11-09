@@ -12,7 +12,7 @@
 #include <QEventLoop>
 
 Scene::Scene(QObject* parent)
-    : QGraphicsScene(parent)
+    : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
 
 }

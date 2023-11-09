@@ -3,6 +3,8 @@
 #include <QRubberBand>
 #include <QGraphicsView>
 #include <QScopedPointer>
+#include <QMouseEvent>
+
 
 class QRubberBand;
 
@@ -38,4 +40,7 @@ private:
     QSizeF _sizeToFit;
     QScopedPointer<QRubberBand> _rb;
     QPoint _origin;
+
+    bool _dragMode = false;
+    QMouseEvent _lastMouseEvent = {QEvent::None, QPointF(), QPointF(), QPointF(), Qt::NoButton, { }, { } };
 };
