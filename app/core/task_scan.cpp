@@ -169,12 +169,12 @@ void TaskScanPrivate::run(QString program)
             v->fit();
     }
 
-    scene().addBlob(5,5,25);
+//    scene().addBlob(5,5,25);
 
-    scene().addBlob(35,5,25);
-    BlobItem* bl = scene().addBlob(5,35,25);
-    bl->setFiducial(true);
-    bl->setRotation(45);
+//    scene().addBlob(35,5,25);
+//    BlobItem* bl = scene().addBlob(5,35,25);
+//    bl->setFiducial(true);
+//    bl->setRotation(45);
 
     wait(200);
 
