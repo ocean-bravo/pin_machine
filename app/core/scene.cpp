@@ -8,6 +8,8 @@
 #include "utils2.h"
 #include "common.h"
 
+#include <algorithm>
+
 #include <QMutexLocker>
 #include <QEventLoop>
 
@@ -91,6 +93,12 @@ void Scene::addBoard()
 QGraphicsItem* Scene::board() const
 {
     return _board;
+}
+
+void Scene::moveBoard(double angle, double distance)
+{
+
+
 }
 
 void Scene::setImage(QImage img)

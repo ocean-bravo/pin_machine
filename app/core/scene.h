@@ -20,6 +20,7 @@ public:
 
     void addBoard();
     QGraphicsItem* board() const;
+    void moveBoard(double angle, double distance);
 
     void removeDuplicatedBlobs();
     void updateBlob(BlobItem* blob, double x, double y, double dia);

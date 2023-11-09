@@ -159,16 +159,15 @@ void TaskPunchPrivate::run()
     QPointF secondRef = std::get<0>(fiducialBlobs[1])->pos();
     QPointF secondReal = std::get<1>(fiducialBlobs[1])->pos();
 
+    // 1.
     // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
     // Реальная точка стоит, к ней двигаем плату с идеальной точкой
-    //scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y());
     runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y()); });
-    //wait(10);
 
+
+    // 2.
     // Помещаем transform origin всей платы в первую идеальную fid точку.
-//    scene().board()->setTransformOriginPoint(firstRef);
     runOnThreadWait(&scene(), [=]() { scene().board()->setTransformOriginPoint(firstRef); });
-    //wait(10);
 
     double angleReal = QLineF(firstReal, secondReal).angle();
     double angleRef = QLineF(firstRef, secondRef).angle();
@@ -176,10 +175,15 @@ void TaskPunchPrivate::run()
     double deltaAngle = angleReal - angleRef;
 
     // Довернули плату до реального угла
-    //scene().board()->setRotation(-deltaAngle); // TODO: По тестам определить знак угла
-//    runOnThread(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
-//    wait(10);
     runOnThreadWait(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
+
+
+    // 3. Перемещаю идеальные опорные точки по линии, соединяющей опорные точки, на половину разницы расстояний
+    double distanceReal = QLineF(firstReal, secondReal).length();
+    double distanceRef = QLineF(firstRef, secondRef).length();
+    double distanceDelta = distanceReal - distanceRef;
+
+    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(std::sin(angleReal)*distanceDelta/2, std::cos(angleReal)*distanceDelta/2); });
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     every<BlobItem>(scene().items(), [this](BlobItem* blob)
