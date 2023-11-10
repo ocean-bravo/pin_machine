@@ -64,6 +64,8 @@ void TaskTestAlgoPrivate::run()
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    db().insert("step", "");
+
     while(true)
     {
         if (_stop)
@@ -72,9 +74,11 @@ void TaskTestAlgoPrivate::run()
             break;
         }
 
-        db().insert("step", "");
-        waitDataBus("step", "next");
-        db().insert("step", "");
+        scene().clear();
+        scene().addBoard();
+
+
+        waitDataBus("step", "next"); db().insert("step", "");
 
 
         QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
@@ -93,18 +97,16 @@ void TaskTestAlgoPrivate::run()
           fiducialBlobs.append(std::make_tuple(bl1, bl2));
         }
 
-        db().insert("step", "");
-        waitDataBus("step", "next");
-        db().insert("step", "");
+        waitDataBus("step", "next"); db().insert("step", "");
 
         if (fiducialBlobs.size() != 2)
             return;
 
-        QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
-        QPointF firstReal = std::get<1>(fiducialBlobs[0])->pos();
+        QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
+        QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
 
-        QPointF secondRef = std::get<0>(fiducialBlobs[1])->pos();
-        QPointF secondReal = std::get<1>(fiducialBlobs[1])->pos();
+        BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
+        BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
 
         algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
     }

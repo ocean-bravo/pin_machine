@@ -16,7 +16,7 @@ public:
     int updateBlobPosition(BlobItem* blob);
 
     // Не знаю куда приткнуть этот метод
-    static void algorithmMatchPoints(QPointF firstRef, QPointF firstReal, QPointF secondRef, QPointF secondReal);
+    static void algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem *secondRefBlob, BlobItem *secondRealBlob);
 
 protected:
     QMutex _mutex;

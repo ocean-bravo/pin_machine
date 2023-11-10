@@ -127,26 +127,6 @@ void TaskPunchPrivate::run()
         fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
     }
 
-    { BlobItem* bl1 = scene().addBlob(10,10,2);
-      bl1->setFiducial(true);
-      BlobItem* bl2 = scene().addBlob(10,13,2, true);
-      bl2->setRealFiducial(true);
-      fiducialBlobs.append(std::make_tuple(bl1, bl2));
-    }
-
-    { BlobItem* bl1 = scene().addBlob(1,10,2);
-      bl1->setFiducial(true);
-      BlobItem* bl2 = scene().addBlob(1,13,2, true);
-      bl2->setRealFiducial(true);
-      fiducialBlobs.append(std::make_tuple(bl1, bl2));
-    }
-
-    qd() << "before next";
-    db().insert("step", "");
-    waitDataBus("step", "next");
-    qd() << "next";
-    db().insert("step", "");
-
     // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
     // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
     // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
@@ -155,16 +135,14 @@ void TaskPunchPrivate::run()
     if (fiducialBlobs.size() != 2)
         return;
 
-    QPointF firstRef = std::get<0>(fiducialBlobs[0])->pos();
-    QPointF firstReal = std::get<1>(fiducialBlobs[0])->pos();
+    QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
+    QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
 
-    QPointF secondRef = std::get<0>(fiducialBlobs[1])->pos();
-    QPointF secondReal = std::get<1>(fiducialBlobs[1])->pos();
+    BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
+    BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
 
     algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
-
-    return;
 
     // сделать тест доворота.
     // разные точки в разных местах.

@@ -476,7 +476,7 @@ Item {
                     }
                     ComboBox {
                         id: dataType
-                        model: ["int", "double", "text"]
+                        model: ["text", "int", "double"]
                     }
 
                     SmButton {
