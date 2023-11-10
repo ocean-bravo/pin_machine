@@ -429,7 +429,7 @@ Item {
             CollapsiblePanel {
                 id: debugPanel
                 width: parent.width
-                height: checked ? 150 : 30
+                height: checked ? 200 : 30
                 text: "Debug"
                 onCheckedChanged: {
                     debugButtons.visible = checked
@@ -474,11 +474,22 @@ Item {
                     SmTextEdit {
                         id: sendDataBus
                     }
-                    SmButton {
-                        text: qsTr("Write value")
-                        onClicked: DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                    ComboBox {
+                        id: dataType
+                        model: ["int", "double", "text"]
                     }
 
+                    SmButton {
+                        text: qsTr("Write value")
+                        onClicked: {
+                            if (dataType.currentText === "int")    DataBus[dbKeys.currentText] = parseInt(sendDataBus.text)
+                            if (dataType.currentText === "double") DataBus[dbKeys.currentText] = parseFloat(sendDataBus.text)
+                            if (dataType.currentText === "text")   DataBus[dbKeys.currentText] = sendDataBus.text
+                        }
+                    }
+                    Item { height: 20; width: 10}
+
+                    Item { height: 20; width: 10}
                     SmButton {
                         id: beginTest
                         text: qsTr("Begin test")
@@ -492,8 +503,16 @@ Item {
                             }
                         }
                     }
+                    Item { height: 20; width: 10}
 
-
+                    Item { height: 20; width: 10}
+                    SmButton {
+                        id: testAlgo
+                        text: qsTr("Test match points")
+                        checkable: true
+                        checked: false
+                        onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
+                    }
                 }
             }
         }

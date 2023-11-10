@@ -62,3 +62,34 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
         return 0;
     }
 }
+
+void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, QPointF secondRef, QPointF secondReal)
+{
+    // 1.
+    // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
+    // Реальная точка стоит, к ней двигаем плату с идеальной точкой
+    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y()); });
+
+    // 2.
+    // Помещаем transform origin всей платы в первую идеальную fid точку.
+    runOnThreadWait(&scene(), [=]() { scene().board()->setTransformOriginPoint(firstRef); });
+
+    double angleReal = QLineF(firstReal, secondReal).angle();
+    double angleRef = QLineF(firstRef, secondRef).angle();
+
+    double deltaAngle = angleReal - angleRef;
+
+    // Довернули плату до реального угла
+    runOnThreadWait(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
+
+
+    // 3. Перемещаю идеальные опорные точки по линии, соединяющей опорные точки, на половину разницы расстояний
+    double distanceReal = QLineF(firstReal, secondReal).length();
+    double distanceRef = QLineF(firstRef, secondRef).length();
+    double distanceDelta = distanceReal - distanceRef;
+
+    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(std::sin(angleReal)*distanceDelta/2, std::cos(angleReal)*distanceDelta/2); });
+
+    // 4. Восстанавливаю transform origin
+    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
+}

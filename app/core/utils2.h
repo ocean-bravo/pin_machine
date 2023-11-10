@@ -18,6 +18,8 @@ inline std::tuple<double, double, double> blobToDouble(const QString& blob)
 
 void waitForGetPosition(double xTarget, double yTarget);
 
+void waitDataBus(const QString& key, const QString& value);
+
 template<typename Function>
 auto runOnThread(QObject* targetObject, Function function)
 {

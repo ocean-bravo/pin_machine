@@ -182,6 +182,7 @@ void TaskScanPrivate::run(QString program)
 //        bl->setRealFiducial(true);
 //        //bl->setRotation(0);
 //    }
+
 //    return;
 
     wait(200);

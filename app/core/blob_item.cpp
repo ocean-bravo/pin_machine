@@ -24,6 +24,7 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     setZValue(1); // Отметки поверх платы
     setAcceptHoverEvents(true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemIsMovable, true);
 }
 
 void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -78,6 +79,9 @@ QRectF BlobItem::boundingRect() const
 }
 
 // Область, чтобы попадать мышью, больше ширины линии, которой нарисован элемент
+// TODO: Внутри блоба пустота получается. Т.е. shape пустой внутри. Из за этого могут быть
+// проблемы с определением пересечений блобов, если один идеально поместитсся внутри другогого, не задевая контуры.
+// Проверить эту тему.
 QPainterPath BlobItem::shape() const
 {
     QPainterPath path;

@@ -87,10 +87,8 @@ void TaskPunchPrivate::run()
 
     // Восстанавливаю поворот и позицию платы с предудущего раза.
     // Надо выполнять в потоке сцены, там внутри запускается какой то таймер
-    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
     runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
     runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
-    //wait(50);
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
@@ -129,21 +127,25 @@ void TaskPunchPrivate::run()
         fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
     }
 
-//    { BlobItem* bl1 = scene().addBlob(100,0,2);
-//      bl1->setFiducial(true);
-//      BlobItem* bl2 = scene().addBlob(5,6,2, true);
-//      bl2->setFiducial(true);
-//      bl2->setRotation(45);
-//      fiducialBlobs.append(std::make_tuple(bl1, bl2));
-//    }
+    { BlobItem* bl1 = scene().addBlob(10,10,2);
+      bl1->setFiducial(true);
+      BlobItem* bl2 = scene().addBlob(10,13,2, true);
+      bl2->setRealFiducial(true);
+      fiducialBlobs.append(std::make_tuple(bl1, bl2));
+    }
 
-//    { BlobItem* bl1 = scene().addBlob(50,150,2);
-//      bl1->setFiducial(true);
-//      BlobItem* bl2 = scene().addBlob(110,82,2, true);
-//      bl2->setFiducial(true);
-//      bl2->setRotation(45);
-//      fiducialBlobs.append(std::make_tuple(bl1, bl2));
-//    }
+    { BlobItem* bl1 = scene().addBlob(1,10,2);
+      bl1->setFiducial(true);
+      BlobItem* bl2 = scene().addBlob(1,13,2, true);
+      bl2->setRealFiducial(true);
+      fiducialBlobs.append(std::make_tuple(bl1, bl2));
+    }
+
+    qd() << "before next";
+    db().insert("step", "");
+    waitDataBus("step", "next");
+    qd() << "next";
+    db().insert("step", "");
 
     // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
     // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
@@ -159,36 +161,15 @@ void TaskPunchPrivate::run()
     QPointF secondRef = std::get<0>(fiducialBlobs[1])->pos();
     QPointF secondReal = std::get<1>(fiducialBlobs[1])->pos();
 
-    // 1.
-    // Передвигаем плату в 1-ю реальную fid точку. 1-ые реальная и идеальная точки совпали.
-    // Реальная точка стоит, к ней двигаем плату с идеальной точкой
-    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(firstReal.x() - firstRef.x(), firstReal.y() - firstRef.y()); });
+    algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
 
-    // 2.
-    // Помещаем transform origin всей платы в первую идеальную fid точку.
-    runOnThreadWait(&scene(), [=]() { scene().board()->setTransformOriginPoint(firstRef); });
-
-    double angleReal = QLineF(firstReal, secondReal).angle();
-    double angleRef = QLineF(firstRef, secondRef).angle();
-
-    double deltaAngle = angleReal - angleRef;
-
-    // Довернули плату до реального угла
-    runOnThreadWait(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
-
-
-    // 3. Перемещаю идеальные опорные точки по линии, соединяющей опорные точки, на половину разницы расстояний
-    double distanceReal = QLineF(firstReal, secondReal).length();
-    double distanceRef = QLineF(firstRef, secondRef).length();
-    double distanceDelta = distanceReal - distanceRef;
-
-    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(std::sin(angleReal)*distanceDelta/2, std::cos(angleReal)*distanceDelta/2); });
+    return;
 
     // сделать тест доворота.
     // разные точки в разных местах.
 
-             //И сделать тест разброса определения координат блоба
+    //И сделать тест разброса определения координат блоба
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     every<BlobItem>(scene().items(), [this](BlobItem* blob)

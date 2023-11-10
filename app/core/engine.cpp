@@ -20,6 +20,7 @@
 #include "task_scan.h"
 #include "task_update.h"
 #include "task_test.h"
+#include "task_test_algo.h"
 #include "task_punch.h"
 
 #include "openCv.h"
@@ -46,40 +47,6 @@ QStringList Engine::camerasInfo()
 {
     return _info;
 }
-
-//QStringList Engine::removeDuplicatedBlobs(QStringList blobs)
-//{
-//    ScopedMeasure("remove duplicated blobs");
-
-//    QGraphicsScene scene;
-
-//    // Отправляю все блобы на сцену
-//    for (const QString& blob : blobs)
-//    {
-////        QStringList coord = blob.split(" ");
-////        double x = coord[0].toDouble();
-////        double y = coord[1].toDouble();
-//        auto [x, y, dia] = blobToDouble(blob);
-
-//        QGraphicsEllipseItem* item = scene.addEllipse(-dia/2, -dia/2, dia, dia);
-//        item->setPos(x, y);
-//    }
-
-//    // если есть пересечение с кем то, то удалить его
-//    for (QGraphicsItem* item : qAsConst(scene).items())
-//    {
-//        if (!scene.collidingItems(item).isEmpty())
-//            delete item;
-//    }
-
-//    QStringList b;
-//    for (const QGraphicsItem* item : qAsConst(scene).items())
-//    {
-//        b.append(toReal3(item->x()) + " " + toReal3(item->y()));
-//    }
-
-//    return b;
-//}
 
 Engine::~Engine()
 {
@@ -147,6 +114,7 @@ void Engine::createQmlEngine()
     TaskUpdate* ub = new TaskUpdate(this);
     TaskTest* tp = new TaskTest(sb, ub, this);
     TaskPunch* pu = new TaskPunch(this);
+    TaskTestAlgo* ta = new TaskTestAlgo(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -168,6 +136,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("UpdateBlobs", ub);
     _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
     _qmlEngine->rootContext()->setContextProperty("Punch", pu);
+    _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

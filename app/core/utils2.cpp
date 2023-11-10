@@ -40,3 +40,20 @@ void waitForGetPosition(double xTarget, double yTarget)
 
     loop.exec();
 }
+
+void waitDataBus(const QString& key, const QString& value)
+{
+    QEventLoop loop;
+    QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&loop, key, value](const QString& k, const QVariant& v)
+    {
+        if (k == key && v.toString() == value)
+            loop.quit();
+    });
+
+    auto guard = qScopeGuard([=]()
+    {
+        QObject::disconnect(conn);
+    });
+
+    loop.exec();
+}
