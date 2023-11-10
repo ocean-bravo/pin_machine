@@ -77,6 +77,26 @@ QRectF BlobItem::boundingRect() const
     return boundRect;
 }
 
+// Область, чтобы попадать мышью, больше ширины линии, которой нарисован элемент
+QPainterPath BlobItem::shape() const
+{
+    QPainterPath path;
+
+    path.addEllipse(rect());
+
+    double rad = rect().width()/2;
+
+    path.moveTo(0, rad);  path.lineTo(0, 2*rad);
+    path.moveTo(0, -rad); path.lineTo(0, -2*rad);
+    path.moveTo(rad, 0);  path.lineTo(2*rad, 0);
+    path.moveTo(-rad, 0); path.lineTo(-2*rad, 0);
+
+    QPainterPathStroker stroker;
+    stroker.setWidth(3);  // ширина области занимаемая линией
+    stroker.setCapStyle(Qt::RoundCap);
+    return stroker.createStroke(path);
+}
+
 bool BlobItem::isFiducial() const
 {
     return data(0).toBool();

@@ -176,6 +176,8 @@ void TaskScanPrivate::run(QString program)
 //    bl->setFiducial(true);
 //    bl->setRotation(45);
 
+//    return;
+
     wait(200);
 
     auto start = QDateTime::currentMSecsSinceEpoch();

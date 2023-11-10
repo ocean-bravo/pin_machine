@@ -185,6 +185,11 @@ void TaskPunchPrivate::run()
 
     runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(std::sin(angleReal)*distanceDelta/2, std::cos(angleReal)*distanceDelta/2); });
 
+    // сделать тест доворота.
+    // разные точки в разных местах.
+
+             //И сделать тест разброса определения координат блоба
+
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     every<BlobItem>(scene().items(), [this](BlobItem* blob)
     {

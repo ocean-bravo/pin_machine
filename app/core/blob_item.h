@@ -34,6 +34,7 @@ protected:
     //QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     QRectF boundingRect() const override;
+    QPainterPath shape() const override;
 
 private:
     void highlight();
