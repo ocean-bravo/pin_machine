@@ -172,10 +172,16 @@ void TaskScanPrivate::run(QString program)
 //    scene().addBlob(5,5,25);
 
 //    scene().addBlob(35,5,25);
-//    BlobItem* bl = scene().addBlob(5,35,25);
-//    bl->setFiducial(true);
-//    bl->setRotation(45);
-
+//    {
+//        BlobItem* bl = scene().addBlob(5,35,2);
+//        bl->setFiducial(true);
+//        //bl->setRotation(45);
+//    }
+//    {
+//        BlobItem* bl = scene().addBlob(5.05,35.05,2);
+//        bl->setRealFiducial(true);
+//        //bl->setRotation(0);
+//    }
 //    return;
 
     wait(200);

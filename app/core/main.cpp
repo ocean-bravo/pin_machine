@@ -49,6 +49,8 @@ void myterminate()
     abort();  // forces abnormal termination
 }
 
+
+// TODO: если блоб фидушифл, не давать быть реал фидушиал и наоборот
 int main(int argc, char* argv[])
 {
     //std::set_terminate(myterminate);

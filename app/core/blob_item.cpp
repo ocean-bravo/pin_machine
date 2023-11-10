@@ -92,7 +92,7 @@ QPainterPath BlobItem::shape() const
     path.moveTo(-rad, 0); path.lineTo(-2*rad, 0);
 
     QPainterPathStroker stroker;
-    stroker.setWidth(3);  // ширина области занимаемая линией
+    stroker.setWidth(0.3);  // ширина области занимаемая линией
     stroker.setCapStyle(Qt::RoundCap);
     return stroker.createStroke(path);
 }
