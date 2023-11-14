@@ -80,25 +80,23 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
     // Помещаем transform origin всей платы в первую идеальную fid точку.
     runOnThreadWait(&scene(), [=]() { scene().board()->setTransformOriginPoint(firstRef); });
 
-    double angleReal = QLineF(firstReal, secondReal).angle();
-
-    double angleRef = QLineF(firstRef, secondRef).angle();
-
-    double deltaAngle = angleReal - angleRef;
+    const double angleRef = QLineF(firstRef, secondRef).angle();
+    const double angleReal = QLineF(firstReal, secondReal).angle();
+    const double deltaAngle = angleRef - angleReal;
 
     // Довернули плату до реального угла
-    runOnThreadWait(&scene(), [=]() { scene().board()->setRotation(-deltaAngle); });
+    runOnThreadWait(&scene(), [=]() { scene().board()->setRotation(deltaAngle); });
 
     //waitDataBus("step", "next"); db().insert("step", "");
 
-    // 3. Перемещаю идеальные опорные точки по линии, соединяющей опорные точки, на половину разницы расстояний
-    double dx = secondRealBlob->scenePos().x() - secondRefBlob->scenePos().x();
-    double dy = secondRealBlob->scenePos().y() - secondRefBlob->scenePos().y();
+    // 3. Перемещаю плату линии, соединяющей опорные точки, на половину разницы расстояний
+    const double dx = secondRealBlob->scenePos().x() - secondRefBlob->scenePos().x();
+    const double dy = secondRealBlob->scenePos().y() - secondRefBlob->scenePos().y();
 
     runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(dx/2, dy/2); });
 
     //waitDataBus("step", "next"); db().insert("step", "");
 
     // 4. Восстанавливаю transform origin
-    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
+    //runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 }

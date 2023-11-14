@@ -17,10 +17,6 @@ public:
     ~TaskTestAlgo();
 
     Q_INVOKABLE void run();
-
-    void startProgram();
-    void pauseProgram();
-
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -44,7 +40,5 @@ public slots:
     void run();
 
 private:
-
-
     friend class TaskTestAlgo;
 };

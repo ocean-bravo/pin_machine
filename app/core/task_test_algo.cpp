@@ -1,25 +1,12 @@
 #include "task_test_algo.h"
-#include "wait.h"
-#include "video4.h"
-#include "serial.h"
-#include "utils.h"
 #include "utils2.h"
-#include "openCv.h"
 #include "data_bus.h"
 #include "scene.h"
+#include "wait.h"
 #include "blob_item.h"
-
-#include <QEventLoop>
-#include <QTimer>
-#include <QRegExp>
-#include <QMetaMethod>
-#include <QScopeGuard>
-#include <QDateTime>
-#include <QGraphicsScene>
-
-
 #include "common.h"
 
+#include <QScopeGuard>
 
 TaskTestAlgo::TaskTestAlgo(QObject* parent)
     : QObject(parent)
@@ -66,6 +53,9 @@ void TaskTestAlgoPrivate::run()
 
     db().insert("step", "");
 
+    scene().clear();
+    scene().addBoard();
+
     while(true)
     {
         if (_stop)
@@ -74,12 +64,37 @@ void TaskTestAlgoPrivate::run()
             break;
         }
 
-        scene().clear();
-        scene().addBoard();
+        waitDataBus("step", "next");
+        db().insert("step", "");
 
 
-        waitDataBus("step", "next"); db().insert("step", "");
+        runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 
+        waitDataBus("step", "next");
+        db().insert("step", "");
+
+        runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
+        runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
+
+        every<BlobItem>(scene().items(), [](BlobItem* blob)
+        {
+            if (blob->isFiducial())
+                delete blob;
+
+            if (blob->isRealFiducial())
+                delete blob;
+        });
+
+        every<BlobItem>(scene().board()->childItems(), [](BlobItem* blob)
+        {
+            if (blob->isFiducial())
+                blob->deleteLater();
+
+            if (blob->isRealFiducial())
+                blob->deleteLater();
+        });
+
+        wait(100);
 
         QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
 
@@ -97,7 +112,8 @@ void TaskTestAlgoPrivate::run()
           fiducialBlobs.append(std::make_tuple(bl1, bl2));
         }
 
-        waitDataBus("step", "next"); db().insert("step", "");
+        waitDataBus("step", "next");
+        db().insert("step", "");
 
         if (fiducialBlobs.size() != 2)
             return;
