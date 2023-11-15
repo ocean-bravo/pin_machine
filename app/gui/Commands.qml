@@ -419,7 +419,7 @@ Item {
                     id: punchBlobs
                     text: qsTr("Check camera")
                     checkable: true
-                    onCheckedChanged: checked ? Punch.run() : Punch.stopProgram()
+                    onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
                     Connections { target: Punch; function onFinished() { punchBlobs.checked = false } }
                 }
             }

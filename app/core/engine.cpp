@@ -21,7 +21,7 @@
 #include "task_update.h"
 #include "task_test.h"
 #include "task_test_algo.h"
-#include "task_punch.h"
+#include "task_check_camera.h"
 
 #include "openCv.h"
 
@@ -135,7 +135,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("SearchBlobs", sb);
     _qmlEngine->rootContext()->setContextProperty("UpdateBlobs", ub);
     _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
-    _qmlEngine->rootContext()->setContextProperty("Punch", pu);
+    _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", pu);
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
