@@ -17,13 +17,13 @@
 
 #include "common.h"
 
-TaskPunch::TaskPunch(QObject* parent)
+TaskCheckCamera::TaskCheckCamera(QObject* parent)
     : QObject(parent)
-    , _impl(new TaskPunchPrivate)
+    , _impl(new TaskCheckCameraPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
-    connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskCheckCameraPrivate::message, this, &TaskCheckCamera::message, Qt::QueuedConnection);
+    connect(_impl, &TaskCheckCameraPrivate::finished, this, &TaskCheckCamera::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -31,30 +31,30 @@ TaskPunch::TaskPunch(QObject* parent)
     _thread->start();
 }
 
-TaskPunch::~TaskPunch()
+TaskCheckCamera::~TaskCheckCamera()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void TaskPunch::run()
+void TaskCheckCamera::run()
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
-void TaskPunch::stopProgram()
+void TaskCheckCamera::stopProgram()
 {
     _impl->_stop = true;
 }
 
 
-TaskPunchPrivate::TaskPunchPrivate()
+TaskCheckCameraPrivate::TaskCheckCameraPrivate()
 {
 
 }
 
-void TaskPunchPrivate::run()
+void TaskCheckCameraPrivate::run()
 {
     // Разница в диаметрах блобов, больше которой считается что блоб неправильный
     static const double wrongBlobDiaError = 0.3;

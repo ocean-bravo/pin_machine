@@ -113,7 +113,7 @@ void Engine::createQmlEngine()
     TaskScan* sb = new TaskScan(this);
     TaskUpdate* ub = new TaskUpdate(this);
     TaskTest* tp = new TaskTest(sb, ub, this);
-    TaskPunch* pu = new TaskPunch(this);
+    TaskCheckCamera* pu = new TaskCheckCamera(this);
     TaskTestAlgo* ta = new TaskTestAlgo(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
