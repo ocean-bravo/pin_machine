@@ -118,6 +118,8 @@ void TaskPunchPrivate::run()
         runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
         updateBlobPosition(realFiducialBlob);
+        updateBlobPosition(realFiducialBlob);
+        updateBlobPosition(realFiducialBlob);
         int result = updateBlobPosition(realFiducialBlob);
         if (result > 0)
         {

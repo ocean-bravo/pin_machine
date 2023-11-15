@@ -417,13 +417,11 @@ Item {
 
                 SmButton {
                     id: punchBlobs
-                    text: qsTr("Punch")
+                    text: qsTr("Check camera")
                     checkable: true
                     onCheckedChanged: checked ? Punch.run() : Punch.stopProgram()
                     Connections { target: Punch; function onFinished() { punchBlobs.checked = false } }
                 }
-
-
             }
 
             CollapsiblePanel {
@@ -457,6 +455,11 @@ Item {
                     ComboBox {
                         id: dbKeys
                         model: DataBus.keys()
+                        onDownChanged: {
+                            if (down)
+                                model = DataBus.keys()
+                        }
+
                         onActivated: {
                             logViewer.append('<br>')
                             logViewer.append(currentText + '<br>')
@@ -468,7 +471,6 @@ Item {
                             data = JSON.stringify(data).replace(/[,]/g, '<br>')
                             logViewer.append(data)
                             logViewer.append('<br>')
-                            model = DataBus.keys()
                         }
                     }
                     SmTextEdit {
