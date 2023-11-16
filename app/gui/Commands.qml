@@ -436,10 +436,10 @@ Item {
                     debugButtons.visible = checked
                 }
 
-                Grid {
+                GridLayout {
                     id: debugButtons
                     width: parent.width
-                    columns: 3
+                    columns: 10
                     columnSpacing: 5
                     rowSpacing: 5
 
@@ -447,10 +447,11 @@ Item {
                         decimals: 5
                         value: DataBus.pixel_size
                         onValueModified: DataBus.pixel_size = Number(text)
-                    }
-                    Item { height: 20; width: 10}
 
-                    Item { height: 20; width: 10}
+                        Layout.row: 0
+                        Layout.column: 0
+                        Layout.columnSpan: 3
+                    }
 
                     ComboBox {
                         id: dbKeys
@@ -472,13 +473,28 @@ Item {
                             logViewer.append(data)
                             logViewer.append('<br>')
                         }
+
+                        Layout.row: 1
+                        Layout.column: 0
+                        Layout.columnSpan: 6
+
+                        Layout.preferredWidth: 140
                     }
                     SmTextEdit {
                         id: sendDataBus
+                        Layout.row: 1
+                        Layout.column: 5
+                        Layout.columnSpan: 2
+                        Layout.preferredWidth: 90
                     }
                     ComboBox {
                         id: dataType
                         model: ["text", "int", "double"]
+                        Layout.row: 1
+                        Layout.column: 8
+                        Layout.preferredWidth: 60
+                        //Layout.columnSpan: 1
+                        //Layout.fillWidth: true
                     }
 
                     SmButton {
@@ -488,10 +504,12 @@ Item {
                             if (dataType.currentText === "double") DataBus[dbKeys.currentText] = parseFloat(sendDataBus.text)
                             if (dataType.currentText === "text")   DataBus[dbKeys.currentText] = sendDataBus.text
                         }
+                        Layout.row: 1
+                        Layout.column: 9
+                        //Layout.columnSpan: 1
+                        //Layout.fillWidth: true
                     }
-                    Item { height: 20; width: 10}
 
-                    Item { height: 20; width: 10}
                     SmButton {
                         id: beginTest
                         text: qsTr("Begin test")
@@ -504,16 +522,16 @@ Item {
                                 TestProgram.stopProgram()
                             }
                         }
+                        Layout.row: 2
                     }
-                    Item { height: 20; width: 10}
 
-                    Item { height: 20; width: 10}
                     SmButton {
                         id: testAlgo
                         text: qsTr("Test match points")
                         checkable: true
                         checked: false
                         onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
+                        Layout.row: 3
                     }
                 }
             }
