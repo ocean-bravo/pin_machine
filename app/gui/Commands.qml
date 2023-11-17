@@ -22,12 +22,15 @@ Item {
         appendLog(msg+"\n")
     }
 
-    function appendLog(message) {
+    function appendLog(message, color) {
+        if (color === undefined)
+            color = 'red'
+
         let msg = message.split('').join('') // Копирую строку фактически
         msg = msg.replace(/\r?\n/g, '<br>')
 
         msg = String(Date.now()).slice(-4) + ": " + msg
-        logViewer.append("<font color='red'>" + msg + "</font>")
+        logViewer.append("<font color=" + color + ">" + msg + "</font>")
     }
 
     function moveTo(x, y) {
@@ -41,22 +44,7 @@ Item {
         }
     }
 
-
-    function extractFromGcodeX(line) {
-        return Number(line.split(' ').filter(e => e)[3].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
-    }
-
-    function extractFromGcodeY(line) {
-        return Number(line.split(' ').filter(e => e)[4].replace(/[^\d.-]/g, '')) //G1 G90 F5000 X6 Y140
-    }
-
-    Connections {
-        target: Serial
-        function onMessage(msg) {
-            logViewer.append("<font color='darkgrey'>" + msg + "</font><br>")
-        }
-    }
-
+    Connections { target: Serial;          function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
     Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskCheckCamera; function onMessage(msg) { appendLog(msg + '<br>') } }
@@ -149,11 +137,6 @@ Item {
             }
         }
     }
-
-    CyclePromise {
-        id: cycle
-    }
-
 
     RowLayout {
         anchors.fill: parent
@@ -264,12 +247,6 @@ Item {
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
-
-
-
-                //Item { height: 20; width: 10}
-
-
 
 
                 Item { height: 30; width: 10}
