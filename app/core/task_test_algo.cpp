@@ -78,10 +78,7 @@ void TaskTestAlgoPrivate::run()
 
         every<BlobItem>(scene().items(), [](BlobItem* blob)
         {
-            if (blob->isFiducial())
-                delete blob;
-
-            if (blob->isRealFiducial())
+            if (blob->isFiducial() || blob->isRealFiducial())
                 delete blob;
         });
 

@@ -60,6 +60,7 @@ Item {
     Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskCheckCamera; function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskPunch;       function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial
