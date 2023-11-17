@@ -152,6 +152,7 @@ void TaskPunchPrivate::run(QString program)
             {
                 if (_stop) { emit message("program interrupted"); return; }
                 serial().write(gCode.toLatin1() + "\n");
+                emit message(gCode);
                 const double z = extractFromGcodeZ(gCode);
                 waitPosZ(z);
             }

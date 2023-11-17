@@ -57,26 +57,9 @@ Item {
         }
     }
 
-    Connections {
-        target: TaskScan
-        function onMessage(msg) {
-            appendLog(msg + '<br>')
-        }
-    }
-
-    Connections {
-        target: TaskUpdate
-        function onMessage(msg) {
-            appendLog(msg + '<br>')
-        }
-    }
-
-    Connections {
-        target: TaskCheckCamera
-        function onMessage(msg) {
-            appendLog(msg + '<br>')
-        }
-    }
+    Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskCheckCamera; function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial
@@ -453,6 +436,7 @@ Item {
                         CodeEditor2 {
                             id: punchCode
                             anchors.fill: parent
+                            text: "G1 G90 F100 Z1\nG1 G90 F100 Z0"
                         }
                     }
                     Text {
