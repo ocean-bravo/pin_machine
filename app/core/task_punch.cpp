@@ -155,7 +155,7 @@ void TaskPunchPrivate::run(QString program)
             for (const QString& gCode : punchCode)
             {
                 serial().write(gCode.toLatin1() + "\n");
-                double z = extractFromGcodeZ(gCode);
+                const double z = extractFromGcodeZ(gCode);
                 waitPosZ(z);
             }
         }
