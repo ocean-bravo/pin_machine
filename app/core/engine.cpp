@@ -22,6 +22,7 @@
 #include "task_test.h"
 #include "task_test_algo.h"
 #include "task_check_camera.h"
+#include "task_punch.h"
 
 #include "openCv.h"
 
@@ -110,11 +111,12 @@ void Engine::createQmlEngine()
         myImageProvider->setImage(img, "small_blob_captured");
     });
 
-    TaskScan* sb = new TaskScan(this);
-    TaskUpdate* ub = new TaskUpdate(this);
-    TaskTest* tp = new TaskTest(sb, ub, this);
-    TaskCheckCamera* pu = new TaskCheckCamera(this);
+    TaskScan* taskScan = new TaskScan(this);
+    TaskUpdate* taskUpdate = new TaskUpdate(this);
+    TaskTest* tp = new TaskTest(taskScan, taskUpdate, this);
+    TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);
     TaskTestAlgo* ta = new TaskTestAlgo(this);
+    TaskPunch* taskPunch = new TaskPunch(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -132,11 +134,12 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
 
-    _qmlEngine->rootContext()->setContextProperty("SearchBlobs", sb);
-    _qmlEngine->rootContext()->setContextProperty("UpdateBlobs", ub);
+    _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
+    _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
     _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
-    _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", pu);
+    _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
+    _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

@@ -57,21 +57,21 @@ Item {
     }
 
     Connections {
-        target: SearchBlobs
+        target: TaskScan
         function onMessage(msg) {
             appendLog(msg + '<br>')
         }
     }
 
     Connections {
-        target: UpdateBlobs
+        target: TaskUpdate
         function onMessage(msg) {
             appendLog(msg + '<br>')
         }
     }
 
     Connections {
-        target: Punch
+        target: TaskCheckCamera
         function onMessage(msg) {
             appendLog(msg + '<br>')
         }
@@ -379,8 +379,8 @@ Item {
                     id: playPauseProgram
                     text: qsTr("Fast scan")
                     checkable: true
-                    onCheckedChanged: checked ?  SearchBlobs.run(codeEditor.text) : SearchBlobs.stopProgram()
-                    Connections { target: SearchBlobs; function onFinished() { playPauseProgram.checked = false } }
+                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text) : TaskScan.stopProgram()
+                    Connections { target: TaskScan; function onFinished() { playPauseProgram.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
@@ -390,8 +390,8 @@ Item {
                     id: blobVisitor
                     text: qsTr("Update selected")
                     checkable: true
-                    onCheckedChanged: checked ? UpdateBlobs.run() : UpdateBlobs.stopProgram()
-                    Connections { target: UpdateBlobs; function onFinished() { blobVisitor.checked = false } }
+                    onCheckedChanged: checked ? TaskUpdate.run() : TaskUpdate.stopProgram()
+                    Connections { target: TaskUpdate; function onFinished() { blobVisitor.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
@@ -402,25 +402,21 @@ Item {
                     text: qsTr("Save")
                     onClicked: {}
                 }
-
-                Item { height: 20; width: 10}
-                Item { height: 30; width: 10}
-
                 SmButton {
                     id: load
                     text: qsTr("Load")
                     onClicked: {}
                 }
 
-                Item { height: 20; width: 10}
                 Item { height: 30; width: 10}
+
 
                 SmButton {
                     id: punchBlobs
                     text: qsTr("Check camera")
                     checkable: true
                     onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
-                    Connections { target: Punch; function onFinished() { punchBlobs.checked = false } }
+                    Connections { target: TaskCheckCamera; function onFinished() { punchBlobs.checked = false } }
                 }
             }
 
@@ -483,7 +479,7 @@ Item {
                     SmTextEdit {
                         id: sendDataBus
                         Layout.row: 1
-                        Layout.column: 5
+                        Layout.column: 6
                         Layout.columnSpan: 2
                         Layout.preferredWidth: 90
                     }
