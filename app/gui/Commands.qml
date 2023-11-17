@@ -15,6 +15,7 @@ Item {
 
     property real xPos
     property real yPos
+    property real zPos
 
     function write(msg) {
         Serial.write(msg+"\n")
@@ -127,11 +128,15 @@ Item {
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
                     fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
+
                     xPos = parseFloat(pos[0])
                     yPos = parseFloat(pos[1])
+                    zPos = parseFloat(pos[2])
 
                     DataBus.xPos = xPos
                     DataBus.yPos = yPos
+                    DataBus.zPos = zPos
+
                 }
 
                 //                for (let k = 0; k < modes.length; ++k) {
@@ -410,7 +415,6 @@ Item {
 
                 Item { height: 30; width: 10}
 
-
                 SmButton {
                     id: checkCamera
                     text: qsTr("Check camera")
@@ -418,10 +422,6 @@ Item {
                     onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
                     Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
                 }
-                Item { height: 20; width: 10}
-                Item { height: 30; width: 10}
-
-
             }
 
             CollapsiblePanel {
@@ -482,12 +482,7 @@ Item {
                         Layout.row: 1
                         Layout.column: 9
                     }
-
-
-
-
                 }
-
             }
 
             CollapsiblePanel {

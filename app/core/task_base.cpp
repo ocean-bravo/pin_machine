@@ -15,7 +15,12 @@ void TaskBase::moveTo(double x, double y)
 {
     const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
     serial().write(line.toLatin1() + "\n");
+}
 
+void TaskBase::moveToAndWaitPosition(double x, double y)
+{
+    moveTo(x, y);
+    waitForGetPosition(x, y);
 }
 
 int TaskBase::updateBlobPosition(BlobItem *blob)
@@ -24,9 +29,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
     double yTarget = blob->y();
     double diaTarget = blob->rect().width();
 
-    moveTo(xTarget, yTarget);
-
-    waitForGetPosition(xTarget, yTarget);
+    moveToAndWaitPosition(xTarget, yTarget);
 
     emit message("capturing ...");
 

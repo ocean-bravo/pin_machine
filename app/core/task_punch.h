@@ -16,7 +16,7 @@ public:
     TaskPunch(QObject* parent = nullptr);
     ~TaskPunch();
 
-    Q_INVOKABLE void run();
+    Q_INVOKABLE void run(QString program);
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -37,7 +37,7 @@ public:
     TaskPunchPrivate();
 
 public slots:
-    void run();
+    void run(QString program);
 
 private:
     friend class TaskPunch;

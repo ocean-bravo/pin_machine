@@ -37,10 +37,10 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run()
+void TaskPunch::run(QString program)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
 void TaskPunch::stopProgram()
@@ -54,11 +54,8 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run()
+void TaskPunchPrivate::run(QString program)
 {
-    // Разница в диаметрах блобов, больше которой считается что блоб неправильный
-    static const double wrongBlobDiaError = 0.3;
-
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
@@ -146,20 +143,20 @@ void TaskPunchPrivate::run()
 
     algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
-
-    // сделать тест доворота.
-    // разные точки в разных местах.
-
-    //И сделать тест разброса определения координат блоба
-
-    // Теперь определяем реальные координаты точек для забивания и посещаем их.
-    every<BlobItem>(scene().items(), [this](BlobItem* blob)
+    // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
+    const double dx = db().value("punch_dx").toDouble(); // сдвиг инструмента
+    const double dy = db().value("punch_dy").toDouble(); // сдвиг инструмента
+    const QStringList punchCode = program.split("\n", Qt::SkipEmptyParts);
+    every<BlobItem>(scene().items(), [this, dx, dy, punchCode](BlobItem* blob)
     {
         if (blob->isPunch())
         {
-            moveTo(blob->scenePos().x(), blob->scenePos().y());
-            waitForGetPosition(blob->scenePos().x(), blob->scenePos().y());
-            wait(500);
+            moveToAndWaitPosition(blob->scenePos().x() + dx, blob->scenePos().y() + dy); // Приехали на позицию
+            for (const QString& gCode : punchCode)
+            {
+                serial().write(gCode.toLatin1() + "\n");
+            }
+
         }
     });
 
