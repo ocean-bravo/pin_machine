@@ -15,7 +15,9 @@
 void TaskBase::moveTo(double x, double y)
 {
     const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
+    emit message(line);
     serial().write(line.toLatin1() + "\n");
+
 }
 
 void TaskBase::moveToAndWaitPosition(double x, double y)
