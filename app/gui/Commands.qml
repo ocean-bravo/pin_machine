@@ -421,13 +421,75 @@ Item {
                 Item { height: 20; width: 10}
                 Item { height: 30; width: 10}
 
-                SmButton {
-                    id: punch
-                    text: qsTr("Punch")
-                    checkable: true
-                    onCheckedChanged: checked ? TaskPunch.run() : TaskPunch.stopProgram()
-                    Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+
+            }
+
+            CollapsiblePanel {
+                id: punchPanel
+                width: parent.width
+                height: checked ? 200 : 30
+                text: "Punch"
+                onCheckedChanged: {
+                    punchGrid.visible = checked
                 }
+                Component.onCompleted: {
+                    punchGrid.visible = checked
+                }
+
+                GridLayout {
+                    id: punchGrid
+                    width: parent.width
+                    columns: 10
+                    columnSpacing: 5
+                    rowSpacing: 5
+
+
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 100
+                        Layout.columnSpan: 10
+
+                        CodeEditor2 {
+                            id: punchCode
+                            anchors.fill: parent
+                        }
+                    }
+                    Text {
+                        text: qsTr("dx")
+                    }
+
+                    DoubleSpinBox {
+                        value: DataBus.punch_dx
+                        onValueModified: DataBus.punch_dx = value
+                        Layout.preferredWidth: 100
+                    }
+
+                    Text {
+                        text: qsTr("dy")
+                    }
+                    DoubleSpinBox {
+                        value: DataBus.punch_dy
+                        onValueModified: DataBus.punch_dy = value
+                        Layout.preferredWidth: 100
+                    }
+
+                    SmButton {
+                        id: punch
+                        text: qsTr("Punch")
+                        checkable: true
+                        onCheckedChanged: checked ? TaskPunch.run() : TaskPunch.stopProgram()
+                        Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+
+                        Layout.row: 1
+                        Layout.column: 9
+                    }
+
+
+
+
+                }
+
             }
 
             CollapsiblePanel {
