@@ -460,7 +460,6 @@ Item {
                     }
 
                     DoubleSpinBox {
-                        value: DataBus.punch_dx
                         onValueModified: DataBus.punch_dx = value
                         Layout.preferredWidth: 100
                     }
@@ -469,7 +468,6 @@ Item {
                         text: qsTr("dy")
                     }
                     DoubleSpinBox {
-                        value: DataBus.punch_dy
                         onValueModified: DataBus.punch_dy = value
                         Layout.preferredWidth: 100
                     }
@@ -478,7 +476,7 @@ Item {
                         id: punch
                         text: qsTr("Punch")
                         checkable: true
-                        onCheckedChanged: checked ? TaskPunch.run() : TaskPunch.stopProgram()
+                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
                         Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
 
                         Layout.row: 1
@@ -514,7 +512,7 @@ Item {
                     DoubleSpinBox {
                         decimals: 5
                         value: DataBus.pixel_size
-                        onValueModified: DataBus.pixel_size = Number(text)
+                        onValueModified: DataBus.pixel_size = value
 
                         Layout.row: 0
                         Layout.column: 0
@@ -579,17 +577,11 @@ Item {
                     }
 
                     SmButton {
-                        id: beginTest
+                        id: testScanUpdateCycle
                         text: qsTr("Begin test")
                         checkable: true
                         checked: false
-                        onCheckedChanged: {
-                            if (checked)
-                                TestProgram.run(codeEditor.text)
-                            else {
-                                TestProgram.stopProgram()
-                            }
-                        }
+                        onCheckedChanged: checked ? TaskTestScanUpdateCycle.run(codeEditor.text) : TaskTestScanUpdateCycle.stopProgram()
                         Layout.row: 2
                     }
 

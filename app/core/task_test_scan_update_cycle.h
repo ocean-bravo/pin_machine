@@ -6,18 +6,18 @@
 
 #include "task_base.h"
 
-class TaskTestPrivate;
+class TaskTestScanUpdateCyclePrivate;
 
 class TaskScan;
 class TaskUpdate;
 
-class TaskTest : public QObject
+class TaskTestScanUpdateCycle : public QObject
 {
     Q_OBJECT
 
 public:
-    TaskTest(TaskScan* sb, TaskUpdate* ub, QObject* parent = nullptr);
-    ~TaskTest();
+    TaskTestScanUpdateCycle(TaskScan* sb, TaskUpdate* ub, QObject* parent = nullptr);
+    ~TaskTestScanUpdateCycle();
 
     Q_INVOKABLE void run(QString program);
 
@@ -31,17 +31,17 @@ signals:
     void finished();
 
 private:
-    TaskTestPrivate* const _impl;
+    TaskTestScanUpdateCyclePrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
-class TaskTestPrivate : public TaskBase
+class TaskTestScanUpdateCyclePrivate : public TaskBase
 {
     Q_OBJECT
 
 public:
-    TaskTestPrivate(TaskScan* sb, TaskUpdate* ub);
+    TaskTestScanUpdateCyclePrivate(TaskScan* sb, TaskUpdate* ub);
 
 public slots:
     void run(QString program);
@@ -50,5 +50,5 @@ private:
     TaskScan* _sb = nullptr;
     TaskUpdate* _ub = nullptr;
 
-    friend class TaskTest;
+    friend class TaskTestScanUpdateCycle;
 };

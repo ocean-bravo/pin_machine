@@ -19,7 +19,7 @@
 #include "data_bus.h"
 #include "task_scan.h"
 #include "task_update.h"
-#include "task_test.h"
+#include "task_test_scan_update_cycle.h"
 #include "task_test_algo.h"
 #include "task_check_camera.h"
 #include "task_punch.h"
@@ -113,7 +113,7 @@ void Engine::createQmlEngine()
 
     TaskScan* taskScan = new TaskScan(this);
     TaskUpdate* taskUpdate = new TaskUpdate(this);
-    TaskTest* tp = new TaskTest(taskScan, taskUpdate, this);
+    TaskTestScanUpdateCycle* tp = new TaskTestScanUpdateCycle(taskScan, taskUpdate, this);
     TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);
     TaskTestAlgo* ta = new TaskTestAlgo(this);
     TaskPunch* taskPunch = new TaskPunch(this);
@@ -136,7 +136,7 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
     _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
-    _qmlEngine->rootContext()->setContextProperty("TestProgram", tp);
+    _qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCycle", tp);
     _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
     _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);

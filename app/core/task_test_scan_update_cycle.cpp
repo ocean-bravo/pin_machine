@@ -1,4 +1,4 @@
-#include "task_test.h"
+#include "task_test_scan_update_cycle.h"
 #include "wait.h"
 #include "video4.h"
 #include "serial.h"
@@ -23,13 +23,13 @@
 #include "task_update.h"
 
 
-TaskTest::TaskTest(TaskScan *sb, TaskUpdate *ub, QObject* parent)
+TaskTestScanUpdateCycle::TaskTestScanUpdateCycle(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     : QObject(parent)
-    , _impl(new TaskTestPrivate(sb, ub))
+    , _impl(new TaskTestScanUpdateCyclePrivate(sb, ub))
     , _thread(new QThread)
 {
-    connect(_impl, &TaskTestPrivate::message, this, &TaskTest::message, Qt::QueuedConnection);
-    connect(_impl, &TaskTestPrivate::finished, this, &TaskTest::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskTestScanUpdateCyclePrivate::message, this, &TaskTestScanUpdateCycle::message, Qt::QueuedConnection);
+    connect(_impl, &TaskTestScanUpdateCyclePrivate::finished, this, &TaskTestScanUpdateCycle::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -37,19 +37,19 @@ TaskTest::TaskTest(TaskScan *sb, TaskUpdate *ub, QObject* parent)
     _thread->start();
 }
 
-TaskTest::~TaskTest()
+TaskTestScanUpdateCycle::~TaskTestScanUpdateCycle()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void TaskTest::run(QString program)
+void TaskTestScanUpdateCycle::run(QString program)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
 }
 
-void TaskTest::stopProgram()
+void TaskTestScanUpdateCycle::stopProgram()
 {
     _impl->_stop = true;
     _impl->_sb->stopProgram();
@@ -57,13 +57,13 @@ void TaskTest::stopProgram()
 }
 
 
-TaskTestPrivate::TaskTestPrivate(TaskScan *sb, TaskUpdate *ub)
+TaskTestScanUpdateCyclePrivate::TaskTestScanUpdateCyclePrivate(TaskScan *sb, TaskUpdate *ub)
 {
     _sb = sb;
     _ub = ub;
 }
 
-void TaskTestPrivate::run(QString program)
+void TaskTestScanUpdateCyclePrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
