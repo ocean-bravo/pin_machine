@@ -158,7 +158,7 @@ void TaskCheckCameraPrivate::run()
         if (blob->isPunch())
         {
             moveTo(blob->scenePos().x(), blob->scenePos().y());
-            waitForGetPosition(blob->scenePos().x(), blob->scenePos().y());
+            waitPosXY(blob->scenePos().x(), blob->scenePos().y());
             wait(500);
         }
     });

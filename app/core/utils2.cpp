@@ -6,7 +6,16 @@
 #include <QEventLoop>
 #include <QScopeGuard>
 
-void waitForGetPosition(double xTarget, double yTarget)
+namespace {
+
+bool okValue(double targetValue, double currentValue)
+{
+    return std::abs(targetValue - currentValue) <= 0.003;
+}
+
+}
+
+void waitPosXY(double xTarget, double yTarget)
 {
     auto condition = [xTarget, yTarget]() -> bool
     {
@@ -14,7 +23,7 @@ void waitForGetPosition(double xTarget, double yTarget)
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
 
-        return (status == "Idle") && (std::abs(xTarget - xPos) <= 0.003) && (std::abs(yTarget - yPos) <= 0.003);
+        return (status == "Idle") && okValue(xTarget, xPos) && okValue(yTarget, yPos);
     };
 
     QEventLoop loop;
@@ -40,6 +49,41 @@ void waitForGetPosition(double xTarget, double yTarget)
 
     loop.exec();
 }
+
+void waitPosZ(double zTarget)
+{
+    auto condition = [zTarget]() -> bool
+    {
+        const QString status = db().value("status").toString();
+        const double zPos = db().value("zPos").toDouble();
+
+        return (status == "Idle") && okValue(zTarget, zPos);
+    };
+
+    QEventLoop loop;
+    QTimer::singleShot(10000, &loop, &QEventLoop::quit);
+
+    QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop](const QString& key, const QVariant&)
+    {
+        if ( key == "status" || key == "zPos")
+        {
+            if (condition())
+                loop.quit();
+        }
+    });
+
+    auto guard = qScopeGuard([=]()
+    {
+        QObject::disconnect(conn);
+    });
+
+    //у машины есть зона нечувствительности, т.е. она не реагирует на микроперемещения, около 0,002 мм
+    if (condition())
+        return;
+
+    loop.exec();
+}
+
 
 void waitDataBus(const QString& key, const QString& value)
 {

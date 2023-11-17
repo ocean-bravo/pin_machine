@@ -16,7 +16,8 @@ inline std::tuple<double, double, double> blobToDouble(const QString& blob)
     return {x, y, dia};
 }
 
-void waitForGetPosition(double xTarget, double yTarget);
+void waitPosXY(double xTarget, double yTarget);
+void waitPosZ(double zTarget);
 
 void waitDataBus(const QString& key, const QString& value);
 

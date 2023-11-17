@@ -20,16 +20,6 @@
 
 namespace {
 
-double extractFromGcodeX(QString line)
-{
-    return line.split(' ', Qt::SkipEmptyParts)[3].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
-}
-
-double extractFromGcodeY(QString line)
-{
-    return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
-}
-
 }
 
 TaskScan::TaskScan(QObject* parent)
@@ -202,7 +192,7 @@ void TaskScanPrivate::run(QString program)
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
-            waitForGetPosition(_xTarget, _yTarget);
+            waitPosXY(_xTarget, _yTarget);
 
             emit message("capturing ...");
             auto a = QDateTime::currentMSecsSinceEpoch();

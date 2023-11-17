@@ -10,6 +10,7 @@
 #include "scene.h"
 
 #include <QString>
+#include <QRegularExpression>
 
 void TaskBase::moveTo(double x, double y)
 {
@@ -20,7 +21,7 @@ void TaskBase::moveTo(double x, double y)
 void TaskBase::moveToAndWaitPosition(double x, double y)
 {
     moveTo(x, y);
-    waitForGetPosition(x, y);
+    waitPosXY(x, y);
 }
 
 int TaskBase::updateBlobPosition(BlobItem *blob)
@@ -102,4 +103,24 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
 
     // 4. Восстанавливаю transform origin
     //runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
+}
+
+double TaskBase::extractFromGcodeX(QString line)
+{
+    static QRegularExpression re(R"(.*X(\d{0,3}\.{0,1}\d{0,3}).*)");
+    return re.match(line).captured().toDouble();
+}
+
+double TaskBase::extractFromGcodeY(QString line)
+{
+    //return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
+
+    static QRegularExpression re(R"(.*Y(\d{0,3}\.{0,1}\d{0,3}).*)");
+    return re.match(line).captured().toDouble();
+}
+
+double TaskBase::extractFromGcodeZ(QString line)
+{
+    static QRegularExpression re(R"(.*Z(\d{0,3}\.{0,1}\d{0,3}).*)");
+    return re.match(line).captured().toDouble();
 }
