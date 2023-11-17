@@ -376,22 +376,22 @@ Item {
                 Item { height: 20; width: 10}
 
                 SmButton {
-                    id: playPauseProgram
+                    id: scan
                     text: qsTr("Fast scan")
                     checkable: true
                     onCheckedChanged: checked ?  TaskScan.run(codeEditor.text) : TaskScan.stopProgram()
-                    Connections { target: TaskScan; function onFinished() { playPauseProgram.checked = false } }
+                    Connections { target: TaskScan; function onFinished() { scan.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
                 Item { height: 30; width: 10}
 
                 SmButton {
-                    id: blobVisitor
+                    id: update
                     text: qsTr("Update selected")
                     checkable: true
                     onCheckedChanged: checked ? TaskUpdate.run() : TaskUpdate.stopProgram()
-                    Connections { target: TaskUpdate; function onFinished() { blobVisitor.checked = false } }
+                    Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
                 }
 
                 Item { height: 20; width: 10}
@@ -412,11 +412,21 @@ Item {
 
 
                 SmButton {
-                    id: punchBlobs
+                    id: checkCamera
                     text: qsTr("Check camera")
                     checkable: true
                     onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
-                    Connections { target: TaskCheckCamera; function onFinished() { punchBlobs.checked = false } }
+                    Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
+                }
+                Item { height: 20; width: 10}
+                Item { height: 30; width: 10}
+
+                SmButton {
+                    id: punch
+                    text: qsTr("Punch")
+                    checkable: true
+                    onCheckedChanged: checked ? TaskPunch.run() : TaskPunch.stopProgram()
+                    Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
                 }
             }
 
