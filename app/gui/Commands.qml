@@ -415,6 +415,11 @@ Item {
                             id: punchCode
                             anchors.fill: parent
                             text: "G1 G90 F100 Z1\nG1 G90 F100 Z0"
+                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                            // https://github.com/SakamotoMari/FileIO
+                            // https://github.com/chili-epfl/qml-fileio
                         }
                     }
                     Text {
