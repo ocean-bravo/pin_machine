@@ -19,9 +19,9 @@ public:
     // Не знаю куда приткнуть этот метод
     static void algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem *secondRefBlob, BlobItem *secondRealBlob);
 
-    double extractFromGcodeX(QString line);
-    double extractFromGcodeY(QString line);
-    double extractFromGcodeZ(QString line);
+    double extractFromGcodeX(QString line) const;
+    double extractFromGcodeY(QString line) const;
+    double extractFromGcodeZ(QString line) const;
 
 protected:
     QMutex _mutex;

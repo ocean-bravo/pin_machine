@@ -105,24 +105,19 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
     //runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 }
 
-double TaskBase::extractFromGcodeX(QString line)
+double TaskBase::extractFromGcodeX(QString line) const
 {
     static QRegularExpression re(R"(.*X(\d{0,3}\.{0,1}\d{0,3}).*)");
-    qd() << "extracted x " <<  re.match(line).captured(1).toDouble();
     return re.match(line).captured(1).toDouble();
 }
 
-double TaskBase::extractFromGcodeY(QString line)
+double TaskBase::extractFromGcodeY(QString line) const
 {
-    //return line.split(' ', Qt::SkipEmptyParts)[4].replace(QRegExp(R"([^\d.-])"), "").toDouble(); //G1 G90 F5000 X6 Y140
-
     static QRegularExpression re(R"(.*Y(\d{0,3}\.{0,1}\d{0,3}).*)");
-
-    qd() << "extracted y " <<  re.match(line).captured(1).toDouble();
     return re.match(line).captured(1).toDouble();
 }
 
-double TaskBase::extractFromGcodeZ(QString line)
+double TaskBase::extractFromGcodeZ(QString line) const
 {
     static QRegularExpression re(R"(.*Z(\d{0,3}\.{0,1}\d{0,3}).*)");
     return re.match(line).captured(1).toDouble();

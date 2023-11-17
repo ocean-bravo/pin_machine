@@ -18,16 +18,16 @@ function generateSteps(xMin, yMin, xMax, yMax, stepX, stepY, feed) {
 
     while (x < xMax) {
         while (y < yMax) {
-            cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
+            cmds.push("G1 G90 F" + feed + " X" + parseFloat(x.toFixed(3)) + " Y" + parseFloat(y.toFixed(3))) // чтобы убрать trailing zeroes
             y += stepY
         }
-        cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
+        cmds.push("G1 G90 F" + feed + " X" + parseFloat(x.toFixed(3)) + " Y" + parseFloat(y.toFixed(3)))
         x += stepX
         while (y > yMin) {
-            cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
+            cmds.push("G1 G90 F" + feed + " X" + parseFloat(x.toFixed(3)) + " Y" + parseFloat(y.toFixed(3)))
             y -= stepY
         }
-        cmds.push("G1 G90 F" + feed + " X" + x + " Y" + y)
+        cmds.push("G1 G90 F" + feed + " X" + parseFloat(x.toFixed(3)) + " Y" + parseFloat(y.toFixed(3)))
         x += stepX
         y = yMin
     }
