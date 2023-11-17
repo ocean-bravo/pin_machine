@@ -98,17 +98,11 @@ void TaskPunchPrivate::run(QString program)
             referenceFiducialBlobs.append(blob);
     });
 
-    int count  = 0;
+
     QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
     for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
-        if (_stop)
-        {
-            emit message("program interrupted");
-            break;
-        }
-
-        ++count;
+        if (_stop) { emit message("program interrupted"); break; }
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         //realFiducialBlob->setRealFiducial(true);
@@ -144,20 +138,24 @@ void TaskPunchPrivate::run(QString program)
     algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
     // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
+    int count  = 0;
     const double dx = db().value("punch_dx").toDouble(); // сдвиг инструмента
     const double dy = db().value("punch_dy").toDouble(); // сдвиг инструмента
     const QStringList punchCode = program.split("\n", Qt::SkipEmptyParts);
-    every<BlobItem>(scene().items(), [this, dx, dy, punchCode](BlobItem* blob)
+    every<BlobItem>(scene().items(), [this, dx, dy, punchCode, &count](BlobItem* blob)
     {
         if (blob->isPunch())
         {
             moveToAndWaitPosition(blob->scenePos().x() + dx, blob->scenePos().y() + dy); // Приехали на позицию
+            if (_stop) { emit message("program interrupted"); return; }
             for (const QString& gCode : punchCode)
             {
+                if (_stop) { emit message("program interrupted"); return; }
                 serial().write(gCode.toLatin1() + "\n");
                 const double z = extractFromGcodeZ(gCode);
                 waitPosZ(z);
             }
+            ++count;
         }
     });
 
