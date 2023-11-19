@@ -24,12 +24,13 @@ public:
 
     //Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
 
+    Q_INVOKABLE void save();
+
 signals:
     void imageChanged(QString id);
 
 private:
     void createQmlEngine();
-
 
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
 
