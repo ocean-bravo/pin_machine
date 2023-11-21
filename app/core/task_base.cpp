@@ -109,18 +109,18 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
 
 double TaskBase::extractFromGcodeX(QString line) const
 {
-    static QRegularExpression re(R"(.*X(\d{0,3}\.{0,1}\d{0,3}).*)");
+    static QRegularExpression re(R"(.*X(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
     return re.match(line).captured(1).toDouble();
 }
 
 double TaskBase::extractFromGcodeY(QString line) const
 {
-    static QRegularExpression re(R"(.*Y(\d{0,3}\.{0,1}\d{0,3}).*)");
+    static QRegularExpression re(R"(.*Y(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
     return re.match(line).captured(1).toDouble();
 }
 
 double TaskBase::extractFromGcodeZ(QString line) const
 {
-    static QRegularExpression re(R"(.*Z(\d{0,3}\.{0,1}\d{0,3}).*)");
+    static QRegularExpression re(R"(.*Z(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
     return re.match(line).captured(1).toDouble();
 }
