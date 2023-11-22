@@ -367,12 +367,12 @@ Item {
                 SmButton {
                     id: save
                     text: qsTr("Save")
-                    onClicked: {}
+                    onClicked: {Engine.save()}
                 }
                 SmButton {
                     id: load
                     text: qsTr("Load")
-                    onClicked: {}
+                    onClicked: {Engine.load()}
                 }
 
                 Item { height: 30; width: 10}

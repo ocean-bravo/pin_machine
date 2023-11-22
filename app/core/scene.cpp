@@ -13,6 +13,8 @@
 #include <QMutexLocker>
 #include <QEventLoop>
 
+#include <QFile>
+
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
@@ -40,27 +42,27 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 
     runOnThreadWait(this, foo);
 
-//    static const QThread* sceneThread = thread();
-//    const QThread* executorThread = QThread::currentThread();
+    //    static const QThread* sceneThread = thread();
+    //    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-//    {
-//        QEventLoop loop;
-//        runOnThread(this, [this, foo, &loop]()
-//        {
-//            foo();
-//            loop.quit();
-//        });
+    //    {
+    //        QEventLoop loop;
+    //        runOnThread(this, [this, foo, &loop]()
+    //        {
+    //            foo();
+    //            loop.quit();
+    //        });
 
-//        loop.exec();
-//    }
-//    else
-//    {
-//        runOnThread(this, [this, foo]()
-//        {
-//            foo();
-//        });
-//    }
+    //        loop.exec();
+    //    }
+    //    else
+    //    {
+    //        runOnThread(this, [this, foo]()
+    //        {
+    //            foo();
+    //        });
+    //    }
     return blob;
 }
 
@@ -74,11 +76,11 @@ BlobItem* Scene::addBlobCopy(const BlobItem* blob, bool sceneIsParent)
 
 void Scene::addBoard()
 {
-   //QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
     //_board.reset(new BoardItem);
 
-//    runOnThread(this, [this]() { addItem(_board.data()); });
-//    runOnThread(this, [this]() { addItem(new CameraViewItem); });
+    //    runOnThread(this, [this]() { addItem(_board.data()); });
+    //    runOnThread(this, [this]() { addItem(new CameraViewItem); });
 
     runOnThreadWait(this, [this]()
     {
@@ -135,6 +137,88 @@ void Scene::setImagePrivate(QImage img)
     //addItem(item);
 }
 
+void Scene::saveScene()
+{
+    QVariantMap map;
+
+    int i = 0;
+    every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
+    {
+        QPixmap pix = pixmap->pixmap();
+        QPointF offset = pixmap->offset();
+        double scale = pixmap->scale();
+        QPointF pos = pixmap->pos();
+        double zValue = pixmap->zValue();
+
+        const QString mainKey = "background_" + toInt(i);
+        ++i;
+
+        map.insert(mainKey + ".pix" , pix);
+        map.insert(mainKey + ".offset" , offset);
+        map.insert(mainKey + ".scale" , scale);
+        map.insert(mainKey + ".pos" , pos);
+        map.insert(mainKey + ".zValue" , zValue);
+    });
+
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << map;
+    saveDataToFile(".", "scene_save", ba);
+}
+
+void Scene::loadScene()
+{
+    clear();
+    addBoard();
+
+    QFile file("scene_save");
+
+    if (!file.exists())
+    {
+        return;
+    }
+
+    if (!file.open(QFile::ReadOnly))
+    {
+        return;
+    }
+
+    const QByteArray ba = file.readAll();
+    file.close();
+
+    QVariantMap map;
+    QDataStream in(ba);
+    in.setVersion(QDataStream::Qt_5_15);
+    in >> map;
+
+
+    int i = 0;
+
+    while (true)
+    {
+        const QString mainKey = "background_" + toInt(i);
+        ++i;
+
+        if (!map.contains(mainKey))
+            break;
+
+        QPixmap pix = map.value(mainKey + ".pix").value<QPixmap>();
+        QPointF offset = map.value(mainKey + ".offset").toPointF();
+        double scale= map.value(mainKey + ".scale").toDouble();
+        QPointF pos = map.value(mainKey + ".pos").toPointF();
+        double zValue = map.value(mainKey + ".zValue").toDouble();
+
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
+
+        // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
+        item->setOffset(offset);
+        item->setScale(scale);
+        item->setPos(pos);
+        item->setZValue(zValue); // Чтобы изображения были позади блобов
+    }
+}
+
 void Scene::removeDuplicatedBlobs()
 {
     //QMutexLocker locker(&_mutex);
@@ -162,27 +246,27 @@ void Scene::removeDuplicatedBlobs()
 
     runOnThreadWait(this, foo);
 
-//    static const QThread* sceneThread = thread();
-//    const QThread* executorThread = QThread::currentThread();
+    //    static const QThread* sceneThread = thread();
+    //    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-//    {
-//        QEventLoop loop;
-//        runOnThread(this, [this, &foo, &loop]()
-//        {
-//            foo();
-//            loop.quit();
-//        });
+    //    {
+    //        QEventLoop loop;
+    //        runOnThread(this, [this, &foo, &loop]()
+    //        {
+    //            foo();
+    //            loop.quit();
+    //        });
 
-//        loop.exec();
-//    }
-//    else
-//    {
-//        runOnThread(this, [this, &foo]()
-//        {
-//            foo();
-//        });
-//    }
+    //        loop.exec();
+    //    }
+    //    else
+    //    {
+    //        runOnThread(this, [this, &foo]()
+    //        {
+    //            foo();
+    //        });
+    //    }
 }
 
 void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
@@ -198,27 +282,27 @@ void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
 
     runOnThreadWait(this, foo);
 
-//    static const QThread* sceneThread = thread();
-//    const QThread* executorThread = QThread::currentThread();
+    //    static const QThread* sceneThread = thread();
+    //    const QThread* executorThread = QThread::currentThread();
 
     //if (sceneThread != executorThread)
-//    {
-//        QEventLoop loop;
-//        runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
-//        {
-//            foo(blob, x, y, dia);
-//            loop.quit();
-//        });
+    //    {
+    //        QEventLoop loop;
+    //        runOnThread(this, [this, &foo, blob, x, y, dia, &loop]()
+    //        {
+    //            foo(blob, x, y, dia);
+    //            loop.quit();
+    //        });
 
-//        loop.exec();
-//    }
-//    else
-//    {
-//        runOnThread(this, [this, &foo, blob, x, y, dia]()
-//        {
-//            foo(blob, x, y, dia);
-//        });
-//    }
+    //        loop.exec();
+    //    }
+    //    else
+    //    {
+    //        runOnThread(this, [this, &foo, blob, x, y, dia]()
+    //        {
+    //            foo(blob, x, y, dia);
+    //        });
+    //    }
 }
 
 QList<QGraphicsItem*> Scene::items(Qt::SortOrder order) const

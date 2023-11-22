@@ -25,6 +25,7 @@ public:
     //Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
 
     Q_INVOKABLE void save();
+    Q_INVOKABLE void load();
 
 signals:
     void imageChanged(QString id);

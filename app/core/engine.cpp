@@ -28,6 +28,9 @@
 
 #include "my_image_provider.h"
 
+#include "scene.h"
+
+
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
@@ -51,13 +54,17 @@ QStringList Engine::camerasInfo()
 
 void Engine::save()
 {
-
-    QVariantMap saveFile;
-
-
-
+    scene().saveScene();
 
 }
+
+void Engine::load()
+{
+    scene().loadScene();
+
+}
+
+
 
 Engine::~Engine()
 {
