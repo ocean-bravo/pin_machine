@@ -99,7 +99,8 @@ Item {
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
-                    fullStatus = "[" + DataBus.x_coord + " " + DataBus.y_coord + "]"
+                    DataBus.z_coord = pos[2]
+                    fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
 
                     xPos = parseFloat(pos[0])
                     yPos = parseFloat(pos[1])

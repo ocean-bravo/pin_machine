@@ -52,6 +52,7 @@ QStringList Engine::camerasInfo()
 void Engine::save()
 {
 
+    QVariantMap saveFile;
 
 
 }
