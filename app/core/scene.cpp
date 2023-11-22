@@ -176,11 +176,13 @@ void Scene::loadScene()
 
     if (!file.exists())
     {
+        qd() << "file not exists";
         return;
     }
 
     if (!file.open(QFile::ReadOnly))
     {
+        qd() << "cant opent file";
         return;
     }
 
@@ -192,6 +194,8 @@ void Scene::loadScene()
     in.setVersion(QDataStream::Qt_5_15);
     in >> map;
 
+
+    qd() << map.keys();
 
     int i = 0;
 
