@@ -28,10 +28,6 @@
 
 #include "my_image_provider.h"
 
-#include "json_fwd.h"
-
-using json = nlohmann::json;
-
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
@@ -55,8 +51,7 @@ QStringList Engine::camerasInfo()
 
 void Engine::save()
 {
-    std::ifstream f("example.json");
-    json data = json::parse(f);
+
 
 
 }
