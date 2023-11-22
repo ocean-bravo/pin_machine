@@ -164,7 +164,7 @@ void Scene::saveScene()
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
     out << map;
-    saveDataToFile(".", "scene_save", ba);
+    saveDataToFile("", "scene_save", ba);
 }
 
 void Scene::loadScene()
