@@ -59,6 +59,9 @@ void TaskPunchPrivate::run(QString program)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    db().insert("punch_dx", 85.0);
+    db().insert("punch_dy", -90.0);
+
     video().stop();
 
     db().insert("resolution_width", 1280);
