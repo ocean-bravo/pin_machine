@@ -22,6 +22,9 @@ TaskPunch::TaskPunch(QObject* parent)
     , _impl(new TaskPunchPrivate)
     , _thread(new QThread)
 {
+    db().insert("punch_dx", 85.0);
+    db().insert("punch_dy", -90.0);
+
     connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
     connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
 
@@ -58,9 +61,6 @@ void TaskPunchPrivate::run(QString program)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
-
-    db().insert("punch_dx", 85.0);
-    db().insert("punch_dy", -90.0);
 
     video().stop();
 

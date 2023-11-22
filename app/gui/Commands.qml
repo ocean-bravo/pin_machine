@@ -428,6 +428,7 @@ Item {
                     }
 
                     DoubleSpinBox {
+                        value: DataBus.punch_dx
                         onValueModified: DataBus.punch_dx = value
                         Layout.preferredWidth: 100
                     }
@@ -436,6 +437,7 @@ Item {
                         text: qsTr("dy")
                     }
                     DoubleSpinBox {
+                        value: DataBus.punch_dy
                         onValueModified: DataBus.punch_dy = value
                         Layout.preferredWidth: 100
                     }
