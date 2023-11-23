@@ -12,7 +12,7 @@
 
 #include <QMutexLocker>
 #include <QEventLoop>
-
+#include <QSplashScreen>
 #include <QFile>
 
 Scene::Scene(QObject* parent)
@@ -139,16 +139,20 @@ void Scene::setImagePrivate(QImage img)
 
 void Scene::saveScene()
 {
+    QSplashScreen splash;
+    splash.show();
+
+
     QVariantMap map;
 
     int i = 0;
     every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
     {
-        QPixmap pix = pixmap->pixmap();
-        QPointF offset = pixmap->offset();
-        double scale = pixmap->scale();
-        QPointF pos = pixmap->pos();
-        double zValue = pixmap->zValue();
+        const QPixmap pix = pixmap->pixmap();
+        const QPointF offset = pixmap->offset();
+        const double scale = pixmap->scale();
+        const QPointF pos = pixmap->pos();
+        const double zValue = pixmap->zValue();
 
         const QString mainKey = "background_" + toInt(i);
         ++i;
@@ -165,6 +169,7 @@ void Scene::saveScene()
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
     out << map;
+
     saveDataToFile("", "scene_save", ba);
 }
 
@@ -194,9 +199,6 @@ void Scene::loadScene()
     QDataStream in(ba);
     in.setVersion(QDataStream::Qt_5_15);
     in >> map;
-
-
-    qd() << map.keys();
 
     int i = 0;
 
