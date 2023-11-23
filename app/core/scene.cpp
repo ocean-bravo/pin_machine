@@ -152,7 +152,7 @@ void Scene::saveScene()
     int i = 0;
     every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
     {
-        QPixmap pix = pixmap->pixmap();
+        QImage img = pixmap->pixmap().toImage();
         const QPointF offset = pixmap->offset();
         const double scale = pixmap->scale();
         const QPointF pos = pixmap->pos();
@@ -161,13 +161,13 @@ void Scene::saveScene()
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
-        QByteArray bytes;
-        QBuffer buffer(&bytes);
-        buffer.open(QIODevice::WriteOnly);
-        pix.save(&buffer, "PNG"); // writes pixmap into bytes in PNG format
+//        QByteArray bytes;
+//        QBuffer buffer(&bytes);
+//        buffer.open(QIODevice::WriteOnly);
+//        pix.save(&buffer, "PNG"); // writes pixmap into bytes in PNG format
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".pix" , bytes);
+        map.insert(mainKey + ".img" , img);
         map.insert(mainKey + ".offset" , offset);
         map.insert(mainKey + ".scale" , scale);
         map.insert(mainKey + ".pos" , pos);
@@ -179,7 +179,6 @@ void Scene::saveScene()
 
     Measure mes2("datastream");
     QByteArray ba;
-    ba.resize(200000000);
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
     out << map;
@@ -228,13 +227,13 @@ void Scene::loadScene()
         if (!map.contains(mainKey))
             break;
 
-        QImage pix = map.value(mainKey + ".pix").value<QImage>();
+        QImage img = map.value(mainKey + ".img").value<QImage>();
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale= map.value(mainKey + ".scale").toDouble();
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(pix), _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(img), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
