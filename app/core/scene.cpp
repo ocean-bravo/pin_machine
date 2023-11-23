@@ -150,7 +150,7 @@ void Scene::saveScene()
     int i = 0;
     every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
     {
-        const QPixmap pix = pixmap->pixmap();
+        const QImage pix = pixmap->pixmap().toImage();
         const QPointF offset = pixmap->offset();
         const double scale = pixmap->scale();
         const QPointF pos = pixmap->pos();
@@ -220,13 +220,13 @@ void Scene::loadScene()
         if (!map.contains(mainKey))
             break;
 
-        QPixmap pix = map.value(mainKey + ".pix").value<QPixmap>();
+        QImage pix = map.value(mainKey + ".pix").value<QImage>();
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale= map.value(mainKey + ".scale").toDouble();
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(pix)), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
