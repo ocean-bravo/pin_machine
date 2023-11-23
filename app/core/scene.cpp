@@ -15,6 +15,8 @@
 #include <QSplashScreen>
 #include <QFile>
 
+#include <QBuffer>
+
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
@@ -150,7 +152,7 @@ void Scene::saveScene()
     int i = 0;
     every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
     {
-        const QImage pix = pixmap->pixmap().toImage();
+        QPixmap pix = pixmap->pixmap();
         const QPointF offset = pixmap->offset();
         const double scale = pixmap->scale();
         const QPointF pos = pixmap->pos();
@@ -159,8 +161,13 @@ void Scene::saveScene()
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
+        QByteArray bytes;
+        QBuffer buffer(&bytes);
+        buffer.open(QIODevice::WriteOnly);
+        pix.save(&buffer, "PNG"); // writes pixmap into bytes in PNG format
+
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".pix" , pix);
+        map.insert(mainKey + ".pix" , bytes);
         map.insert(mainKey + ".offset" , offset);
         map.insert(mainKey + ".scale" , scale);
         map.insert(mainKey + ".pos" , pos);
