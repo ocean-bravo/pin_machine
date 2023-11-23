@@ -50,9 +50,9 @@ void Measure::start()
 void Measure::stop()
 {
     const auto finish = std::chrono::steady_clock::now();
-    const std::chrono::duration<double> elapsed = finish - _start;
+    const std::chrono::duration<double, std::micro> elapsed = finish - _start;
 
-    qd() << _msg << elapsed.count();
+    qd() << _msg << elapsed.count() << "us";
 }
 
 QJsonObject readJsonFile(const QString& fileName)

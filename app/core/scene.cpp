@@ -143,6 +143,8 @@ void Scene::saveScene()
     splash.show();
 
 
+    Measure mes("get pixmap");
+
     QVariantMap map;
 
     int i = 0;
@@ -165,12 +167,20 @@ void Scene::saveScene()
         map.insert(mainKey + ".zValue" , zValue);
     });
 
+    mes.stop();
+
+
+    Measure mes2("datastream");
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
     out << map;
+    mes2.stop();
 
+
+    Measure mes3("safetofile");
     saveDataToFile("", "scene_save", ba);
+    mes3.stop();
 }
 
 void Scene::loadScene()
