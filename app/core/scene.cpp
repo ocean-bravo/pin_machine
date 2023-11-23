@@ -153,6 +153,7 @@ void Scene::saveScene()
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
+        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".pix" , pix);
         map.insert(mainKey + ".offset" , offset);
         map.insert(mainKey + ".scale" , scale);
@@ -216,10 +217,10 @@ void Scene::loadScene()
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
-//        item->setOffset(offset);
-//        item->setScale(scale);
-//        item->setPos(pos);
-//        item->setZValue(zValue); // Чтобы изображения были позади блобов
+        item->setOffset(offset);
+        item->setScale(scale);
+        item->setPos(pos);
+        item->setZValue(zValue); // Чтобы изображения были позади блобов
     }
 }
 
