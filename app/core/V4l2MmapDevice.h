@@ -1,26 +1,23 @@
 #pragma once
 
+#include <linux/videodev2.h>
+
 #include <vector>
 #include <QString>
+#include <QRect>
 
-#include "V4l2Device.h"
+class QJsonArray;
 
-class V4l2MmapDevice
+class MyDriver
 {	
 public:
-    V4l2MmapDevice();
-    ~V4l2MmapDevice();
+    MyDriver();
+    ~MyDriver();
 
-    static quint32 fourccToInt(QString fourcc);
-    static QString fourccToString(quint32 fourcc);
-
-    //virtual bool init(unsigned int mandatoryCapabilities);
     bool init(int device, int width, int height, int fourcc);
     bool isReady();
     bool start();
     bool stop();
-
-
     bool open(QString deviceName);
     void close();
 
@@ -33,11 +30,13 @@ public:
     int width = 640;
     int height = 480;
 
+    static void reloadDevices();
+    static quint32 maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint32 height);
+    static QVector<QRect> frameSizes(int fd, quint32 pixelformat);
+    static QJsonArray imageFormats(int fd);
+
 protected:
-
-
     size_t _bufSize = 0;
-
 
     unsigned int  n_buffers ;
 
@@ -48,24 +47,22 @@ protected:
     };
     std::vector<buffer> m_buffers;
 
-    bool unmapAndDeleteBuffers();
-
 private:
-    bool streamOff(int fd);
-    bool requestBuffers(int fd, int count);
-    bool queryBuffers(int fd, int count);
-    bool streamOn(int fd);
-    bool queueBuffers(int fd, int count);
-    int setFormat(int fd, int width, int height, int fourcc);
+    bool requestBuffers(int count);
+    bool queryBuffers(int count);
 
+    bool streamOn();
+    bool streamOff();
 
+    bool queueBuffers(int count);
+
+    bool setFormat(int width, int height, int fourcc);
 
     bool freeBuffers();
+    bool unmapAndDeleteBuffers();
 
-
-
+    static v4l2_buf_type _type;
     QString _deviceName;
-
-    int m_fd = -1;
+    int _fd = -1;
+    static quint32 _memory;
 };
-

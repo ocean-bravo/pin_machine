@@ -4,6 +4,7 @@
 #include "version.h" // автогенерированный файл qmake из version.h.in
 #include "utils.h"
 #include "utils2.h"
+#include "wait.h"
 
 #include <QCoreApplication>
 #include <QQmlContext>
@@ -13,8 +14,10 @@
 #include <QBuffer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QSplashScreen>
 
 #include <QQuickStyle>
+#include <QScopeGuard>
 
 #include "data_bus.h"
 #include "task_scan.h"
@@ -29,42 +32,74 @@
 #include "my_image_provider.h"
 
 #include "scene.h"
+#include "settings.h"
 
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
 {
+    Settings::instance();
     Serial::instance();
-
     DataBus::instance();
     OpenCv::instance();
 
-    _videoDriver3 = new Video3();
+    //_videoDriver3 = new Video3();
     Video4::instance();
 
     createQmlEngine();
 }
 
 
-QStringList Engine::camerasInfo()
+//QStringList Engine::camerasInfo()
+//{
+//    return _info;
+//}
+
+void Engine::save(const QString& url)
 {
-    return _info;
+    QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
+    splash.setEnabled(false);
+    splash.setWindowModality(Qt::ApplicationModal);
+    splash.show();
+
+    int count = scene().images();
+
+    auto connection = connect(&scene(), &Scene::imageSaved, this, [&splash, count](int i)
+    {
+        splash.showMessage(QString("Saved %1 of %2 images").arg(i).arg(count));
+    });
+
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+    scene().saveScene(url);
 }
 
-void Engine::save()
+void Engine::load(const QString& url)
 {
-    scene().saveScene();
+    QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
+    splash.setEnabled(false);
+    splash.setWindowModality(Qt::ApplicationModal);
+    splash.show();
 
+    scene().loadScene(url);
+
+//    QList<QGraphicsView *> views = scene().views();
+
+//    for (QGraphicsView * view : views)
+//    {
+//        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
+    //    }
 }
 
-void Engine::load()
+void Engine::capture()
 {
-    scene().loadScene();
-
+    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+    video().start();
+    video().capture();
+    waitForSignal(&video(), &Video4::captured, 2000);
 }
-
-
 
 Engine::~Engine()
 {
@@ -100,7 +135,7 @@ void Engine::createQmlEngine()
         const QString x = db().value("x_coord").toString();
         const QString y = db().value("y_coord").toString();
 
-        qd() << "captured " << captureNumber << x << y;
+        //qd() << "captured " << captureNumber << x << y;
 
         img.setText("x", x);
         img.setText("y", y);
@@ -143,9 +178,10 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
     _qmlEngine->addImageProvider("camera", myImageProvider);
 
+    _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
-    _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
+    //_qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
     _qmlEngine->rootContext()->setContextProperty("Video4", &video());
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);

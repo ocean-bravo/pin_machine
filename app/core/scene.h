@@ -30,13 +30,16 @@ public:
     // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
 
-    void saveScene();
-    void loadScene();
+    void saveScene(const QString &url);
+    void loadScene(const QString &url);
+
+    int images() const;
+
+signals:
+    void imageSaved(int);
 
 private slots:
     void setImagePrivate(QImage img);
-
-
 
 private:
     Scene(QObject* parent = nullptr);

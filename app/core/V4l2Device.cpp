@@ -67,7 +67,7 @@ void V4l2Device::queryFormat()
 
     fmt.type  = m_deviceType;
 
-    if (0 == ioctl(m_fd,VIDIOC_G_FMT,&fmt))
+    if (0 == ioctl(m_fd, VIDIOC_G_FMT, &fmt))
     {
         m_format     = fmt.fmt.pix.pixelformat;
         m_width      = fmt.fmt.pix.width;

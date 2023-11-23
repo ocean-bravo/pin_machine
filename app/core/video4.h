@@ -30,7 +30,10 @@ public:
 
     Q_INVOKABLE void captureSmallRegion(double width);
 
-    Q_INVOKABLE QImage smallRegion();
+    QImage smallRegion();
+
+
+    Q_INVOKABLE void reloadDevices();
 
 signals:
     void newImage(QImage);
@@ -63,6 +66,8 @@ public slots:
     void capture();
     void captureSmallRegion(double width);
 
+    void reloadDevices();
+
 signals:
     void newImage(QImage);
     void captured(QImage);
@@ -74,7 +79,7 @@ signals:
 private:
     void imageDispatch(QImage img);
 
-    QScopedPointer<V4l2MmapDevice> _videoCapture;
+    QScopedPointer<MyDriver> _videoCapture;
 
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
@@ -94,6 +99,3 @@ inline Video4& video()
 {
     return Video4::instance();
 }
-
-
-

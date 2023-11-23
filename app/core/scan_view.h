@@ -14,12 +14,8 @@ public:
     ScanView(QWidget* parent = nullptr);
     ~ScanView();
 
-protected slots:
-
-
 private:
-
-    void setCross();
+    void updateCameraView();
     Ui::ScanView* ui;
     QGraphicsScene*  _scene;
 };

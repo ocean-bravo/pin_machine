@@ -1,5 +1,12 @@
 #include "V4l2MmapDevice.h"
 
+#include "data_bus.h"
+#include "common.h"
+
+#include <QScopeGuard>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QRect>
 #include <sys/poll.h>
 
 #include <string.h>
@@ -8,10 +15,11 @@
 #include <errno.h> 
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <sys/fcntl.h>
 
 #include "utils.h"
 // libv4l2
-#include <linux/videodev2.h>
+
 
 // project
 //#include "logger.h"
@@ -26,103 +34,124 @@ const size_t V4L2MMAP_NBBUFFER = 2;
 
 }
 
+v4l2_buf_type MyDriver::_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+quint32 MyDriver::_memory = V4L2_MEMORY_MMAP;
 
-QString V4l2MmapDevice::fourccToString(quint32 fourcc)
-{
-    QString str;
-    for(uint32_t i=0; i<4; i++)
-    {
-        str += (char)(fourcc & 0xFF);
-        fourcc >>= 8;
-    }
-    return str;
-}
-
-quint32 V4l2MmapDevice::fourccToInt(QString fourcc)
-{
-    if (fourcc.size() != 4)
-    {
-        qd() << "error: wrong FOURCC size: " << fourcc;
-        return 0;
-    }
-
-    return v4l2_fourcc(fourcc[0].toLatin1(), fourcc[1].toLatin1(), fourcc[2].toLatin1(), fourcc[3].toLatin1());
-}
-
-V4l2MmapDevice::V4l2MmapDevice()
+MyDriver::MyDriver()
     : n_buffers(V4L2MMAP_NBBUFFER)
 {
     m_buffers.resize(V4L2MMAP_NBBUFFER);
     std::fill(m_buffers.begin(), m_buffers.end(), buffer());
 }
 
-//bool V4l2MmapDevice::init(unsigned int mandatoryCapabilities)
-//{
-//    qd() << "init device";
+MyDriver::~MyDriver()
+{
+    stop();
+}
 
-//    bool ret = V4l2Device::init(mandatoryCapabilities);
-//    if (ret)
-//    {
-//        qd() << "inited OK";
-//        ret = start();
-//    }
-//    return ret;
-//}
-
-bool V4l2MmapDevice::init(int device, int width, int height, int fourcc)
+bool MyDriver::init(int device, int width, int height, int fourcc)
 {
     qd() << "Camera: init device";
 
-    open(QString("/dev/video%1").arg(device));
+    bool ok = open(QString("/dev/video%1").arg(device));
+
+    if (!ok)
+        return false;
+
     this->width = width;
     this->height = height;
-    setFormat(m_fd, width, height, fourcc);
-
-    //int caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
+    setFormat(width, height, fourcc);
 
     start();
     return true;
 }
 
-bool V4l2MmapDevice::isReady()
+bool MyDriver::open(QString deviceName)
 {
-    return  ((m_fd != -1)&& (n_buffers != 0));
+    const QByteArray ba = deviceName.toLatin1();
+
+    _deviceName = deviceName;
+    _fd = ::open(ba.constData(), O_RDWR); // TODO: возможно NONBLOCK
+
+    if (_fd < 0)
+    {
+        qd() <<  "Camera: error cannot open device" << deviceName << strerror(errno);
+        return false;
+    }
+    qd() << "Camera: open device" << deviceName << "OK";
+    return true;
 }
 
-V4l2MmapDevice::~V4l2MmapDevice()
+void MyDriver::close()
 {
-    stop();
+    ::close(_fd);
+    _fd = -1;
 }
 
-
-bool V4l2MmapDevice::requestBuffers(int fd, int count)
+bool MyDriver::start()
 {
-    struct v4l2_requestbuffers req = {};
+    qd() << "Camera: starting device " << _deviceName << "...";
+
+    if (!requestBuffers(V4L2MMAP_NBBUFFER))
+        return false;
+
+    if (!queryBuffers(V4L2MMAP_NBBUFFER))
+        return false;
+
+    if (!streamOn())
+        return false;
+
+    if (!queueBuffers(V4L2MMAP_NBBUFFER))
+        return false;
+
+    qd() << "Camera: start device OK";
+    return true;
+}
+
+bool MyDriver::stop()
+{
+    qd() << "Camera: stop device " << _deviceName;
+
+    streamOff();
+    unmapAndDeleteBuffers();
+    freeBuffers();
+
+    return true;
+}
+
+bool MyDriver::isReady()
+{
+    return  ((_fd != -1)&& (n_buffers != 0));
+}
+
+bool MyDriver::requestBuffers(int count)
+{
+    v4l2_requestbuffers req = {};
 
     req.count   = count;
-    req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory  = V4L2_MEMORY_MMAP;
+    req.type    = _type;
+    req.memory  = _memory;
 
-    if (ioctl(fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
+    if (ioctl(_fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
     qd() << "Camera: request buffers OK"; return true;
 }
 
-bool V4l2MmapDevice::queryBuffers(int fd, int count)
+bool MyDriver::queryBuffers(int count)
 {
     for (int i = 0; i < count; ++i)
     {
         v4l2_buffer buf = {};
 
-        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
+        buf.type   = _type;
+        buf.memory = _memory;
         buf.index  = i;
 
-        if (ioctl(fd, VIDIOC_QUERYBUF, &buf) == -1)
+        if (ioctl(_fd, VIDIOC_QUERYBUF, &buf) == -1)
         {
             qd() << "Camera: error VIDIOC_QUERYBUF " << i;
             return false;
         }
-        auto bufff = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
+        auto bufff = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, _fd, buf.m.offset);
 
         if (bufff == MAP_FAILED)
         {
@@ -140,59 +169,43 @@ bool V4l2MmapDevice::queryBuffers(int fd, int count)
     return true;
 }
 
-bool V4l2MmapDevice::queueBuffers(int fd, int count)
+bool MyDriver::queueBuffers(int count)
 {
     for (int i = 0; i < count; ++i)
     {
         v4l2_buffer buf = {};
 
-        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
+        buf.type   = _type;
+        buf.memory = _memory;
         buf.index  = i;
 
-        if (ioctl(fd, VIDIOC_QBUF, &buf) == -1)
-        {
-            qd() << "Camera: error VIDIOC_QBUF " << i;
-            return false;
-        }
+        if (ioctl(_fd, VIDIOC_QBUF, &buf) == -1) { qd() << "Camera: error VIDIOC_QBUF " << i; return false; }
     }
     return true;
 }
 
-int V4l2MmapDevice::setFormat(int fd, int width, int height, int fourcc)
+bool MyDriver::setFormat(int width, int height, int fourcc)
 {
     v4l2_format format = {};
-    format.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    format.type                = _type;
     format.fmt.pix.width       = width;
     format.fmt.pix.height      = height;
-    format.fmt.pix.pixelformat = fourcc;//V4L2_PIX_FMT_YUYV;
+    format.fmt.pix.pixelformat = fourcc;
     format.fmt.pix.field       = V4L2_FIELD_NONE;
 
-    if (ioctl(fd, VIDIOC_S_FMT, &format) == -1) { qd() << "Camera: error could not set format"; return false; }
-    qd() << QString("Camera: set format (%1x%2 %3) OK").arg(width).arg(height).arg(fourccToString(fourcc)); return true;
-}
-
-bool V4l2MmapDevice::start() 
-{
-    qd() << "Camera: starting device " << _deviceName << "...";
-
-    if (!requestBuffers(m_fd, V4L2MMAP_NBBUFFER))
+    if (ioctl(_fd, VIDIOC_S_FMT, &format) == -1)
+    {
+        qd() << QString("Camera: error could not set format (%1x%2 %3)").arg(width).arg(height).arg(fourccToString(fourcc));
         return false;
+    }
 
-    if (!queryBuffers(m_fd, V4L2MMAP_NBBUFFER))
-        return false;
+    // Можно еще перечитать структуру для большей уверенности, что формат установился.
 
-    if (!streamOn(m_fd))
-        return false;
-
-    if (!queueBuffers(m_fd, V4L2MMAP_NBBUFFER))
-        return false;
-
-    qd() << "Camera: start device OK";
+    qd() << QString("Camera: set format (%1x%2 %3) OK").arg(width).arg(height).arg(fourccToString(fourcc));
     return true;
 }
 
-bool V4l2MmapDevice::unmapAndDeleteBuffers()
+bool MyDriver::unmapAndDeleteBuffers()
 {
     bool result = true;
     for(uint32_t i=0; i< m_buffers.size(); i++)
@@ -210,86 +223,50 @@ bool V4l2MmapDevice::unmapAndDeleteBuffers()
     return result;
 }
 
-bool V4l2MmapDevice::freeBuffers()
+bool MyDriver::freeBuffers()
 {
     n_buffers = 0;
 
     v4l2_requestbuffers req = {};
 
     req.count    = 0;
-    req.type     = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory   = V4L2_MEMORY_MMAP;
+    req.type     = _type;
+    req.memory   = _memory;
 
-    if (ioctl(m_fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
+    if (ioctl(_fd, VIDIOC_REQBUFS, &req) == -1) { qd() << "Camera: error VIDIOC_REQBUFS"; return false; }
     qd() << "Camera: free buffers OK";
     return true;
 }
 
-bool V4l2MmapDevice::stop() 
+bool MyDriver::isReadable(int timeoutMs) const
 {
-    qd() << "Camera: stop device " << _deviceName;
-
-    streamOff(m_fd);
-    unmapAndDeleteBuffers();
-    freeBuffers();
-
-    return true;
-}
-
-bool V4l2MmapDevice::open(QString deviceName)
-{
-    _deviceName = deviceName;
-
-    m_fd = ::open(deviceName.toStdString().c_str(),  O_RDWR); // TODO: возможно NONBLOCK
-
-    if (m_fd < 0)
-    {
-        qd() <<  "Camera: error cannot open device" << deviceName << strerror(errno);
-        return false;
-    }
-    qd() << "Camera: open device" << deviceName << "OK";
-    return true;
-}
-
-void V4l2MmapDevice::close()
-{
-    if (m_fd != -1)
-        ::close(m_fd);
-
-    m_fd = -1;
-}
-
-bool V4l2MmapDevice::isReadable(int timeoutMs) const
-{
-    if (m_fd == -1)
+    if (_fd == -1)
     {
         qd() << "Camera: error fd = -1";
         return false;
     }
     // Use poll to wait for video capture events
     pollfd poll_fds[1];
-    poll_fds[0].fd = m_fd;
+    poll_fds[0].fd = _fd;
     poll_fds[0].events = POLLIN;
     const int ret = poll(poll_fds, 1, timeoutMs); // wait up to 1 second for events ( put -1 if it should wait forever )
     return ret == 1;
 }
 
-size_t V4l2MmapDevice::bufSize() const
+size_t MyDriver::bufSize() const
 {
     return _bufSize;
 }
 
-bool V4l2MmapDevice::streamOn(int fd)
+bool MyDriver::streamOn()
 {
-    v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (ioctl(fd, VIDIOC_STREAMON, &type) == -1) { qd() << "Camera: error VIDIOC_STREAMON"; return false; }
+    if (ioctl(_fd, VIDIOC_STREAMON, &_type) == -1) { qd() << "Camera: error VIDIOC_STREAMON"; return false; }
     qd() << "Camera: stream on OK"; return true;
 }
 
-bool V4l2MmapDevice::streamOff(int fd)
+bool MyDriver::streamOff()
 {
-    v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (ioctl(fd, VIDIOC_STREAMOFF, &type) == -1) { qd() << "Camera: error VIDIOC_STREAMOFF"; return false; }
+    if (ioctl(_fd, VIDIOC_STREAMOFF, &_type) == -1) { qd() << "Camera: error VIDIOC_STREAMOFF"; return false; }
     qd() << "Camera: stream off OK"; return true;
 }
 
@@ -311,17 +288,17 @@ bool V4l2MmapDevice::streamOff(int fd)
 //    dequeue_buffer(camera);
 //}
 
-size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
+size_t MyDriver::readInternal(char* buffer, size_t bufferSize)
 {
     size_t size = 0;
 
     if (n_buffers > 0)
     {
         v4l2_buffer buf = {};
-        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
+        buf.type   = _type;
+        buf.memory = _memory;
 
-        if (ioctl(m_fd, VIDIOC_DQBUF, &buf) == -1)
+        if (ioctl(_fd, VIDIOC_DQBUF, &buf) == -1)
         {
             qd() << "Camera: error VIDIOC_DQBUF";
             size = -1;
@@ -336,7 +313,7 @@ size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
             }
             memcpy(buffer, m_buffers[buf.index].start, size);
 
-            if (ioctl(m_fd, VIDIOC_QBUF, &buf) == -1)
+            if (ioctl(_fd, VIDIOC_QBUF, &buf) == -1)
             {
                 qd() <<  "Camera: error VIDIOC_QBUF";
                 size = -1;
@@ -346,5 +323,141 @@ size_t V4l2MmapDevice::readInternal(char* buffer, size_t bufferSize)
     return size;
 }
 
+quint32 MyDriver::maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint32 height)
+{
+    quint32 fps = 0;
 
+    v4l2_frmivalenum frmival = {};
 
+    frmival.pixel_format = pixelformat;
+    frmival.width = width;
+    frmival.height = height;
+    frmival.index = 0;
+
+    while (ioctl(fd, VIDIOC_ENUM_FRAMEINTERVALS, &frmival) != -1)
+    {
+        if (frmival.type == V4L2_FRMIVAL_TYPE_DISCRETE)
+        {
+            quint32 v = frmival.discrete.denominator / frmival.discrete.numerator;
+
+            if (fps < v)
+                fps = v;
+        }
+        ++frmival.index;
+    }
+
+    return fps;
+}
+
+QJsonArray MyDriver::imageFormats(int fd)
+{
+    v4l2_fmtdesc fmtdesc = {};
+
+    fmtdesc.index = 0;
+    fmtdesc.type = _type;
+
+    QJsonArray formats;
+
+    while (ioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc) != -1)      // Получите формат, поддерживаемый выходным изображением камеры.
+    {
+        const QString fourcc = fourccToString(fmtdesc.pixelformat);
+
+        ++fmtdesc.index;
+
+        const QVector<QRect> sizes = frameSizes(fd, fmtdesc.pixelformat);
+
+        for (const QRect& size : sizes)
+        {
+            const quint32 fps = maxFrameRate(fd, fmtdesc.pixelformat, size.width(), size.height());
+
+            const QString display = QString("[%1x%2] %3 %4fps").arg(size.width()).arg(size.height()).arg(fourcc).arg(fps);
+
+            QJsonObject format {
+                {"width",   int(size.width())},
+                {"height",  int(size.height())},
+                {"fourcc",  fourcc},
+                {"fps",     int(fps)},
+                {"display", display}
+            };
+
+            formats.append(format);
+        }
+    }
+    return formats;
+}
+
+QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
+{
+    v4l2_frmsizeenum frmsize = {};
+
+    frmsize.index = 0;
+    frmsize.pixel_format = pixelformat;
+
+    QVector<QRect> frameSizes;
+
+    while (ioctl(fd, VIDIOC_ENUM_FRAMESIZES, &frmsize) != -1)
+    {
+        QRect frameSize;
+        if (frmsize.type == V4L2_FRMSIZE_TYPE_DISCRETE)
+        {
+            frameSize.setWidth(frmsize.discrete.width);
+            frameSize.setHeight(frmsize.discrete.height);
+            frameSizes.push_back(frameSize);
+        }
+
+        ++frmsize.index;
+    }
+
+    return frameSizes;
+}
+
+void MyDriver::reloadDevices()
+{
+    const int maxDevices = 32;
+
+    QJsonArray devices;
+
+    for (int id = 0; id < maxDevices; ++id)
+    {
+        const QByteArray path = QString("/dev/video%1").arg(id).toLatin1();
+
+        const int fd = ::open(path.constData(), O_RDWR);
+        auto fileCloser = qScopeGuard([=]() { ::close(fd); });
+
+        if (fd == -1)
+            continue;
+
+        v4l2_capability cap = {};
+        if (ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1)        // Проверьте информацию о камере
+        {
+            qd() << "Camera: cannot get capabilities for device: " << path << " " << strerror(errno);
+            continue;
+        }
+        else
+        {
+            qd() << "path:\t\t"           << path;
+            qd() << "driver_name:\t\t"    << QString::fromLatin1(reinterpret_cast<const char *>(cap.driver));
+            qd() << "device_name:\t\t"    << QString::fromUtf8(reinterpret_cast<const char *>(cap.card));
+            qd() << "bus_info:\t\t"       << QString::fromLatin1(reinterpret_cast<const char *>(cap.bus_info));
+            qd() << "driver_version:\t"   << QString("%1.%2.%3").arg((cap.version >> 16) & 0xFF).arg((cap.version >> 8) & 0xFF).arg((cap.version) & 0XFF),
+            qd() << "capabilities:\t\t"   << QByteArray().setNum(cap.capabilities, 16); // набор возможностей, обычно：V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
+            qd() << "device_caps:\t\t"    << QByteArray().setNum(cap.device_caps, 16);
+        }
+
+        const QJsonArray formats = imageFormats(fd);
+
+        // Если у устройства нет форматов, не заносить его в список устройств.
+        if (formats.isEmpty())
+            continue;
+
+        db().insert("camera" + QString::number(id), formats);
+
+        QJsonObject device {
+            { "id",   id },
+            { "name", QString::fromUtf8(reinterpret_cast<const char *>(cap.card)) }
+        };
+
+        devices.append(device);
+    }
+    db().insert("cameras", devices);
+}

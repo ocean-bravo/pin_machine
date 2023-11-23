@@ -30,16 +30,17 @@ Item {
             horizontalAlignment: Text.AlignHCenter
         }
 
-        SpinBox {
+        DoubleSpinBox {
             id: spinbox
             height: root.height
             width: 50
             value: root.value
-            editable: true
+            decimals: 1
+            property real stepSize
 
             onValueModified: {
                 root.value = value
-                root.value = Qt.binding(root.valueBind)
+                spinbox.value = Qt.binding(root.valueBind)
             }
 
 //            MouseArea {

@@ -27,7 +27,7 @@ ScanView::ScanView(QWidget *parent)
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "xPos" || key == "yPos")
-            setCross();
+            updateCameraView();
     });
 
     QLabel* message1 = new QLabel;
@@ -90,14 +90,14 @@ ScanView::~ScanView()
     delete ui;
 }
 
-void ScanView::setCross()
+void ScanView::updateCameraView()
 {
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
 
     double w = db().value("resolution_width").toInt();
     double h = db().value("resolution_height").toInt();
-    double ps = db().value("pixel_size").toDouble();
+    double ps = db().pixelSize();
 
     for (QGraphicsItem* item : _scene->items())
     {
@@ -106,6 +106,7 @@ void ScanView::setCross()
             CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
             rect->setRect(-w*ps/2, -h*ps/2, w*ps, h*ps);
             item->setPos(x, y);
+            return;
         }
     }
 }

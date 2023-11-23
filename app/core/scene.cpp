@@ -12,8 +12,11 @@
 
 #include <QMutexLocker>
 #include <QEventLoop>
-#include <QSplashScreen>
+
 #include <QFile>
+#include <QUrl>
+
+#include <QBuffer>
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
@@ -99,7 +102,8 @@ QGraphicsItem* Scene::board() const
 
 void Scene::moveBoard(double angle, double distance)
 {
-
+    Q_UNUSED(angle)
+    Q_UNUSED(distance)
 
 }
 
@@ -114,7 +118,7 @@ void Scene::setImagePrivate(QImage img)
     const double y = img.text("y").toDouble();
     const int w = img.width();
     //const int h = img.height();
-    const double pixelSize = db().value("pixel_size").toDouble();
+    const double pixelSize = db().pixelSize();
 
     const double imageWidthMm = w * pixelSize;
     //const double imageHeightMm = h * pixelSize;
@@ -125,6 +129,9 @@ void Scene::setImagePrivate(QImage img)
     QPixmap pix = QPixmap::fromImage(img);
 
     const double ratio = pix.rect().width() / imageWidthMm;
+
+    if (!_board)
+        addBoard();
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
@@ -137,38 +144,54 @@ void Scene::setImagePrivate(QImage img)
     //addItem(item);
 }
 
-void Scene::saveScene()
+void Scene::saveScene(const QString& url)
 {
-    QSplashScreen splash;
-    splash.show();
+    qd() << "save scene begin";
 
+    ScopedMeasure sm("save scene end");
 
     Measure mes("get pixmap");
 
     QVariantMap map;
 
     int i = 0;
-    every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
+    // Порядок items важен. Именно так выглядит как сканировалось.
+    every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&map, &i, this](QGraphicsPixmapItem* pixmap)
     {
-        const QPixmap pix = pixmap->pixmap();
-        const QPointF offset = pixmap->offset();
-        const double scale = pixmap->scale();
-        const QPointF pos = pixmap->pos();
-        const double zValue = pixmap->zValue();
-
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
+        QImage img = pixmap->pixmap().toImage();
+        QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.sizeInBytes());
+//        QBuffer buffer(&ba);
+//        buffer.open(QIODevice::WriteOnly);
+//        img.save(&buffer, "PNG");
+
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".pix" , pix);
-        map.insert(mainKey + ".offset" , offset);
-        map.insert(mainKey + ".scale" , scale);
-        map.insert(mainKey + ".pos" , pos);
-        map.insert(mainKey + ".zValue" , zValue);
+        map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
+        map.insert(mainKey + ".img.width", img.width());
+        map.insert(mainKey + ".img.height", img.height());
+        map.insert(mainKey + ".offset" , pixmap->offset());
+        map.insert(mainKey + ".scale" , pixmap->scale());
+        map.insert(mainKey + ".pos" , pixmap->pos());
+        map.insert(mainKey + ".zValue" , pixmap->zValue());
+        emit imageSaved(i);
     });
 
     mes.stop();
 
+    i = 0;
+    every<BlobItem>(items(), [&map, &i, this](BlobItem* blob)
+    {
+        const QString mainKey = "blob" + toInt(i);
+        ++i;
+
+        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
+        map.insert(mainKey + ".pos" , blob->pos());
+        map.insert(mainKey + ".dia" , blob->rect().width());
+        map.insert(mainKey + ".isFiducial" , blob->isFiducial());
+        map.insert(mainKey + ".isPunch" , blob->isPunch());
+    });
 
     Measure mes2("datastream");
     QByteArray ba;
@@ -179,26 +202,36 @@ void Scene::saveScene()
 
 
     Measure mes3("safetofile");
-    saveDataToFile("", "scene_save", ba);
+
+    QFile file(QUrl(url).toLocalFile());
+
+    if (!file.open(QFile::WriteOnly))
+    {
+        qd() << "couldnt open file for save: " << QUrl(url).toLocalFile();
+        return;
+    }
+
+    file.write(ba);
+
     mes3.stop();
 }
 
-void Scene::loadScene()
+void Scene::loadScene(const QString& url)
 {
     clear();
     addBoard();
 
-    QFile file("scene_save");
+    QFile file(QUrl(url).toLocalFile());
 
     if (!file.exists())
     {
-        qd() << "file not exists";
+        qd() << "file not exists: " << QUrl(url).toLocalFile();
         return;
     }
 
     if (!file.open(QFile::ReadOnly))
     {
-        qd() << "cant opent file";
+        qd() << "cant opent file: " << QUrl(url).toLocalFile();
         return;
     }
 
@@ -220,13 +253,22 @@ void Scene::loadScene()
         if (!map.contains(mainKey))
             break;
 
-        QPixmap pix = map.value(mainKey + ".pix").value<QPixmap>();
+        QByteArray ba = map.value(mainKey + ".img").toByteArray();
+        int imgWidth = map.value(mainKey + ".img.width").toInt();
+        int imgHeight = map.value(mainKey + ".img.height").toInt();
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale= map.value(mainKey + ".scale").toDouble();
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
+        ba = qUncompress(ba);
+
+        // img и ba располалагают 1 буфером. Владеет им ba.
+        QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
+
+        img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
+
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(img)), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
@@ -234,6 +276,32 @@ void Scene::loadScene()
         item->setPos(pos);
         item->setZValue(zValue); // Чтобы изображения были позади блобов
     }
+
+    i = 0;
+    while (true)
+    {
+        const QString mainKey = "blob" + toInt(i);
+        ++i;
+
+        if (!map.contains(mainKey))
+            break;
+
+        const QPointF pos = map.value(mainKey + ".pos").toPointF();
+        const double dia = map.value(mainKey + ".dia").toDouble();
+        const bool isFiducial = map.value(mainKey + ".isFiducial").toBool();
+        const bool isPunch = map.value(mainKey + ".isPunch").toBool();
+
+        BlobItem* blob = addBlob(pos.x(), pos.y(), dia);
+        blob->setPunch(isPunch);
+        blob->setFiducial(isFiducial);
+    }
+}
+
+int Scene::images() const
+{
+    int i = 0;
+    every<QGraphicsPixmapItem>(items(), [&i](QGraphicsPixmapItem*) { ++i; });
+    return i;
 }
 
 void Scene::removeDuplicatedBlobs()
@@ -242,23 +310,19 @@ void Scene::removeDuplicatedBlobs()
 
     auto foo = [this]()
     {
-        // если есть пересечение с кем то, то удалить его
-        const auto items = QGraphicsScene::items();
-        for (QGraphicsItem* item : items)
+        every<BlobItem>(items(), [this](BlobItem* blob)
         {
-            if (isNot<BlobItem>(item))
-                continue;
-
-            const auto collidingItems = QGraphicsScene::collidingItems(item);
+            // если есть пересечение с кем то, то удалить его
+            const auto collidingItems = QGraphicsScene::collidingItems(blob);
             for (QGraphicsItem* collidingItem : collidingItems)
             {
                 if (is<BlobItem>(collidingItem))
                 {
-                    delete item;
+                    delete blob;
                     break;
                 }
             }
-        }
+        });
     };
 
     runOnThreadWait(this, foo);

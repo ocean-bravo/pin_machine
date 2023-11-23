@@ -3,8 +3,8 @@
 #include <QObject>
 #include <QScopedPointer>
 
-#include "video.h"
-#include "video3.h"
+//#include "video.h"
+//#include "video3.h"
 #include "video4.h"
 
 
@@ -20,12 +20,11 @@ public:
     explicit Engine(QObject* parent = nullptr);
     ~Engine();
 
-    Q_INVOKABLE QStringList camerasInfo();
+    //Q_INVOKABLE QStringList camerasInfo();
 
-    //Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
-
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void load();
+    Q_INVOKABLE void save(const QString &url);
+    Q_INVOKABLE void load(const QString &url);
+    Q_INVOKABLE void capture();
 
 signals:
     void imageChanged(QString id);
@@ -35,11 +34,11 @@ private:
 
     QScopedPointer<QQmlApplicationEngine> _qmlEngine;
 
-    V4L2 _videoDriver;
-    Video3* _videoDriver3;
+    //V4L2 _videoDriver;
+//    Video3* _videoDriver3;
 //    Video4* _videoDriver4;
-    QImage _image;
+    //QImage _image;
 
-    QByteArray _imgPpm;
-    QStringList _info;
+    //QByteArray _imgPpm;
+    //QStringList _info;
 };

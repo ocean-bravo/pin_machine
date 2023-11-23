@@ -3,6 +3,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.platform 1.1
 import Process 1.0
 
 import "utils.js" as Utils
@@ -42,6 +43,28 @@ Item {
         else {
             appendLog("error move to point " + x + " " + y + " wrong arguments")
         }
+    }
+
+    function sortResolutions(resolutions) {
+        if (resolutions === undefined)
+            return
+
+        let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
+        let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
+
+        // Функция сортировки по возрастанию разрешения
+        let sortFunction = function (a,b) {
+            if (a.width * a.height === b.width * b.height)
+                return 0
+            return a.width * a.height > b.width * b.height ? 1 : -1
+        }
+
+        // Меняю порядок сортировки - большие разрешения вперед
+        resYuyv.sort(sortFunction).reverse()
+        resMjpg.sort(sortFunction).reverse()
+
+        // Сначала MJPG разрешения
+        return resMjpg.concat(resYuyv)
     }
 
     Connections { target: Serial;          function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
@@ -247,14 +270,14 @@ Item {
 
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
-                Item { height: 20; width: 10}
+                //Item { height: 20; width: 10}
 
 
-                Item { height: 30; width: 10}
+                //Item { height: 30; width: 10}
 
                 //                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
                 //                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
-                Item { height: 30; width: 10}
+                //Item { height: 30; width: 10}
                 SmButton { text: qsTr("Clear log");  onClicked: { logViewer.clear() } }
             }
 
@@ -330,7 +353,7 @@ Item {
                 SmTextEdit {
                     id: programParams
                     width: 200
-                    text: "6 100  180  180  10  8  5000"
+                    text: "85 120  165  170  10  8  5000"
                 }
                 SmButton {
                     text: qsTr("Generate program")
@@ -346,33 +369,79 @@ Item {
                     id: scan
                     text: qsTr("Fast scan")
                     checkable: true
-                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text) : TaskScan.stopProgram()
+                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskScan.stopProgram()
                     Connections { target: TaskScan; function onFinished() { scan.checked = false } }
+                    function selectedResolution() {
+                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForScan.currentIndex]
+                    }
                 }
+                ComboBox {
+                    id: resolutionListForScan
+                    width: 200
+                    textRole: "display"
+                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    onModelChanged: {
+                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
 
-                Item { height: 20; width: 10}
+                        for (let i = 0; i < res.length; i++) {
+                            let r = res[i]
+                            if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
+                                currentIndex = i
+                        }
+                    }
+                }
                 Item { height: 30; width: 10}
 
                 SmButton {
                     id: update
                     text: qsTr("Update selected")
                     checkable: true
-                    onCheckedChanged: checked ? TaskUpdate.run() : TaskUpdate.stopProgram()
+                    onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskUpdate.stopProgram()
                     Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
+                    function selectedResolution() {
+                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
+                    }
                 }
+                ComboBox {
+                    id: resolutionListForUpdate
+                    width: 200
+                    textRole: "display"
+                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    onModelChanged: {
+                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
 
-                Item { height: 20; width: 10}
+                        for (let i = 0; i < res.length; i++) {
+                            let r = res[i]
+                            if (r.width === 1280 && r.height === 960 && r.fourcc === "YUYV")
+                                currentIndex = i
+                        }
+                    }
+                }
                 Item { height: 30; width: 10}
 
                 SmButton {
                     id: save
                     text: qsTr("Save")
-                    onClicked: {Engine.save()}
+                    onClicked: saveDialog.open()
+
+                    FileDialog {
+                        id: saveDialog
+                        folder: applicationDirPath
+                        fileMode: FileDialog.SaveFile
+                        onAccepted: Engine.save(currentFile)
+                    }
                 }
                 SmButton {
                     id: load
                     text: qsTr("Load")
-                    onClicked: {Engine.load()}
+                    onClicked: loadDialog.open()
+
+                    FileDialog {
+                        id: loadDialog
+                        folder: applicationDirPath
+                        fileMode: FileDialog.OpenFile
+                        onAccepted: Engine.load(currentFile)
+                    }
                 }
 
                 Item { height: 30; width: 10}
@@ -389,7 +458,7 @@ Item {
             CollapsiblePanel {
                 id: punchPanel
                 width: parent.width
-                height: checked ? 200 : 30
+                height: checked ? 220 : 30
                 text: "Punch"
                 onCheckedChanged: {
                     punchGrid.visible = checked
@@ -409,7 +478,7 @@ Item {
                     Rectangle {
                         color: "lightgrey"
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 100
+                        Layout.preferredHeight: 70
                         Layout.columnSpan: 10
 
                         CodeEditor2 {
@@ -428,8 +497,8 @@ Item {
                     }
 
                     DoubleSpinBox {
-                        value: DataBus.punch_dx
-                        onValueModified: DataBus.punch_dx = value
+                        value: DataBus.punch_dx_mm
+                        onValueModified: DataBus.punch_dx_mm = value
                         Layout.preferredWidth: 100
                     }
 
@@ -437,8 +506,8 @@ Item {
                         text: qsTr("dy")
                     }
                     DoubleSpinBox {
-                        value: DataBus.punch_dy
-                        onValueModified: DataBus.punch_dy = value
+                        value: DataBus.punch_dy_mm
+                        onValueModified: DataBus.punch_dy_mm = value
                         Layout.preferredWidth: 100
                     }
 
@@ -446,11 +515,28 @@ Item {
                         id: punch
                         text: qsTr("Punch")
                         checkable: true
-                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
+                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text, goToBeginCode.text) : TaskPunch.stopProgram()
                         Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
 
                         Layout.row: 1
                         Layout.column: 9
+                    }
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 50
+                        Layout.columnSpan: 10
+
+                        CodeEditor2 {
+                            id: goToBeginCode
+                            anchors.fill: parent
+                            //text: "G1 G90 F4000 Z20"
+                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                            // https://github.com/SakamotoMari/FileIO
+                            // https://github.com/chili-epfl/qml-fileio
+                        }
                     }
                 }
             }
@@ -475,9 +561,12 @@ Item {
                     rowSpacing: 5
 
                     DoubleSpinBox {
+                        id: pixelSizeSpinBox
                         decimals: 5
-                        value: DataBus.pixel_size
-                        onValueModified: DataBus.pixel_size = value
+                        value: DataBus.pixelSize()
+                        onValueModified: DataBus.setPixelSize(value)
+
+                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixelSize() }}
 
                         Layout.row: 0
                         Layout.column: 0
@@ -489,7 +578,7 @@ Item {
                         model: DataBus.keys()
                         onDownChanged: {
                             if (down)
-                                model = DataBus.keys()
+                                model = DataBus.keys().sort()
                         }
 
                         onActivated: {
@@ -605,8 +694,8 @@ Item {
                 Text {
                     anchors.top: image.top
                     anchors.right: image.right
-                    text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
-                    //text: DataBus.blob_info3
+                    //text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
+                    text: DataBus.blob_info
                 }
 
                 Column {
@@ -627,13 +716,12 @@ Item {
                         }
                     }
 
-
                     Button {
                         id: reloadDevices
                         width: 200
                         text: qsTr("Reload devices")
                         onPressed: {
-                            Video3.reloadDevices()
+                            Video4.reloadDevices()
                         }
                     }
 
@@ -642,7 +730,7 @@ Item {
                         width: 200
                         text: qsTr("Capture frame")
                         onPressed: {
-                            Video4.capture()
+                            Engine.capture()
                         }
                     }
 
@@ -672,6 +760,8 @@ Item {
                     ComboBox {
                         width: 200
                         id: cameraList
+                        valueRole: "id"
+                        textRole: "name"
                         model: DataBus.cameras
                     }
 
@@ -679,7 +769,7 @@ Item {
                         id: resolutionList
                         width: 200
                         textRole: "display"
-                        model: sortResolutions(DataBus["camera" + cameraList.currentIndex])
+                        model: sortResolutions(DataBus["camera" + cameraList.currentValue])
                         onActivated: {
                             setCurrentFormat()
                         }
@@ -688,21 +778,26 @@ Item {
                         }
 
                         function setCurrentFormat() {
+                            if (model === undefined)
+                                return
                             let resolution = model[currentIndex]
-                            Video4.changeCamera(cameraList.currentIndex*2, resolution.width, resolution.height, resolution.fourcc)
+                            Video4.changeCamera(cameraList.currentValue, resolution.width, resolution.height, resolution.fourcc)
 
-                            if (resolution.width === 800)
-                                DataBus.pixel_size = 0.017
-                            else if (resolution.width === 1280)
-                                DataBus.pixel_size = 0.0107
-                            else
-                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
+//                            if (resolution.width === 800)
+//                                DataBus.pixel_size = 0.017
+//                            else if (resolution.width === 1280)
+//                                DataBus.pixel_size = 0.0107
+//                            else
+//                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
 
                             DataBus.resolution_width = resolution.width
                             DataBus.resolution_height = resolution.height
                         }
 
                         function sortResolutions(resolutions) {
+                            if (resolutions === undefined)
+                                return
+
                             let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
                             let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
 
@@ -881,5 +976,9 @@ Item {
         133:	"Axis 4 (A) Max travel, unit",
         134:	"Axis 5 (B) Max travel, unit",
         135:	"Axis 6 (C) Max travel, unit"
+    }
+
+    Component.onCompleted: {
+        Video4.reloadDevices()
     }
 }

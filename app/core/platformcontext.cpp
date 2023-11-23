@@ -196,8 +196,7 @@ bool PlatformContext::queryFrameSize(int fd, uint32_t index, uint32_t pixelforma
     return false;
 }
 
-uint32_t PlatformContext::findMaxFrameRate(int fd, uint32_t pixelformat, 
-    uint32_t width, uint32_t height)
+uint32_t PlatformContext::findMaxFrameRate(int fd, uint32_t pixelformat, uint32_t width, uint32_t height)
 {
     uint32_t fps = 0;
 

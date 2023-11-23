@@ -23,6 +23,11 @@ inline QString toReal3(double value)
     return QString::number(value, 'f', 3);
 }
 
+inline QString toReal1(double value)
+{
+    return QString::number(value, 'f', 1);
+}
+
 class ScopedMeasure
 {
 public:
@@ -110,4 +115,46 @@ template<typename T>
 bool inRange(T value, T a, T b)
 {
     return value >= std::min(a, b) && value <= std::max(a, b);
+}
+
+
+#include <linux/videodev2.h>
+
+inline QString fourccToString(quint32 fourcc)
+{
+    QString str;
+    for(uint32_t i=0; i<4; i++)
+    {
+        str += (char)(fourcc & 0xFF);
+        fourcc >>= 8;
+    }
+    return str;
+}
+
+inline quint32 fourccToInt(QString fourcc)
+{
+    if (fourcc.size() != 4)
+    {
+        qd() << "error: wrong FOURCC size: " << fourcc;
+        return 0;
+    }
+
+    return v4l2_fourcc(fourcc[0].toLatin1(), fourcc[1].toLatin1(), fourcc[2].toLatin1(), fourcc[3].toLatin1());
+}
+
+inline QByteArray v4l2_fourcc2s(quint32 fourcc)
+{
+    QByteArray buf(8, '\0');
+    buf[0] = fourcc & 0x7f;
+    buf[1] = (fourcc >> 8) & 0x7f;
+    buf[2] = (fourcc >> 16) & 0x7f;
+    buf[3] = (fourcc >> 24) & 0x7f;
+    if (fourcc & (1 << 31))
+    {
+        buf[4] = '-';
+        buf[5] = 'B';
+        buf[6] = 'E';
+    }
+
+    return buf;
 }

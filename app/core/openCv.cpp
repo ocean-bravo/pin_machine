@@ -3,6 +3,7 @@
 
 #include "data_bus.h"
 #include "scene.h"
+#include "settings.h"
 
 #include <QtConcurrent>
 
@@ -95,7 +96,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     static quint32 count = 0;
     ++count;
 
-    ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
+    //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
 
     //qd() << "detect blobs " << img.width() << img.height();
 
@@ -103,12 +104,15 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
     // Filter by Area.
     params.filterByArea = true;
-    params.minArea = db().value("blob_minArea").toFloat();
-    params.maxArea = db().value("blob_maxArea").toFloat();
+    double minDia = db().value("blob_minDia_mm").toDouble();
+    double maxDia = db().value("blob_maxDia_mm").toDouble();
+
+    params.minArea = minDia * minDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
+    params.maxArea = maxDia * maxDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
 
     // Filter by Circularity
     params.filterByCircularity = true;
-    params.minCircularity = 0.5;
+    params.minCircularity = 0.3;
     params.maxCircularity = 5.0;
 
     // Filter by Convexity
@@ -116,9 +120,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     //params.minConvexity = 0.87
 
     // Filter by Inertia
-    params.filterByInertia = true;
-    params.minInertiaRatio = 0.8;
-    params.maxInertiaRatio = 5.0;
+//    params.filterByInertia = true;
+//    params.minInertiaRatio = 0.8;
+//    params.maxInertiaRatio = 5.0;
 
     // Distance Between Blobs
     params.minDistBetweenBlobs = 2.0;
@@ -135,8 +139,15 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     cv::Mat grey;
     cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
+    cv::Mat adtr;
+
+    const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
+    const double c = db().value("blob_ad_tr_c").toDouble();
+    cv::adaptiveThreshold(grey, adtr, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, blockSize, c);
+
     cv::Mat blur;
-    cv::medianBlur(grey, blur, 3);
+    cv::medianBlur(adtr, blur, 3);
+    //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
     // Storage for blobs
     std::vector<cv::KeyPoint> keypoints;
@@ -194,9 +205,6 @@ OpenCv::OpenCv()
             _blobWatcherCaptured.setFuture(future);
         }
     });
-
-
-    db().insert("pixel_size", 0.00524);
 }
 
 OpenCv::~OpenCv()
@@ -230,10 +238,12 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
     disconnect(_smallRegConn);
 
-    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::resultReadyAt, this, [this](int index)
     {
-        QImage im = std::get<0>(_blobWatcherCapturedSmallRegion.result());
-        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCapturedSmallRegion.result());
+        OpenCv::BlobInfo result = _blobWatcherCapturedSmallRegion.resultAt(index);
+
+        QImage im = std::get<0>(result);
+        std::vector<cv::KeyPoint> kps = std::get<1>(result);
 
         if (kps.empty())
         {
@@ -318,9 +328,9 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 
     for (const cv::KeyPoint& kp : kps)
     {
-        const double xBlob = (pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
-        const double yBlob = (pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
-        const double diaBlob = (kp.size * db().pixelSize());
+        const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
+        const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
+        const double diaBlob = kp.size * db().pixelSize();
 
         scene().addBlob(xBlob, yBlob, diaBlob);
     }
@@ -328,12 +338,15 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("blob_minArea", 1000);
-    db().insert("blob_maxArea", 400000);
+    db().insert("blob_minDia_mm", settings().value("blob_minDia_mm", 0.3).toDouble());
+    db().insert("blob_maxDia_mm", settings().value("blob_maxDia_mm", 6.0).toDouble());
     db().insert("blob_thresholdStep", 10);
     db().insert("blob_minThreshold", 1);
     db().insert("blob_maxThreshold", 200);
     //    db().insert("circle_maxRadius", 110);
+
+    db().insert("blob_ad_tr_blockSize", settings().value("blob_ad_tr_blockSize", 29).toInt());
+    db().insert("blob_ad_tr_c",         settings().value("blob_ad_tr_c", 9.0).toDouble());
 
     db().insert("blob_info", "");
 
@@ -358,53 +371,39 @@ OpenCvPrivate::OpenCvPrivate()
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherLive.result());
 
         QString res;
-        for (const cv::KeyPoint& kp : kps)
-        {
-            res += QString("(%1, %2) \t %3\n").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
-        }
-
-        db().insert("blob_info", res);
-
+        res += "x_pix \t y_pix \t dia_pix \t x_mm \t y_mm \t dia_mm \t dx_mm \t dy_mm \n";
 
         QString x = im.text("x");
         QString y = im.text("y");
 
-        res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal3(kp.size * db().pixelSize());
+            const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+            const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+            const double diaBlob = kp.size * db().pixelSize();
 
-            res.append(QString("pos: [%1 %2] size: %3 \n").arg(xBlob).arg(yBlob).arg(diaBlob));
+            res.append(QString("%1 \t %2 \t %3 \t %4 \t %5 \t %6 \t %7 \t %8 \n")
+                       .arg(toReal1(kp.pt.x))
+                       .arg(toReal1(kp.pt.y))
+                       .arg(toReal1(kp.size))
+                       .arg(toReal3(xBlob))
+                       .arg(toReal3(yBlob))
+                       .arg(toReal3(diaBlob))
+                       .arg(toReal3(xBlob - x.toDouble())) // дельта между блобом и центром
+                       .arg(toReal3(yBlob - y.toDouble()))); // дельта между блобом и центром
         }
-        db().insert("blob_info2", res);
+        db().insert("blob_info", res);
 
+//        res.clear();
+//        if (!kps.empty())
+//        {
+//            auto kp = kps[0];
+//            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+//            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
 
-        res.clear();
-        if (!kps.empty())
-        {
-            auto kp = kps[0];
-            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal3(kp.size * db().pixelSize());
-
-            res = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
-        }
-        db().insert("blob_info3", res);
-
-
-        res.clear();
-        if (!kps.empty())
-        {
-            auto kp = kps[0];
-            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-
-            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
-        }
-        db().insert("blob_info4", res);
-
+//            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
+//        }
+//        db().insert("blob_info4", res);
     });
 }
 

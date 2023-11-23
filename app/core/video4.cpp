@@ -1,5 +1,6 @@
 #include "video4.h"
 #include "utils.h"
+#include "wait.h"
 
 #include "data_bus.h"
 
@@ -9,11 +10,13 @@
 #include <QDateTime>
 #include <QScopeGuard>
 
+#include <sys/fcntl.h>
 #include <linux/videodev2.h>
 
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/ioctl.h>
 #include <signal.h>
 
 #include "V4l2MmapDevice.h"
@@ -26,13 +29,6 @@ namespace {
 // Сколько кадров нужно выкинуть.
 const int throwFramesYuv = 1; // Достаточно 1, чтобы не было смаза. Не всегда...
 const int throwFramesJpg = 15; // 12 вроде достаточно было
-
-void wait(int timeout)
-{
-    QEventLoop loop;
-    QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
-    loop.exec();
-}
 
 }
 
@@ -103,6 +99,12 @@ QImage Video4::smallRegion()
     return _smallRegion;
 }
 
+void Video4::reloadDevices()
+{
+    QMetaObject::invokeMethod(_impl, "reloadDevices", Qt::QueuedConnection);
+}
+
+
 void Video4Private::init()
 {
     _jpegDecompressor = new MjpegHelper;
@@ -128,6 +130,11 @@ void Video4Private::captureSmallRegion(double width)
     _captureSmallRegion = true;
     _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
     _smallRegionWidth = width;
+}
+
+void Video4Private::reloadDevices()
+{
+    _videoCapture->reloadDevices();
 }
 
 void Video4Private::update()
@@ -189,7 +196,7 @@ void Video4Private::update()
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
         //qd() << i << ":" << elapsed.count() << "ms";
-        qd() << beginprevline + setpos(60) + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
+        //qd() << beginprevline + setpos(60) + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
         start = std::chrono::steady_clock::now();
 
         {
@@ -242,7 +249,7 @@ void Video4Private::imageDispatch(QImage img)
 
                 static quint32 count = 0;
                 ++count;
-                qd() << beginprevline << setpos(30) << "captured " << count;
+                //qd() << beginprevline << setpos(30) << "captured " << count;
                 emit captured(img.copy()); // Наружу выпускается копия, все правильно
             }
 
@@ -267,7 +274,7 @@ void Video4Private::imageDispatch(QImage img)
 
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)
 {
-    _videoCapture.reset(new V4l2MmapDevice);
-    _videoCapture->init(device, width, height, V4l2MmapDevice::fourccToInt(fourcc));
+    _videoCapture.reset(new MyDriver);
+    _videoCapture->init(device, width, height, fourccToInt(fourcc));
     _currentFourcc = fourcc;
 }
