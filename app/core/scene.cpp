@@ -141,6 +141,10 @@ void Scene::setImagePrivate(QImage img)
 
 void Scene::saveScene()
 {
+    qd() << "save scene begin";
+
+    ScopedMeasure sm("save scene end");
+
     Measure mes("get pixmap");
 
     QVariantMap map;
