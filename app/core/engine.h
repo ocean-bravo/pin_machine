@@ -22,8 +22,6 @@ public:
 
     Q_INVOKABLE QStringList camerasInfo();
 
-    //Q_INVOKABLE QStringList removeDuplicatedBlobs(QStringList blobs);
-
     Q_INVOKABLE void save();
     Q_INVOKABLE void load();
 

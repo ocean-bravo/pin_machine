@@ -257,23 +257,19 @@ void Scene::removeDuplicatedBlobs()
 
     auto foo = [this]()
     {
-        // если есть пересечение с кем то, то удалить его
-        const auto items = QGraphicsScene::items();
-        for (QGraphicsItem* item : items)
+        every<BlobItem>(items(), [this](BlobItem* blob)
         {
-            if (isNot<BlobItem>(item))
-                continue;
-
-            const auto collidingItems = QGraphicsScene::collidingItems(item);
+            // если есть пересечение с кем то, то удалить его
+            const auto collidingItems = QGraphicsScene::collidingItems(blob);
             for (QGraphicsItem* collidingItem : collidingItems)
             {
                 if (is<BlobItem>(collidingItem))
                 {
-                    delete item;
+                    delete blob;
                     break;
                 }
             }
-        }
+        });
     };
 
     runOnThreadWait(this, foo);
