@@ -150,6 +150,7 @@ void Scene::saveScene()
     QVariantMap map;
 
     int i = 0;
+    // Порядок items важен. Именно так выглядит как сканировалось.
     every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&map, &i, this](QGraphicsPixmapItem* pixmap)
     {
         QImage img = pixmap->pixmap().toImage();
