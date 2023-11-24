@@ -12,7 +12,7 @@
 
 #include <QMutexLocker>
 #include <QEventLoop>
-#include <QSplashScreen>
+
 #include <QFile>
 
 #include <QBuffer>
@@ -141,16 +141,12 @@ void Scene::setImagePrivate(QImage img)
 
 void Scene::saveScene()
 {
-    QSplashScreen splash;
-    splash.show();
-
-
     Measure mes("get pixmap");
 
     QVariantMap map;
 
     int i = 0;
-    every<QGraphicsPixmapItem>(items(), [&map, &i](QGraphicsPixmapItem* pixmap)
+    every<QGraphicsPixmapItem>(items(), [&map, &i, this](QGraphicsPixmapItem* pixmap)
     {
         QImage img = pixmap->pixmap().toImage();
         const QPointF offset = pixmap->offset();
@@ -161,17 +157,18 @@ void Scene::saveScene()
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
-//        QByteArray bytes;
-//        QBuffer buffer(&bytes);
-//        buffer.open(QIODevice::WriteOnly);
-//        pix.save(&buffer, "PNG"); // writes pixmap into bytes in PNG format
+        QByteArray ba;
+        QBuffer buffer(&ba);
+        buffer.open(QIODevice::WriteOnly);
+        img.save(&buffer, "PPM");
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".img" , img);
+        map.insert(mainKey + ".img" , ba);
         map.insert(mainKey + ".offset" , offset);
         map.insert(mainKey + ".scale" , scale);
         map.insert(mainKey + ".pos" , pos);
         map.insert(mainKey + ".zValue" , zValue);
+        emit imageSaved(i);
     });
 
     mes.stop();
@@ -241,6 +238,17 @@ void Scene::loadScene()
         item->setPos(pos);
         item->setZValue(zValue); // Чтобы изображения были позади блобов
     }
+}
+
+int Scene::images() const
+{
+    int i = 0;
+    every<QGraphicsPixmapItem>(items(), [&i](QGraphicsPixmapItem*)
+    {
+        ++i;
+    });
+    return i;
+
 }
 
 void Scene::removeDuplicatedBlobs()

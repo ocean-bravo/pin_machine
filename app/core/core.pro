@@ -39,7 +39,7 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 -lopencv_ximgproc -lopencv_xobjdetect -lopencv_xphoto \
 -lturbojpeg # libturbojpeg0-dev
 
-OTHER_FILES += ../../opencv/main.py
+OTHER_FILES +=
 
 HEADERS += *.h
 

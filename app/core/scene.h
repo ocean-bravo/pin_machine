@@ -33,6 +33,11 @@ public:
     void saveScene();
     void loadScene();
 
+    int images() const;
+
+signals:
+    void imageSaved(int);
+
 private slots:
     void setImagePrivate(QImage img);
 

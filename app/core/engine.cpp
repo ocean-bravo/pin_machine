@@ -13,8 +13,10 @@
 #include <QBuffer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QSplashScreen>
 
 #include <QQuickStyle>
+#include <QScopeGuard>
 
 #include "data_bus.h"
 #include "task_scan.h"
@@ -29,6 +31,7 @@
 #include "my_image_provider.h"
 
 #include "scene.h"
+
 
 
 Engine::Engine(QObject* parent)
@@ -54,8 +57,19 @@ QStringList Engine::camerasInfo()
 
 void Engine::save()
 {
-    scene().saveScene();
+    QSplashScreen splash;
+    splash.show();
 
+    int count = scene().images();
+
+    auto connection = connect(&scene(), &Scene::imageSaved, this, [&splash, count](int i)
+    {
+        splash.showMessage(QString("Saved %1 of %2 images").arg(i).arg(count));
+    });
+
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+    scene().saveScene();
 }
 
 void Engine::load()
