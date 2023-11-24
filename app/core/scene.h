@@ -30,8 +30,8 @@ public:
     // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
 
-    void saveScene();
-    void loadScene();
+    void saveScene(const QString &url);
+    void loadScene(const QString &url);
 
     int images() const;
 

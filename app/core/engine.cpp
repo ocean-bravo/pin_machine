@@ -55,7 +55,7 @@ QStringList Engine::camerasInfo()
     return _info;
 }
 
-void Engine::save()
+void Engine::save(const QString& url)
 {
     QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
     splash.setEnabled(false);
@@ -71,17 +71,17 @@ void Engine::save()
 
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    scene().saveScene();
+    scene().saveScene(url);
 }
 
-void Engine::load()
+void Engine::load(const QString& path)
 {
     QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
     splash.setEnabled(false);
     splash.setWindowModality(Qt::ApplicationModal);
     splash.show();
 
-    scene().loadScene();
+    scene().loadScene(path);
 }
 
 Engine::~Engine()
@@ -161,6 +161,7 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
     _qmlEngine->addImageProvider("camera", myImageProvider);
 
+    _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
     _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);

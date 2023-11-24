@@ -22,8 +22,8 @@ public:
 
     Q_INVOKABLE QStringList camerasInfo();
 
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void load();
+    Q_INVOKABLE void save(const QString &url);
+    Q_INVOKABLE void load(const QString &url);
 
 signals:
     void imageChanged(QString id);

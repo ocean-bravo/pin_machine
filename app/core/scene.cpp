@@ -14,6 +14,7 @@
 #include <QEventLoop>
 
 #include <QFile>
+#include <QUrl>
 
 #include <QBuffer>
 
@@ -139,7 +140,7 @@ void Scene::setImagePrivate(QImage img)
     //addItem(item);
 }
 
-void Scene::saveScene()
+void Scene::saveScene(const QString& url)
 {
     qd() << "save scene begin";
 
@@ -195,26 +196,36 @@ void Scene::saveScene()
 
 
     Measure mes3("safetofile");
-    saveDataToFile("", "scene_save", ba);
+
+    QFile file(QUrl(url).toLocalFile());
+
+    if (!file.open(QFile::WriteOnly))
+    {
+        qd() << "couldnt open file for save: " << QUrl(url).toLocalFile();
+        return;
+    }
+
+    file.write(ba);
+
     mes3.stop();
 }
 
-void Scene::loadScene()
+void Scene::loadScene(const QString& url)
 {
     clear();
     addBoard();
 
-    QFile file("scene_save");
+    QFile file(QUrl(url).toLocalFile());
 
     if (!file.exists())
     {
-        qd() << "file not exists";
+        qd() << "file not exists: " << QUrl(url).toLocalFile();
         return;
     }
 
     if (!file.open(QFile::ReadOnly))
     {
-        qd() << "cant opent file";
+        qd() << "cant opent file: " << QUrl(url).toLocalFile();
         return;
     }
 

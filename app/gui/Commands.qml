@@ -3,6 +3,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.platform 1.1
 import Process 1.0
 
 import "utils.js" as Utils
@@ -367,12 +368,26 @@ Item {
                 SmButton {
                     id: save
                     text: qsTr("Save")
-                    onClicked: {Engine.save()}
+                    onClicked: saveDialog.open()
+
+                    FileDialog {
+                        id: saveDialog
+                        folder: applicationDirPath
+                        fileMode: FileDialog.SaveFile
+                        onAccepted: Engine.save(currentFile)
+                    }
                 }
                 SmButton {
                     id: load
                     text: qsTr("Load")
-                    onClicked: {Engine.load()}
+                    onClicked: loadDialog.open()
+
+                    FileDialog {
+                        id: loadDialog
+                        folder: applicationDirPath
+                        fileMode: FileDialog.OpenFile
+                        onAccepted: Engine.load(currentFile)
+                    }
                 }
 
                 Item { height: 30; width: 10}
@@ -703,6 +718,9 @@ Item {
                         }
 
                         function sortResolutions(resolutions) {
+                            if (resolutions === undefined)
+                                return
+
                             let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
                             let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
 
