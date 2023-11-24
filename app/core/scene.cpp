@@ -150,7 +150,7 @@ void Scene::saveScene()
     QVariantMap map;
 
     int i = 0;
-    every<QGraphicsPixmapItem>(items(), [&map, &i, this](QGraphicsPixmapItem* pixmap)
+    every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&map, &i, this](QGraphicsPixmapItem* pixmap)
     {
         QImage img = pixmap->pixmap().toImage();
         const QPointF offset = pixmap->offset();
