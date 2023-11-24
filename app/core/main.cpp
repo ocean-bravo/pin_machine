@@ -49,7 +49,7 @@ void myterminate()
     abort();  // forces abnormal termination
 }
 
-
+#include <QSplashScreen>
 // TODO: если блоб фидушифл, не давать быть реал фидушиал и наоборот
 int main(int argc, char* argv[])
 {
@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
     QTimer::singleShot(1000, &loop, &QEventLoop::quit);
     QObject::connect(&Logger::instance(), &Logger::inited, &loop, &QEventLoop::quit);
     loop.exec();
-
 
     QScopedPointer<Engine> engine(new Engine());
 

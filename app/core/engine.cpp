@@ -57,7 +57,9 @@ QStringList Engine::camerasInfo()
 
 void Engine::save()
 {
-    QSplashScreen splash;
+    QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
+    splash.setEnabled(false);
+    splash.setWindowModality(Qt::ApplicationModal);
     splash.show();
 
     int count = scene().images();
