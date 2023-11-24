@@ -224,13 +224,13 @@ void Scene::loadScene()
         if (!map.contains(mainKey))
             break;
 
-        QImage img = map.value(mainKey + ".img").value<QImage>();
+        QByteArray ba = map.value(mainKey + ".img").toByteArray();
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale= map.value(mainKey + ".scale").toDouble();
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(img)), _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(QImage::fromData(ba, "PNG"))), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
