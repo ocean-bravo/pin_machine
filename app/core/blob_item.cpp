@@ -24,7 +24,7 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     setZValue(1); // Отметки поверх платы
     setAcceptHoverEvents(true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-    setFlag(QGraphicsItem::ItemIsMovable, true);
+    //setFlag(QGraphicsItem::ItemIsMovable, true);
 }
 
 void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

@@ -82,10 +82,7 @@ void Engine::load()
     splash.show();
 
     scene().loadScene();
-
 }
-
-
 
 Engine::~Engine()
 {

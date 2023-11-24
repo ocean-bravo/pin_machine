@@ -153,15 +153,10 @@ void Scene::saveScene()
     // Порядок items важен. Именно так выглядит как сканировалось.
     every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&map, &i, this](QGraphicsPixmapItem* pixmap)
     {
-        QImage img = pixmap->pixmap().toImage();
-        const QPointF offset = pixmap->offset();
-        const double scale = pixmap->scale();
-        const QPointF pos = pixmap->pos();
-        const double zValue = pixmap->zValue();
-
         const QString mainKey = "background_" + toInt(i);
         ++i;
 
+        QImage img = pixmap->pixmap().toImage();
         QByteArray ba;
         QBuffer buffer(&ba);
         buffer.open(QIODevice::WriteOnly);
@@ -169,15 +164,27 @@ void Scene::saveScene()
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".img" , ba);
-        map.insert(mainKey + ".offset" , offset);
-        map.insert(mainKey + ".scale" , scale);
-        map.insert(mainKey + ".pos" , pos);
-        map.insert(mainKey + ".zValue" , zValue);
+        map.insert(mainKey + ".offset" , pixmap->offset());
+        map.insert(mainKey + ".scale" , pixmap->scale());
+        map.insert(mainKey + ".pos" , pixmap->pos());
+        map.insert(mainKey + ".zValue" , pixmap->zValue());
         emit imageSaved(i);
     });
 
     mes.stop();
 
+    i = 0;
+    every<BlobItem>(items(), [&map, &i, this](BlobItem* blob)
+    {
+        const QString mainKey = "blob" + toInt(i);
+        ++i;
+
+        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
+        map.insert(mainKey + ".pos" , blob->pos());
+        map.insert(mainKey + ".dia" , blob->rect().width());
+        map.insert(mainKey + ".isFiducial" , blob->isFiducial());
+        map.insert(mainKey + ".isPunch" , blob->isPunch());
+    });
 
     Measure mes2("datastream");
     QByteArray ba;
@@ -242,6 +249,25 @@ void Scene::loadScene()
         item->setScale(scale);
         item->setPos(pos);
         item->setZValue(zValue); // Чтобы изображения были позади блобов
+    }
+
+    i = 0;
+    while (true)
+    {
+        const QString mainKey = "blob" + toInt(i);
+        ++i;
+
+        if (!map.contains(mainKey))
+            break;
+
+        const QPointF pos = map.value(mainKey + ".pos").toPointF();
+        const double dia = map.value(mainKey + ".dia").toDouble();
+        const bool isFiducial = map.value(mainKey + ".isFiducial").toBool();
+        const bool isPunch = map.value(mainKey + ".isPunch").toBool();
+
+        BlobItem* blob = addBlob(pos.x, pos.y(), dia);
+        blob->setPunch(isPunch);
+        blob->setFiducial(isFiducial);
     }
 }
 
