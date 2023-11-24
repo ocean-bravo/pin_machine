@@ -265,7 +265,7 @@ void Scene::loadScene()
         const bool isFiducial = map.value(mainKey + ".isFiducial").toBool();
         const bool isPunch = map.value(mainKey + ".isPunch").toBool();
 
-        BlobItem* blob = addBlob(pos.x, pos.y(), dia);
+        BlobItem* blob = addBlob(pos.x(), pos.y(), dia);
         blob->setPunch(isPunch);
         blob->setFiducial(isFiducial);
     }
