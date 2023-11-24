@@ -160,7 +160,7 @@ void Scene::saveScene()
         QByteArray ba;
         QBuffer buffer(&ba);
         buffer.open(QIODevice::WriteOnly);
-        img.save(&buffer, "PPM");
+        img.save(&buffer, "PNG");
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".img" , ba);
@@ -243,12 +243,8 @@ void Scene::loadScene()
 int Scene::images() const
 {
     int i = 0;
-    every<QGraphicsPixmapItem>(items(), [&i](QGraphicsPixmapItem*)
-    {
-        ++i;
-    });
+    every<QGraphicsPixmapItem>(items(), [&i](QGraphicsPixmapItem*) { ++i; });
     return i;
-
 }
 
 void Scene::removeDuplicatedBlobs()
