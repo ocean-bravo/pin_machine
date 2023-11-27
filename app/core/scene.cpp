@@ -158,13 +158,13 @@ void Scene::saveScene(const QString& url)
         ++i;
 
         QImage img = pixmap->pixmap().toImage();
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        buffer.open(QIODevice::WriteOnly);
-        img.save(&buffer, "PNG");
+        QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.width() * img.height());
+//        QBuffer buffer(&ba);
+//        buffer.open(QIODevice::WriteOnly);
+//        img.save(&buffer, "PNG");
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".img" , ba);
+        map.insert(mainKey + ".img" , qCompress(ba));
         map.insert(mainKey + ".offset" , pixmap->offset());
         map.insert(mainKey + ".scale" , pixmap->scale());
         map.insert(mainKey + ".pos" , pixmap->pos());
@@ -253,7 +253,7 @@ void Scene::loadScene(const QString& url)
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(QImage::fromData(ba, "PNG"))), _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(QImage::fromData(qUncompress(ba)))), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);

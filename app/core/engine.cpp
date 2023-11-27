@@ -74,14 +74,21 @@ void Engine::save(const QString& url)
     scene().saveScene(url);
 }
 
-void Engine::load(const QString& path)
+void Engine::load(const QString& url)
 {
     QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
     splash.setEnabled(false);
     splash.setWindowModality(Qt::ApplicationModal);
     splash.show();
 
-    scene().loadScene(path);
+    scene().loadScene(url);
+
+//    QList<QGraphicsView *> views = scene().views();
+
+//    for (QGraphicsView * view : views)
+//    {
+//        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
+//    }
 }
 
 Engine::~Engine()

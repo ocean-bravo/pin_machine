@@ -41,8 +41,6 @@ signals:
 private slots:
     void setImagePrivate(QImage img);
 
-
-
 private:
     Scene(QObject* parent = nullptr);
     ~Scene();
