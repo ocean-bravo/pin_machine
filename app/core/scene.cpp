@@ -259,15 +259,12 @@ void Scene::loadScene(const QString& url)
 
         ba = qUncompress(ba);
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
-                    QPixmap::fromImage(
+        QImage im(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
 
-                            QImage(reinterpret_cast<const uchar *>(ba.constData()),
-                                   imgWidth,
-                                   imgHeight,
-                                   QImage::Format_RGB32 // Такой формат у сохраняемого изображения.
-                                   )
-                            )
+        QImage img = im.copy();
+
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
+                    QPixmap::fromImage(img)
                         , _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
