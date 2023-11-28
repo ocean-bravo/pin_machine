@@ -265,7 +265,6 @@ void Scene::loadScene(const QString& url)
                     QPixmap::fromImage(
                         std::move(
                             QImage(reinterpret_cast<const uchar *>(ba.constData()),
-                                   imgWidth*4,
                                    imgWidth,
                                    imgHeight,
                                    QImage::Format_RGB32
