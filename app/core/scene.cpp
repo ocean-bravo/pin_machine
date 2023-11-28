@@ -163,7 +163,6 @@ void Scene::saveScene(const QString& url)
 //        buffer.open(QIODevice::WriteOnly);
 //        img.save(&buffer, "PNG");
 
-        qd() << "img format " << img.format();
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
         map.insert(mainKey + ".img.width", img.width());
@@ -269,7 +268,7 @@ void Scene::loadScene(const QString& url)
                                    imgWidth*4,
                                    imgWidth,
                                    imgHeight,
-                                   QImage::Format_RGB888
+                                   QImage::Format_RGB32
                                    )
                             )
                         ), _board);
