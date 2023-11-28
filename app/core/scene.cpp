@@ -257,10 +257,17 @@ void Scene::loadScene(const QString& url)
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(QImage(reinterpret_cast<const uchar *>(qUncompress(ba).constData()),
-                                                                                                imgWidth,
-                                                                                                imgHeight,
-                                                                                                QImage::Format_RGB888))), _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
+                    QPixmap::fromImage(
+                        std::move(
+                            QImage(reinterpret_cast<const uchar *>(qUncompress(ba).constData()),
+                                   imgWidth*3,
+                                   imgWidth,
+                                   imgHeight,
+                                   QImage::Format_RGB888
+                                   )
+                            )
+                        ), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
