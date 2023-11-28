@@ -495,8 +495,7 @@ Item {
                         value: DataBus.pixelSize()
                         onValueModified: DataBus.setPixelSize(value)
 
-                        Connections { target: DataBus; function onPixelSizeChanged() {pixelSizeSpinBox.value = DataBus.pixelSize() }}
-
+                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixelSize() }}
 
                         Layout.row: 0
                         Layout.column: 0
@@ -508,7 +507,7 @@ Item {
                         model: DataBus.keys()
                         onDownChanged: {
                             if (down)
-                                model = DataBus.keys()
+                                model = DataBus.keys().sort()
                         }
 
                         onActivated: {
