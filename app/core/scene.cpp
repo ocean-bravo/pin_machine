@@ -257,13 +257,14 @@ void Scene::loadScene(const QString& url)
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
+        ba = qUncompress(ba);
         qd() << "ba size " << ba.size();
         qd() << "img width " << imgWidth;
 
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
                     QPixmap::fromImage(
                         std::move(
-                            QImage(reinterpret_cast<const uchar *>(qUncompress(ba).constData()),
+                            QImage(reinterpret_cast<const uchar *>(ba.constData()),
                                    imgWidth*3,
                                    imgWidth,
                                    imgHeight,
