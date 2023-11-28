@@ -492,7 +492,7 @@ Item {
                     DoubleSpinBox {
                         decimals: 5
                         value: DataBus.pixelSize
-                        onValueModified: DataBus.pixelSize
+                        onValueModified: DataBus.pixelSize = value
 
                         Layout.row: 0
                         Layout.column: 0
