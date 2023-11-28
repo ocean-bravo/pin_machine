@@ -490,6 +490,7 @@ Item {
                     rowSpacing: 5
 
                     DoubleSpinBox {
+                        id: pixelSizeSpinBox
                         decimals: 5
                         value: DataBus.pixelSize
                         onValueModified: DataBus.pixelSize = value
@@ -497,6 +498,8 @@ Item {
                         Layout.row: 0
                         Layout.column: 0
                         Layout.columnSpan: 3
+
+                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixelSize }}
                     }
 
                     ComboBox {
