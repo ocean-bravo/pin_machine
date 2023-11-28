@@ -194,9 +194,6 @@ OpenCv::OpenCv()
             _blobWatcherCaptured.setFuture(future);
         }
     });
-
-
-    db().insert("pixel_size", 0.00524);
 }
 
 OpenCv::~OpenCv()

@@ -97,7 +97,7 @@ void ScanView::setCross()
 
     double w = db().value("resolution_width").toInt();
     double h = db().value("resolution_height").toInt();
-    double ps = db().value("pixel_size").toDouble();
+    double ps = db().pixelSize();
 
     for (QGraphicsItem* item : _scene->items())
     {

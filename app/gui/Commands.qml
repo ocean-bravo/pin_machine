@@ -491,8 +491,8 @@ Item {
 
                     DoubleSpinBox {
                         decimals: 5
-                        value: DataBus.pixel_size
-                        onValueModified: DataBus.pixel_size = value
+                        value: DataBus.pixelSize
+                        onValueModified: DataBus.pixelSize = value
 
                         Layout.row: 0
                         Layout.column: 0
@@ -706,12 +706,12 @@ Item {
                             let resolution = model[currentIndex]
                             Video4.changeCamera(cameraList.currentIndex*2, resolution.width, resolution.height, resolution.fourcc)
 
-                            if (resolution.width === 800)
-                                DataBus.pixel_size = 0.017
-                            else if (resolution.width === 1280)
-                                DataBus.pixel_size = 0.0107
-                            else
-                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
+//                            if (resolution.width === 800)
+//                                DataBus.pixel_size = 0.017
+//                            else if (resolution.width === 1280)
+//                                DataBus.pixel_size = 0.0107
+//                            else
+//                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
 
                             DataBus.resolution_width = resolution.width
                             DataBus.resolution_height = resolution.height

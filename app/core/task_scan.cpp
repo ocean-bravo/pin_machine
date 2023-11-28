@@ -134,7 +134,6 @@ void TaskScanPrivate::run(QString program)
 
     db().insert("resolution_width", 800);
     db().insert("resolution_height", 600);
-    db().insert("pixel_size", 0.017);
 
     video().changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
     video().start();

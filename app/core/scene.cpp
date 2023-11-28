@@ -117,7 +117,7 @@ void Scene::setImagePrivate(QImage img)
     const double y = img.text("y").toDouble();
     const int w = img.width();
     //const int h = img.height();
-    const double pixelSize = db().value("pixel_size").toDouble();
+    const double pixelSize = db().pixelSize();
 
     const double imageWidthMm = w * pixelSize;
     //const double imageHeightMm = h * pixelSize;

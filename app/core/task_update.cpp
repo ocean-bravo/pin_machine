@@ -64,7 +64,6 @@ void TaskUpdatePrivate::run()
 
     db().insert("resolution_width", 1280);
     db().insert("resolution_height", 960);
-    db().insert("pixel_size", 0.0107);
 
     video().changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
     video().start();
