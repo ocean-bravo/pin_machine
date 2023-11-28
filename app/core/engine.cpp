@@ -79,7 +79,7 @@ void Engine::load(const QString& url)
     QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
     splash.setEnabled(false);
     splash.setWindowModality(Qt::ApplicationModal);
-    splash.show();
+    //splash.show();
 
     scene().loadScene(url);
 
