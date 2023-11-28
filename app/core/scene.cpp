@@ -259,13 +259,12 @@ void Scene::loadScene(const QString& url)
 
         ba = qUncompress(ba);
 
-        QImage im(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
+        // img и ba располалагают 1 буфером. Владеет им ba.
+        QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
 
-        QImage img = im.copy();
+        img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
-                    QPixmap::fromImage(img)
-                        , _board);
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(img)), _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
