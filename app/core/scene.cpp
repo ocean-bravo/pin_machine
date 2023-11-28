@@ -261,14 +261,14 @@ void Scene::loadScene(const QString& url)
 
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
                     QPixmap::fromImage(
-                        std::move(
+
                             QImage(reinterpret_cast<const uchar *>(ba.constData()),
                                    imgWidth,
                                    imgHeight,
                                    QImage::Format_RGB32 // Такой формат у сохраняемого изображения.
                                    )
                             )
-                        ), _board);
+                        , _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
