@@ -12,11 +12,11 @@
 class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 {
     Q_OBJECT
-    //Q_PROPERTY(double pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
+    Q_PROPERTY(double pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
 
 public:
-    Q_INVOKABLE double pixelSize() const;
-    Q_INVOKABLE void setPixelSize(double);
+    double pixelSize() const;
+    void setPixelSize(double);
 
     Q_INVOKABLE void remove(QString key)
     {

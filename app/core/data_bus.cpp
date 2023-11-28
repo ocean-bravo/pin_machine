@@ -34,6 +34,9 @@ void DataBus::insert(const QString& key, const QVariant& value)
     QQmlPropertyMap::insert(key, value);
     _lock.unlock();
 
+    if (key == "resolution_width")
+        emit pixelSizeChanged();
+
     emit valueChanged(key, value);
 }
 
