@@ -499,7 +499,12 @@ Item {
                         Layout.column: 0
                         Layout.columnSpan: 3
 
-                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixelSize() }}
+                        Connections { target: DataBus; function onPixelSizeChanged() {
+
+                            console.log("pixel size changed ", DataBus.pixelSize())
+
+                            pixelSizeSpinBox.value = DataBus.pixelSize() }
+                        }
                     }
 
                     ComboBox {
