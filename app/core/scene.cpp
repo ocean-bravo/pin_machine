@@ -257,9 +257,7 @@ void Scene::loadScene(const QString& url)
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
-        ba = qUncompress(ba);
-        qd() << "ba size " << ba.size();
-        qd() << "img width " << imgWidth;
+        ba = std::move(qUncompress(ba));
 
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
                     QPixmap::fromImage(
@@ -267,7 +265,7 @@ void Scene::loadScene(const QString& url)
                             QImage(reinterpret_cast<const uchar *>(ba.constData()),
                                    imgWidth,
                                    imgHeight,
-                                   QImage::Format_RGB32
+                                   QImage::Format_RGB32 // Такой формат у сохраняемого изображения.
                                    )
                             )
                         ), _board);
