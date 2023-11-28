@@ -50,5 +50,3 @@ QVariant DataBus::value(const QString& key) const
     _lock.unlock();
     return var;
 }
-
-
