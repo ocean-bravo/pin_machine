@@ -6,6 +6,12 @@ DataBus::DataBus(QObject *parent)
     insert("pixel_size_800", 0.017);
     insert("pixel_size_1280", 0.0107);
     insert("pixel_size_2592", 0.00524);
+
+    connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
+    {
+        if (key == "resolution_width")
+            emit pixelSizeChanged();
+    });
 }
 
 DataBus::~DataBus()
@@ -33,9 +39,6 @@ void DataBus::insert(const QString& key, const QVariant& value)
     _lock.lockForWrite();
     QQmlPropertyMap::insert(key, value);
     _lock.unlock();
-
-    if (key == "resolution_width")
-        emit pixelSizeChanged();
 
     emit valueChanged(key, value);
 }
