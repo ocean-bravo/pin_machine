@@ -355,53 +355,39 @@ OpenCvPrivate::OpenCvPrivate()
         std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherLive.result());
 
         QString res;
-        for (const cv::KeyPoint& kp : kps)
-        {
-            res += QString("(%1, %2) \t %3\n").arg(kp.pt.x).arg(kp.pt.y).arg(kp.size);
-        }
-
-        db().insert("blob_info", res);
-
+        res += "x_pix \t y_pix \t dia_pix \t x_mm \t y_mm \t dia_mm \t dx_mm \t dy_mm \n";
 
         QString x = im.text("x");
         QString y = im.text("y");
 
-        res.clear();
         for (const cv::KeyPoint& kp : kps)
         {
-            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal3(kp.size * db().pixelSize());
+            const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+            const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+            const double diaBlob = kp.size * db().pixelSize();
 
-            res.append(QString("pos: [%1 %2] size: %3 \n").arg(xBlob).arg(yBlob).arg(diaBlob));
+            res.append(QString("%1 \t %2 \t %3 \t %4 \t %5 \t %6 \t %7 \t %8 \n")
+                       .arg(toReal1(kp.pt.x))
+                       .arg(toReal1(kp.pt.y))
+                       .arg(toReal1(kp.size))
+                       .arg(toReal3(xBlob))
+                       .arg(toReal3(yBlob))
+                       .arg(toReal3(diaBlob))
+                       .arg(toReal3(xBlob - x.toDouble())) // дельта между блобом и центром
+                       .arg(toReal3(yBlob - y.toDouble()))); // дельта между блобом и центром
         }
-        db().insert("blob_info2", res);
+        db().insert("blob_info", res);
 
+//        res.clear();
+//        if (!kps.empty())
+//        {
+//            auto kp = kps[0];
+//            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+//            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
 
-        res.clear();
-        if (!kps.empty())
-        {
-            auto kp = kps[0];
-            const QString xBlob = toReal3(pixToRealX(x.toDouble(), kp.pt.x, im.width()));
-            const QString yBlob = toReal3(pixToRealY(y.toDouble(), kp.pt.y, im.height()));
-            const QString diaBlob = toReal3(kp.size * db().pixelSize());
-
-            res = QString("%1 %2 %3").arg(xBlob).arg(yBlob).arg(diaBlob);
-        }
-        db().insert("blob_info3", res);
-
-
-        res.clear();
-        if (!kps.empty())
-        {
-            auto kp = kps[0];
-            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-
-            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
-        }
-        db().insert("blob_info4", res);
-
+//            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
+//        }
+//        db().insert("blob_info4", res);
     });
 }
 

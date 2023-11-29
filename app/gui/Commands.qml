@@ -623,8 +623,8 @@ Item {
                 Text {
                     anchors.top: image.top
                     anchors.right: image.right
-                    text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
-                    //text: DataBus.blob_info3
+                    //text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
+                    text: DataBus.blob_info
                 }
 
                 Column {
@@ -644,7 +644,6 @@ Item {
                                 Video4.stop()
                         }
                     }
-
 
                     Button {
                         id: reloadDevices
