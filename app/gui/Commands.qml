@@ -707,6 +707,8 @@ Item {
                         }
 
                         function setCurrentFormat() {
+                            if (model === undefined)
+                                return
                             let resolution = model[currentIndex]
                             Video4.changeCamera(cameraList.currentValue, resolution.width, resolution.height, resolution.fourcc)
 

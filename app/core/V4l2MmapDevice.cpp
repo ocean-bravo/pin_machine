@@ -205,13 +205,6 @@ bool MyDriver::setFormat(int width, int height, int fourcc)
     return true;
 }
 
-void MyDriver::getFormat(int fd)
-{
-    // Не знаю, нужна ли эта функция
-    // VIDIOC_G_FMT
-    // V4L2_BUF_TYPE_VIDEO_CAPTURE
-}
-
 bool MyDriver::unmapAndDeleteBuffers()
 {
     bool result = true;
@@ -356,20 +349,41 @@ quint32 MyDriver::maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint
     return fps;
 }
 
-quint32 MyDriver::imageFormats(int fd)
+QJsonArray MyDriver::imageFormats(int fd)
 {
     v4l2_fmtdesc fmtdesc = {};
 
     fmtdesc.index = 0;
     fmtdesc.type = _type;
 
+    QJsonArray formats;
+
     while (ioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc) != -1)      // Получите формат, поддерживаемый выходным изображением камеры.
     {
-
         const QString fourcc = fourccToString(fmtdesc.pixelformat);
 
         ++fmtdesc.index;
+
+        const QVector<QRect> sizes = frameSizes(fd, fmtdesc.pixelformat);
+
+        for (const QRect& size : sizes)
+        {
+            const quint32 fps = maxFrameRate(fd, fmtdesc.pixelformat, size.width(), size.height());
+
+            const QString display = QString("[%1x%2] %3 %4fps").arg(size.width()).arg(size.height()).arg(fourcc).arg(fps);
+
+            QJsonObject format {
+                {"width",   int(size.width())},
+                {"height",  int(size.height())},
+                {"fourcc",  fourcc},
+                {"fps",     int(fps)},
+                {"display", display}
+            };
+
+            formats.append(format);
+        }
     }
+    return formats;
 }
 
 QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
@@ -397,7 +411,6 @@ QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
     return frameSizes;
 }
 
-
 void MyDriver::reloadDevices()
 {
     const int maxDevices = 64;
@@ -423,50 +436,21 @@ void MyDriver::reloadDevices()
         else
         {
             qd() << "path:\t\t"           << path;
-            qd() << "driver_name:\t\t"    << cap.driver;
-            qd() << "device_name:\t\t"    << cap.card;
-            qd() << "bus_info:\t\t"       << cap.bus_info;
-            qd() << "driver_version:\t\t" << QString("%1.%2.%3").arg((cap.version >> 16) & 0xFF).arg((cap.version >> 8) & 0xFF).arg((cap.version) & 0XFF),
-            qd() << "capabilities:\t"     << QByteArray().setNum(cap.capabilities, 16); // набор возможностей, обычно：V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
-            qd() << "device_caps:\t"      << QByteArray().setNum(cap.device_caps, 16);
+            qd() << "driver_name:\t\t"    << QString::fromLatin1(reinterpret_cast<const char *>(cap.driver));
+            qd() << "device_name:\t\t"    << QString::fromUtf8(reinterpret_cast<const char *>(cap.card));
+            qd() << "bus_info:\t\t"       << QString::fromLatin1(reinterpret_cast<const char *>(cap.bus_info));
+            qd() << "driver_version:\t"   << QString("%1.%2.%3").arg((cap.version >> 16) & 0xFF).arg((cap.version >> 8) & 0xFF).arg((cap.version) & 0XFF),
+            qd() << "capabilities:\t\t"   << QByteArray().setNum(cap.capabilities, 16); // набор возможностей, обычно：V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
+            qd() << "device_caps:\t\t"    << QByteArray().setNum(cap.device_caps, 16);
         }
 
-        v4l2_fmtdesc fmtdesc = {};
-
-        fmtdesc.index = 0;
-        fmtdesc.type = _type;
-
-        QJsonArray formats;
-
-        while (ioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc) != -1)      // Получите формат, поддерживаемый выходным изображением камеры.
-        {
-            const QString fourcc = fourccToString(fmtdesc.pixelformat);
-
-            ++fmtdesc.index;
-
-            const QVector<QRect> sizes = frameSizes(fd, fmtdesc.pixelformat);
-
-            for (const QRect& size : sizes)
-            {
-                const quint32 fps = maxFrameRate(fd, fmtdesc.pixelformat, size.width(), size.height());
-
-                const QString display = QString("[%1x%2] %3 %4fps").arg(size.width()).arg(size.height()).arg(fourcc).arg(fps);
-
-                QJsonObject format {
-                    {"width",   int(size.width())},
-                    {"height",  int(size.height())},
-                    {"fourcc",  fourcc},
-                    {"fps",     int(fps)},
-                    {"display", display}
-                };
-
-                formats.append(format);
-            }
-        }
+        const QJsonArray formats = imageFormats(fd);
 
         // Если у устройства нет форматов, не заносить его в список устройств.
         if (formats.isEmpty())
             continue;
+
+        db().insert("camera" + QString::number(id), formats);
 
         QJsonObject device {
             { "id",   toInt(id) },
@@ -474,8 +458,6 @@ void MyDriver::reloadDevices()
         };
 
         devices.append(device);
-
-        db().insert("camera" + QString::number(id), formats);
     }
     db().insert("cameras", devices);
 }

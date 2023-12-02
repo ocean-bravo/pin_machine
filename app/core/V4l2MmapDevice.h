@@ -1,11 +1,12 @@
 #pragma once
 
+#include <linux/videodev2.h>
+
 #include <vector>
 #include <QString>
-
-//#include "V4l2Device.h"
-#include <linux/videodev2.h>
 #include <QRect>
+
+class QJsonArray;
 
 class MyDriver
 {	
@@ -26,15 +27,14 @@ public:
 
     size_t readInternal(char* buffer, size_t bufferSize);
 
-    static void reloadDevices();
-
     int width = 640;
     int height = 480;
 
+    static void reloadDevices();
     static quint32 maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint32 height);
     static QVector<QRect> frameSizes(int fd, quint32 pixelformat);
+    static QJsonArray imageFormats(int fd);
 
-    quint32 imageFormats(int fd);
 protected:
     size_t _bufSize = 0;
 
@@ -48,7 +48,6 @@ protected:
     std::vector<buffer> m_buffers;
 
 private:
-
     bool requestBuffers(int count);
     bool queryBuffers(int count);
 
@@ -58,7 +57,6 @@ private:
     bool queueBuffers(int count);
 
     bool setFormat(int width, int height, int fourcc);
-    void getFormat(int fd);
 
     bool freeBuffers();
     bool unmapAndDeleteBuffers();
