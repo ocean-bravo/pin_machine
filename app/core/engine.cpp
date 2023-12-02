@@ -33,13 +33,11 @@
 #include "scene.h"
 
 
-
 Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
 {
     Serial::instance();
-
     DataBus::instance();
     OpenCv::instance();
 
@@ -50,10 +48,10 @@ Engine::Engine(QObject* parent)
 }
 
 
-QStringList Engine::camerasInfo()
-{
-    return _info;
-}
+//QStringList Engine::camerasInfo()
+//{
+//    return _info;
+//}
 
 void Engine::save(const QString& url)
 {
