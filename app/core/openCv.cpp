@@ -315,9 +315,9 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 
     for (const cv::KeyPoint& kp : kps)
     {
-        const double xBlob = (pixToRealX(imX.toDouble(), kp.pt.x, imWidth));
-        const double yBlob = (pixToRealY(imY.toDouble(), kp.pt.y, imHeight));
-        const double diaBlob = (kp.size * db().pixelSize());
+        const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
+        const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
+        const double diaBlob = kp.size * db().pixelSize();
 
         scene().addBlob(xBlob, yBlob, diaBlob);
     }

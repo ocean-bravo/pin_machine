@@ -24,17 +24,6 @@ QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *buff
     return pgmImage;
 }
 
-QString fourccToString (quint32 fourcc)
-{
-    QString str;
-    for(uint32_t i=0; i<4; i++)
-    {
-        str += (char)(fourcc & 0xFF);
-        fourcc >>= 8;
-    }
-    return str;
-}
-
 }
 
 

@@ -650,7 +650,7 @@ Item {
                         width: 200
                         text: qsTr("Reload devices")
                         onPressed: {
-                            Video3.reloadDevices()
+                            Video4.reloadDevices()
                         }
                     }
 
@@ -689,6 +689,8 @@ Item {
                     ComboBox {
                         width: 200
                         id: cameraList
+                        valueRole: "id"
+                        textRole: "name"
                         model: DataBus.cameras
                     }
 
@@ -696,7 +698,7 @@ Item {
                         id: resolutionList
                         width: 200
                         textRole: "display"
-                        model: sortResolutions(DataBus["camera" + cameraList.currentIndex])
+                        model: sortResolutions(DataBus["camera" + cameraList.currentValue])
                         onActivated: {
                             setCurrentFormat()
                         }
@@ -706,7 +708,7 @@ Item {
 
                         function setCurrentFormat() {
                             let resolution = model[currentIndex]
-                            Video4.changeCamera(cameraList.currentIndex*2, resolution.width, resolution.height, resolution.fourcc)
+                            Video4.changeCamera(cameraList.currentValue, resolution.width, resolution.height, resolution.fourcc)
 
 //                            if (resolution.width === 800)
 //                                DataBus.pixel_size = 0.017

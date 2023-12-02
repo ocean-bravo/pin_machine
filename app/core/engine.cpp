@@ -43,7 +43,7 @@ Engine::Engine(QObject* parent)
     DataBus::instance();
     OpenCv::instance();
 
-    _videoDriver3 = new Video3();
+    //_videoDriver3 = new Video3();
     Video4::instance();
 
     createQmlEngine();
@@ -171,7 +171,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     _qmlEngine->rootContext()->setContextProperty("Engine", this);
-    _qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
+    //_qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
     _qmlEngine->rootContext()->setContextProperty("Video4", &video());
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);

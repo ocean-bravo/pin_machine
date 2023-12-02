@@ -19,23 +19,6 @@
 
 namespace {
 
-QByteArray v4l2_fourcc2s(quint32 fourcc)
-{
-    QByteArray buf(8, '\0');
-    buf[0] = fourcc & 0x7f;
-    buf[1] = (fourcc >> 8) & 0x7f;
-    buf[2] = (fourcc >> 16) & 0x7f;
-    buf[3] = (fourcc >> 24) & 0x7f;
-    if (fourcc & (1 << 31))
-    {
-        buf[4] = '-';
-        buf[5] = 'B';
-        buf[6] = 'E';
-    }
-
-    return buf;
-}
-
 quint32 stringToFourcc(QString fmt)
 {
     // TODO: проверки тут бы сделать разные
