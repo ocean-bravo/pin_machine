@@ -17,7 +17,6 @@
 #include <QScopeGuard>
 #include <QDateTime>
 
-
 namespace {
 
 }
@@ -130,12 +129,15 @@ void TaskScanPrivate::run(QString program)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
+    video().reloadDevices();
+    wait(500);
     video().stop();
 
     db().insert("resolution_width", 800);
     db().insert("resolution_height", 600);
 
-    video().changeCamera(0, 800, 600, "YUYV"); // НУжен номер девайса
+    video().changeCamera(cameraId(), 800, 600, "YUYV");
     video().start();
 
     _lineToSend = 0;

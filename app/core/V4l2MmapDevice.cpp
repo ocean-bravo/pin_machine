@@ -413,7 +413,7 @@ QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
 
 void MyDriver::reloadDevices()
 {
-    const int maxDevices = 64;
+    const int maxDevices = 32;
 
     QJsonArray devices;
 
@@ -453,7 +453,7 @@ void MyDriver::reloadDevices()
         db().insert("camera" + QString::number(id), formats);
 
         QJsonObject device {
-            { "id",   toInt(id) },
+            { "id",   id },
             { "name", QString::fromUtf8(reinterpret_cast<const char *>(cap.card)) }
         };
 

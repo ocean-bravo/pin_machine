@@ -31,6 +31,7 @@
 #include "my_image_provider.h"
 
 #include "scene.h"
+#include "settings.h"
 
 
 Engine::Engine(QObject* parent)
@@ -40,6 +41,7 @@ Engine::Engine(QObject* parent)
     Serial::instance();
     DataBus::instance();
     OpenCv::instance();
+    Settings::instance();
 
     //_videoDriver3 = new Video3();
     Video4::instance();

@@ -22,6 +22,7 @@ public:
     double extractFromGcodeX(QString line) const;
     double extractFromGcodeY(QString line) const;
     double extractFromGcodeZ(QString line) const;
+    int cameraId() const;
 
 protected:
     QMutex _mutex;

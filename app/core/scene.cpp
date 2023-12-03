@@ -102,7 +102,8 @@ QGraphicsItem* Scene::board() const
 
 void Scene::moveBoard(double angle, double distance)
 {
-
+    Q_UNUSED(angle)
+    Q_UNUSED(distance)
 
 }
 

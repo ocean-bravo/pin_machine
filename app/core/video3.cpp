@@ -9,20 +9,20 @@
 
 namespace {
 
-QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *bufferPtr, size_t bytes)
-{
-    QByteArray pgmImage;
-    {
-        QTextStream textStream(&pgmImage);
-        textStream << "P6" <<  ' ' << width << ' ' << height << ' ' <<  255 << '\n'; // PGM header
-    }
-    {
-        QDataStream dataStream(&pgmImage, QIODevice::WriteOnly | QIODevice::Append);
-        dataStream.writeRawData((const char *)bufferPtr, bytes);
-    }
+//QByteArray writeBufferAsPPM(uint32_t width, uint32_t height, const uint8_t *bufferPtr, size_t bytes)
+//{
+//    QByteArray pgmImage;
+//    {
+//        QTextStream textStream(&pgmImage);
+//        textStream << "P6" <<  ' ' << width << ' ' << height << ' ' <<  255 << '\n'; // PGM header
+//    }
+//    {
+//        QDataStream dataStream(&pgmImage, QIODevice::WriteOnly | QIODevice::Append);
+//        dataStream.writeRawData((const char *)bufferPtr, bytes);
+//    }
 
-    return pgmImage;
-}
+//    return pgmImage;
+//}
 
 }
 

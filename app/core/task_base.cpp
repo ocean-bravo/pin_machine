@@ -8,7 +8,11 @@
 #include "openCv.h"
 #include "video4.h"
 #include "scene.h"
+#include "settings.h"
 
+#include <QJsonValue>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QString>
 #include <QRegularExpression>
 
@@ -123,4 +127,18 @@ double TaskBase::extractFromGcodeZ(QString line) const
 {
     static QRegularExpression re(R"(.*Z(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
     return re.match(line).captured(1).toDouble();
+}
+
+int TaskBase::cameraId() const
+{
+    const QString cameraName = settings().value("camera").toString();
+    const QJsonArray cameras = db().value("cameras").toJsonArray();
+
+    for (const QJsonValue& cameraInfo : cameras)
+    {
+        if (cameraInfo.toObject().value("name").toString().contains(cameraName))
+            return cameraInfo.toObject().value("id").toInt();
+    }
+    qd() << "Camera: not found id for device name: " << cameraName;
+    return -1;
 }

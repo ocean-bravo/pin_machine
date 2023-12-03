@@ -303,5 +303,7 @@ int init()
 
     CapResult result = Cap_releaseContext(ctx);
 
+    result = result;
+
     return 0;
 }

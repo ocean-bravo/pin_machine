@@ -57,17 +57,20 @@ TaskCheckCameraPrivate::TaskCheckCameraPrivate()
 void TaskCheckCameraPrivate::run()
 {
     // Разница в диаметрах блобов, больше которой считается что блоб неправильный
-    static const double wrongBlobDiaError = 0.3;
+    //static const double wrongBlobDiaError = 0.3;
 
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
+    video().reloadDevices();
+    wait(500);
     video().stop();
 
     db().insert("resolution_width", 1280);
     db().insert("resolution_height", 960);
 
-    video().changeCamera(0, 1280, 960, "YUYV"); // НУжен номер девайса
+    video().changeCamera(cameraId(), 1280, 960, "YUYV");
     video().start();
 
     QTimer statusTimer;
