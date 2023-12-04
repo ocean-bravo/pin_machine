@@ -41,10 +41,11 @@ TaskScan::~TaskScan()
     _thread->wait(1000);
 }
 
-void TaskScan::run(QString program)
+void TaskScan::run(QString program, int width, int height, QString fourcc)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
+                              Q_ARG(QString, program), Q_ARG(int, width), Q_ARG(int, height), Q_ARG(QString, fourcc));
 }
 
 void TaskScan::stopProgram()
@@ -124,7 +125,7 @@ void TaskScanPrivate::pauseProgram()
 //    loop.exec();
 //}
 
-void TaskScanPrivate::run(QString program)
+void TaskScanPrivate::run(QString program, int width, int height, QString fourcc)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -134,10 +135,10 @@ void TaskScanPrivate::run(QString program)
     wait(500);
     video().stop();
 
-    db().insert("resolution_width", 800);
-    db().insert("resolution_height", 600);
+    db().insert("resolution_width", width);
+    db().insert("resolution_height", height);
 
-    video().changeCamera(cameraId(), 800, 600, "YUYV");
+    video().changeCamera(cameraId(), width, height, fourcc);
     video().start();
 
     _lineToSend = 0;

@@ -38,10 +38,10 @@ TaskUpdate::~TaskUpdate()
     _thread->wait(1000);
 }
 
-void TaskUpdate::run()
+void TaskUpdate::run(int width, int height, QString fourcc)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(QString, fourcc));
 }
 
 void TaskUpdate::stopProgram()
@@ -55,7 +55,7 @@ TaskUpdatePrivate::TaskUpdatePrivate()
 
 }
 
-void TaskUpdatePrivate::run()
+void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -65,10 +65,10 @@ void TaskUpdatePrivate::run()
     wait(500);
     video().stop();
 
-    db().insert("resolution_width", 1280);
-    db().insert("resolution_height", 960);
+    db().insert("resolution_width", width);
+    db().insert("resolution_height", height);
 
-    video().changeCamera(cameraId(), 1280, 960, "YUYV");
+    video().changeCamera(cameraId(), width, height, fourcc);
     video().start();
 
     QTimer statusTimer;

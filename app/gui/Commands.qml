@@ -45,6 +45,28 @@ Item {
         }
     }
 
+    function sortResolutions(resolutions) {
+        if (resolutions === undefined)
+            return
+
+        let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
+        let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
+
+        // Функция сортировки по возрастанию разрешения
+        let sortFunction = function (a,b) {
+            if (a.width * a.height === b.width * b.height)
+                return 0
+            return a.width * a.height > b.width * b.height ? 1 : -1
+        }
+
+        // Меняю порядок сортировки - большие разрешения вперед
+        resYuyv.sort(sortFunction).reverse()
+        resMjpg.sort(sortFunction).reverse()
+
+        // Сначала MJPG разрешения
+        return resMjpg.concat(resYuyv)
+    }
+
     Connections { target: Serial;          function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
     Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
@@ -347,22 +369,36 @@ Item {
                     id: scan
                     text: qsTr("Fast scan")
                     checkable: true
-                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text) : TaskScan.stopProgram()
+                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskScan.stopProgram()
                     Connections { target: TaskScan; function onFinished() { scan.checked = false } }
+                    function selectedResolution() {
+                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForScan.currentIndex]
+                    }
                 }
-
-                Item { height: 20; width: 10}
+                ComboBox {
+                    id: resolutionListForScan
+                    width: 200
+                    textRole: "display"
+                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                }
                 Item { height: 30; width: 10}
 
                 SmButton {
                     id: update
                     text: qsTr("Update selected")
                     checkable: true
-                    onCheckedChanged: checked ? TaskUpdate.run() : TaskUpdate.stopProgram()
+                    onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskUpdate.stopProgram()
                     Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
+                    function selectedResolution() {
+                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
+                    }
                 }
-
-                Item { height: 20; width: 10}
+                ComboBox {
+                    id: resolutionListForUpdate
+                    width: 200
+                    textRole: "display"
+                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                }
                 Item { height: 30; width: 10}
 
                 SmButton {

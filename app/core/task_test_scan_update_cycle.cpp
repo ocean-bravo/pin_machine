@@ -76,7 +76,7 @@ void TaskTestScanUpdateCyclePrivate::run(QString program)
             break;
         }
 
-        _sb->run(program);
+        _sb->run(program, 800, 600, "YUYV");
 
         waitForSignal(_sb, &TaskScan::finished, 3600*1000);
 
@@ -86,7 +86,7 @@ void TaskTestScanUpdateCyclePrivate::run(QString program)
             break;
         }
 
-        _ub->run();
+        _ub->run(1280, 960, "YUYV");
 
         waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 

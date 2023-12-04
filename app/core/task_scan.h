@@ -16,7 +16,7 @@ public:
     TaskScan(QObject* parent = nullptr);
     ~TaskScan();
 
-    Q_INVOKABLE void run(QString program); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
+    Q_INVOKABLE void run(QString program, int width, int height, QString fourcc); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
 
     bool sendNextLine();
 
@@ -40,7 +40,7 @@ public:
     TaskScanPrivate();
 
 public slots:
-    void run(QString program);
+    void run(QString program, int width, int height, QString fourcc);
     bool sendNextLine();
     void pauseProgram();
 
