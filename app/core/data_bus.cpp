@@ -1,11 +1,12 @@
 #include "data_bus.h"
+#include "settings.h"
 
 DataBus::DataBus(QObject *parent)
     : QQmlPropertyMap(this, parent)
 {
-    insert("pixel_size_800", 0.017);
-    insert("pixel_size_1280", 0.0107);
-    insert("pixel_size_2592", 0.00524);
+    insert("pixel_size_800", settings().value("pixel_size_800").toDouble());
+    insert("pixel_size_1280", settings().value("pixel_size_1280").toDouble());
+    insert("pixel_size_2592", settings().value("pixel_size_2592").toDouble());
 
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {

@@ -38,10 +38,10 @@ Engine::Engine(QObject* parent)
     : QObject(parent)
     , _qmlEngine(nullptr)
 {
+    Settings::instance();
     Serial::instance();
     DataBus::instance();
     OpenCv::instance();
-    Settings::instance();
 
     //_videoDriver3 = new Video3();
     Video4::instance();
