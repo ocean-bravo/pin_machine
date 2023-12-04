@@ -196,7 +196,7 @@ void Video4Private::update()
         const std::chrono::duration<double, std::milli> elapsed = finish - start;
         ++i;
         //qd() << i << ":" << elapsed.count() << "ms";
-        qd() << beginprevline + setpos(60) + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
+        //qd() << beginprevline + setpos(60) + QString::number(1000/elapsed.count(), 'f', 1) << "fps";
         start = std::chrono::steady_clock::now();
 
         {

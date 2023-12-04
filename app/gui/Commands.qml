@@ -380,6 +380,15 @@ Item {
                     width: 200
                     textRole: "display"
                     model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    onModelChanged: {
+                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
+
+                        for (let i = 0; i < res.length; i++) {
+                            let r = res[i]
+                            if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
+                                currentIndex = i
+                        }
+                    }
                 }
                 Item { height: 30; width: 10}
 
@@ -398,6 +407,15 @@ Item {
                     width: 200
                     textRole: "display"
                     model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    onModelChanged: {
+                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
+
+                        for (let i = 0; i < res.length; i++) {
+                            let r = res[i]
+                            if (r.width === 1280 && r.height === 960 && r.fourcc === "YUYV")
+                                currentIndex = i
+                        }
+                    }
                 }
                 Item { height: 30; width: 10}
 
@@ -941,5 +959,9 @@ Item {
         133:	"Axis 4 (A) Max travel, unit",
         134:	"Axis 5 (B) Max travel, unit",
         135:	"Axis 6 (C) Max travel, unit"
+    }
+
+    Component.onCompleted: {
+        Video4.reloadDevices()
     }
 }
