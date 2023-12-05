@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
-    property int from: -300
-    property int to: 300
+    property real from: -300
+    property real to: 300
     property int decimals: 3
     property bool editable: true
     property real value: 0.0

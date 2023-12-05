@@ -103,8 +103,11 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
     // Filter by Area.
     params.filterByArea = true;
-    params.minArea = db().value("blob_minArea").toFloat();
-    params.maxArea = db().value("blob_maxArea").toFloat();
+    double minDia = db().value("blob_minDia").toDouble();
+    double maxDia = db().value("blob_maxDia").toDouble();
+
+    params.minArea = minDia * minDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
+    params.maxArea = maxDia * maxDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
 
     // Filter by Circularity
     params.filterByCircularity = true;
@@ -327,8 +330,8 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("blob_minArea", 1000);
-    db().insert("blob_maxArea", 400000);
+    db().insert("blob_minDia", 0.3);
+    db().insert("blob_maxDia", 6);
     db().insert("blob_thresholdStep", 10);
     db().insert("blob_minThreshold", 1);
     db().insert("blob_maxThreshold", 200);
