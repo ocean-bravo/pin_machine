@@ -95,7 +95,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     static quint32 count = 0;
     ++count;
 
-    ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
+    //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
 
     //qd() << "detect blobs " << img.width() << img.height();
 
