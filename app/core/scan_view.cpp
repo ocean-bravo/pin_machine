@@ -27,7 +27,7 @@ ScanView::ScanView(QWidget *parent)
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "xPos" || key == "yPos")
-            setCross();
+            updateCameraView();
     });
 
     QLabel* message1 = new QLabel;
@@ -90,7 +90,7 @@ ScanView::~ScanView()
     delete ui;
 }
 
-void ScanView::setCross()
+void ScanView::updateCameraView()
 {
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
