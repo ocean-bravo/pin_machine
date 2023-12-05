@@ -106,6 +106,7 @@ void ScanView::updateCameraView()
             CameraViewItem* rect = dynamic_cast<CameraViewItem*>(item);
             rect->setRect(-w*ps/2, -h*ps/2, w*ps, h*ps);
             item->setPos(x, y);
+            return;
         }
     }
 }
