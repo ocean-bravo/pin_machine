@@ -9,11 +9,11 @@ Item {
     Column {
         anchors.fill: parent
 
-        RowDoubleSpinSlider { text: "minDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
+        RowDoubleSpinSlider { text: "minDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
             valueBind: function() { return DataBus.blob_minDia_mm }
             onValueChanged: DataBus.blob_minDia_mm = value
         }
-        RowDoubleSpinSlider { text: "maxDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia_mm
+        RowDoubleSpinSlider { text: "maxDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia_mm
             valueBind: function() { return DataBus.blob_maxDia_mm }
             onValueChanged: DataBus.blob_maxDia_mm = value
         }
