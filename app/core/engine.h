@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE void save(const QString &url);
     Q_INVOKABLE void load(const QString &url);
+    Q_INVOKABLE void capture();
 
 signals:
     void imageChanged(QString id);

@@ -130,6 +130,9 @@ void Scene::setImagePrivate(QImage img)
 
     const double ratio = pix.rect().width() / imageWidthMm;
 
+    if (!_board)
+        addBoard();
+
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения

@@ -713,7 +713,7 @@ Item {
                         width: 200
                         text: qsTr("Capture frame")
                         onPressed: {
-                            Video4.capture()
+                            Engine.capture()
                         }
                     }
 

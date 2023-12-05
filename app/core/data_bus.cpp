@@ -8,6 +8,9 @@ DataBus::DataBus(QObject *parent)
     insert("pixel_size_1280", settings().value("pixel_size_1280").toDouble());
     insert("pixel_size_2592", settings().value("pixel_size_2592").toDouble());
 
+    insert("x_coord", QString("0.000"));
+    insert("y_coord", QString("0.000"));
+
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "resolution_width")

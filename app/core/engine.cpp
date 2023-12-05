@@ -4,6 +4,7 @@
 #include "version.h" // автогенерированный файл qmake из version.h.in
 #include "utils.h"
 #include "utils2.h"
+#include "wait.h"
 
 #include <QCoreApplication>
 #include <QQmlContext>
@@ -88,7 +89,16 @@ void Engine::load(const QString& url)
 //    for (QGraphicsView * view : views)
 //    {
 //        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
-//    }
+    //    }
+}
+
+void Engine::capture()
+{
+    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+    video().start();
+    video().capture();
+    waitForSignal(&video(), &Video4::captured, 2000);
 }
 
 Engine::~Engine()
