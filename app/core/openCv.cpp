@@ -331,7 +331,7 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 OpenCvPrivate::OpenCvPrivate()
 {
     db().insert("blob_minDia_mm", 0.3);
-    db().insert("blob_maxDia_mm", 6);
+    db().insert("blob_maxDia_mm", 6.0);
     db().insert("blob_thresholdStep", 10);
     db().insert("blob_minThreshold", 1);
     db().insert("blob_maxThreshold", 200);
