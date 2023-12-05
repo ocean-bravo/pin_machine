@@ -41,9 +41,9 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 
 OTHER_FILES +=
 
-HEADERS += *.h
+HEADERS += *.h \
 
-SOURCES += *.cpp
+SOURCES += *.cpp \
 
 FORMS += *.ui
 

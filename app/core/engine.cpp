@@ -34,6 +34,8 @@
 #include "scene.h"
 #include "settings.h"
 
+#include "ImageItem.h"
+
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
@@ -115,7 +117,7 @@ void Engine::createQmlEngine()
         const QString mode = db().value("mode").toString();
 
         if (mode == "raw")
-            myImageProvider->setImage(OpenCv::drawCross(img), "raw");
+            myImageProvider->setImage(img, "raw");
 
         if (mode == "circle")
             opencv().searchCirclesLive(img);
@@ -126,7 +128,7 @@ void Engine::createQmlEngine()
 
     connect(&video(), &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
     {
-        myImageProvider->setImage(opencv().drawCross(img.copy()), "raw captured");
+        myImageProvider->setImage(img.copy(), "raw captured");
     });
 
     connect(&video(), &Video4::captured, this, [myImageProvider](QImage img)
@@ -177,6 +179,8 @@ void Engine::createQmlEngine()
 
     _qmlEngine->addImportPath(appDir() + "libs");
     _qmlEngine->addImageProvider("camera", myImageProvider);
+
+    qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
 
     _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());

@@ -5,6 +5,7 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
 import Process 1.0
+import ImageItem 1.0
 
 import "utils.js" as Utils
 
@@ -677,160 +678,172 @@ Item {
                 }
             }
 
-            ImageDoubleBuff2 {
-                id: image
-                width: parent.width
-                height: parent.height
+            Item {
+                ImageItem {
+                    id: image
+                    anchors.fill: parent
+                }
 
-                Connections {
-                    target: Engine
-                    function onImageChanged(id) {
-                        if (id !== imgType.currentText)
-                            return
-                        image.setSource("image://camera/" +  id)
+                Item{
+                    anchors.fill: parent
+                    Connections {
+                        target: Engine
+                        function onImageChanged(id) {
+                            if (id !== imgType.currentText)
+                                return
+                            //image.setImage("image://camera/" +  id)
+                        }
                     }
-                }
 
-                Text {
-                    anchors.top: image.top
-                    anchors.right: image.right
-                    //text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
-                    text: DataBus.blob_info
-                }
+                    Text {
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        //text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
+                        text: DataBus.blob_info
+                    }
 
-                Column {
-                    spacing: 5
-                    Button {
-                        id: startStopUpdate
-                        width: 200
-                        text: checked ? qsTr("Stop update") : qsTr("Start update")
-                        checkable: true
-                        checked: false
-                        onCheckedChanged: {
-                            if (checked) {
-                                resolutionList.setCurrentFormat()
-                                Video4.start()
+                    Column {
+                        spacing: 5
+                        Button {
+                            id: startStopUpdate
+                            width: 200
+                            text: checked ? qsTr("Stop update") : qsTr("Start update")
+                            checkable: true
+                            checked: false
+                            onCheckedChanged: {
+                                if (checked) {
+                                    resolutionList.setCurrentFormat()
+                                    Video4.start()
+                                }
+                                else
+                                    Video4.stop()
                             }
-                            else
-                                Video4.stop()
-                        }
-                    }
-
-                    Button {
-                        id: reloadDevices
-                        width: 200
-                        text: qsTr("Reload devices")
-                        onPressed: {
-                            Video4.reloadDevices()
-                        }
-                    }
-
-                    Button {
-                        id: captureFrame
-                        width: 200
-                        text: qsTr("Capture frame")
-                        onPressed: {
-                            Engine.capture()
-                        }
-                    }
-
-                    ComboBox {
-                        id: imgType
-                        width: 200
-                        model: ["raw", "circle", "blob", "raw captured", "small_blob_captured"]
-                        onActivated: {
-                            image.setSource("image://camera/" + currentText)
-                            DataBus.mode = currentText
-                        }
-                        Component.onCompleted: {
-                            image.setSource("image://camera/raw")
-                            DataBus.mode = "raw"
-                        }
-                    }
-
-                    //                    ComboBox {
-                    //                        id: captureNumber
-                    //                        width: 200
-                    //                        model: DataBus.capture_number
-                    //                        onActivated: {
-                    //                            image.setSource("image://camera/captured_" + currentText)
-                    //                        }
-                    //                    }
-
-                    ComboBox {
-                        width: 200
-                        id: cameraList
-                        valueRole: "id"
-                        textRole: "name"
-                        model: DataBus.cameras
-                    }
-
-                    ComboBox {
-                        id: resolutionList
-                        width: 200
-                        textRole: "display"
-                        model: sortResolutions(DataBus["camera" + cameraList.currentValue])
-                        onActivated: {
-                            setCurrentFormat()
-                        }
-                        onModelChanged: {
-                            setCurrentFormat()
                         }
 
-                        function setCurrentFormat() {
-                            if (model === undefined)
-                                return
-                            let resolution = model[currentIndex]
-                            Video4.changeCamera(cameraList.currentValue, resolution.width, resolution.height, resolution.fourcc)
-
-//                            if (resolution.width === 800)
-//                                DataBus.pixel_size = 0.017
-//                            else if (resolution.width === 1280)
-//                                DataBus.pixel_size = 0.0107
-//                            else
-//                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
-
-                            DataBus.resolution_width = resolution.width
-                            DataBus.resolution_height = resolution.height
+                        Button {
+                            id: reloadDevices
+                            width: 200
+                            text: qsTr("Reload devices")
+                            onPressed: {
+                                Video4.reloadDevices()
+                            }
                         }
 
-                        function sortResolutions(resolutions) {
-                            if (resolutions === undefined)
-                                return
+                        Button {
+                            id: captureFrame
+                            width: 200
+                            text: qsTr("Capture frame")
+                            onPressed: {
+                                Engine.capture()
+                            }
+                        }
 
-                            let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
-                            let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
+                        ComboBox {
+                            id: imgType
+                            width: 200
+                            model: ["raw", "circle", "blob", "raw captured", "small_blob_captured"]
+                            onActivated: {
+                                //image.setSource("image://camera/" + currentText)
+                                DataBus.mode = currentText
+                            }
+                            Component.onCompleted: {
+                                //image.setImage("image://camera/raw")
+                                DataBus.mode = "raw"
+                            }
+                        }
 
-                            // Функция сортировки по возрастанию разрешения
-                            let sortFunction = function (a,b) {
-                                if (a.width * a.height === b.width * b.height)
-                                    return 0
-                                return a.width * a.height > b.width * b.height ? 1 : -1
+                        //                    ComboBox {
+                        //                        id: captureNumber
+                        //                        width: 200
+                        //                        model: DataBus.capture_number
+                        //                        onActivated: {
+                        //                            image.setSource("image://camera/captured_" + currentText)
+                        //                        }
+                        //                    }
+
+                        ComboBox {
+                            width: 200
+                            id: cameraList
+                            valueRole: "id"
+                            textRole: "name"
+                            model: DataBus.cameras
+                        }
+
+                        ComboBox {
+                            id: resolutionList
+                            width: 200
+                            textRole: "display"
+                            model: sortResolutions(DataBus["camera" + cameraList.currentValue])
+                            onActivated: {
+                                setCurrentFormat()
+                            }
+                            onModelChanged: {
+                                setCurrentFormat()
                             }
 
-                            // Меняю порядок сортировки - большие разрешения вперед
-                            resYuyv.sort(sortFunction).reverse()
-                            resMjpg.sort(sortFunction).reverse()
+                            function setCurrentFormat() {
+                                if (model === undefined)
+                                    return
+                                let resolution = model[currentIndex]
+                                Video4.changeCamera(cameraList.currentValue, resolution.width, resolution.height, resolution.fourcc)
 
-                            // Сначала MJPG разрешения
-                            return resMjpg.concat(resYuyv)
+                                //                            if (resolution.width === 800)
+                                //                                DataBus.pixel_size = 0.017
+                                //                            else if (resolution.width === 1280)
+                                //                                DataBus.pixel_size = 0.0107
+                                //                            else
+                                //                                DataBus.pixel_size = 0.00524 * Math.floor(2592 / resolution.width)
+
+                                DataBus.resolution_width = resolution.width
+                                DataBus.resolution_height = resolution.height
+                            }
+
+                            function sortResolutions(resolutions) {
+                                if (resolutions === undefined)
+                                    return
+
+                                let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
+                                let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
+
+                                // Функция сортировки по возрастанию разрешения
+                                let sortFunction = function (a,b) {
+                                    if (a.width * a.height === b.width * b.height)
+                                        return 0
+                                    return a.width * a.height > b.width * b.height ? 1 : -1
+                                }
+
+                                // Меняю порядок сортировки - большие разрешения вперед
+                                resYuyv.sort(sortFunction).reverse()
+                                resMjpg.sort(sortFunction).reverse()
+
+                                // Сначала MJPG разрешения
+                                return resMjpg.concat(resYuyv)
+                            }
+
                         }
-
+                    }
+                    CircleSettings {
+                        visible: imgType.currentText === "circle"
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                    }
+                    BlobSettings {
+                        visible: imgType.currentText === "blob"
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
                     }
                 }
-                CircleSettings {
-                    visible: imgType.currentText === "circle"
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                }
-                BlobSettings {
-                    visible: imgType.currentText === "blob"
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                }
+
+
             }
+
+
+
+
+
+
         }
     }
 
