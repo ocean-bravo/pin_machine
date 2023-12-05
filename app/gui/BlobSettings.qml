@@ -9,13 +9,13 @@ Item {
     Column {
         anchors.fill: parent
 
-        RowDoubleSpinSlider { text: "minDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia
-            valueBind: function() { return DataBus.blob_minDia }
-            onValueChanged: DataBus.blob_minDia = value
+        RowDoubleSpinSlider { text: "minDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
+            valueBind: function() { return DataBus.blob_minDia_mm }
+            onValueChanged: DataBus.blob_minDia_mm = value
         }
-        RowDoubleSpinSlider { text: "maxDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia
-            valueBind: function() { return DataBus.blob_maxDia }
-            onValueChanged: DataBus.blob_maxDia = value
+        RowDoubleSpinSlider { text: "maxDia"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia_mm
+            valueBind: function() { return DataBus.blob_maxDia_mm }
+            onValueChanged: DataBus.blob_maxDia_mm = value
         }
         RowSpinSlider { text: "thresholdStep"; from: 0; to: 100; stepSize: 1; value: DataBus.blob_thresholdStep
             valueBind: function() { return DataBus.blob_thresholdStep }
