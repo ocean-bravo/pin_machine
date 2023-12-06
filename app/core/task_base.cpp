@@ -111,22 +111,28 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
     //runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 }
 
-double TaskBase::extractFromGcodeX(QString line) const
+// Возвращает defaultValue или число
+double TaskBase::extractFromGcodeX(QString line, double defaultValue) const
 {
     static QRegularExpression re(R"(.*X(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
-    return re.match(line).captured(1).toDouble();
+    const QString value = re.match(line).captured(1);
+    return value.isNull() ? defaultValue : value.toDouble();
 }
 
-double TaskBase::extractFromGcodeY(QString line) const
+// Возвращает defaultValue или число
+double TaskBase::extractFromGcodeY(QString line, double defaultValue) const
 {
     static QRegularExpression re(R"(.*Y(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
-    return re.match(line).captured(1).toDouble();
+    const QString value = re.match(line).captured(1);
+    return value.isNull() ? defaultValue : value.toDouble();
 }
 
-double TaskBase::extractFromGcodeZ(QString line) const
+// Возвращает defaultValue или число
+double TaskBase::extractFromGcodeZ(QString line, double defaultValue) const
 {
     static QRegularExpression re(R"(.*Z(-{0,1}\d{0,3}\.{0,1}\d{0,3}).*)");
-    return re.match(line).captured(1).toDouble();
+    const QString value = re.match(line).captured(1);
+    return value.isNull() ? defaultValue : value.toDouble();
 }
 
 int TaskBase::cameraId() const

@@ -135,7 +135,7 @@ void Engine::createQmlEngine()
         const QString x = db().value("x_coord").toString();
         const QString y = db().value("y_coord").toString();
 
-        qd() << "captured " << captureNumber << x << y;
+        //qd() << "captured " << captureNumber << x << y;
 
         img.setText("x", x);
         img.setText("y", y);

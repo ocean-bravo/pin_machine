@@ -8,6 +8,7 @@
 #include "data_bus.h"
 #include "scene.h"
 #include "blob_item.h"
+#include "settings.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -22,8 +23,8 @@ TaskPunch::TaskPunch(QObject* parent)
     , _impl(new TaskPunchPrivate)
     , _thread(new QThread)
 {
-    db().insert("punch_dx", 85.0);
-    db().insert("punch_dy", -90.0);
+    db().insert("punch_dx_mm", settings().value("punch_dx_mm", 85.0).toDouble());
+    db().insert("punch_dy_mm", settings().value("punch_dy_mm", -90.0).toDouble());
 
     connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
     connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
@@ -40,10 +41,10 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run(QString program)
+void TaskPunch::run(QString punchProgram, QString goToBeginProgram)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, program));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram), Q_ARG(QString, goToBeginProgram));
 }
 
 void TaskPunch::stopProgram()
@@ -57,7 +58,7 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run(QString program)
+void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -144,9 +145,9 @@ void TaskPunchPrivate::run(QString program)
 
     // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
     int count  = 0;
-    const double dx = db().value("punch_dx").toDouble(); // сдвиг инструмента
-    const double dy = db().value("punch_dy").toDouble(); // сдвиг инструмента
-    const QStringList punchCode = program.split("\n", Qt::SkipEmptyParts);
+    const double dx = db().value("punch_dx_mm").toDouble(); // сдвиг инструмента
+    const double dy = db().value("punch_dy_mm").toDouble(); // сдвиг инструмента
+    const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
     every<BlobItem>(scene().items(), [this, dx, dy, punchCode, &count](BlobItem* blob)
     {
         if (blob->isPunch())
@@ -164,6 +165,24 @@ void TaskPunchPrivate::run(QString program)
             ++count;
         }
     });
+
+    // А если в Gcode нет одной из осей - X или Y? Нужно, чтобы нормально это отрабатывалось.
+    // Если не добыли позицию из кода -
+    // Вообще, не очень подход с кодом возврата. Нужно, чтобы весь машрут расчитывался. Но пока так
+    const QStringList goToBeginCode = goToBeginProgram.split("\n", Qt::SkipEmptyParts);
+    for (const QString& gCode : goToBeginCode)
+    {
+        if (_stop) { emit message("program interrupted"); return; }
+        serial().write(gCode.toLatin1() + "\n");
+        emit message(gCode);
+
+        const double xCurrent = db().value("xPos").toDouble();
+        const double yCurrent = db().value("yPos").toDouble();
+
+        const double x = extractFromGcodeX(gCode, xCurrent);
+        const double y = extractFromGcodeY(gCode, yCurrent);
+        moveToAndWaitPosition(x, y); // Приехали на позицию
+    }
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 

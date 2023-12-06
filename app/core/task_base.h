@@ -19,9 +19,9 @@ public:
     // Не знаю куда приткнуть этот метод
     static void algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem *secondRefBlob, BlobItem *secondRealBlob);
 
-    double extractFromGcodeX(QString line) const;
-    double extractFromGcodeY(QString line) const;
-    double extractFromGcodeZ(QString line) const;
+    double extractFromGcodeX(QString line, double defaultValue = qQNaN()) const;
+    double extractFromGcodeY(QString line, double defaultValue = qQNaN()) const;
+    double extractFromGcodeZ(QString line, double defaultValue = qQNaN()) const;
     int cameraId() const;
 
 protected:

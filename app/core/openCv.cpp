@@ -3,6 +3,7 @@
 
 #include "data_bus.h"
 #include "scene.h"
+#include "settings.h"
 
 #include <QtConcurrent>
 
@@ -111,7 +112,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
     // Filter by Circularity
     params.filterByCircularity = true;
-    params.minCircularity = 0.5;
+    params.minCircularity = 0.3;
     params.maxCircularity = 5.0;
 
     // Filter by Convexity
@@ -119,9 +120,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     //params.minConvexity = 0.87
 
     // Filter by Inertia
-    params.filterByInertia = true;
-    params.minInertiaRatio = 0.8;
-    params.maxInertiaRatio = 5.0;
+//    params.filterByInertia = true;
+//    params.minInertiaRatio = 0.8;
+//    params.maxInertiaRatio = 5.0;
 
     // Distance Between Blobs
     params.minDistBetweenBlobs = 2.0;
@@ -138,8 +139,15 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     cv::Mat grey;
     cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
+    cv::Mat adtr;
+
+    const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
+    const double c = db().value("blob_ad_tr_c").toDouble();
+    cv::adaptiveThreshold(grey, adtr, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, blockSize, c);
+
     cv::Mat blur;
-    cv::medianBlur(grey, blur, 3);
+    cv::medianBlur(adtr, blur, 3);
+    //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
     // Storage for blobs
     std::vector<cv::KeyPoint> keypoints;
@@ -330,12 +338,15 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("blob_minDia_mm", 0.3);
-    db().insert("blob_maxDia_mm", 6.0);
+    db().insert("blob_minDia_mm", settings().value("blob_minDia_mm", 0.3).toDouble());
+    db().insert("blob_maxDia_mm", settings().value("blob_maxDia_mm", 6.0).toDouble());
     db().insert("blob_thresholdStep", 10);
     db().insert("blob_minThreshold", 1);
     db().insert("blob_maxThreshold", 200);
     //    db().insert("circle_maxRadius", 110);
+
+    db().insert("blob_ad_tr_blockSize", settings().value("blob_ad_tr_blockSize", 29).toInt());
+    db().insert("blob_ad_tr_c",         settings().value("blob_ad_tr_c", 9.0).toDouble());
 
     db().insert("blob_info", "");
 

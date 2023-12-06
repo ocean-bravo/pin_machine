@@ -270,14 +270,14 @@ Item {
 
                 Item { height: 20; width: 10}
                 Item { height: 20; width: 10}
-                Item { height: 20; width: 10}
+                //Item { height: 20; width: 10}
 
 
-                Item { height: 30; width: 10}
+                //Item { height: 30; width: 10}
 
                 //                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
                 //                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
-                Item { height: 30; width: 10}
+                //Item { height: 30; width: 10}
                 SmButton { text: qsTr("Clear log");  onClicked: { logViewer.clear() } }
             }
 
@@ -458,7 +458,7 @@ Item {
             CollapsiblePanel {
                 id: punchPanel
                 width: parent.width
-                height: checked ? 200 : 30
+                height: checked ? 220 : 30
                 text: "Punch"
                 onCheckedChanged: {
                     punchGrid.visible = checked
@@ -478,7 +478,7 @@ Item {
                     Rectangle {
                         color: "lightgrey"
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 100
+                        Layout.preferredHeight: 70
                         Layout.columnSpan: 10
 
                         CodeEditor2 {
@@ -497,8 +497,8 @@ Item {
                     }
 
                     DoubleSpinBox {
-                        value: DataBus.punch_dx
-                        onValueModified: DataBus.punch_dx = value
+                        value: DataBus.punch_dx_mm
+                        onValueModified: DataBus.punch_dx_mm = value
                         Layout.preferredWidth: 100
                     }
 
@@ -506,8 +506,8 @@ Item {
                         text: qsTr("dy")
                     }
                     DoubleSpinBox {
-                        value: DataBus.punch_dy
-                        onValueModified: DataBus.punch_dy = value
+                        value: DataBus.punch_dy_mm
+                        onValueModified: DataBus.punch_dy_mm = value
                         Layout.preferredWidth: 100
                     }
 
@@ -515,11 +515,28 @@ Item {
                         id: punch
                         text: qsTr("Punch")
                         checkable: true
-                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
+                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text, goToBeginCode.text) : TaskPunch.stopProgram()
                         Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
 
                         Layout.row: 1
                         Layout.column: 9
+                    }
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 50
+                        Layout.columnSpan: 10
+
+                        CodeEditor2 {
+                            id: goToBeginCode
+                            anchors.fill: parent
+                            //text: "G1 G90 F4000 Z20"
+                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                            // https://github.com/SakamotoMari/FileIO
+                            // https://github.com/chili-epfl/qml-fileio
+                        }
                     }
                 }
             }

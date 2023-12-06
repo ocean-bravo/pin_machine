@@ -249,7 +249,7 @@ void Video4Private::imageDispatch(QImage img)
 
                 static quint32 count = 0;
                 ++count;
-                qd() << beginprevline << setpos(30) << "captured " << count;
+                //qd() << beginprevline << setpos(30) << "captured " << count;
                 emit captured(img.copy()); // Наружу выпускается копия, все правильно
             }
 
