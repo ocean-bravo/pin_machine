@@ -744,6 +744,25 @@ Item {
                             model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_1", "adapt_threshold_2"]
                             onActivated: DataBus.mode = currentText
                             Component.onCompleted: DataBus.mode = "raw"
+                            MouseArea {
+                                anchors.fill: parent
+                                onWheel: {
+                                    if (wheel.angleDelta.y > 0) {
+                                        imgType.decrementCurrentIndex()
+                                    }
+                                    else if (wheel.angleDelta.y < 0) {
+                                        imgType.incrementCurrentIndex()
+                                    }
+                                }
+                                onPressed: {
+                                    // propogate to ComboBox
+                                    mouse.accepted = false;
+                                }
+                                onReleased: {
+                                    // propogate to ComboBox
+                                    mouse.accepted = false;
+                                }
+                            }
                         }
 
                         ComboBox {
@@ -814,7 +833,7 @@ Item {
                         anchors.right: parent.right
                     }
                     BlobSettings {
-                        visible: imgType.currentText === "blob"
+                        visible: imgType.currentText === "blob" || imgType.currentText === "adapt_threshold_1" || imgType.currentText === "adapt_threshold_2"
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.right: parent.right
