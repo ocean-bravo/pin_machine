@@ -18,7 +18,8 @@ DataBus::DataBus(QObject *parent)
     insert("image_circle", QImage());
     insert("image_raw_captured", QImage());
     insert("image_small_blob_captured", QImage());
-    insert("image_adapt_threshold", QImage());
+    insert("image_adapt_threshold_1", QImage());
+    insert("image_adapt_threshold_2", QImage());
 
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {

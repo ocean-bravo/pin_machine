@@ -741,7 +741,7 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold"]
+                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_1", "adapt_threshold_2"]
                             onActivated: DataBus.mode = currentText
                             Component.onCompleted: DataBus.mode = "raw"
                         }
@@ -820,15 +820,7 @@ Item {
                         anchors.right: parent.right
                     }
                 }
-
-
             }
-
-
-
-
-
-
         }
     }
 

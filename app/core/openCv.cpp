@@ -145,6 +145,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     const double c = db().value("blob_ad_tr_c").toDouble();
     cv::adaptiveThreshold(grey, adtr, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, blockSize, c);
 
+    db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
+    db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
+
     cv::Mat blur;
     cv::medianBlur(adtr, blur, 3);
     //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
