@@ -6,10 +6,11 @@
 class ImageItem : public QQuickPaintedItem
 {
     Q_OBJECT
+    //Q_PROPERTY(QImage image WRITE setImage)
 
 public:
     explicit ImageItem(QQuickItem *parent = nullptr);
-    Q_INVOKABLE void setImage(const QImage &image);
+    Q_INVOKABLE void setImage(const QImage& image);
 
     void paint(QPainter *painter) override;
 
@@ -21,7 +22,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 private:
-    QImage m_image;
+    QImage _image;
     QPoint m_transOrigin;
     QTransform m_transform;
     QPoint m_prevPoint;

@@ -1,6 +1,8 @@
 #include "data_bus.h"
 #include "settings.h"
 
+#include <QImage>
+
 DataBus::DataBus(QObject *parent)
     : QQmlPropertyMap(this, parent)
 {
@@ -10,6 +12,13 @@ DataBus::DataBus(QObject *parent)
 
     insert("x_coord", QString("0.000"));
     insert("y_coord", QString("0.000"));
+
+    insert("image_raw", QImage());
+    insert("image_blob", QImage());
+    insert("image_circle", QImage());
+    insert("image_raw_captured", QImage());
+    insert("image_small_blob_captured", QImage());
+    insert("image_adapt_threshold", QImage());
 
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
@@ -45,6 +54,9 @@ void DataBus::insert(const QString& key, const QVariant& value)
     _lock.unlock();
 
     emit valueChanged(key, value);
+
+    if (key.contains("image_"))
+        emit imageChanged(key);
 }
 
 QVariant DataBus::value(const QString& key) const

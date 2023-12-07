@@ -29,6 +29,7 @@ public:
 
 signals:
     void pixelSizeChanged();
+    void imageChanged(QString key);
 
 protected:
 //    template <typename Derived>

@@ -682,23 +682,23 @@ Item {
                 ImageItem {
                     id: image
                     anchors.fill: parent
-                }
 
-                Item{
-                    anchors.fill: parent
                     Connections {
-                        target: Engine
-                        function onImageChanged(id) {
-                            if (id !== imgType.currentText)
-                                return
-                            //image.setImage("image://camera/" +  id)
+                        target: DataBus;
+                        function onImageChanged(key) {
+                            if (key !== "image_" + DataBus.mode)
+                                return;
+                            image.setImage(DataBus["image_" + DataBus.mode])
                         }
                     }
+                }
+
+                Item {
+                    anchors.fill: parent
 
                     Text {
                         anchors.top: parent.top
                         anchors.right: parent.right
-                        //text: DataBus.blob_info + "\n" + DataBus.blob_info2 + "\n" + DataBus.blob_info3 + "\n" + DataBus.blob_info4
                         text: DataBus.blob_info
                     }
 
@@ -741,25 +741,10 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "circle", "blob", "raw captured", "small_blob_captured"]
-                            onActivated: {
-                                //image.setSource("image://camera/" + currentText)
-                                DataBus.mode = currentText
-                            }
-                            Component.onCompleted: {
-                                //image.setImage("image://camera/raw")
-                                DataBus.mode = "raw"
-                            }
+                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold"]
+                            onActivated: DataBus.mode = currentText
+                            Component.onCompleted: DataBus.mode = "raw"
                         }
-
-                        //                    ComboBox {
-                        //                        id: captureNumber
-                        //                        width: 200
-                        //                        model: DataBus.capture_number
-                        //                        onActivated: {
-                        //                            image.setSource("image://camera/captured_" + currentText)
-                        //                        }
-                        //                    }
 
                         ComboBox {
                             width: 200

@@ -8,12 +8,6 @@
 ImageItem::ImageItem(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
-    connect(&video(), &Video4::newImage, this, [this](QImage img)
-    {
-        m_image = img;
-        update();
-    });
-
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::AllButtons);
     m_prevPoint = QPoint(-1, -1);
@@ -23,18 +17,19 @@ void ImageItem::paint(QPainter *painter)
 {
     painter->setTransform(m_transform);
 
-    if (m_image.isNull())
+    if (_image.isNull())
         return;
 
     int w = width();
-    int h = w * m_image.height() / m_image.width();
+    int h = w * _image.height() / _image.width();
 
-    painter->drawImage(QRect(-w/2, -h/2, w, h), m_image);
+    //painter->drawImage(QRect(-w/2, -h/2, w, h), _image);
+    painter->drawImage(QRect(0, 0, w, h), _image);
 
     // Перекрестие по центру картинки
     painter->setPen(QPen(Qt::white, 0));
-    painter->drawLine(0, h/2, 0, -h/2);
-    painter->drawLine(-w/2, 0, w/2, 0);
+    painter->drawLine(w/2, 0, w/2, h);
+    painter->drawLine(0, h/2, w, h/2);
 }
 
 void ImageItem::wheelEvent(QWheelEvent *event)
@@ -54,7 +49,7 @@ void ImageItem::wheelEvent(QWheelEvent *event)
 
 void ImageItem::setImage(const QImage &image)
 {
-    m_image = image;
+    _image = image;
     update();
 }
 

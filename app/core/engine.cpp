@@ -110,14 +110,15 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-    MyImageProvider* myImageProvider = new MyImageProvider;
+    //MyImageProvider* myImageProvider = new MyImageProvider;
 
-    connect(&video(), &Video4::newImage, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::newImage, this, [](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
         if (mode == "raw")
-            myImageProvider->setImage(img, "raw");
+            //myImageProvider->setImage(img, "raw");
+            db().insert("image_raw", img);
 
         if (mode == "circle")
             opencv().searchCirclesLive(img);
@@ -126,12 +127,13 @@ void Engine::createQmlEngine()
             opencv().blobDetectorLive(img);
     });
 
-    connect(&video(), &Video4::capturedSmallRegion, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
-        myImageProvider->setImage(img.copy(), "raw captured");
+        //myImageProvider->setImage(img.copy(), "raw captured");
+        db().insert("image_raw_captured", img.copy());
     });
 
-    connect(&video(), &Video4::captured, this, [myImageProvider](QImage img)
+    connect(&video(), &Video4::captured, this, [](QImage img)
     {
         int captureNumber = db().value("capture_number").toInt();
         const QString x = db().value("x_coord").toString();
@@ -142,27 +144,32 @@ void Engine::createQmlEngine()
         img.setText("x", x);
         img.setText("y", y);
 
-        myImageProvider->setImage(img, "raw captured");
+        //myImageProvider->setImage(img, "raw captured");
+        db().insert("image_raw_captured", img);
         //myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
         opencv().blobDetectorCaptured(img.copy());
     });
 
-    connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
+    //connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
-    connect(&opencv(), &OpenCv::circleChanged, this, [myImageProvider](QImage img)
+    connect(&opencv(), &OpenCv::circleChanged, this, [](QImage img)
     {
-        myImageProvider->setImage(img, "circle");
+        //myImageProvider->setImage(img, "circle");
+        db().insert("image_circle", img);
     });
 
-    connect(&opencv(), &OpenCv::blobChanged, this, [myImageProvider](QImage img)
+    connect(&opencv(), &OpenCv::blobChanged, this, [](QImage img)
     {
-        myImageProvider->setImage(img, "blob");
+        //myImageProvider->setImage(img, "blob");
+        db().insert("image_blob", img);
     });
 
-    connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [myImageProvider](QImage img)
+    connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [](QImage img)
     {
-        myImageProvider->setImage(img, "small_blob_captured");
+        //myImageProvider->setImage(img, "small_blob_captured");
+
+        db().insert("image_small_blob_captured", img);
     });
 
     TaskScan* taskScan = new TaskScan(this);
@@ -178,7 +185,7 @@ void Engine::createQmlEngine()
     _qmlEngine.reset(new QQmlApplicationEngine());
 
     _qmlEngine->addImportPath(appDir() + "libs");
-    _qmlEngine->addImageProvider("camera", myImageProvider);
+    //_qmlEngine->addImageProvider("camera", myImageProvider);
 
     qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
 
@@ -188,7 +195,7 @@ void Engine::createQmlEngine()
     //_qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
     _qmlEngine->rootContext()->setContextProperty("Video4", &video());
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
-    _qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
+    //_qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
 
     _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
