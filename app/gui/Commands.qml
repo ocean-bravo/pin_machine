@@ -658,7 +658,7 @@ Item {
 
             Item {
                 SplitView.minimumWidth: 50
-                SplitView.preferredWidth: root.width / 3
+                SplitView.preferredWidth: expandVideo.checked ? 50 : root.width / 3
                 SplitView.maximumWidth: 800
 
                 SplitView {
@@ -695,6 +695,16 @@ Item {
 
                 Item {
                     anchors.fill: parent
+
+                    Button {
+                        id: expandVideo
+                        width: 20
+                        height: 20
+                        checkable: true
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        text: checked ? "→" : "←";
+                    }
 
                     Text {
                         anchors.top: parent.top
