@@ -682,15 +682,16 @@ Item {
                 ImageItem {
                     id: image
                     anchors.fill: parent
+                    image: DataBus["image_" + DataBus.mode]
 
-                    Connections {
-                        target: DataBus;
-                        function onImageChanged(key) {
-                            if (key !== "image_" + DataBus.mode)
-                                return;
-                            image.setImage(DataBus["image_" + DataBus.mode])
-                        }
-                    }
+//                    Connections {
+//                        target: DataBus;
+//                        function onImageChanged(key) {
+//                            if (key !== "image_" + DataBus.mode)
+//                                return;
+//                            image.setImage(DataBus["image_" + DataBus.mode])
+//                        }
+//                    }
                 }
 
                 Item {

@@ -8,7 +8,7 @@
 ImageItem::ImageItem(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
-    setAcceptHoverEvents(true);
+    //setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::AllButtons);
     m_prevPoint = QPoint(-1, -1);
 }
