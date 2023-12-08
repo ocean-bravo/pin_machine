@@ -57,8 +57,8 @@ cv::Mat XCorrelation(cv::Mat const& I, cv::Mat const& I1)
     // here divide another times
     return cv::abs(fft1)/(width*height);
 
-//    Mat  draw;
-//    sobelx.convertTo(draw,  CV_8U,  255.0/(maxVal  -  minVal),  -minVal);
+    //    Mat  draw;
+    //    sobelx.convertTo(draw,  CV_8U,  255.0/(maxVal  -  minVal),  -minVal);
 }
 
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
@@ -264,15 +264,23 @@ void OpenCv::corr()
     cv::Mat img1 = cv::Mat(cap1.height(), cap1.width(), CV_8UC3, const_cast<uchar *>(cap1.constBits()), cap1.bytesPerLine());
     cv::Mat img2 = cv::Mat(cap2.height(), cap2.width(), CV_8UC3, const_cast<uchar *>(cap2.constBits()), cap2.bytesPerLine());
 
-//    img1.convertTo(img1, CV_32FC1);
-//    img2.convertTo(img2, CV_32FC1);
-cv::Mat gr1;
-cv::Mat gr2;
+    cv::Mat gr1;
+    cv::Mat gr2;
     cv::cvtColor(img1, gr1, cv::COLOR_RGB2GRAY);
-    cv::cvtColor(img1, gr2, cv::COLOR_RGB2GRAY);
+    cv::cvtColor(img2, gr2, cv::COLOR_RGB2GRAY);
+
+
+    gr1.convertTo(gr1, CV_32F);
+    gr2.convertTo(gr2, CV_32F);
 
     cv::Mat res = XCorrelation(gr1, gr2);
     db().insert("image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
+
+//    double resp;
+//    cv::Point2d res = cv::phaseCorrelate(gr1, gr2);
+
+//    qd() << " result " << res.x << res.y;
+
 }
 
 void OpenCv::searchCirclesLive(QImage img)
