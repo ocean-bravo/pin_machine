@@ -94,6 +94,35 @@ void Engine::load(const QString& url)
     //    }
 }
 
+void Engine::capture1()
+{
+    auto connection = connect(&video(), &Video4::captured, [](QImage img)
+    {
+        db().insert("capture1", img.copy());
+    });
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+    video().start();
+    video().capture();
+    waitForSignal(&video(), &Video4::captured, 2000);
+}
+
+void Engine::capture2()
+{
+    auto connection = connect(&video(), &Video4::captured, [](QImage img)
+    {
+        db().insert("capture2", img.copy());
+    });
+    auto guard = qScopeGuard([=]() { disconnect(connection); });
+    video().start();
+    video().capture();
+    waitForSignal(&video(), &Video4::captured, 2000);
+}
+
+void Engine::corr()
+{
+    opencv().corr();
+}
+
 void Engine::capture()
 {
     auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);

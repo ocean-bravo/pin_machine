@@ -21,6 +21,46 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
+void Rearrange(cv::Mat& src, cv::Mat& dst)
+{
+    int cx = src.cols / 2;
+    int cy = src.rows / 2;
+    cv::Mat tmp;
+    tmp.create(src.size(), src.type());
+    src(cv::Rect(0, 0, cx, cy)).copyTo(tmp(cv::Rect(cx, cy, cx, cy)));
+    src(cv::Rect(cx, cy, cx, cy)).copyTo(tmp(cv::Rect(0, 0, cx, cy)));
+    src(cv::Rect(cx, 0, cx, cy)).copyTo(tmp(cv::Rect(0, cy, cx, cy)));
+    src(cv::Rect(0, cy, cx, cy)).copyTo(tmp(cv::Rect(cx, 0, cx, cy)));
+    dst = tmp;
+}
+
+cv::Mat XCorrelation(cv::Mat const& I, cv::Mat const& I1)
+{
+    int width = cv::getOptimalDFTSize(std::max(I.cols,I1.cols));
+    int height = cv::getOptimalDFTSize(std::max(I.rows,I1.rows));
+    cv::Mat fft1;
+    cv::Mat fft2;
+
+    cv::copyMakeBorder(I, fft1, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+    cv::copyMakeBorder(I1, fft2, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+
+    fft1.convertTo(fft1, CV_32F);
+    fft2.convertTo(fft2, CV_32F);
+
+    cv::dft(fft1,fft1,0,I.rows);
+    cv::dft(fft2,fft2,0,I1.rows);
+
+    cv::mulSpectrums(fft1,fft2,fft1,0,true);
+    // here cv::DFT_SCALE divide `width*height` 1 times
+    cv::idft(fft1,fft1,cv::DFT_SCALE|cv::DFT_REAL_OUTPUT);
+    Rearrange(fft1, fft1);
+    // here divide another times
+    return cv::abs(fft1)/(width*height);
+
+//    Mat  draw;
+//    sobelx.convertTo(draw,  CV_8U,  255.0/(maxVal  -  minVal),  -minVal);
+}
+
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
 // pixPos - [0, pixelInLine)
 double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
@@ -120,9 +160,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     //params.minConvexity = 0.87
 
     // Filter by Inertia
-//    params.filterByInertia = true;
-//    params.minInertiaRatio = 0.8;
-//    params.maxInertiaRatio = 5.0;
+    //    params.filterByInertia = true;
+    //    params.minInertiaRatio = 0.8;
+    //    params.maxInertiaRatio = 5.0;
 
     // Distance Between Blobs
     params.minDistBetweenBlobs = 2.0;
@@ -214,6 +254,25 @@ OpenCv::~OpenCv()
 {
     _thread->quit();
     _thread->wait(1000);
+}
+
+void OpenCv::corr()
+{
+    QImage cap1 = db().value("capture1").value<QImage>();
+    QImage cap2 = db().value("capture2").value<QImage>();
+
+    cv::Mat img1 = cv::Mat(cap1.height(), cap1.width(), CV_8UC3, const_cast<uchar *>(cap1.constBits()), cap1.bytesPerLine());
+    cv::Mat img2 = cv::Mat(cap2.height(), cap2.width(), CV_8UC3, const_cast<uchar *>(cap2.constBits()), cap2.bytesPerLine());
+
+//    img1.convertTo(img1, CV_32FC1);
+//    img2.convertTo(img2, CV_32FC1);
+cv::Mat gr1;
+cv::Mat gr2;
+    cv::cvtColor(img1, gr1, cv::COLOR_RGB2GRAY);
+    cv::cvtColor(img1, gr2, cv::COLOR_RGB2GRAY);
+
+    cv::Mat res = XCorrelation(gr1, gr2);
+    db().insert("image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
 }
 
 void OpenCv::searchCirclesLive(QImage img)
@@ -397,16 +456,16 @@ OpenCvPrivate::OpenCvPrivate()
         }
         db().insert("blob_info", res);
 
-//        res.clear();
-//        if (!kps.empty())
-//        {
-//            auto kp = kps[0];
-//            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-//            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        //        res.clear();
+        //        if (!kps.empty())
+        //        {
+        //            auto kp = kps[0];
+        //            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+        //            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
 
-//            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
-//        }
-//        db().insert("blob_info4", res);
+        //            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
+        //        }
+        //        db().insert("blob_info4", res);
     });
 }
 

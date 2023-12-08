@@ -648,6 +648,9 @@ Item {
                         onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
                         Layout.row: 3
                     }
+                    SmButton {onClicked: Engine.capture1()}
+                    SmButton {onClicked: Engine.capture2()}
+                    SmButton {onClicked: Engine.corr()}
                 }
             }
         }
@@ -743,7 +746,7 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_1", "adapt_threshold_2"]
+                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_1", "adapt_threshold_2", "corr"]
                             onActivated: DataBus.mode = currentText
                             Component.onCompleted: DataBus.mode = "raw"
                             MouseArea {
