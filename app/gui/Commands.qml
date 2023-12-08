@@ -648,9 +648,9 @@ Item {
                         onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
                         Layout.row: 3
                     }
-                    SmButton {onClicked: Engine.capture1()}
-                    SmButton {onClicked: Engine.capture2()}
-                    SmButton {onClicked: Engine.corr()}
+                    Button {onClicked: Engine.capture1();Layout.row: 4; Layout.column: 0; Layout.columnSpan: 4}
+                    Button {onClicked: Engine.capture2();Layout.row: 4; Layout.column: 4; Layout.columnSpan: 3}
+                    Button {onClicked: Engine.corr();    Layout.row: 4; Layout.column: 7; Layout.columnSpan: 3}
                 }
             }
         }
