@@ -15,6 +15,19 @@ ApplicationWindow {
         id: commands
         anchors.fill: parent
     }
+
+    FlashMessageBox {
+        id: message
+        text: DataBus.messagebox
+        backgroundColor: "maroon"
+        interval: 2000
+        onTextChanged: {
+            if (text.length > 0)
+                open()
+        }
+        onClosed: DataBus.messagebox = "" // чтобы одно и тоже сообщение могло показываться
+    }
+
 //    MyCamera {
 //        id: camera
 //        anchors.fill: parent

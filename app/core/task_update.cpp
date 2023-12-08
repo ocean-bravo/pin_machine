@@ -111,6 +111,10 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
             if (result > 0)
                 result = updateBlobPosition(blob);
         }
+
+        const double x = blob->scenePos().x();
+        const double y = blob->scenePos().y();
+        qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
     });
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();

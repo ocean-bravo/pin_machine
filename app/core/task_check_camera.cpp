@@ -103,7 +103,7 @@ void TaskCheckCameraPrivate::run()
             referenceFiducialBlobs.append(blob);
     });
 
-    int count  = 0;
+
     QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
     for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
@@ -112,8 +112,6 @@ void TaskCheckCameraPrivate::run()
             emit message("program interrupted");
             break;
         }
-
-        ++count;
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         //realFiducialBlob->setRealFiducial(true);
@@ -138,7 +136,10 @@ void TaskCheckCameraPrivate::run()
     // realFiducialBlob  не привязана никуда.
 
     if (fiducialBlobs.size() != 2)
+    {
+        db().insert("messagebox", "fiducial точек должно быть 2");
         return;
+    }
 
     QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
     QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
@@ -155,13 +156,20 @@ void TaskCheckCameraPrivate::run()
     //И сделать тест разброса определения координат блоба
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
-    every<BlobItem>(scene().items(), [this](BlobItem* blob)
+    int count  = 0;
+    every<BlobItem>(scene().items(), [this, &count](BlobItem* blob)
     {
         if (blob->isPunch())
         {
-            moveTo(blob->scenePos().x(), blob->scenePos().y());
-            waitPosXY(blob->scenePos().x(), blob->scenePos().y());
+            const double x = blob->scenePos().x();
+            const double y = blob->scenePos().y();
+
+            moveTo(x, y);
+            waitPosXY(x, y);
+            qd() << QString("board position: %1 %2").arg(toReal3(blob->pos().x()), toReal3(blob->pos().y())); // для отладки
+            qd() << QString("punch position: %1 %2").arg(toReal3(x), toReal3(y));
             wait(500);
+            ++count;
         }
     });
 
