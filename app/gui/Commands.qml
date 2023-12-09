@@ -649,6 +649,7 @@ Item {
                         checkable: true
                         checked: false
                         onCheckedChanged: checked ? TaskCheckPixelSize.run(1280, 960, "YUYV") : TaskCheckPixelSize.stopProgram()
+                        Connections { target: TaskCheckPixelSize; function onFinished() { testPixelSize.checked = false } }
                         Layout.row: 4
                     }
                     Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
