@@ -101,7 +101,7 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
         const double xCurrent = db().value("xPos").toDouble();
         const double yCurrent = db().value("yPos").toDouble();
 
-        moveToAndWaitPosition(xCurrent + 3.0, yCurrent + 3.0);
+        moveToAndWaitPosition(xCurrent + 8.0, yCurrent + 0.5);
 
         emit message("capturing ...");
         auto a = QDateTime::currentMSecsSinceEpoch();
