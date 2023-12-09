@@ -202,84 +202,79 @@ Item {
                 SmButton { text: qsTr("Close");  onClicked: { Serial.close() } }
             }
 
-            Item { height: 30; width: 10}
+            //Item { height: 30; width: 10}
 
-            Grid {
-                width: parent.width
-                columns: 4
-                columnSpacing: 5
-                rowSpacing: 5
-
-                SmButton { text: qsTr("$H");  onClicked: { write("$H" )} }
-                SmButton { text: qsTr("$HX"); onClicked: { write("$HX" ) } }
-                SmButton { text: qsTr("$HY"); onClicked: { write("$HY" ) } }
-                SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ" ) } }
-            }
-
-            Item { height: 30; width: 10}
             Text {
-                text: fullStatus
+                text: fullStatus + status
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+                height: 30
             }
 
-
-            Grid {
+            CollapsiblePanel {
+                id: machineCommandsPanel
                 width: parent.width
-                columns: 3
-                columnSpacing: 5
-                rowSpacing: 5
+                height: checked ? 220 : 30
+                text: "Machine Commands"
+                checked: true
+                onCheckedChanged: machineCommands.visible = checked
+                Component.onCompleted: machineCommands.visible = checked
 
-                SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X" )     } }
-                SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85" )    } }
-                SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!" )     } }
-                SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~" )     } }
-                SmButton { text: qsTr("");   onClicked: {      } }
+                Column {
+                    id: machineCommands
+                    width: parent.width
 
-                SmButton {
-                    text: qsTr("Status(?)")
-                    tooltipText: "F5";
-                    checkable: true
-                    onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
+                    Grid {
+                        width: parent.width
+                        columns: 4
+                        columnSpacing: 5
+                        rowSpacing: 5
 
-                    Timer {
-                        id: statusTimer
-                        interval: 500
-                        repeat: true
-                        triggeredOnStart: true
-                        running: false
-                        onTriggered: Serial.write("?\n")
+                        SmButton { text: qsTr("$H");  onClicked: { write("$H" )} }
+                        SmButton { text: qsTr("$HX"); onClicked: { write("$HX" ) } }
+                        SmButton { text: qsTr("$HY"); onClicked: { write("$HY" ) } }
+                        SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ" ) } }
+                    }
+
+                    Item { height: 30; width: 10}
+
+                    Grid {
+                        width: parent.width
+                        columns: 3
+                        columnSpacing: 5
+                        rowSpacing: 5
+
+                        SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X" )     } }
+                        SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85" )    } }
+                        SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!" )     } }
+                        SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~" )     } }
+
+                        SmButton {
+                            text: qsTr("Status(?)")
+                            tooltipText: "F5";
+                            checkable: true
+                            onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
+
+                            Timer {
+                                id: statusTimer
+                                interval: 500
+                                repeat: true
+                                triggeredOnStart: true
+                                running: false
+                                onTriggered: Serial.write("?\n")
+                            }
+                        }
+
+                        ComboBox {
+                            height: 30
+                            model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
+                                "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
+                            onActivated: write(currentText)
+                        }
+
+                        SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18" )       } }
                     }
                 }
-
-                ComboBox {
-                    height: 30
-                    model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
-                        "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
-                    onActivated: write(currentText)
-                }
-
-                SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18" )       } }
-                Text {
-                    text: status
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                //                Item { height: 20; width: 10}
-                //                Item { height: 20; width: 10}
-
-                Item { height: 20; width: 10}
-                Item { height: 20; width: 10}
-                //Item { height: 20; width: 10}
-
-
-                //Item { height: 30; width: 10}
-
-                //                SmButton { text: qsTr("Idle");       onClicked: { status = "Idle" } }
-                //                SmButton { text: qsTr("Wait");       onClicked: { status = "Wait" } }
-                //Item { height: 30; width: 10}
-                SmButton { text: qsTr("Clear log");  onClicked: { logViewer.clear() } }
             }
 
 
@@ -648,9 +643,22 @@ Item {
                         onCheckedChanged: checked ? TaskTestAlgo.run() : TaskTestAlgo.stopProgram()
                         Layout.row: 3
                     }
-                    Button {onClicked: Engine.capture1();Layout.row: 4; Layout.column: 0; Layout.columnSpan: 4}
-                    Button {onClicked: Engine.capture2();Layout.row: 4; Layout.column: 4; Layout.columnSpan: 3}
-                    Button {onClicked: Engine.corr();    Layout.row: 4; Layout.column: 7; Layout.columnSpan: 3}
+                    SmButton {
+                        id: testPixelSize
+                        text: qsTr("Test pixel size")
+                        checkable: true
+                        checked: false
+                        onCheckedChanged: checked ? TaskCheckPixelSize.run(1280, 960, "YUYV") : TaskCheckPixelSize.stopProgram()
+                        Layout.row: 4
+                    }
+                    Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
+                    Button {
+                        onClicked: {
+                            Engine.capture2();
+                        }
+                        Layout.row: 5; Layout.column: 4; Layout.columnSpan: 3
+                    }
+                    Button {onClicked: Engine.corr();    Layout.row: 5; Layout.column: 7; Layout.columnSpan: 3}
                 }
             }
         }
@@ -672,6 +680,17 @@ Item {
                         id: logViewer
                         SplitView.minimumHeight: 50
                         SplitView.preferredHeight: parent.height / 2
+                        Button {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            width: 25
+                            height:25
+                            text: ("🗑")
+                            onClicked: { logViewer.clear() }
+
+                            ToolTip.visible: hovered
+                            ToolTip.text: qsTr("Clear log")
+                        }
                     }
                     CodeEditor2 {
                         id: codeEditor
@@ -693,8 +712,8 @@ Item {
 
                     Button {
                         id: expandVideo
-                        width: 20
-                        height: 20
+                        width: 25
+                        height: 25
                         checkable: true
                         anchors.top: parent.top
                         anchors.right: parent.right

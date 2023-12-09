@@ -26,6 +26,7 @@
 #include "task_test_algo.h"
 #include "task_check_camera.h"
 #include "task_punch.h"
+#include "task_check_pixel_size.h"
 
 #include "openCv.h"
 
@@ -207,6 +208,7 @@ void Engine::createQmlEngine()
     TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);
     TaskTestAlgo* ta = new TaskTestAlgo(this);
     TaskPunch* taskPunch = new TaskPunch(this);
+    TaskCheckPixelSize* taskCheckPixelSize = new TaskCheckPixelSize(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -233,6 +235,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
     _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
+    _qmlEngine->rootContext()->setContextProperty("TaskCheckPixelSize", taskCheckPixelSize);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
