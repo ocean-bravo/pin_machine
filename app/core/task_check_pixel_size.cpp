@@ -90,7 +90,7 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
     auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         if (_stop)
         {
@@ -101,7 +101,7 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
         const double xCurrent = db().value("xPos").toDouble();
         const double yCurrent = db().value("yPos").toDouble();
 
-        moveToAndWaitPosition(xCurrent + 8.0, yCurrent + 0.5);
+        moveToAndWaitPosition(xCurrent + 5.0, yCurrent + 0.5);
 
         emit message("capturing ...");
         auto a = QDateTime::currentMSecsSinceEpoch();
