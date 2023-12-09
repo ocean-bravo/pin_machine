@@ -558,7 +558,7 @@ Item {
 
                     DoubleSpinBox {
                         id: pixelSizeSpinBox
-                        decimals: 5
+                        decimals: 6
                         value: DataBus.pixelSize()
                         onValueModified: DataBus.setPixelSize(value)
 
