@@ -90,7 +90,7 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
     auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    while (true)
+    for (int i = 0; i < 10; ++i)
     {
         if (_stop)
         {
@@ -98,20 +98,17 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
             break;
         }
 
-        for (int i = 0; i < 10; ++i)
-        {
-            const double xCurrent = db().value("xPos").toDouble();
-            const double yCurrent = db().value("yPos").toDouble();
+        const double xCurrent = db().value("xPos").toDouble();
+        const double yCurrent = db().value("yPos").toDouble();
 
-            moveToAndWaitPosition(xCurrent + 3.0, yCurrent + 3.0);
+        moveToAndWaitPosition(xCurrent + 3.0, yCurrent + 3.0);
 
-            emit message("capturing ...");
-            auto a = QDateTime::currentMSecsSinceEpoch();
-            video().capture();
-            waitForSignal(&video(), &Video4::captured, 2000);
-            auto b = QDateTime::currentMSecsSinceEpoch();
-            emit message(QString("captured %1 ms").arg(b-a));
-        }
+        emit message("capturing ...");
+        auto a = QDateTime::currentMSecsSinceEpoch();
+        video().capture();
+        waitForSignal(&video(), &Video4::captured, 2000);
+        auto b = QDateTime::currentMSecsSinceEpoch();
+        emit message(QString("captured %1 ms").arg(b-a));
     }
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
