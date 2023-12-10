@@ -89,9 +89,9 @@ void TaskCheckCameraPrivate::run()
 
     // Восстанавливаю поворот и позицию платы с предудущего раза.
     // Надо выполнять в потоке сцены, там внутри запускается какой то таймер
-    runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
-    runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
-    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
+//    runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
+//    runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
+//    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
