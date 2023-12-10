@@ -46,10 +46,14 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     emit message("captured");
 
+    wait(3000);
+
     QImage smallRegion = video().smallRegion();
     opencv().blobDetectorUpdated(smallRegion);
 
     waitForSignal(&opencv(), &OpenCv::smallRegionBlobChanged, 500);
+
+    wait(3000);
 
     auto [ok, x, y, dia] = opencv().smallRegionBlob();
 
