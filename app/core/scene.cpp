@@ -26,8 +26,14 @@ Scene::Scene(QObject* parent)
         if (key != "pixel_size_test")
             return;
 
-        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
+        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this, value](QGraphicsPixmapItem* pixmap)
         {
+
+            qd() << pixmap->pixmap().devicePixelRatio();
+            qd() << pixmap->pixmap().devicePixelRatioF();
+
+           auto pix = pixmap->pixmap();
+           pix.setDevicePixelRatio(value.toDouble());
 
             qd() << pixmap->pixmap().devicePixelRatio();
             qd() << pixmap->pixmap().devicePixelRatioF();
