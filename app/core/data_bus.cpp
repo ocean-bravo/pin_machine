@@ -20,6 +20,7 @@ DataBus::DataBus(QObject *parent)
     insert("image_small_blob_captured", QImage());
     insert("image_adapt_threshold_1", QImage());
     insert("image_adapt_threshold_2", QImage());
+    insert("pixel_size_test", 0);
 
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {

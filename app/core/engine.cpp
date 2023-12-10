@@ -140,8 +140,6 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-    //MyImageProvider* myImageProvider = new MyImageProvider;
-
     connect(&video(), &Video4::newImage, this, [](QImage img)
     {
         const QString mode = db().value("mode").toString();

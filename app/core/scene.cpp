@@ -21,7 +21,19 @@
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString &key, const QVariant &value)
+    {
+        if (key != "pixel_size_test")
+            return;
 
+        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
+        {
+
+            qd() << pixmap->pixmap().devicePixelRatio();
+            qd() << pixmap->pixmap().devicePixelRatioF();
+            qd() << "\n";
+        });
+    });
 }
 
 Scene::~Scene()
@@ -116,19 +128,20 @@ void Scene::setImagePrivate(QImage img)
 {
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
-    const int w = img.width();
+    //const int w = img.width();
     //const int h = img.height();
     const double pixelSize = db().pixelSize();
 
-    const double imageWidthMm = w * pixelSize;
+    //const double imageWidthMm = w * pixelSize;
     //const double imageHeightMm = h * pixelSize;
 
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = img.mirrored(false, true); // тут копия img
 
     QPixmap pix = QPixmap::fromImage(img);
+    pix.setDevicePixelRatio(pixelSize);
 
-    const double ratio = pix.rect().width() / imageWidthMm;
+    //const double ratio = pix.rect().width() / imageWidthMm;
 
     if (!_board)
         addBoard();
@@ -137,7 +150,7 @@ void Scene::setImagePrivate(QImage img)
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
-    item->setScale(1/ratio);
+    //item->setScale(1/ratio);
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
