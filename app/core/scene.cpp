@@ -21,21 +21,21 @@
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
-    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
-    {
-        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
-        {
-            auto pix = pixmap->pixmap();
-            //auto pos = pixmap->pos();
+//    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
+//    {
+//        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
+//        {
+//            auto pix = pixmap->pixmap();
+//            //auto pos = pixmap->pos();
 
-            double pixInMm = db().pixInMm();
-            pix.setDevicePixelRatio(pixInMm);
-            pixmap->setPixmap(pix);
+//            double pixInMm = db().pixInMm();
+//            pix.setDevicePixelRatio(pixInMm);
+//            pixmap->setPixmap(pix);
 
 
-            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
-        });
-    });
+//            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
+//        });
+//    });
 }
 
 Scene::~Scene()
