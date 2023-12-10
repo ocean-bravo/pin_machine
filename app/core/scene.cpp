@@ -28,17 +28,9 @@ Scene::Scene(QObject* parent)
 
         every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this, value](QGraphicsPixmapItem* pixmap)
         {
-
-            qd() << pixmap->pixmap().devicePixelRatio();
-            qd() << pixmap->pixmap().devicePixelRatioF();
-
            auto pix = pixmap->pixmap();
            pix.setDevicePixelRatio(value.toDouble());
            pixmap->setPixmap(pix);
-
-            qd() << pixmap->pixmap().devicePixelRatio();
-            qd() << pixmap->pixmap().devicePixelRatioF();
-            qd() << "\n";
         });
     });
 }
@@ -135,20 +127,14 @@ void Scene::setImagePrivate(QImage img)
 {
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
-    //const int w = img.width();
-    //const int h = img.height();
-    const double pixelSize = db().pixelSize();
 
-    //const double imageWidthMm = w * pixelSize;
-    //const double imageHeightMm = h * pixelSize;
+    const double pixelSize = db().pixelSize();
 
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = img.mirrored(false, true); // тут копия img
 
     QPixmap pix = QPixmap::fromImage(img);
     pix.setDevicePixelRatio(pixelSize);
-
-    //const double ratio = pix.rect().width() / imageWidthMm;
 
     if (!_board)
         addBoard();
@@ -157,11 +143,8 @@ void Scene::setImagePrivate(QImage img)
 
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
-    //item->setScale(1/ratio);
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
-
-    //addItem(item);
 }
 
 void Scene::saveScene(const QString& url)

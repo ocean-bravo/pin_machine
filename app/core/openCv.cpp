@@ -68,7 +68,7 @@ double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos + (posOriginRelativeCenter * db().pixelSize());
+    return frameCenterPos + (posOriginRelativeCenter / db().pixelSize());
 }
 
 
@@ -77,7 +77,7 @@ double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos - (posOriginRelativeCenter * db().pixelSize());
+    return frameCenterPos - (posOriginRelativeCenter / db().pixelSize());
 }
 
 // В нижнем левом углу
@@ -147,8 +147,8 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     double minDia = db().value("blob_minDia_mm").toDouble();
     double maxDia = db().value("blob_maxDia_mm").toDouble();
 
-    params.minArea = minDia * minDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
-    params.maxArea = maxDia * maxDia * 3.14159 / (4 * db().pixelSize() * db().pixelSize());
+    params.minArea = minDia * minDia * 3.14159 * db().pixelSize() * db().pixelSize() / 4;
+    params.maxArea = maxDia * maxDia * 3.14159 * db().pixelSize() * db().pixelSize() / 4;
 
     // Filter by Circularity
     params.filterByCircularity = true;
@@ -336,7 +336,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
         const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-        const double diaBlob = kp.size * db().pixelSize();
+        const double diaBlob = kp.size / db().pixelSize();
 
         _smallRegionBlob = {true, xBlob, yBlob, diaBlob};
 
@@ -400,7 +400,7 @@ void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
     {
         const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
         const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
-        const double diaBlob = kp.size * db().pixelSize();
+        const double diaBlob = kp.size / db().pixelSize();
 
         scene().addBlob(xBlob, yBlob, diaBlob);
     }
@@ -450,7 +450,7 @@ OpenCvPrivate::OpenCvPrivate()
         {
             const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
             const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-            const double diaBlob = kp.size * db().pixelSize();
+            const double diaBlob = kp.size / db().pixelSize();
 
             res.append(QString("%1 \t %2 \t %3 \t %4 \t %5 \t %6 \t %7 \t %8 \n")
                        .arg(toReal1(kp.pt.x))
