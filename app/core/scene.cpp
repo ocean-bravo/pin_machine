@@ -25,10 +25,14 @@ Scene::Scene(QObject* parent)
     {
         every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
         {
-           auto pix = pixmap->pixmap();
+            auto pix = pixmap->pixmap();
+            //auto pos = pixmap->pos();
 
-           pix.setDevicePixelRatio(db().pixInMm());
-           pixmap->setPixmap(pix);
+
+            pix.setDevicePixelRatio(db().pixInMm());
+            pixmap->setPixmap(pix);
+
+            pixmap->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
         });
     });
 }
