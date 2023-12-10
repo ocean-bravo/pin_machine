@@ -15,8 +15,8 @@ class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
     //Q_PROPERTY(double pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
 
 public:
-    Q_INVOKABLE double pixelSize() const;
-    Q_INVOKABLE void setPixelSize(double);
+    Q_INVOKABLE double pixInMm() const;
+    Q_INVOKABLE void setPixInMm(double);
 
     Q_INVOKABLE void remove(QString key)
     {

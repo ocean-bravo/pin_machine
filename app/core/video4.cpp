@@ -129,7 +129,7 @@ void Video4Private::captureSmallRegion(double width)
 {
     _captureSmallRegion = true;
     _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
-    _smallRegionWidth = width;
+    _smallRegionWidthMm = width;
 }
 
 void Video4Private::reloadDevices()
@@ -259,9 +259,9 @@ void Video4Private::imageDispatch(QImage img)
                 int yCenter = img.height()/2;
                 _captureSmallRegion = false;
 
-                int widthInPixesl = _smallRegionWidth * db().pixelSize();
+                int widthPix = _smallRegionWidthMm * db().pixInMm();
 
-                emit capturedSmallRegion(img.copy(QRect(xCenter - (widthInPixesl/2), yCenter - (widthInPixesl/2), widthInPixesl, widthInPixesl)));
+                emit capturedSmallRegion(img.copy(QRect(xCenter - (widthPix/2), yCenter - (widthPix/2), widthPix, widthPix)));
                 //qd() << "small region captured";
             }
         }

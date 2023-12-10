@@ -34,14 +34,14 @@ DataBus::~DataBus()
 
 }
 
-double DataBus::pixelSize() const
+double DataBus::pixInMm() const
 {
     int width = value("resolution_width").toInt();
 
     return value(QString("pixel_size_%1").arg(width)).toDouble();
 }
 
-void DataBus::setPixelSize(double size)
+void DataBus::setPixInMm(double size)
 {
     int width = value("resolution_width").toInt();
 

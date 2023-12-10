@@ -558,11 +558,11 @@ Item {
 
                     DoubleSpinBox {
                         id: pixelSizeSpinBox
-                        decimals: 6
-                        value: DataBus.pixelSize()
-                        onValueModified: DataBus.setPixelSize(value)
+                        decimals: 3
+                        value: DataBus.pixInMm()
+                        onValueModified: DataBus.setPixInMm(value)
 
-                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixelSize() }}
+                        Connections { target: DataBus; function onPixelSizeChanged() { pixelSizeSpinBox.value = DataBus.pixInMm() }}
 
                         Layout.row: 0
                         Layout.column: 0

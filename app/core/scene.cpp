@@ -21,15 +21,13 @@
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString &key, const QVariant &value)
+    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
     {
-        if (key != "pixel_size_test")
-            return;
-
         every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this, value](QGraphicsPixmapItem* pixmap)
         {
            auto pix = pixmap->pixmap();
-           pix.setDevicePixelRatio(value.toDouble());
+
+           pix.setDevicePixelRatio(db().pixInMm());
            pixmap->setPixmap(pix);
         });
     });
@@ -128,7 +126,7 @@ void Scene::setImagePrivate(QImage img)
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
 
-    const double pixelSize = db().pixelSize();
+    const double pixelSize = db().pixInMm();
 
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = img.mirrored(false, true); // тут копия img

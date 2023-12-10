@@ -97,7 +97,7 @@ void ScanView::updateCameraView()
 
     double w = db().value("resolution_width").toInt();
     double h = db().value("resolution_height").toInt();
-    double ps = db().pixelSize();
+    double ps = db().pixInMm();
 
     for (QGraphicsItem* item : _scene->items())
     {

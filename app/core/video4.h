@@ -90,7 +90,7 @@ private:
 
     QString _currentFourcc;
     MjpegHelper* _jpegDecompressor = nullptr;
-    double _smallRegionWidth = 0;
+    double _smallRegionWidthMm = 0;
 
     friend class Video4;
 };
