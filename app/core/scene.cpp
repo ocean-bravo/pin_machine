@@ -28,11 +28,12 @@ Scene::Scene(QObject* parent)
             auto pix = pixmap->pixmap();
             //auto pos = pixmap->pos();
 
-
-            pix.setDevicePixelRatio(db().pixInMm());
+            double pixInMm = db().pixInMm();
+            pix.setDevicePixelRatio(pixInMm);
             pixmap->setPixmap(pix);
 
-            //pixmap->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
+
+            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
         });
     });
 }
