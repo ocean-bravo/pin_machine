@@ -67,10 +67,10 @@ void TaskCheckCameraPrivate::run()
     wait(500);
     video().stop();
 
-    db().insert("resolution_width", 1280);
-    db().insert("resolution_height", 960);
+    db().insert("resolution_width", 800);
+    db().insert("resolution_height", 600);
 
-    video().changeCamera(cameraId(), 1280, 960, "YUYV");
+    video().changeCamera(cameraId(), 800, 600, "YUYV");
     video().start();
 
     QTimer statusTimer;
