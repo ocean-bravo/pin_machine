@@ -103,7 +103,7 @@ void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobIte
     const double dx = secondRealBlob->scenePos().x() - secondRefBlob->scenePos().x();
     const double dy = secondRealBlob->scenePos().y() - secondRefBlob->scenePos().y();
 
-    //runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(dx/2, dy/2); });
+    runOnThreadWait(&scene(), [=]() { scene().board()->moveBy(dx/2, dy/2); });
 
     //waitDataBus("step", "next"); db().insert("step", "");
 

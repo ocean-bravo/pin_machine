@@ -147,7 +147,7 @@ void TaskCheckCameraPrivate::run()
     BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
     BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
 
-    algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
+    //algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
 
     // сделать тест доворота.
