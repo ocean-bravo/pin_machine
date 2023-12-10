@@ -32,7 +32,7 @@ Scene::Scene(QObject* parent)
             pix.setDevicePixelRatio(db().pixInMm());
             pixmap->setPixmap(pix);
 
-            pixmap->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
+            //pixmap->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
         });
     });
 }
@@ -146,7 +146,7 @@ void Scene::setImagePrivate(QImage img)
 
     qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
-    item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
+    //item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
