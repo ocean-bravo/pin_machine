@@ -34,6 +34,7 @@ Scene::Scene(QObject* parent)
 
            auto pix = pixmap->pixmap();
            pix.setDevicePixelRatio(value.toDouble());
+           pixmap->setPixmap(pix);
 
             qd() << pixmap->pixmap().devicePixelRatio();
             qd() << pixmap->pixmap().devicePixelRatioF();
