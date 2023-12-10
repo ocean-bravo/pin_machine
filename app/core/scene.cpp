@@ -130,23 +130,28 @@ void Scene::setImagePrivate(QImage img)
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
 
-    const double pixelSize = db().pixInMm();
+    const double pixInMm = db().pixInMm();
 
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = img.mirrored(false, true); // тут копия img
 
     QPixmap pix = QPixmap::fromImage(img);
-    pix.setDevicePixelRatio(pixelSize);
+    pix.setDevicePixelRatio(pixInMm);
 
     if (!_board)
         addBoard();
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
+
+    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / 2, -pix.rect().height() / 2);
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
+
+        qd() << "pix rect " << pix.rect();
+            qd() << "pix offset " << item->offset();
 }
 
 void Scene::saveScene(const QString& url)
