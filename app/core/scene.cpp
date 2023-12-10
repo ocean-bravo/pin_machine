@@ -23,7 +23,7 @@ Scene::Scene(QObject* parent)
 {
     connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
     {
-        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this, value](QGraphicsPixmapItem* pixmap)
+        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
         {
            auto pix = pixmap->pixmap();
 
