@@ -32,8 +32,8 @@ void TaskBase::moveToAndWaitPosition(double x, double y)
 
 int TaskBase::updateBlobPosition(BlobItem *blob)
 {
-    double xTarget = blob->x();
-    double yTarget = blob->y();
+    double xTarget = blob->scenePos().x();
+    double yTarget = blob->scenePos().y();
     double diaTarget = blob->rect().width();
 
     moveToAndWaitPosition(xTarget, yTarget);
