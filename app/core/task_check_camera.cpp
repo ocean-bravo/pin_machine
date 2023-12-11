@@ -164,8 +164,7 @@ void TaskCheckCameraPrivate::run()
             const double x = blob->scenePos().x();
             const double y = blob->scenePos().y();
 
-            moveTo(x, y);
-            waitPosXY(x, y);
+            moveToAndWaitPosition(x, y);
             qd() << QString("board position: %1 %2").arg(toReal3(blob->pos().x()), toReal3(blob->pos().y())); // для отладки
             qd() << QString("punch position: %1 %2").arg(toReal3(x), toReal3(y));
             wait(500);
