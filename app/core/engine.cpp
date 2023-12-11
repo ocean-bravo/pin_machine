@@ -156,43 +156,27 @@ void Engine::createQmlEngine()
 
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
-        db().insert("image_raw_captured", img.copy());
+        db().insert("image_raw_captured", img);
     });
 
     connect(&video(), &Video4::captured, this, [](QImage img)
     {
-//        int captureNumber = db().value("capture_number").toInt();
-//        const QString x = db().value("x_coord").toString();
-//        const QString y = db().value("y_coord").toString();
-
-        //qd() << "captured " << captureNumber << x << y;
-
-//        img.setText("x", x);
-//        img.setText("y", y);
-
-        db().insert("image_raw_captured", img);
-
-        opencv().blobDetectorCaptured(img.copy());
+        db().insert("image_raw_captured", img.copy());
+        opencv().blobDetectorCaptured(img);
     });
-
-    //connect(myImageProvider, &MyImageProvider::imageChanged, this, &Engine::imageChanged);
 
     connect(&opencv(), &OpenCv::circleChanged, this, [](QImage img)
     {
-        //myImageProvider->setImage(img, "circle");
         db().insert("image_circle", img);
     });
 
     connect(&opencv(), &OpenCv::blobChanged, this, [](QImage img)
     {
-        //myImageProvider->setImage(img, "blob");
         db().insert("image_blob", img);
     });
 
     connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [](QImage img)
     {
-        //myImageProvider->setImage(img, "small_blob_captured");
-
         db().insert("image_small_blob_captured", img);
     });
 
@@ -210,7 +194,6 @@ void Engine::createQmlEngine()
     _qmlEngine.reset(new QQmlApplicationEngine());
 
     _qmlEngine->addImportPath(appDir() + "libs");
-    //_qmlEngine->addImageProvider("camera", myImageProvider);
 
     qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
 

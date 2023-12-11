@@ -38,7 +38,7 @@ Video4::Video4()
     _impl = new Video4Private;
     _thread = new QThread;
 
-    connect(_impl, &Video4Private::newImage,   this, &Video4::rawImage, Qt::QueuedConnection);
+    connect(_impl, &Video4Private::rawImage,   this, &Video4::rawImage, Qt::QueuedConnection);
     connect(_impl, &Video4Private::captured,   this, &Video4::captured, Qt::QueuedConnection);
     connect(_impl, &Video4Private::capturedSmallRegion,  this, [this](QImage img)
     {
@@ -234,7 +234,7 @@ void Video4Private::imageDispatch(QImage img)
     img.setText("x", x);
     img.setText("y", y);
 
-    emit newImage(img.copy());
+    emit rawImage(img.copy());
 
     if (_capture || _captureSmallRegion)
     {
