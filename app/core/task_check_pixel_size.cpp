@@ -110,11 +110,16 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
         video().capture();
         waitForSignal(&video(), &Video4::captured, 10000);
 
-
         moveToAndWaitPosition(xCurrent + 3, yCurrent + 3);
         moveToAndWaitPosition(xCurrent, yCurrent);
+        wait(1000);
+        video().capture(dia);
+        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
-                wait(1000);
+        wait(1000);
+        moveToAndWaitPosition(xCurrent - 3, yCurrent - 3);
+        moveToAndWaitPosition(xCurrent, yCurrent);
+        wait(1000);
         video().capture(dia);
         waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
