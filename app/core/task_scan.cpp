@@ -215,6 +215,7 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
         }
     }
 
+    wait(300); // не успевает блоб отдетектироваться
     scene().removeDuplicatedBlobs();
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
