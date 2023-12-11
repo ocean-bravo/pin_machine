@@ -648,7 +648,7 @@ Item {
                         text: qsTr("Test pixel size")
                         checkable: true
                         checked: false
-                        onCheckedChanged: checked ? TaskCheckPixelSize.run(800, 600, "YUYV") : TaskCheckPixelSize.stopProgram()
+                        onCheckedChanged: checked ? TaskCheckPixelSize.run(2592, 1944, "YUYV") : TaskCheckPixelSize.stopProgram()
                         Connections { target: TaskCheckPixelSize; function onFinished() { testPixelSize.checked = false } }
                         Layout.row: 4
                     }
