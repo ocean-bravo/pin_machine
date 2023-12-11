@@ -93,7 +93,7 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
     auto connection2 = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard2 = qScopeGuard([=]() { disconnect(connection2); });
 
-    double dia = 5;
+    double dia = 3;
     //for (int i = 0; i < 10; ++i)
     {
         if (_stop)
