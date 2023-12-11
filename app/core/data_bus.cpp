@@ -23,8 +23,8 @@ DataBus::DataBus(QObject *parent)
     insert("pixel_size_test", 0);
 
     // Сколько кадров нужно выкинуть.
-    insert("jpg_frames_throw", 1); // Достаточно 1, чтобы не было смаза. Не всегда...
-    insert("yuv_frames_throw", 15); // 12 вроде достаточно было
+    insert("jpg_frames_throw", 15); // 12 вроде достаточно было
+    insert("yuv_frames_throw", 1);  // Достаточно 1, чтобы не было смаза. Не всегда...
 
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
