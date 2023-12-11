@@ -38,7 +38,7 @@ Video4::Video4()
     _impl = new Video4Private;
     _thread = new QThread;
 
-    connect(_impl, &Video4Private::newImage,   this, &Video4::newImage, Qt::QueuedConnection);
+    connect(_impl, &Video4Private::newImage,   this, &Video4::rawImage, Qt::QueuedConnection);
     connect(_impl, &Video4Private::captured,   this, &Video4::captured, Qt::QueuedConnection);
     connect(_impl, &Video4Private::capturedSmallRegion,  this, [this](QImage img)
     {
@@ -228,8 +228,8 @@ void Video4Private::imageDispatch(QImage img)
     //qd() << beginprevline + setpos(30) + "dispatch ...";
     //qd() << "dispatch ...";
 
-    const QString x = db().value("x_coord").toString();
-    const QString y = db().value("y_coord").toString();
+    const QString x = toReal3(db().value("xPos").toDouble());
+    const QString y = toReal3(db().value("yPos").toDouble());
 
     img.setText("x", x);
     img.setText("y", y);

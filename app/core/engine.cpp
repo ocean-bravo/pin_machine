@@ -140,12 +140,11 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-    connect(&video(), &Video4::newImage, this, [](QImage img)
+    connect(&video(), &Video4::rawImage, this, [](QImage img)
     {
         const QString mode = db().value("mode").toString();
 
         if (mode == "raw")
-            //myImageProvider->setImage(img, "raw");
             db().insert("image_raw", img);
 
         if (mode == "circle")
@@ -157,24 +156,21 @@ void Engine::createQmlEngine()
 
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
-        //myImageProvider->setImage(img.copy(), "raw captured");
         db().insert("image_raw_captured", img.copy());
     });
 
     connect(&video(), &Video4::captured, this, [](QImage img)
     {
-        int captureNumber = db().value("capture_number").toInt();
-        const QString x = db().value("x_coord").toString();
-        const QString y = db().value("y_coord").toString();
+//        int captureNumber = db().value("capture_number").toInt();
+//        const QString x = db().value("x_coord").toString();
+//        const QString y = db().value("y_coord").toString();
 
         //qd() << "captured " << captureNumber << x << y;
 
-        img.setText("x", x);
-        img.setText("y", y);
+//        img.setText("x", x);
+//        img.setText("y", y);
 
-        //myImageProvider->setImage(img, "raw captured");
         db().insert("image_raw_captured", img);
-        //myImageProvider->setImage(_openCv->drawText(img.copy(), x + " " + y), QString("captured_%1").arg(captureNumber));
 
         opencv().blobDetectorCaptured(img.copy());
     });

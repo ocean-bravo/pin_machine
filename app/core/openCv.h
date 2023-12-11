@@ -45,7 +45,7 @@ signals:
     void circleChanged(QImage);
     void blobChanged(QImage);
 
-    void smallRegionBlobChanged();
+    void smallRegionBlobDetectionFinished();
 
     void smallRegionBlobImage(QImage);
 

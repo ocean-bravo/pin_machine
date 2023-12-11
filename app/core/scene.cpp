@@ -145,14 +145,14 @@ void Scene::setImagePrivate(QImage img)
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
 
-    qd() << "pix rect " << pix.rect();
+//    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-        qd() << "pix rect " << pix.rect();
-            qd() << "pix offset " << item->offset();
+//        qd() << "pix rect " << pix.rect();
+//            qd() << "pix offset " << item->offset();
 }
 
 void Scene::saveScene(const QString& url)

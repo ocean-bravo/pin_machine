@@ -319,12 +319,11 @@ void OpenCv::blobDetectorUpdated(QImage img)
         {
             qd() << "kps is empty";
             _smallRegionBlob = {false, 0, 0, 0};
-            emit smallRegionBlobChanged();
+            emit smallRegionBlobDetectionFinished();
             return;
         }
 
-        QString x = im.text("x");
-        QString y = im.text("y");
+
         emit smallRegionBlobImage(im);
 
         auto kp = kps[0];
@@ -334,6 +333,8 @@ void OpenCv::blobDetectorUpdated(QImage img)
         //qd() << "kp size " << kp.size;
         //qd() << "smakl region width " << im.width();
 
+        QString x = im.text("x");
+        QString y = im.text("y");
         const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
         const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
         const double diaBlob = kp.size / db().pixInMm();
@@ -345,7 +346,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
 
         qd() << "blob error " << xBlobError << yBlobError;
 
-        emit smallRegionBlobChanged();
+        emit smallRegionBlobDetectionFinished();
     });
 }
 

@@ -36,7 +36,7 @@ public:
     Q_INVOKABLE void reloadDevices();
 
 signals:
-    void newImage(QImage);
+    void rawImage(QImage);
     void captured(QImage);
     void capturedSmallRegion(QImage);
 
