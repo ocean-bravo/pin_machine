@@ -87,23 +87,28 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
 
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
+    auto connection1 = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+    auto guard1 = qScopeGuard([=]() { disconnect(connection1); });
+
+    auto connection2 = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
+    auto guard2 = qScopeGuard([=]() { disconnect(connection2); });
 
     double dia = 5;
-    for (int i = 0; i < 10; ++i)
+    //for (int i = 0; i < 10; ++i)
     {
         if (_stop)
         {
             emit message("program interrupted");
-            break;
+            //break;
         }
 
         wait(1000);
 
-        video().capture(dia);
+        video().capture();
+        waitForSignal(&video(), &Video4::captured, 10000);
 
-        waitForSignal(&video(), &Video4::capturedSmallRegion, 2000);
+        video().capture(dia);
+        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
         dia -= 0.5;
 
