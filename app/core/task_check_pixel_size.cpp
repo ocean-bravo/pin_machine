@@ -104,9 +104,17 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
 
         wait(1000);
 
+        const double xCurrent = db().value("xPos").toDouble();
+        const double yCurrent = db().value("yPos").toDouble();
+
         video().capture();
         waitForSignal(&video(), &Video4::captured, 10000);
 
+
+        moveToAndWaitPosition(xCurrent + 3, yCurrent + 3);
+        moveToAndWaitPosition(xCurrent, yCurrent);
+
+                wait(1000);
         video().capture(dia);
         waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
