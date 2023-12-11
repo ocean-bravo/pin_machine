@@ -13,6 +13,11 @@ ImageItem::ImageItem(QQuickItem *parent)
     m_prevPoint = QPoint(-1, -1);
 }
 
+QImage ImageItem::image() const
+{
+    return QImage();
+}
+
 void ImageItem::paint(QPainter *painter)
 {
     painter->setTransform(m_transform);
