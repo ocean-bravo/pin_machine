@@ -361,14 +361,13 @@ void Scene::removeDuplicatedBlobs()
     //    }
 }
 
-void Scene::updateBlob(BlobItem* blob, double x, double y, double dia)
+void Scene::updateBlob(BlobItem* blob, double sceneX, double sceneY, double dia)
 {
     //QMutexLocker locker(&_mutex);
 
-    auto foo = [blob, x, y, dia]()
+    auto foo = [blob, sceneX, sceneY, dia]()
     {
-        blob->setX(x);
-        blob->setY(y);
+        blob->setPos(blob->mapToParent(blob->mapFromScene(sceneX, sceneY)));
         blob->setRect(-dia/2, -dia/2, dia, dia);
     };
 

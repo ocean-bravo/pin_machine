@@ -23,7 +23,7 @@ public:
     void moveBoard(double angle, double distance);
 
     void removeDuplicatedBlobs();
-    void updateBlob(BlobItem* blob, double x, double y, double dia);
+    void updateBlob(BlobItem* blob, double x, double sceneY, double dia);
 
     QList<QGraphicsItem*> items(Qt::SortOrder order = Qt::DescendingOrder) const;
 

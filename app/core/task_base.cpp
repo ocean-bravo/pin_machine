@@ -32,18 +32,18 @@ void TaskBase::moveToAndWaitPosition(double x, double y)
 
 int TaskBase::updateBlobPosition(BlobItem *blob)
 {
-    double xTarget = blob->scenePos().x();
-    double yTarget = blob->scenePos().y();
-    double diaTarget = blob->rect().width();
+    const double xBlob = blob->scenePos().x();
+    const double yBlob = blob->scenePos().y();
+    const double diaBlob = blob->rect().width();
 
-    moveToAndWaitPosition(xTarget, yTarget);
+    moveToAndWaitPosition(xBlob, yBlob);
 
 //    if (blob->isPunch())
 //        wait(3000);
 
     emit message("capturing ...");
 
-    video().capture(diaTarget + 2);
+    video().capture(diaBlob + 2);
 
     waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
@@ -60,9 +60,9 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 //    if (blob->isPunch())
 //        wait(3000);
 
-    auto [ok, x, y, dia] = opencv().smallRegionBlob();
+    auto [ok, sceneX, sceneY, dia] = opencv().smallRegionBlob();
 
-    if (ok && (dia / diaTarget > 2)) // неправильный блоб
+    if (ok && (dia / diaBlob > 2)) // неправильный блоб
         return 2;
 
     //qd() << "diameter " << dia;
@@ -78,7 +78,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
         qd() << "blob found";
 
         // Обновили позицию и диаметро блоба
-        scene().updateBlob(blob, x, y, dia);
+        scene().updateBlob(blob, sceneX, sceneY, dia);
         return 0;
     }
 }
