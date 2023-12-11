@@ -27,7 +27,7 @@ void waitPosXY(double xTarget, double yTarget)
     };
 
     QEventLoop loop;
-    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+    QTimer::singleShot(10000, &loop, &QEventLoop::quit);
 
     QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop](const QString& key, const QVariant&)
     {
