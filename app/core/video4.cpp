@@ -261,7 +261,10 @@ void Video4Private::imageDispatch(QImage img)
 
                 int widthPix = _smallRegionWidthMm * db().pixInMm();
 
-                emit capturedSmallRegion(img.copy(QRect(xCenter - (widthPix/2), yCenter - (widthPix/2), widthPix, widthPix)));
+                QImage cpy = img.copy(QRect(xCenter - (widthPix/2), yCenter - (widthPix/2), widthPix, widthPix));
+                qd() << " small image x:" << cpy.text("x");
+                qd() << " small image y:" << cpy.text("y");
+                emit capturedSmallRegion(cpy);
                 //qd() << "small region captured";
             }
         }
