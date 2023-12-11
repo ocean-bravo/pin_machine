@@ -38,8 +38,8 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     moveToAndWaitPosition(xTarget, yTarget);
 
-    if (blob->isPunch())
-        wait(3000);
+//    if (blob->isPunch())
+//        wait(3000);
 
     emit message("capturing ...");
 
