@@ -253,6 +253,7 @@ void Video4Private::imageDispatch(QImage img)
 
             if (_captureSmallRegion)
             {
+                _captureSmallRegion = false;
 //                qd() << " small image x:" << cpy.text("x");
 //                qd() << " small image y:" << cpy.text("y");
                 emit capturedSmallRegion(img.copy(_rectToCopy));

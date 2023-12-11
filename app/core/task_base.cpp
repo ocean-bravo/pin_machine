@@ -45,7 +45,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     video().capture(diaTarget + 2);
 
-    waitForSignal(&video(), &Video4::capturedSmallRegion, 5000);
+    waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
 
     emit message("captured");
 
@@ -55,7 +55,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
     QImage smallRegion = video().smallRegion();
     opencv().blobDetectorUpdated(smallRegion);
 
-    waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 500);
+    waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
 
 //    if (blob->isPunch())
 //        wait(3000);
