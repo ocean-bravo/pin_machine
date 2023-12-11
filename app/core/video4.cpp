@@ -26,10 +26,6 @@
 
 namespace {
 
-// Сколько кадров нужно выкинуть.
-const int throwFramesYuv = 1; // Достаточно 1, чтобы не было смаза. Не всегда...
-const int throwFramesJpg = 15; // 12 вроде достаточно было
-
 }
 
 
@@ -79,14 +75,9 @@ void Video4::stop()
     _impl->_stop = true;
 }
 
-void Video4::capture()
+void Video4::capture(double widthMm)
 {
-    QMetaObject::invokeMethod(_impl, "capture", Qt::QueuedConnection);
-}
-
-void Video4::captureSmallRegion(double width)
-{
-    QMetaObject::invokeMethod(_impl, "captureSmallRegion", Qt::QueuedConnection, Q_ARG(double, width));
+    QMetaObject::invokeMethod(_impl, "capture", Qt::QueuedConnection, Q_ARG(double, widthMm));
 }
 
 QImage Video4::smallRegion()
@@ -108,29 +99,31 @@ void Video4::reloadDevices()
 void Video4Private::init()
 {
     _jpegDecompressor = new MjpegHelper;
-    //connect(this, &Video4Private::imageCaptured, this, &Video4Private::imageDispatch, Qt::QueuedConnection);
-
-    db().insert("jpg_frames_throw", throwFramesJpg);
-    db().insert("yuv_frames_throw", throwFramesYuv);
 }
 
-void Video4Private::capture()
+void Video4Private::capture(double widthMm)
 {
-    //qd() << "Video4Private::capture";
-    _capture = true;
-
     int jpgFramesThrow = db().value("jpg_frames_throw").toInt();
     int yuvFramesThrow = db().value("yuv_frames_throw").toInt();
 
     _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow  : jpgFramesThrow;
+
+    if (widthMm == 0.0)
+    {
+        _rectToCopy = QRect();
+        _capture = true;
+        return;
+    }
+
+    int w = _videoCapture->width;
+    int h = _videoCapture->height;
+
+    int widthPix = widthMm * db().pixInMm();
+
+    _rectToCopy = QRect((w/2) - (widthPix/2), (h/2) - (widthPix/2), widthPix, widthPix);
+    _captureSmallRegion = true;
 }
 
-void Video4Private::captureSmallRegion(double width)
-{
-    _captureSmallRegion = true;
-    _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
-    _smallRegionWidthMm = width;
-}
 
 void Video4Private::reloadDevices()
 {
@@ -217,12 +210,14 @@ void Video4Private::update()
         }
 
         QImage img((const uint8_t*)rgbBuffer.data(), _videoCapture->width, _videoCapture->height, QImage::Format_RGB888);
-        imageDispatch(img);
+
+        imageDispatch(img.copy()); // Копия наружу, правильно
     }
 
     emit finished();
 }
 
+// С пришедшим изображением можно делать все что угодно.
 void Video4Private::imageDispatch(QImage img)
 {
     //qd() << beginprevline + setpos(30) + "dispatch ...";
@@ -240,7 +235,10 @@ void Video4Private::imageDispatch(QImage img)
     {
         if (_framesToThrowOut == 0)
         {
-            _framesToThrowOut = _currentFourcc == "YUYV" ? throwFramesYuv : throwFramesJpg;
+            int jpgFramesThrow = db().value("jpg_frames_throw").toInt();
+            int yuvFramesThrow = db().value("yuv_frames_throw").toInt();
+
+            _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow : jpgFramesThrow;
 
             //qd() << "Video4Private::update captured";
             if (_capture)
@@ -250,21 +248,14 @@ void Video4Private::imageDispatch(QImage img)
                 static quint32 count = 0;
                 ++count;
                 //qd() << beginprevline << setpos(30) << "captured " << count;
-                emit captured(img.copy()); // Наружу выпускается копия, все правильно
+                emit captured(img); // Копия наружу не нужна
             }
 
             if (_captureSmallRegion)
             {
-                int xCenter = img.width()/2;
-                int yCenter = img.height()/2;
-                _captureSmallRegion = false;
-
-                int widthPix = _smallRegionWidthMm * db().pixInMm();
-
-                QImage cpy = img.copy(QRect(xCenter - (widthPix/2), yCenter - (widthPix/2), widthPix, widthPix));
-                qd() << " small image x:" << cpy.text("x");
-                qd() << " small image y:" << cpy.text("y");
-                emit capturedSmallRegion(cpy);
+//                qd() << " small image x:" << cpy.text("x");
+//                qd() << " small image y:" << cpy.text("y");
+                emit capturedSmallRegion(img.copy(_rectToCopy));
                 //qd() << "small region captured";
             }
         }

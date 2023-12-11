@@ -26,9 +26,7 @@ public:
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
 
-    Q_INVOKABLE void capture();
-
-    Q_INVOKABLE void captureSmallRegion(double width);
+    Q_INVOKABLE void capture(double widthMm = 0.0);
 
     QImage smallRegion();
 
@@ -63,8 +61,7 @@ public slots:
     void changeCamera(int device, int width, int height, QString fourcc);
     void update();
 
-    void capture();
-    void captureSmallRegion(double width);
+    void capture(double widthMm = 0.0);
 
     void reloadDevices();
 
@@ -87,6 +84,8 @@ private:
     QAtomicInteger<bool> _capture = false;
     QAtomicInteger<bool> _captureSmallRegion = false;
     QAtomicInteger<int> _framesToThrowOut = 1;
+
+    QRect _rectToCopy;
 
     QString _currentFourcc;
     MjpegHelper* _jpegDecompressor = nullptr;

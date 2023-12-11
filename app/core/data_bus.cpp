@@ -22,6 +22,10 @@ DataBus::DataBus(QObject *parent)
     insert("image_adapt_threshold_2", QImage());
     insert("pixel_size_test", 0);
 
+    // Сколько кадров нужно выкинуть.
+    insert("jpg_frames_throw", 1); // Достаточно 1, чтобы не было смаза. Не всегда...
+    insert("yuv_frames_throw", 15); // 12 вроде достаточно было
+
     connect(this, &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "resolution_width")
