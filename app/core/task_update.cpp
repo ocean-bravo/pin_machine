@@ -93,7 +93,10 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 
     int count  = 0;
 
-    every<BlobItem>(itemsToUpdate, [this, &count](BlobItem* blob)
+    QPointF startPoint = currPos();
+    QList<QGraphicsItem*> orderedItemsToUpdate = findShortestPath(itemsToUpdate, startPoint);
+
+    every<BlobItem>(orderedItemsToUpdate, [this, &count](BlobItem* blob)
     {
         if (_stop)
         {

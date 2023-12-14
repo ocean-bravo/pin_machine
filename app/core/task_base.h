@@ -5,6 +5,8 @@
 #include <QAtomicInteger>
 
 class BlobItem;
+class QGraphicsItem;
+
 
 class TaskBase : public QObject
 {
@@ -23,6 +25,11 @@ public:
     double extractFromGcodeY(QString line, double defaultValue = qQNaN()) const;
     double extractFromGcodeZ(QString line, double defaultValue = qQNaN()) const;
     int cameraId() const;
+
+
+    QList<QGraphicsItem*> findShortestPath(QList<QGraphicsItem *> items, QPointF startPoint);
+
+    QPointF currPos() const;
 
 protected:
     QMutex _mutex;

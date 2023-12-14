@@ -157,3 +157,39 @@ int TaskBase::cameraId() const
     qd() << "Camera: not found id for device name: " << cameraName;
     return -1;
 }
+
+QList<QGraphicsItem *> TaskBase::findShortestPath(QList<QGraphicsItem*> items, QPointF startPoint)
+{
+    if (items.length() < 2)
+        return items;
+
+    auto closestItem = [](QList<QGraphicsItem *>& items, QPointF startPoint) -> QGraphicsItem*
+    {
+        auto binary_op = [startPoint](QGraphicsItem* it1, QGraphicsItem* it2)
+        {
+            return QLineF(it1->scenePos(), startPoint).length() < QLineF(it2->scenePos(), startPoint).length() ? it1 : it2;
+        };
+
+        QGraphicsItem* closestItem = std::accumulate(items.begin(), items.end(), items.first(), binary_op);
+        items.removeOne(closestItem);
+        return closestItem;
+    };
+
+    QList<QGraphicsItem *> newItems;
+
+    while (items.length() > 1)
+    {
+        QGraphicsItem* item = closestItem(items, startPoint);
+        newItems.push_back(item);
+        startPoint = item->scenePos();
+    }
+
+    newItems.push_back(items.first());
+
+    return newItems;
+}
+
+QPointF TaskBase::currPos() const
+{
+    return { db().value("xPos").toDouble(), db().value("yPos").toDouble() };
+}
