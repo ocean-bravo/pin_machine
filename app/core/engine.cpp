@@ -145,24 +145,24 @@ void Engine::createQmlEngine()
         const QString mode = db().value("mode").toString();
 
         if (mode == "raw")
-            db().insert("image_raw", img);
+            db().insert("image_raw", img.copy());
 
         if (mode == "circle")
-            opencv().searchCirclesLive(img);
+            opencv().searchCirclesLive(img.copy());
 
         if (mode == "blob" || mode == "adapt_threshold_1" || mode == "adapt_threshold_2")
-            opencv().blobDetectorLive(img);
+            opencv().blobDetectorLive(img.copy());
     });
 
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
-        db().insert("image_raw_captured", img);
+        db().insert("image_raw_captured", img.copy());
     });
 
     connect(&video(), &Video4::captured, this, [](QImage img)
     {
         db().insert("image_raw_captured", img.copy());
-        opencv().blobDetectorCaptured(img);
+        opencv().blobDetectorCaptured(img.copy());
     });
 
     connect(&opencv(), &OpenCv::circleChanged, this, [](QImage img)

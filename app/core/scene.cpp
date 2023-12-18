@@ -134,7 +134,7 @@ void Scene::setImagePrivate(QImage img)
     const double pixInMm = db().pixInMm();
 
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
-    img = img.mirrored(false, true); // тут копия img
+    img = std::move(img.mirrored(false, true)); // тут копия img и это правильно
 
     QPixmap pix = QPixmap::fromImage(img);
     pix.setDevicePixelRatio(pixInMm);

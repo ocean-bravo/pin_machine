@@ -220,16 +220,11 @@ void Video4Private::update()
 // С пришедшим изображением можно делать все что угодно.
 void Video4Private::imageDispatch(QImage img)
 {
-    //qd() << beginprevline + setpos(30) + "dispatch ...";
-    //qd() << "dispatch ...";
-
     const QString x = toReal3(db().value("xPos").toDouble());
     const QString y = toReal3(db().value("yPos").toDouble());
 
     img.setText("x", x);
     img.setText("y", y);
-
-    emit rawImage(img.copy());
 
     if (_capture || _captureSmallRegion)
     {
@@ -240,24 +235,16 @@ void Video4Private::imageDispatch(QImage img)
 
             _framesToThrowOut = _currentFourcc == "YUYV" ? yuvFramesThrow : jpgFramesThrow;
 
-            //qd() << "Video4Private::update captured";
             if (_capture)
             {
                 _capture = false;
-
-                static quint32 count = 0;
-                ++count;
-                //qd() << beginprevline << setpos(30) << "captured " << count;
                 emit captured(img); // Копия наружу не нужна
             }
 
             if (_captureSmallRegion)
             {
                 _captureSmallRegion = false;
-//                qd() << " small image x:" << cpy.text("x");
-//                qd() << " small image y:" << cpy.text("y");
                 emit capturedSmallRegion(img.copy(_rectToCopy));
-                //qd() << "small region captured";
             }
         }
         else
@@ -265,6 +252,8 @@ void Video4Private::imageDispatch(QImage img)
             _framesToThrowOut -= 1;
         }
     }
+
+    emit rawImage(img); // Копию не делать
 }
 
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)

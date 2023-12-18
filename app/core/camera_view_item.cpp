@@ -6,7 +6,7 @@
 CameraViewItem::CameraViewItem(QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
 {
-    setPen({Qt::cyan, 0, Qt::SolidLine, Qt::RoundCap});
+    setPen({Qt::blue, 0, Qt::SolidLine, Qt::RoundCap});
     setZValue(1); // Отметки поверх миниплат
 }
 
