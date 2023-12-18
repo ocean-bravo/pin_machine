@@ -57,15 +57,13 @@ ApplicationWindow {
 //            opencv.visible = false
 //        }
 //    }
-//    Shortcut {
-//        sequence: "F2"
-//        context: Qt.ApplicationShortcut
-//        onActivated: {
-//            commands.visible = false
-//            camera.visible = true
-//            opencv.visible = false
-//        }
-//    }
+    Shortcut {
+        sequence: "F2"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            DataBus.next = "ok"
+        }
+    }
 
 //    Shortcut {
 //        sequence: "F3"
