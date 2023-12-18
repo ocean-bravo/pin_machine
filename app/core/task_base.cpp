@@ -77,6 +77,8 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
         scene().updateBlob(blob, sceneX, sceneY, dia);
         return 0;
     }
+
+    waitForNext();
 }
 
 void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem* secondRefBlob, BlobItem* secondRealBlob)
