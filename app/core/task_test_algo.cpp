@@ -51,7 +51,7 @@ void TaskTestAlgoPrivate::run()
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
-    db().insert("step", "");
+    auto fin = qScopeGuard([this]{ emit finished(); });
 
     scene().clear();
     scene().addBoard();
@@ -64,14 +64,11 @@ void TaskTestAlgoPrivate::run()
             break;
         }
 
-        waitDataBus("step", "next");
-        db().insert("step", "");
-
+        waitForNext();
 
         runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
 
-        waitDataBus("step", "next");
-        db().insert("step", "");
+        waitForNext();
 
         runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
         runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
@@ -109,8 +106,7 @@ void TaskTestAlgoPrivate::run()
           fiducialBlobs.append(std::make_tuple(bl1, bl2));
         }
 
-        waitDataBus("step", "next");
-        db().insert("step", "");
+        waitForNext();
 
         if (fiducialBlobs.size() != 2)
             return;
@@ -123,6 +119,4 @@ void TaskTestAlgoPrivate::run()
 
         algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
     }
-
-    emit finished();
 }

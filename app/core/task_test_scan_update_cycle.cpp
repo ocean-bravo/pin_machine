@@ -68,6 +68,8 @@ void TaskTestScanUpdateCyclePrivate::run(QString program)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    auto fin = qScopeGuard([this]{ emit finished(); });
+
     while(true)
     {
         if (_stop)
@@ -91,6 +93,4 @@ void TaskTestScanUpdateCyclePrivate::run(QString program)
         waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 
     }
-
-    emit finished();
 }

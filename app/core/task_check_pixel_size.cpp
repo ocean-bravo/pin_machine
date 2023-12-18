@@ -59,6 +59,8 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    auto fin = qScopeGuard([this]{ emit finished(); });
+
     // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
     video().reloadDevices();
     wait(500);
@@ -156,6 +158,4 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
 
     emit message("program time " + QString::number((finish - start)/1000) + " sec");
     wait(10);
-
-    emit finished();
 }

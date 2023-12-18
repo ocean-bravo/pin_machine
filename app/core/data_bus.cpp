@@ -22,6 +22,8 @@ DataBus::DataBus(QObject *parent)
     insert("image_adapt_threshold_2", QImage());
     insert("pixel_size_test", 0);
 
+    insert("next", "");
+
     // Сколько кадров нужно выкинуть.
     insert("jpg_frames_throw", 15); // 12 вроде достаточно было
     insert("yuv_frames_throw", 1);  // Достаточно 1, чтобы не было смаза. Не всегда...

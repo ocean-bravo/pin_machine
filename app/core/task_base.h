@@ -31,6 +31,8 @@ public:
 
     QPointF currPos() const;
 
+    void waitForNext();
+
 protected:
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;

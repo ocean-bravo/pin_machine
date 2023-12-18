@@ -60,6 +60,8 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
+    auto fin = qScopeGuard([this]{ emit finished(); });
+
     // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
     video().reloadDevices();
     wait(500);
@@ -124,6 +126,4 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
     emit message("update blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
     emit message("count " + QString::number(count));
-
-    emit finished();
 }

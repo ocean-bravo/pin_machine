@@ -38,8 +38,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     moveToAndWaitPosition(xBlob, yBlob);
 
-//    if (blob->isPunch())
-//        wait(3000);
+    waitForNext();
 
     emit message("capturing ...");
 
@@ -49,15 +48,13 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     emit message("captured");
 
-//    if (blob->isPunch())
-//        wait(3000);
+    waitForNext();
 
     opencv().blobDetectorUpdated(std::move(video().smallRegion()));
 
     waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
 
-//    if (blob->isPunch())
-//        wait(3000);
+    waitForNext();
 
     auto [ok, sceneX, sceneY, dia] = opencv().smallRegionBlob();
 
@@ -191,4 +188,16 @@ QList<QGraphicsItem *> TaskBase::findShortestPath(QList<QGraphicsItem*> items, Q
 QPointF TaskBase::currPos() const
 {
     return { db().value("xPos").toDouble(), db().value("yPos").toDouble() };
+}
+
+void TaskBase::waitForNext()
+{
+    static const bool stepByStep = settings().value("debug/step_by_step", false).toBool();
+
+    if (!stepByStep)
+        return;
+
+    db().insert("next", "wait"); // Показать в GUI окно предложение продолжения
+    waitDataBus("next", "ok");
+    db().insert("next", QString());
 }

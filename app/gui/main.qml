@@ -28,6 +28,17 @@ ApplicationWindow {
         onClosed: DataBus.messagebox = "" // чтобы одно и тоже сообщение могло показываться
     }
 
+    Button {
+        id: stepNext
+        text: "Next"
+        width: 50
+        height: 30
+        visible: DataBus.next === "wait"
+        onClicked: DataBus.next = "ok"
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+    }
+
 //    MyCamera {
 //        id: camera
 //        anchors.fill: parent
