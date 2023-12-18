@@ -87,7 +87,7 @@ QImage Video4::smallRegion()
 
 //    _smallRegion.setText("x", toReal3(x));
 //    _smallRegion.setText("y", toReal3(y));
-    return _smallRegion;
+    return _smallRegion.copy();
 }
 
 void Video4::reloadDevices()

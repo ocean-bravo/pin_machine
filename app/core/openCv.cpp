@@ -324,7 +324,7 @@ void OpenCv::blobDetectorUpdated(QImage img)
         }
 
 
-        emit smallRegionBlobImage(im);
+        emit smallRegionBlobImage(im.copy());
 
         auto kp = kps[0];
 

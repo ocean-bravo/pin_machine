@@ -52,8 +52,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 //    if (blob->isPunch())
 //        wait(3000);
 
-    QImage smallRegion = std::move(video().smallRegion().copy());
-    opencv().blobDetectorUpdated(std::move(smallRegion));
+    opencv().blobDetectorUpdated(std::move(video().smallRegion()));
 
     waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
 
