@@ -27,6 +27,16 @@ public:
     int cameraId() const;
 
 
+    // Список уникальных ширин форматов, т.е., например, [160, 320, 640, 1024]
+    QVector<int> uniqueWidths() const;
+
+    // Любая из доступных высота для данной ширины изображения
+    int anyHeightForWidth(int width) const;
+
+    // Любой из доступных форматов для данной ширины и высоты изображения.
+    QString anyFourcc(int width, int height) const;
+
+
     QList<QGraphicsItem*> findShortestPath(QList<QGraphicsItem *> items, QPointF startPoint);
 
     QPointF currPos() const;

@@ -13,6 +13,13 @@
 #include <QMetaMethod>
 #include <QScopeGuard>
 #include <QDateTime>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+
+#include "openCv.h"
+#include "settings.h"
+
 
 namespace {
 
@@ -38,10 +45,10 @@ TaskCheckPixelSize::~TaskCheckPixelSize()
     _thread->wait(1000);
 }
 
-void TaskCheckPixelSize::run(int width, int height, QString fourcc)
+void TaskCheckPixelSize::run()
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(QString, fourcc));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
 void TaskCheckPixelSize::stopProgram()
@@ -54,7 +61,7 @@ TaskCheckPixelSizePrivate::TaskCheckPixelSizePrivate()
 
 }
 
-void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
+void TaskCheckPixelSizePrivate::run()
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -66,92 +73,78 @@ void TaskCheckPixelSizePrivate::run(int width, int height, QString fourcc)
     wait(500);
     video().stop();
 
-    db().insert("resolution_width", width);
-    db().insert("resolution_height", height);
-
-    video().changeCamera(cameraId(), width, height, fourcc);
-    video().start();
-
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
 
-    scene().clear();
-    scene().addBoard();
-
-    // Костыль. Чтобы плата показывалась во весь экран. Иначе плата была неизвестно где, на сцене ее было не видно.
-    for (QGraphicsView* view : scene().views())
-    {
-        GraphicsView* v = dynamic_cast<GraphicsView*>(view);
-        if (v)
-            v->fit();
-    }
-
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection1 = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
-    auto guard1 = qScopeGuard([=]() { disconnect(connection1); });
+    QVector<int> widths = uniqueWidths();
 
-    auto connection2 = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
-    auto guard2 = qScopeGuard([=]() { disconnect(connection2); });
 
-    double dia = 3;
-    //for (int i = 0; i < 10; ++i)
+    // 1 стадия
+    QMap<int, QImage> stage1;
+    moveToAndWaitPosition(currPos().x() + 3, currPos().y());
+
+    for (int i = 0; i < widths.size(); ++i)
     {
-        if (_stop)
+        const int width = widths[i];
+        const int height = anyHeightForWidth(width);
+        const QString fourcc = anyFourcc(width, height);
+
+        video().stop();
+        db().insert("resolution_width", width);
+        db().insert("resolution_height", height);
+        video().changeCamera(cameraId(), width, height, fourcc);
+        video().start();
+
+        wait(1000); // чтобы изображение подстроилось
+
+        auto connection = connect(&video(), &Video4::captured, [width, &stage1](QImage img)
         {
-            emit message("program interrupted");
-            //break;
-        }
-
-        const double xCurrent = db().value("xPos").toDouble();
-        const double yCurrent = db().value("yPos").toDouble();
-
+            stage1.insert(width, img.copy());
+        });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
         video().capture();
         waitForSignal(&video(), &Video4::captured, 10000);
-        wait(5000);
+    }
 
-        moveToAndWaitPosition(xCurrent + 3, yCurrent + 3);
-        moveToAndWaitPosition(xCurrent, yCurrent);
-        wait(1000);
-        video().capture(dia);
-        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
+    // 2 стадия
+    QMap<int, QImage> stage2;
+    moveToAndWaitPosition(currPos().x() - 6, currPos().y());
 
-        wait(1000);
-        moveToAndWaitPosition(xCurrent - 3, yCurrent - 3);
-        moveToAndWaitPosition(xCurrent, yCurrent);
-        wait(1000);
-        video().capture(dia);
-        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
+    for (int i = 0; i < widths.size(); ++i)
+    {
+        const int width = widths[i];
+        const int height = anyHeightForWidth(width);
+        const QString fourcc = anyFourcc(width, height);
 
+        video().stop();
+        db().insert("resolution_width", width);
+        db().insert("resolution_height", height);
+        video().changeCamera(cameraId(), width, height, fourcc);
+        video().start();
 
-        wait(1000);
-        moveToAndWaitPosition(xCurrent + 3, yCurrent - 3);
-        moveToAndWaitPosition(xCurrent, yCurrent);
-        wait(1000);
-        video().capture(dia);
-        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
+        wait(1000); // чтобы изображение подстроилось
 
-        wait(1000);
-        moveToAndWaitPosition(xCurrent - 3, yCurrent + 3);
-        moveToAndWaitPosition(xCurrent, yCurrent);
-        wait(1000);
-        video().capture(dia);
-        waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
+        auto connection = connect(&video(), &Video4::captured, [width, &stage2](QImage img)
+        {
+            stage2.insert(width, img.copy());
+        });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
+        video().capture();
+        waitForSignal(&video(), &Video4::captured, 10000);
+    }
 
-        dia -= 0.5;
+    // 3 стадия
+    for (int i = 0; i < widths.size(); ++i)
+    {
+        const int width = widths[i];
+        double dist = OpenCv::corr(stage1[width], stage2[width]);
 
-//        const double xCurrent = db().value("xPos").toDouble();
-//        const double yCurrent = db().value("yPos").toDouble();
+        settings().setValue("pixel_size_" + QString::number(width), dist / 6.0);
 
-//        moveToAndWaitPosition(xCurrent + 5.0, yCurrent + 0.5);
-
-//        emit message("capturing ...");
-//        auto a = QDateTime::currentMSecsSinceEpoch();
-//        video().capture();
-//        waitForSignal(&video(), &Video4::captured, 2000);
-//        auto b = QDateTime::currentMSecsSinceEpoch();
-//        emit message(QString("captured %1 ms").arg(b-a));
+        qd() << "pixel_size_" + QString::number(width) << dist / 6.0;
     }
 
     auto finish = QDateTime::currentMSecsSinceEpoch();

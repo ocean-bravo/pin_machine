@@ -450,7 +450,7 @@ void MyDriver::reloadDevices()
         if (formats.isEmpty())
             continue;
 
-        db().insert("camera" + QString::number(id), formats);
+        db().insert("camera_image_formats_" + QString::number(id), formats);
 
         QJsonObject device {
             { "id",   id },

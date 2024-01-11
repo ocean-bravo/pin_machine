@@ -368,16 +368,16 @@ Item {
                     onCheckedChanged: checked ?  TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskScan.stopProgram()
                     Connections { target: TaskScan; function onFinished() { scan.checked = false } }
                     function selectedResolution() {
-                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForScan.currentIndex]
+                        return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForScan.currentIndex]
                     }
                 }
                 ComboBox {
                     id: resolutionListForScan
                     width: 200
                     textRole: "display"
-                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
                     onModelChanged: {
-                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
+                        let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
 
                         for (let i = 0; i < res.length; i++) {
                             let r = res[i]
@@ -395,16 +395,16 @@ Item {
                     onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskUpdate.stopProgram()
                     Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
                     function selectedResolution() {
-                        return sortResolutions(DataBus["camera" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
+                        return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
                     }
                 }
                 ComboBox {
                     id: resolutionListForUpdate
                     width: 200
                     textRole: "display"
-                    model: sortResolutions(DataBus["camera" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
                     onModelChanged: {
-                        let res = sortResolutions(DataBus["camera" + cameraList.currentValue])
+                        let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
 
                         for (let i = 0; i < res.length; i++) {
                             let r = res[i]
@@ -645,21 +645,21 @@ Item {
                     }
                     SmButton {
                         id: testPixelSize
-                        text: qsTr("Test pixel size")
+                        text: qsTr("Find pixel size")
                         checkable: true
                         checked: false
-                        onCheckedChanged: checked ? TaskCheckPixelSize.run(800, 600, "YUYV") : TaskCheckPixelSize.stopProgram()
+                        onCheckedChanged: checked ? TaskCheckPixelSize.run() : TaskCheckPixelSize.stopProgram()
                         Connections { target: TaskCheckPixelSize; function onFinished() { testPixelSize.checked = false } }
                         Layout.row: 4
                     }
-                    Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
-                    Button {
-                        onClicked: {
-                            Engine.capture2();
-                        }
-                        Layout.row: 5; Layout.column: 4; Layout.columnSpan: 3
-                    }
-                    Button {onClicked: Engine.corr();    Layout.row: 5; Layout.column: 7; Layout.columnSpan: 3}
+                    //Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
+                    // Button {
+                    //     onClicked: {
+                    //         Engine.capture2();
+                    //     }
+                    //     Layout.row: 5; Layout.column: 4; Layout.columnSpan: 3
+                    // }
+                    // Button {onClicked: Engine.corr();    Layout.row: 5; Layout.column: 7; Layout.columnSpan: 3}
                 }
             }
         }
@@ -802,7 +802,7 @@ Item {
                             id: resolutionList
                             width: 200
                             textRole: "display"
-                            model: sortResolutions(DataBus["camera" + cameraList.currentValue])
+                            model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
                             onActivated: {
                                 setCurrentFormat()
                             }

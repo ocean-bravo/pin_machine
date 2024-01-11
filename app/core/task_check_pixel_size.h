@@ -16,7 +16,7 @@ public:
     TaskCheckPixelSize(QObject* parent = nullptr);
     ~TaskCheckPixelSize();
 
-    Q_INVOKABLE void run(int width, int height, QString fourcc); // Не помню, кажется строка имеет ограничение 10000. Или QBYteArray
+    Q_INVOKABLE void run();
 
     Q_INVOKABLE void stopProgram();
 
@@ -38,7 +38,7 @@ public:
     TaskCheckPixelSizePrivate();
 
 public slots:
-    void run(int width, int height, QString fourcc);
+    void run();
 
 private:
 

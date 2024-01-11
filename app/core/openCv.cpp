@@ -256,11 +256,8 @@ OpenCv::~OpenCv()
     _thread->wait(1000);
 }
 
-void OpenCv::corr()
+double OpenCv::corr(QImage cap1, QImage cap2)
 {
-    QImage cap1 = db().value("capture1").value<QImage>();
-    QImage cap2 = db().value("capture2").value<QImage>();
-
     cv::Mat img1 = cv::Mat(cap1.height(), cap1.width(), CV_8UC3, const_cast<uchar *>(cap1.constBits()), cap1.bytesPerLine());
     cv::Mat img2 = cv::Mat(cap2.height(), cap2.width(), CV_8UC3, const_cast<uchar *>(cap2.constBits()), cap2.bytesPerLine());
 
@@ -269,18 +266,17 @@ void OpenCv::corr()
     cv::cvtColor(img1, gr1, cv::COLOR_RGB2GRAY);
     cv::cvtColor(img2, gr2, cv::COLOR_RGB2GRAY);
 
-
     gr1.convertTo(gr1, CV_32F);
     gr2.convertTo(gr2, CV_32F);
 
 //    cv::Mat res = XCorrelation(gr1, gr2);
 //    db().insert("image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
 
-    double resp;
     cv::Point2d res = cv::phaseCorrelate(gr1, gr2);
 
     qd() << " result " << res.x << res.y;
 
+    return res.x;
 }
 
 void OpenCv::searchCirclesLive(QImage img)

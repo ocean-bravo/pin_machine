@@ -23,7 +23,7 @@ public:
     using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString, int, int>; // координаты центра, размеры изображения
 
 
-    void corr();
+    static double corr(QImage cap1, QImage cap2);
 
     void searchCirclesLive(QImage img);
     void blobDetectorLive(QImage img);

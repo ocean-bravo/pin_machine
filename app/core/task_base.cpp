@@ -144,7 +144,7 @@ double TaskBase::extractFromGcodeZ(QString line, double defaultValue) const
 
 int TaskBase::cameraId() const
 {
-    const QString cameraName = settings().value("camera").toString();
+    const QString cameraName = settings().value("camera_name").toString();
     const QJsonArray cameras = db().value("cameras").toJsonArray();
 
     for (const QJsonValue& cameraInfo : cameras)
@@ -154,6 +154,45 @@ int TaskBase::cameraId() const
     }
     qd() << "Camera: not found id for device name: " << cameraName;
     return -1;
+}
+
+QVector<int> TaskBase::uniqueWidths() const
+{
+    const QJsonArray cameraImageFormats = db().value("camera_image_formats_" + QString::number(cameraId())).toJsonArray();
+    QVector<int> widths;
+    for (const QJsonValue& format : cameraImageFormats)
+    {
+        widths.push_back(format.toObject().value("width").toInt());
+    }
+    return widths;
+}
+
+int TaskBase::anyHeightForWidth(int width) const
+{
+    const QJsonArray cameraImageFormats = db().value("camera_image_formats_" + QString::number(cameraId())).toJsonArray();
+    for (const QJsonValue& format : cameraImageFormats)
+    {
+        const int w = format.toObject().value("width").toInt();
+        const int h = format.toObject().value("height").toInt();
+
+        if (w == width)
+            return h;
+    }
+    return 0;
+}
+
+QString TaskBase::anyFourcc(int width, int height) const
+{
+    const QJsonArray cameraImageFormats = db().value("camera_image_formats_" + QString::number(cameraId())).toJsonArray();
+    for (const QJsonValue& format : cameraImageFormats)
+    {
+        const int w = format.toObject().value("width").toInt();
+        const int h = format.toObject().value("height").toInt();
+
+        if (w == width && h == height)
+            return format.toObject().value("fourcc").toString();
+    }
+    return "";
 }
 
 QList<QGraphicsItem *> TaskBase::findShortestPath(QList<QGraphicsItem*> items, QPointF startPoint)
