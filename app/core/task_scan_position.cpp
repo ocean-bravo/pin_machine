@@ -67,6 +67,7 @@ void TaskScanPositionPrivate::run(QPointF pos)
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     moveToAndWaitPosition(pos.x(), pos.y());
+    wait(300);
     video().capture();
     waitForSignal(&video(), &Video4::captured, 2000);
     wait(300); // не успевает блоб отдетектироваться
