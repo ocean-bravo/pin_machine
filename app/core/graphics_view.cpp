@@ -159,7 +159,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
 
     menu.addAction(menuText, this, [this, event]()
     {
-        emit scanPosition(mapToScene(event->globalPos()));
+        emit scanPosition(mapToScene(event->pos()));
     });
 
     menu.exec(event->globalPos());
