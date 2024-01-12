@@ -181,6 +181,7 @@ void Engine::createQmlEngine()
     });
 
     TaskScan* taskScan = new TaskScan(this);
+
     TaskUpdate* taskUpdate = new TaskUpdate(this);
     TaskTestScanUpdateCycle* tp = new TaskTestScanUpdateCycle(taskScan, taskUpdate, this);
     TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);

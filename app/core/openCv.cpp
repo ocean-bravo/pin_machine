@@ -34,32 +34,32 @@ void Rearrange(cv::Mat& src, cv::Mat& dst)
     dst = tmp;
 }
 
-cv::Mat XCorrelation(cv::Mat const& I, cv::Mat const& I1)
-{
-    int width = cv::getOptimalDFTSize(std::max(I.cols,I1.cols));
-    int height = cv::getOptimalDFTSize(std::max(I.rows,I1.rows));
-    cv::Mat fft1;
-    cv::Mat fft2;
+// cv::Mat XCorrelation(cv::Mat const& I, cv::Mat const& I1)
+// {
+//     int width = cv::getOptimalDFTSize(std::max(I.cols,I1.cols));
+//     int height = cv::getOptimalDFTSize(std::max(I.rows,I1.rows));
+//     cv::Mat fft1;
+//     cv::Mat fft2;
 
-    cv::copyMakeBorder(I, fft1, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
-    cv::copyMakeBorder(I1, fft2, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+//     cv::copyMakeBorder(I, fft1, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+//     cv::copyMakeBorder(I1, fft2, 0, height - I.rows, 0, width - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
 
-    fft1.convertTo(fft1, CV_32F);
-    fft2.convertTo(fft2, CV_32F);
+//     fft1.convertTo(fft1, CV_32F);
+//     fft2.convertTo(fft2, CV_32F);
 
-    cv::dft(fft1,fft1,0,I.rows);
-    cv::dft(fft2,fft2,0,I1.rows);
+//     cv::dft(fft1,fft1,0,I.rows);
+//     cv::dft(fft2,fft2,0,I1.rows);
 
-    cv::mulSpectrums(fft1,fft2,fft1,0,true);
-    // here cv::DFT_SCALE divide `width*height` 1 times
-    cv::idft(fft1,fft1,cv::DFT_SCALE|cv::DFT_REAL_OUTPUT);
-    Rearrange(fft1, fft1);
-    // here divide another times
-    return cv::abs(fft1)/(width*height);
+//     cv::mulSpectrums(fft1,fft2,fft1,0,true);
+//     // here cv::DFT_SCALE divide `width*height` 1 times
+//     cv::idft(fft1,fft1,cv::DFT_SCALE|cv::DFT_REAL_OUTPUT);
+//     Rearrange(fft1, fft1);
+//     // here divide another times
+//     return cv::abs(fft1)/(width*height);
 
-    //    Mat  draw;
-    //    sobelx.convertTo(draw,  CV_8U,  255.0/(maxVal  -  minVal),  -minVal);
-}
+//     //    Mat  draw;
+//     //    sobelx.convertTo(draw,  CV_8U,  255.0/(maxVal  -  minVal),  -minVal);
+// }
 
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
 // pixPos - [0, pixelInLine)

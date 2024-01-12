@@ -24,6 +24,7 @@ public:
 signals:
     void sizeChanged(QSize);
     void selectModeChanged(bool mode);
+    void scanPosition(QPointF pos);
 
 protected:
     void wheelEvent(QWheelEvent* event) override;
@@ -31,6 +32,9 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
+
+
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 
     void resizeEvent(QResizeEvent *event) override;

@@ -10,6 +10,7 @@
 #include <QWheelEvent>
 #include <QGraphicsTextItem>
 #include <QScrollBar>
+#include <QMenu>
 
 GraphicsView::GraphicsView(QWidget* parent)
     : QGraphicsView(parent)
@@ -148,6 +149,20 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
 void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QAbstractScrollArea::mouseReleaseEvent(event);
+}
+
+void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
+{
+    QMenu menu;
+
+    QString menuText = tr("Scan here");
+
+    menu.addAction(menuText, this, [this, event]()
+    {
+        emit scanPosition(mapToScene(event->globalPos()));
+    });
+
+    menu.exec(event->globalPos());
 }
 
 void GraphicsView::mouseReleaseEvent(QMouseEvent* event)

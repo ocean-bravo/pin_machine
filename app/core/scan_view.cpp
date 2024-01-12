@@ -6,6 +6,9 @@
 #include "data_bus.h"
 
 #include "scene.h"
+#include "task_scan_position.h"
+
+
 #include <QMessageBox>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
@@ -23,6 +26,9 @@ ScanView::ScanView(QWidget *parent)
     _scene = &scene();
 
     ui->graphicsView->setScene(_scene);
+    TaskScanPosition* taskScanPosition = new TaskScanPosition(this);
+
+    connect(ui->graphicsView, &GraphicsView::scanPosition, taskScanPosition, &TaskScanPosition::run);
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
