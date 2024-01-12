@@ -65,6 +65,12 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
 
     auto fin = qScopeGuard([this]{ emit finished(); });
 
+    QTimer statusTimer;
+    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
+    statusTimer.start(100);
+
+    const auto start = QDateTime::currentMSecsSinceEpoch();
+
     // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
     video().reloadDevices();
     wait(500);
@@ -75,12 +81,6 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
 
     video().changeCamera(cameraId(), 1280, 960, "YUYV");
     video().start();
-
-    QTimer statusTimer;
-    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
-    statusTimer.start(100);
-
-    const auto start = QDateTime::currentMSecsSinceEpoch();
 
     auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });

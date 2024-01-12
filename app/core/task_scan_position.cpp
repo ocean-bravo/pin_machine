@@ -55,7 +55,11 @@ void TaskScanPositionPrivate::run(QPointF pos)
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
 
-    auto start = QDateTime::currentMSecsSinceEpoch();
+    const auto start = QDateTime::currentMSecsSinceEpoch();
+
+    // Не разрешать выезжать за пределы нуля. Пока так, на скорую руку.
+    if (pos.x() < 5 || pos.y() < 5)
+        return;
 
     video().start();
 

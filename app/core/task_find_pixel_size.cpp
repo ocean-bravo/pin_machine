@@ -68,19 +68,18 @@ void TaskFindPixelSizePrivate::run()
 
     auto fin = qScopeGuard([this]{ emit finished(); });
 
+    QTimer statusTimer;
+    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
+    statusTimer.start(100);
+
+    const auto start = QDateTime::currentMSecsSinceEpoch();
+
     // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
     video().reloadDevices();
     wait(500);
     video().stop();
 
-    QTimer statusTimer;
-    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
-    statusTimer.start(100);
-
-    auto start = QDateTime::currentMSecsSinceEpoch();
-
     QVector<int> widths = uniqueWidths();
-
 
     // 1 стадия
     QMap<int, QImage> stage1;

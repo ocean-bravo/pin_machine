@@ -132,6 +132,12 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 
     auto fin = qScopeGuard([this]{ emit finished(); });
 
+    QTimer statusTimer;
+    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
+    statusTimer.start(100);
+
+    const auto start = QDateTime::currentMSecsSinceEpoch();
+
     // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
     video().reloadDevices();
     wait(500);
@@ -145,10 +151,6 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 
     _lineToSend = 0;
     _codeLines = program.split("\n", Qt::KeepEmptyParts);
-
-    QTimer statusTimer;
-    connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
-    statusTimer.start(100);
 
     db().insert("capture_number", 0);
     //ImagesStorage.clearCaptured()
@@ -180,8 +182,6 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 //    return;
 
     wait(200);
-
-    auto start = QDateTime::currentMSecsSinceEpoch();
 
     auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
