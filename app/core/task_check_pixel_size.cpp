@@ -25,13 +25,13 @@ namespace {
 
 }
 
-TaskCheckPixelSize::TaskCheckPixelSize(QObject* parent)
+TaskFindPixelSize::TaskFindPixelSize(QObject* parent)
     : QObject(parent)
-    , _impl(new TaskCheckPixelSizePrivate)
+    , _impl(new TaskFindPixelSizePrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &TaskCheckPixelSizePrivate::message, this, &TaskCheckPixelSize::message, Qt::QueuedConnection);
-    connect(_impl, &TaskCheckPixelSizePrivate::finished, this, &TaskCheckPixelSize::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskFindPixelSizePrivate::message, this, &TaskFindPixelSize::message, Qt::QueuedConnection);
+    connect(_impl, &TaskFindPixelSizePrivate::finished, this, &TaskFindPixelSize::finished, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -39,29 +39,29 @@ TaskCheckPixelSize::TaskCheckPixelSize(QObject* parent)
     _thread->start();
 }
 
-TaskCheckPixelSize::~TaskCheckPixelSize()
+TaskFindPixelSize::~TaskFindPixelSize()
 {
     _thread->quit();
     _thread->wait(1000);
 }
 
-void TaskCheckPixelSize::run()
+void TaskFindPixelSize::run()
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
-void TaskCheckPixelSize::stopProgram()
+void TaskFindPixelSize::stopProgram()
 {
     _impl->_stop = true;
 }
 
-TaskCheckPixelSizePrivate::TaskCheckPixelSizePrivate()
+TaskFindPixelSizePrivate::TaskFindPixelSizePrivate()
 {
 
 }
 
-void TaskCheckPixelSizePrivate::run()
+void TaskFindPixelSizePrivate::run()
 {
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });

@@ -6,15 +6,15 @@
 
 #include "task_base.h"
 
-class TaskCheckPixelSizePrivate;
+class TaskFindPixelSizePrivate;
 
-class TaskCheckPixelSize : public QObject
+class TaskFindPixelSize : public QObject
 {
     Q_OBJECT
 
 public:
-    TaskCheckPixelSize(QObject* parent = nullptr);
-    ~TaskCheckPixelSize();
+    TaskFindPixelSize(QObject* parent = nullptr);
+    ~TaskFindPixelSize();
 
     Q_INVOKABLE void run();
 
@@ -25,22 +25,22 @@ signals:
     void finished();
 
 private:
-    TaskCheckPixelSizePrivate* const _impl;
+    TaskFindPixelSizePrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
 
 
-class TaskCheckPixelSizePrivate : public TaskBase
+class TaskFindPixelSizePrivate : public TaskBase
 {
     Q_OBJECT
 
 public:
-    TaskCheckPixelSizePrivate();
+    TaskFindPixelSizePrivate();
 
 public slots:
     void run();
 
 private:
 
-    friend class TaskCheckPixelSize;
+    friend class TaskFindPixelSize;
 };

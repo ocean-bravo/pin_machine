@@ -644,12 +644,12 @@ Item {
                         Layout.row: 3
                     }
                     SmButton {
-                        id: testPixelSize
+                        id: findPixelSize
                         text: qsTr("Find pixel size")
                         checkable: true
                         checked: false
-                        onCheckedChanged: checked ? TaskCheckPixelSize.run() : TaskCheckPixelSize.stopProgram()
-                        Connections { target: TaskCheckPixelSize; function onFinished() { testPixelSize.checked = false } }
+                        onCheckedChanged: checked ? TaskFindPixelSize.run() : TaskFindPixelSize.stopProgram()
+                        Connections { target: TaskFindPixelSize; function onFinished() { findPixelSize.checked = false } }
                         Layout.row: 4
                     }
                     //Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
