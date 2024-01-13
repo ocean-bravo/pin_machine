@@ -59,10 +59,10 @@ void TaskCheckCameraPrivate::run()
     // Разница в диаметрах блобов, больше которой считается что блоб неправильный
     //static const double wrongBlobDiaError = 0.3;
 
+    const auto fin = qScopeGuard([this]{ emit finished(); });
+
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
-
-    auto fin = qScopeGuard([this]{ emit finished(); });
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });

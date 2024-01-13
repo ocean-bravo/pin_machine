@@ -65,10 +65,10 @@ TaskTestScanUpdateCyclePrivate::TaskTestScanUpdateCyclePrivate(TaskScan *sb, Tas
 
 void TaskTestScanUpdateCyclePrivate::run(QString program)
 {
+    const auto fin = qScopeGuard([this]{ emit finished(); });
+
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
-
-    auto fin = qScopeGuard([this]{ emit finished(); });
 
     while(true)
     {

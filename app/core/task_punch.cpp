@@ -60,10 +60,10 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
 {
+    const auto fin = qScopeGuard([this]{ emit finished(); });
+
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
-
-    auto fin = qScopeGuard([this]{ emit finished(); });
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
