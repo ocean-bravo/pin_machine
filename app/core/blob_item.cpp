@@ -139,6 +139,8 @@ void BlobItem::setRealFiducial(bool state)
 void BlobItem::toggleHighlight()
 {
     _highlighted = !_highlighted;
+
+    qd() << "highlight now " << _highlighted;
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
