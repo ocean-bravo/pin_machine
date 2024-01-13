@@ -20,7 +20,7 @@ public:
     bool isRealFiducial() const;
     void setRealFiducial(bool state);
 
-    void toggleHighlight();
+    void setHighlight(bool state);
 
 signals:
     void pressed();

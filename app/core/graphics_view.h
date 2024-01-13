@@ -25,7 +25,7 @@ signals:
     void sizeChanged(QSize);
     void selectModeChanged(bool mode);
     void scanPosition(QPointF pos);
-    void toggleHighlightBlobs();
+    void highlightBlobs(bool);
 
 protected:
     void wheelEvent(QWheelEvent* event) override;
@@ -48,4 +48,5 @@ private:
 
     bool _dragMode = false;
     QMouseEvent _lastMouseEvent = {QEvent::None, QPointF(), QPointF(), QPointF(), Qt::NoButton, { }, { } };
+    bool _highlightBlobs = false;
 };

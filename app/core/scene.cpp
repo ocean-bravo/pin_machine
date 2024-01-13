@@ -308,9 +308,9 @@ void Scene::loadScene(const QString& url)
     }
 }
 
-void Scene::toggleHighlightBlobs()
+void Scene::highlightBlobs(bool state)
 {
-    every<BlobItem>(items(), [this](BlobItem* blob) { blob->toggleHighlight(); });
+    every<BlobItem>(items(), [this, state](BlobItem* blob) { blob->setHighlight(state); });
 }
 
 int Scene::images() const

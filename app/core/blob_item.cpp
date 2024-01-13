@@ -141,9 +141,9 @@ void BlobItem::setRealFiducial(bool state)
     repaintLater();
 }
 
-void BlobItem::toggleHighlight()
+void BlobItem::setHighlight(bool state)
 {
-    _highlighted = !_highlighted;
+    _highlighted = state;
     repaintLater();
 }
 
