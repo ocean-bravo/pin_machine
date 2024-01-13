@@ -51,8 +51,13 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
         painter->drawLine(QLineF(-rad,  0, -2*rad,  0));
     }
 
-    setBrush(_highlighted ? Qt::red : QBrush());
-    setBrush(isPunch() ? Qt::blue : QBrush());
+    setBrush(QBrush());
+
+    if (_highlighted)
+        setBrush(Qt::red);
+
+    if (isPunch())
+        setBrush(Qt::blue);
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
