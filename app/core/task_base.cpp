@@ -46,7 +46,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     video().capture(diaBlob + 2);
 
-    waitForSignal(&video(), &Video4::capturedSmallRegion, 10000);
+    waitForSignal(&video(), &Video4::capturedSmallRegion, 1000);
 
     emit message("captured");
 
