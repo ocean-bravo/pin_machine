@@ -20,6 +20,8 @@ public:
     bool isRealFiducial() const;
     void setRealFiducial(bool state);
 
+    void toggleHighlight();
+
 signals:
     void pressed();
 
@@ -43,4 +45,6 @@ private:
 
     double _highlightedThickness = 3.0;
     double _nonhighlightedThickness = 1.0;
+    bool _highlighted = false;
+
 };

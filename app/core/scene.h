@@ -33,6 +33,8 @@ public:
     void saveScene(const QString &url);
     void loadScene(const QString &url);
 
+    void toggleHighlightBlobs();
+
     int images() const;
 
 signals:

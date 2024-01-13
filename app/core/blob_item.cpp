@@ -51,6 +51,7 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
         painter->drawLine(QLineF(-rad,  0, -2*rad,  0));
     }
 
+    setBrush(_highlighted ? Qt::red : QBrush());
     setBrush(isPunch() ? Qt::blue : QBrush());
 
     QGraphicsEllipseItem::paint(painter, &savedOption, widget);
@@ -133,6 +134,11 @@ void BlobItem::setRealFiducial(bool state)
     setData(1, state);
     state ? setRotation(45) : setRotation(0);
     repaintLater();
+}
+
+void BlobItem::toggleHighlight()
+{
+    _highlighted = !_highlighted;
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)

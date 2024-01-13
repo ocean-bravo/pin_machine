@@ -155,11 +155,15 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu menu;
 
-    QString menuText = tr("Scan here");
-
-    menu.addAction(menuText, this, [this, event]()
+    menu.addAction(tr("Scan here"), this, [this, event]()
     {
         emit scanPosition(mapToScene(event->pos()));
+    });
+
+
+    menu.addAction(tr("Toggle blobs highlight"), this, [this]()
+    {
+        emit toggleHighlightBlobs();
     });
 
     menu.exec(event->globalPos());
