@@ -142,8 +142,7 @@ void TaskFindPixelSizePrivate::run()
         double dist = OpenCv::corr(stage1[width], stage2[width]);
 
         settings().setValue("pixel_size_" + QString::number(width), dist / 6.0);
-
-        qd() << "pixel_size_" + QString::number(width) << dist / 6.0;
+        db().insert("pixel_size_" + QString::number(width), dist / 6.0);
     }
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
