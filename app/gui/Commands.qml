@@ -437,6 +437,7 @@ Item {
                         folder: applicationDirPath
                         fileMode: FileDialog.OpenFile
                         onAccepted: Engine.load(currentFile)
+                        modality: Qt.ApplicationModal
                     }
                 }
 
