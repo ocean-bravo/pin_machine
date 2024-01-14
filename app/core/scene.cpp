@@ -295,7 +295,11 @@ void Scene::loadScene(const QString& url)
 
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(std::move(img)), _board);
+        QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
+        const double pixInMm = db().pixInMm();
+        pix.setDevicePixelRatio(pixInMm);
+
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
