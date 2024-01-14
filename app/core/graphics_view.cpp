@@ -160,14 +160,14 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
         emit scanPosition(mapToScene(event->pos()));
     });
 
-    QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this]()
+    const bool blobsHighlightState = db().value("blobs_highlight").toBool();
+    QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this, blobsHighlightState]()
     {
-        _highlightBlobs = !_highlightBlobs;
-        emit highlightBlobs(_highlightBlobs);
+        db().insert("blobs_highlight", !blobsHighlightState);
     });
 
     toggleHighlight->setCheckable(true);
-    toggleHighlight->setChecked(_highlightBlobs);
+    toggleHighlight->setChecked(blobsHighlightState);
 
     menu.exec(event->globalPos());
 }

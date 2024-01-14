@@ -29,7 +29,6 @@ ScanView::ScanView(QWidget *parent)
     TaskScanPosition* taskScanPosition = new TaskScanPosition(this);
 
     connect(ui->graphicsView, &GraphicsView::scanPosition, taskScanPosition, &TaskScanPosition::run);
-    connect(ui->graphicsView, &GraphicsView::highlightBlobs, &scene(), &Scene::highlightBlobs);
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {

@@ -36,6 +36,13 @@ Scene::Scene(QObject* parent)
 //            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
 //        });
 //    });
+
+
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+    {
+        if (key == "blobs_highlight")
+            highlightBlobs(value.toBool());
+    });
 }
 
 Scene::~Scene()
@@ -48,6 +55,7 @@ BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
     //QMutexLocker locker(&_mutex);
 
     BlobItem* blob = new BlobItem(x, y, dia);
+    blob->setHighlight(db().value("blobs_highlight").toBool());
 
     auto foo = [this, blob, sceneIsParent]()
     {
