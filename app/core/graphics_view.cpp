@@ -170,6 +170,8 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     toggleHighlight->setChecked(blobsHighlightState);
 
     menu.exec(event->globalPos());
+
+    QGraphicsView::contextMenuEvent(event);
 }
 
 void GraphicsView::mouseReleaseEvent(QMouseEvent* event)

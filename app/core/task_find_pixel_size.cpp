@@ -61,6 +61,7 @@ TaskFindPixelSizePrivate::TaskFindPixelSizePrivate()
 
 }
 
+// Скан может быть неудачным для какого то разрешения. Определить, и предупредить
 void TaskFindPixelSizePrivate::run()
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
