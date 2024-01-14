@@ -190,9 +190,7 @@ void Scene::saveScene(const QString& url)
         map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
         map.insert(mainKey + ".img.width", img.width());
         map.insert(mainKey + ".img.height", img.height());
-
-        qd() << "save img width: " << img.width();
-        qd() << "save img height: " << img.height();
+        map.insert(mainKey + ".img.devicePixelRatio", pixmap->pixmap().devicePixelRatio());
 
         map.insert(mainKey + ".offset" , pixmap->offset());
         map.insert(mainKey + ".scale" , pixmap->scale());
@@ -279,9 +277,7 @@ void Scene::loadScene(const QString& url)
         QByteArray ba = map.value(mainKey + ".img").toByteArray();
         int imgWidth = map.value(mainKey + ".img.width").toInt();
         int imgHeight = map.value(mainKey + ".img.height").toInt();
-
-        qd() << "load img width: " << imgWidth;
-        qd() << "load img height: " << imgHeight;
+        double devicePixelRatio = map.value(mainKey + ".img.devicePixelRatio").toDouble();
 
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale = map.value(mainKey + ".scale").toDouble();
@@ -296,9 +292,7 @@ void Scene::loadScene(const QString& url)
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
         QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
-        db().insert("resolution_width", imgWidth);
-        const double pixInMm = db().pixInMm();
-        pix.setDevicePixelRatio(pixInMm);
+        pix.setDevicePixelRatio(devicePixelRatio);
 
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 

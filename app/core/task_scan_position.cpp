@@ -46,6 +46,8 @@ TaskScanPositionPrivate::TaskScanPositionPrivate()
 
 }
 
+// Нужно, чтобы было установлено разрешение камере. Если нет, будут проблемы.
+
 void TaskScanPositionPrivate::run(QPointF pos)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
