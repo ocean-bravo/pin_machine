@@ -98,7 +98,7 @@ void TaskFindPixelSizePrivate::run()
         video().changeCamera(cameraId(), width, height, fourcc);
         video().start();
 
-        wait(1000); // чтобы изображение подстроилось
+        wait(300); // чтобы изображение подстроилось
 
         auto connection = connect(&video(), &Video4::captured, [width, &stage1](QImage img)
         {
@@ -125,7 +125,7 @@ void TaskFindPixelSizePrivate::run()
         video().changeCamera(cameraId(), width, height, fourcc);
         video().start();
 
-        wait(1000); // чтобы изображение подстроилось
+        wait(300); // чтобы изображение подстроилось
 
         auto connection = connect(&video(), &Video4::captured, [width, &stage2](QImage img)
         {
