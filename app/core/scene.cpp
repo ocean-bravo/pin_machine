@@ -190,6 +190,10 @@ void Scene::saveScene(const QString& url)
         map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
         map.insert(mainKey + ".img.width", img.width());
         map.insert(mainKey + ".img.height", img.height());
+
+        qd() << "save img width: " << img.width();
+        qd() << "save img height: " << img.height();
+
         map.insert(mainKey + ".offset" , pixmap->offset());
         map.insert(mainKey + ".scale" , pixmap->scale());
         map.insert(mainKey + ".pos" , pixmap->pos());
@@ -275,8 +279,12 @@ void Scene::loadScene(const QString& url)
         QByteArray ba = map.value(mainKey + ".img").toByteArray();
         int imgWidth = map.value(mainKey + ".img.width").toInt();
         int imgHeight = map.value(mainKey + ".img.height").toInt();
+
+        qd() << "load img width: " << imgWidth;
+        qd() << "load img height: " << imgHeight;
+
         QPointF offset = map.value(mainKey + ".offset").toPointF();
-        double scale= map.value(mainKey + ".scale").toDouble();
+        double scale = map.value(mainKey + ".scale").toDouble();
         QPointF pos = map.value(mainKey + ".pos").toPointF();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
