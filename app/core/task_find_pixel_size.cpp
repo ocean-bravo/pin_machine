@@ -88,6 +88,12 @@ void TaskFindPixelSizePrivate::run()
 
     for (int i = 0; i < widths.size(); ++i)
     {
+        if (_stop)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
         const int width = widths[i];
         const int height = anyHeightForWidth(width);
         const QString fourcc = anyFourcc(width, height);
@@ -115,6 +121,12 @@ void TaskFindPixelSizePrivate::run()
 
     for (int i = 0; i < widths.size(); ++i)
     {
+        if (_stop)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
         const int width = widths[i];
         const int height = anyHeightForWidth(width);
         const QString fourcc = anyFourcc(width, height);
@@ -139,6 +151,12 @@ void TaskFindPixelSizePrivate::run()
     // 3 стадия
     for (int i = 0; i < widths.size(); ++i)
     {
+        if (_stop)
+        {
+            emit message("program interrupted");
+            break;
+        }
+
         const int width = widths[i];
         double dist = OpenCv::corr(stage1[width], stage2[width]);
 
