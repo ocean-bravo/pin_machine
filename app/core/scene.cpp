@@ -296,6 +296,7 @@ void Scene::loadScene(const QString& url)
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
         QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
+        db().insert("resolution_width", imgWidth);
         const double pixInMm = db().pixInMm();
         pix.setDevicePixelRatio(pixInMm);
 
