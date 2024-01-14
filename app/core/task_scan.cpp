@@ -183,7 +183,12 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 
     wait(200);
 
-    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
+    {
+        scene().setImage(img); // копия не нужна. Внутри делается копия
+        db().insert("image_raw_captured", img.copy());
+        opencv().blobDetectorCaptured(img.copy());
+    });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     while (true)

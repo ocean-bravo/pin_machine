@@ -24,7 +24,7 @@ public:
 
     Q_INVOKABLE void save(const QString &url);
     Q_INVOKABLE void load(const QString &url);
-    Q_INVOKABLE void capture();
+    //Q_INVOKABLE void capture();
 
     // Q_INVOKABLE void capture1();
     // Q_INVOKABLE void capture2();

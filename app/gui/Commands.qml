@@ -754,14 +754,14 @@ Item {
                             }
                         }
 
-                        Button {
-                            id: captureFrame
-                            width: 200
-                            text: qsTr("Capture frame")
-                            onPressed: {
-                                Engine.capture()
-                            }
-                        }
+                        // Button {
+                        //     id: captureFrame
+                        //     width: 200
+                        //     text: qsTr("Capture frame")
+                        //     onPressed: {
+                        //         Engine.capture()
+                        //     }
+                        // }
 
                         ComboBox {
                             id: imgType

@@ -124,14 +124,14 @@ void Engine::load(const QString& url)
 //     opencv().corr();
 // }
 
-void Engine::capture()
-{
-    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-    video().start();
-    video().capture();
-    waitForSignal(&video(), &Video4::captured, 2000);
-}
+// void Engine::capture()
+// {
+//     auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+//     auto guard = qScopeGuard([=]() { disconnect(connection); });
+//     video().start();
+//     video().capture();
+//     waitForSignal(&video(), &Video4::captured, 2000);
+// }
 
 Engine::~Engine()
 {
@@ -157,12 +157,6 @@ void Engine::createQmlEngine()
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
         db().insert("image_raw_captured", img.copy());
-    });
-
-    connect(&video(), &Video4::captured, this, [](QImage img)
-    {
-        db().insert("image_raw_captured", img.copy());
-        opencv().blobDetectorCaptured(img.copy());
     });
 
     connect(&opencv(), &OpenCv::circleChanged, this, [](QImage img)

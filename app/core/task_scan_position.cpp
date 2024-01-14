@@ -3,6 +3,8 @@
 #include "video4.h"
 #include "serial.h"
 #include "scene.h"
+#include "data_bus.h"
+#include "openCv.h"
 
 #include <QScopeGuard>
 #include <QDateTime>
@@ -63,7 +65,12 @@ void TaskScanPositionPrivate::run(QPointF pos)
 
     video().start();
 
-    auto connection = connect(&video(), &Video4::captured, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
+    {
+        scene().setImage(img); // копия не нужна. Внутри делается копия
+        db().insert("image_raw_captured", img.copy());
+        opencv().blobDetectorCaptured(img.copy());
+    });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     moveToAndWaitPosition(pos.x(), pos.y());
