@@ -153,6 +153,11 @@ void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 
 void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
 {
+    QGraphicsView::contextMenuEvent(event);
+
+    if (event->isAccepted())
+        return;
+
     QMenu menu;
 
     menu.addAction(tr("Scan here"), this, [this, event]()
@@ -170,8 +175,6 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     toggleHighlight->setChecked(blobsHighlightState);
 
     menu.exec(event->globalPos());
-
-    QGraphicsView::contextMenuEvent(event);
 }
 
 void GraphicsView::mouseReleaseEvent(QMouseEvent* event)

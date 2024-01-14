@@ -210,6 +210,8 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
     });
 
     menu.exec(event->screenPos());
+
+    event->accept();
 }
 
 void BlobItem::highlight()
