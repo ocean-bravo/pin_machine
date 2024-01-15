@@ -663,7 +663,7 @@ Item {
                         onCheckedChanged: {
                             if (checked) {
                                 TaskBestPath.run()
-                                splash.text = "asfdasf"
+                                splash.text = "Searching optimal path..."
                                 splash.backgroundColor = "green"
                                 splash.open()
                                }
