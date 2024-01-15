@@ -68,11 +68,13 @@ Item {
         return resMjpg.concat(resYuyv)
     }
 
-    Connections { target: Serial;          function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
-    Connections { target: TaskScan;        function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskUpdate;      function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskCheckCamera; function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskPunch;       function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: Serial;            function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
+    Connections { target: TaskScan;          function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskUpdate;        function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskCheckCamera;   function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskPunch;         function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskFindPixelSize; function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial
