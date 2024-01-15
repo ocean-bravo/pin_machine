@@ -660,7 +660,18 @@ Item {
                         text: qsTr("Best path")
                         checkable: true
                         checked: false
-                        onCheckedChanged: checked ? TaskBestPath.run() : TaskBestPath.stopProgram()
+                        onCheckedChanged: {
+                            if (checked) {
+                                TaskBestPath.run()
+                                splash.text = "asfdasf"
+                                splash.backgroundColor = "green"
+                                splash.open()
+                               }
+                            else {
+                                TaskBestPath.stopProgram()
+                                splash.close()
+                            }
+                        }
                         Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
                         Layout.row: 5
                     }

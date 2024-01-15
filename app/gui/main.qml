@@ -32,6 +32,7 @@ ApplicationWindow {
         id: splash
         text: DataBus.splash
         backgroundColor: "green"
+        noButtons: true
         onTextChanged: {
             if (text.length > 0)
                 open()
