@@ -158,21 +158,31 @@ void TaskCheckCameraPrivate::run()
     //И сделать тест разброса определения координат блоба
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
-    int count  = 0;
-    every<BlobItem>(scene().items(), [this, &count](BlobItem* blob)
-    {
-        if (blob->isPunch())
-        {
-            const double x = blob->scenePos().x();
-            const double y = blob->scenePos().y();
+    QVector<BlobItem*> blobs;
 
-            moveToAndWaitPosition(x, y);
-            qd() << QString("board position: %1 %2").arg(toReal3(blob->pos().x()), toReal3(blob->pos().y())); // для отладки
-            qd() << QString("punch position: %1 %2").arg(toReal3(x), toReal3(y));
-            wait(500);
-            ++count;
-        }
-    });
+    blobs = db().value("blobs_optimized").value<QVector<BlobItem*>>();
+
+    if (blobs.isEmpty())
+    {
+        every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
+        {
+            if (blob->isPunch())
+                blobs.push_back(blob);
+        });
+    }
+
+    int count  = 0;
+    for (BlobItem* blob : qAsConst(blobs))
+    {
+        const double x = blob->scenePos().x();
+        const double y = blob->scenePos().y();
+
+        moveToAndWaitPosition(x, y);
+        qd() << QString("board position: %1 %2").arg(toReal3(blob->pos().x()), toReal3(blob->pos().y())); // для отладки
+        qd() << QString("punch position: %1 %2").arg(toReal3(x), toReal3(y));
+        wait(500);
+        ++count;
+    }
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 

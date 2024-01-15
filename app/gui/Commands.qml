@@ -653,6 +653,15 @@ Item {
                         Connections { target: TaskFindPixelSize; function onFinished() { findPixelSize.checked = false } }
                         Layout.row: 4
                     }
+                    SmButton {
+                        id: findBestPath
+                        text: qsTr("Best path")
+                        checkable: true
+                        checked: false
+                        onCheckedChanged: checked ? TaskBestPath.run() : TaskBestPath.stopProgram()
+                        Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
+                        Layout.row: 5
+                    }
                     //Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
                     // Button {
                     //     onClicked: {
