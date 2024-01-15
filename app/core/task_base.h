@@ -37,7 +37,7 @@ public:
     QString anyFourcc(int width, int height) const;
 
 
-    QList<QGraphicsItem*> findShortestPath(QList<QGraphicsItem *> items, QPointF startPoint);
+    QList<BlobItem*> findShortestPath(QList<BlobItem*> items, QPointF startPoint);
 
     QPointF currPos() const;
 

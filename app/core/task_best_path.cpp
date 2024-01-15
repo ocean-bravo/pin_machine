@@ -28,7 +28,7 @@
 
 namespace {
 
-Matrix<double> distanceMatrix(const QVector<BlobItem*>& blobs)
+Matrix<double> distanceMatrix(const QList<BlobItem*>& blobs)
 {
     // создание матрицы размерности количества вершин
     Matrix<double> distances(blobs.size());
@@ -99,12 +99,12 @@ void TaskBestPathPrivate::run()
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     // 1. Получили все блобы для забивки
-    QVector<BlobItem*> blobs;
+    QList<BlobItem*> blobs;
 
     every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
     {
         if (blob->isPunch())
-            blobs.push_back(blob);
+            blobs.append(blob);
     });
 
     // 2. Преобразовали блобы в матрицу
@@ -116,9 +116,9 @@ void TaskBestPathPrivate::run()
     std::list<size_t> solution = littleSolver.getSolution();
 
     // 4. Получили элементы выстроенные по кратчайшему пути
-    QVector<BlobItem*> blobsOptimized;
+    QList<BlobItem*> blobsOptimized;
     for (size_t i : solution)
-        blobsOptimized.push_back(blobs.at(i));
+        blobsOptimized.append(blobs.at(i));
 
     // Тут бы надо бы найти ближайшую точки из пути к начальной точке, но пока пофигу, пусть так.
 

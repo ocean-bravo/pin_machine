@@ -82,23 +82,28 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
     auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    QList<QGraphicsItem*> itemsToUpdate;
+    QList<BlobItem*> blobs;
 
-    every<BlobItem>(scene().items(), [&itemsToUpdate](BlobItem* blob)
+    every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
     {
         if (blob->isFiducial() || blob->isPunch())
-            itemsToUpdate.append(blob);
+            blobs.append(blob);
     });
 
-    if (itemsToUpdate.isEmpty())
-        itemsToUpdate = scene().items();
+    if (blobs.isEmpty())
+    {
+        every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
+        {
+            blobs.append(blob);
+        });
+    }
 
     int count  = 0;
 
     QPointF startPoint = currPos();
-    QList<QGraphicsItem*> orderedItemsToUpdate = findShortestPath(itemsToUpdate, startPoint);
+    QList<BlobItem*> orderedBlobsToUpdate = findShortestPath(blobs, startPoint);
 
-    every<BlobItem>(orderedItemsToUpdate, [this, &count](BlobItem* blob)
+    for (BlobItem* blob : orderedBlobsToUpdate)
     {
         if (_stop)
         {
@@ -120,7 +125,7 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
         const double x = blob->scenePos().x();
         const double y = blob->scenePos().y();
         qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
-    });
+    }
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("update blobs finished");

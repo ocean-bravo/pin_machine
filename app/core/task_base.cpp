@@ -197,33 +197,33 @@ QString TaskBase::anyFourcc(int width, int height) const
     return "";
 }
 
-QList<QGraphicsItem *> TaskBase::findShortestPath(QList<QGraphicsItem*> items, QPointF startPoint)
+QList<BlobItem*> TaskBase::findShortestPath(QList<BlobItem*> items, QPointF startPoint)
 {
     if (items.length() < 2)
         return items;
 
-    auto closestItem = [](QList<QGraphicsItem *>& items, QPointF startPoint) -> QGraphicsItem*
+    auto closestItem = [](QList<BlobItem*>& items, QPointF startPoint) -> BlobItem*
     {
-        auto binary_op = [startPoint](QGraphicsItem* it1, QGraphicsItem* it2)
+        auto binary_op = [startPoint](BlobItem* it1, BlobItem* it2)
         {
             return QLineF(it1->scenePos(), startPoint).length() < QLineF(it2->scenePos(), startPoint).length() ? it1 : it2;
         };
 
-        QGraphicsItem* closestItem = std::accumulate(items.begin(), items.end(), items.first(), binary_op);
+        BlobItem* closestItem = std::accumulate(items.begin(), items.end(), items.first(), binary_op);
         items.removeOne(closestItem);
         return closestItem;
     };
 
-    QList<QGraphicsItem *> newItems;
+    QList<BlobItem*> newItems;
 
     while (items.length() > 1)
     {
-        QGraphicsItem* item = closestItem(items, startPoint);
-        newItems.push_back(item);
+        BlobItem* item = closestItem(items, startPoint);
+        newItems.append(item);
         startPoint = item->scenePos();
     }
 
-    newItems.push_back(items.first());
+    newItems.append(items.first());
 
     return newItems;
 }
