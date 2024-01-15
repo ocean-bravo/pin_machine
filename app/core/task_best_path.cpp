@@ -98,6 +98,12 @@ void TaskBestPathPrivate::run()
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
+    int time = 0;
+    QTimer statusTimer;
+    connect(&statusTimer, &QTimer::timeout, this, [&time]() { db().insert("splash", "finding path " + QString::number(time)); ++time; });
+    statusTimer.start(1000);
+
+
     // 1. Получили все блобы для забивки
     QList<BlobItem*> blobs;
 

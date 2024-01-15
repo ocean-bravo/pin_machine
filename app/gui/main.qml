@@ -28,6 +28,18 @@ ApplicationWindow {
         onClosed: DataBus.messagebox = "" // чтобы одно и тоже сообщение могло показываться
     }
 
+    MessageBox {
+        id: splash
+        text: DataBus.splash
+        backgroundColor: "green"
+        onTextChanged: {
+            if (text.length > 0)
+                open()
+            else
+                close()
+        }
+    }
+
     Button {
         id: stepNext
         text: "Next"
