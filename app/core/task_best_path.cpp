@@ -100,7 +100,11 @@ void TaskBestPathPrivate::run()
 
     int time = 0;
     QTimer statusTimer;
-    connect(&statusTimer, &QTimer::timeout, this, [&time]() { db().insert("splash", "finding path " + QString::number(time)); ++time; });
+    connect(&statusTimer, &QTimer::timeout, this, [&time]()
+    {
+        db().insert("splash", "finding path " + QString::number(time));
+        ++time;
+    }, Qt::QueuedConnection);
     statusTimer.start(1000);
 
 
@@ -117,9 +121,18 @@ void TaskBestPathPrivate::run()
     Matrix<double> distances = distanceMatrix(blobs);
 
     // 3. Подали на вход алгоритму и получили решение
-    LittleSolver littleSolver(distances);
-    littleSolver.solve();
-    std::list<size_t> solution = littleSolver.getSolution();
+    std::list<size_t> solution;
+    try
+    {
+        LittleSolver littleSolver(distances);
+        littleSolver.solve();
+        solution = littleSolver.getSolution();
+    }
+    catch (...)
+    {
+
+    }
+
 
     // 4. Получили элементы выстроенные по кратчайшему пути
     QList<BlobItem*> blobsOptimized;
