@@ -665,7 +665,7 @@ Item {
                             if (checked) {
                                 TaskBestPath.run()
                                 count = 0
-                                splash.text = "Searching optimal path..." + "\n" + count
+                                splash.text = Qt.binding(function() { return "Searching optimal path..." + "\n" + count} )
                                 splash.backgroundColor = "green"
                                 splash.open()
                                 countTimer.start()
