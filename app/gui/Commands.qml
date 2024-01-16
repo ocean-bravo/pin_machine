@@ -660,18 +660,30 @@ Item {
                         text: qsTr("Best path")
                         checkable: true
                         checked: false
+                        property int count: 0
                         onCheckedChanged: {
                             if (checked) {
                                 TaskBestPath.run()
-                                splash.text = "Searching optimal path..."
+                                count = 0
+                                splash.text = "Searching optimal path..." + "\n" + count
                                 splash.backgroundColor = "green"
                                 splash.open()
+                                countTimer.start()
                                }
                             else {
                                 TaskBestPath.stopProgram()
                                 splash.close()
+                                countTimer.stop()
                             }
                         }
+                        Timer {
+                            id: countTimer
+                            interval: 1000
+                            repeat: true
+                            running: false
+                            onTriggered: ++count
+                        }
+
                         Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
                         Layout.row: 5
                     }
