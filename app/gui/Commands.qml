@@ -681,7 +681,7 @@ Item {
                             interval: 1000
                             repeat: true
                             running: false
-                            onTriggered: ++count
+                            onTriggered: ++findBestPath.count
                         }
 
                         Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
