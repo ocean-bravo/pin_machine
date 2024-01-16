@@ -51,6 +51,7 @@ public slots:
 
 signals:
     void newRecord(double);
+    void solved();
 
 private:
     // основная рекурсивная функция поиска пути

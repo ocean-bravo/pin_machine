@@ -126,14 +126,14 @@ void TaskBestPathPrivate::run()
         });
 
         QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
-        wait(10000);
-
+        waitForSignal(&littleSolver, &LittleSolver::solved, 10000000);
+        qd() << "solved";
 
         //littleSolver.solve();
         solution = littleSolver.getSolution();
 
         thread.quit();
-        wait(300);
+        wait(1000);
     }
     catch (...)
     {
