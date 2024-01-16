@@ -122,7 +122,7 @@ void TaskBestPathPrivate::run()
         wait(300);
 
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
-        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution) { qd() << "new solution is: " << solution; });
+        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution) { /*qd() << "new solution is: " << solution;*/ });
 
         QAtomicInteger<bool> solved = false;
         connect(&littleSolver, &LittleSolver::solved, [&solved]() { solved = true; });
