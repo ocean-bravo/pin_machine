@@ -667,12 +667,12 @@ Item {
                                 count = 0
                                 splash.text = Qt.binding(function() { return "Searching optimal path..." + "\n" + count} )
                                 splash.backgroundColor = "green"
-                                splash.open()
+                                //splash.open()
                                 countTimer.start()
                                }
                             else {
                                 TaskBestPath.stopProgram()
-                                splash.close()
+                                //splash.close()
                                 countTimer.stop()
                             }
                         }
