@@ -1,6 +1,8 @@
 #include "tsp_little_solver.h"
 #include "tsp_matrix.h"
 
+#include "utils.h"
+
 using std::list;
 using std::vector;
 using std::pair;
@@ -164,6 +166,7 @@ void LittleSolver::candidateSolution(const arclist &arcs)
     std::lock_guard<std::mutex> g(_mutex);
     // копирование стоимости и пути
     _record = curCost;
+    qd() << "record: " << _record;
     _arcs = arcs;
 }
 
