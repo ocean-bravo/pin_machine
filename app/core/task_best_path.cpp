@@ -111,7 +111,8 @@ void TaskBestPathPrivate::run()
     Matrix<double> distances = distanceMatrix(blobs);
 
     // 3. Подали на вход алгоритму и получили решение
-    std::list<size_t> solution;
+    QList<int> solution;
+
     try
     {
         LittleSolver littleSolver(distances);
@@ -130,7 +131,7 @@ void TaskBestPathPrivate::run()
         qd() << "solved";
 
         //littleSolver.solve();
-        solution = littleSolver.getSolution();
+        solution = littleSolver.solution();
 
         thread.quit();
         wait(1000);
@@ -144,6 +145,34 @@ void TaskBestPathPrivate::run()
     QList<BlobItem*> blobsOptimized;
     for (size_t i : solution)
         blobsOptimized.append(blobs.at(i));
+
+
+
+    QList<QPair<int, int>> arclist;
+    QList<int> points;
+
+    points.push_back(arclist.first().first);
+    int last = arclist.first().second;
+
+    while (arclist.size() > 0)
+    {
+        for (int i = 0; i < arclist.size(); ++i)
+        {
+            QPair<int, int> next = arclist[i];
+
+            if (next.first == last)
+            {
+                points.push_back(next.second);
+                last = next.second;
+                arclist.removeAt(i);
+                break;
+            }
+        }
+    }
+
+
+
+
 
     // Тут бы надо бы найти ближайшую точки из пути к начальной точке, но пока пофигу, пусть так.
 
