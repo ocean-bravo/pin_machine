@@ -129,7 +129,7 @@ void TaskBestPathPrivate::run()
 
         QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
 
-        while (!_stop || solved)
+        while (!_stop || !solved)
         {
             wait(100);
         }
