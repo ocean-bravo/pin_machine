@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+
 #include <list>
 #include <utility>
 #include <memory>
@@ -10,8 +12,10 @@
 template<typename T>
 class Matrix;
 
-class LittleSolver
+class LittleSolver : public QObject
 {
+    Q_OBJECT
+
 public:
     // список вершин как список пар номеров смежных вершин
     using arclist = std::list<std::pair<size_t, size_t>>;
@@ -41,6 +45,9 @@ public:
     // не должен быть скопирован
     LittleSolver(const LittleSolver&) = delete;
     LittleSolver &operator=(const LittleSolver&) = delete;
+
+signals:
+    void newRecord(double);
 
 private:
     // основная рекурсивная функция поиска пути

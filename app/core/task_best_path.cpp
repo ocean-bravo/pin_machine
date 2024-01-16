@@ -116,12 +116,12 @@ void TaskBestPathPrivate::run()
     {
         LittleSolver littleSolver(distances);
         QThread thread;
+        littleSolver.moveToThread(&thread);
         thread.start();
         wait(300);
-        runOnThread(&thread, [&]()
-        {
-            littleSolver.solve();
-        });
+        QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
+        wait(10000);
+
 
         //littleSolver.solve();
         solution = littleSolver.getSolution();
