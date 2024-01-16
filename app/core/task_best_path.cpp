@@ -119,12 +119,21 @@ void TaskBestPathPrivate::run()
         littleSolver.moveToThread(&thread);
         thread.start();
         wait(300);
+
+        connect(&littleSolver, &LittleSolver::newRecord, [](double record)
+        {
+            qd() << "new record is: " << record;
+        });
+
         QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
         wait(10000);
 
 
         //littleSolver.solve();
         solution = littleSolver.getSolution();
+
+        thread.quit();
+        wait(300);
     }
     catch (...)
     {

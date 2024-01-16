@@ -166,7 +166,9 @@ void LittleSolver::candidateSolution(const arclist &arcs)
     std::lock_guard<std::mutex> g(_mutex);
     // копирование стоимости и пути
     _record = curCost;
-    qd() << "record: " << _record;
+    //qd() << "record: " << _record;
+
+    emit newRecord(_record);
     _arcs = arcs;
 }
 
