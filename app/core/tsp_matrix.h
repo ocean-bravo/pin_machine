@@ -1,30 +1,30 @@
 #pragma once
 
-#include <vector>
+#include <QVector>
 
 template<typename ItemType>
 class Matrix
 {
 public:
-    explicit Matrix(size_t size = 0, ItemType values = 0);
+    explicit Matrix(int size = 0, ItemType values = 0);
 
     // доступ к элементам по индексам
-    const ItemType &item(size_t row, size_t column) const;
-    ItemType &item(size_t row, size_t column);
-    const ItemType &operator()(size_t row, size_t column) const;
-    ItemType &operator()(size_t row, size_t column);
+    const ItemType &item(int row, int column) const;
+    ItemType &item(int row, int column);
+    const ItemType &operator()(int row, int column) const;
+    ItemType &operator()(int row, int column);
 
     // получение "реальных" идексов
     // e.g. если была удалена строка 1 rowIndex(1) == 2
     // ?необходимо для алгоритма Литтла
-    size_t rowIndex(size_t row) const;
-    size_t columnIndex(size_t column) const;
+    int rowIndex(int row) const;
+    int columnIndex(int column) const;
 
     // размерность матрицы
-    size_t size() const;
+    int size() const;
 
     // удаление строки и столбца по индексам
-    void removeRowColumn(size_t row, size_t column);
+    void removeRowColumn(int row, int column);
 
     Matrix(const Matrix &) = default;
     Matrix &operator=(const Matrix &) = default;
@@ -33,59 +33,61 @@ private:
     // инициализация "реальных" номеров строк и столбцов
     void initRowsColumns();
 
-    std::vector<std::vector<ItemType>> _items;
+    QVector<QVector<ItemType>> _items;
     // "реальные" номера строк
-    std::vector<size_t> _rows;
+    QVector<int> _rows;
     // "реальные" номера столбцов
-    std::vector<size_t> _columns;
+    QVector<int> _columns;
 };
 
 template<typename ItemType>
-inline Matrix<ItemType>::Matrix(size_t size, ItemType values)
-    :_items(size, std::vector<ItemType>(size, values)), _rows(size), _columns(size)
+inline Matrix<ItemType>::Matrix(int size, ItemType values)
+    :_items(size, QVector<ItemType>(size, values))
+    , _rows(size)
+    , _columns(size)
 {
     initRowsColumns();
 }
 
 template<typename ItemType>
-inline const ItemType & Matrix<ItemType>::item(size_t row, size_t column) const
+inline const ItemType & Matrix<ItemType>::item(int row, int column) const
 {
     return _items[row][column];
 }
 
 template<typename ItemType>
-inline ItemType & Matrix<ItemType>::item(size_t row, size_t column)
+inline ItemType & Matrix<ItemType>::item(int row, int column)
 {
     // по имя искоренения дублирования кода
     return const_cast<ItemType&>(static_cast<const Matrix<ItemType>&>(*this).item(row, column));
 }
 
 template<typename ItemType>
-inline const ItemType & Matrix<ItemType>::operator()(size_t row, size_t column) const
+inline const ItemType & Matrix<ItemType>::operator()(int row, int column) const
 {
     return item(row, column);
 }
 
 template<typename ItemType>
-inline ItemType & Matrix<ItemType>::operator()(size_t row, size_t column)
+inline ItemType & Matrix<ItemType>::operator()(int row, int column)
 {
     return item(row, column);
 }
 
 template<typename ItemType>
-inline size_t Matrix<ItemType>::rowIndex(size_t row) const
+inline int Matrix<ItemType>::rowIndex(int row) const
 {
     return _rows[row];
 }
 
 template<typename ItemType>
-inline size_t Matrix<ItemType>::columnIndex(size_t column) const
+inline int Matrix<ItemType>::columnIndex(int column) const
 {
     return _columns[column];
 }
 
 template<typename ItemType>
-inline void Matrix<ItemType>::removeRowColumn(size_t row, size_t column)
+inline void Matrix<ItemType>::removeRowColumn(int row, int column)
 {
     // удаление индексов
     _rows.erase(_rows.begin() + row);
@@ -93,12 +95,12 @@ inline void Matrix<ItemType>::removeRowColumn(size_t row, size_t column)
     // удаление строки
     _items.erase(_items.begin() + row);
     // удаление столбца
-    for (size_t i = 0; i < _items.size(); i++)
+    for (int i = 0; i < _items.size(); i++)
         _items[i].erase(_items[i].begin() + column);
 }
 
 template<typename ItemType>
-inline size_t Matrix<ItemType>::size() const
+inline int Matrix<ItemType>::size() const
 {
     return _items.size();
 }
@@ -106,6 +108,6 @@ inline size_t Matrix<ItemType>::size() const
 template<typename ItemType>
 inline void Matrix<ItemType>::initRowsColumns()
 {
-    for (size_t i = 0; i < _rows.size(); i++)
+    for (int i = 0; i < _rows.size(); i++)
         _rows[i] = _columns[i] = i;
 }

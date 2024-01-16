@@ -32,8 +32,8 @@ Matrix<double> distanceMatrix(const QList<BlobItem*>& blobs)
 {
     // создание матрицы размерности количества вершин
     Matrix<double> distances(blobs.size());
-    size_t i = 0;
-    size_t j = 0;
+    int i = 0;
+    int j = 0;
 
     for (BlobItem* b1 : blobs)
     {
