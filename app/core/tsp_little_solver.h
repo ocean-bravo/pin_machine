@@ -26,8 +26,7 @@ public:
     LittleSolver(const Matrix<double> &m, double record = DBL_MAX);
     ~LittleSolver();
 
-    // основной метод
-    void solve();
+
 
     // получить решение
     std::list<size_t> getSolution() const;
@@ -45,6 +44,10 @@ public:
     // не должен быть скопирован
     LittleSolver(const LittleSolver&) = delete;
     LittleSolver &operator=(const LittleSolver&) = delete;
+
+public slots:
+    // основной метод
+    void solve();
 
 signals:
     void newRecord(double);
