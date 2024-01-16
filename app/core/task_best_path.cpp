@@ -121,22 +121,24 @@ void TaskBestPathPrivate::run()
         thread.start();
         wait(300);
 
-        connect(&littleSolver, &LittleSolver::newRecord, [](double record)
-        {
-            qd() << "new record is: " << record;
-        });
+        connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
+        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution) { qd() << "new solution is: " << solution; });
 
-        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution)
-        {
-            qd() << "new record is: " << solution;
-        });
+        QAtomicInteger<bool> solved = false;
+        connect(&littleSolver, &LittleSolver::solved, [&solved]() { solved = true; });
 
         QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
-        waitForSignal(&littleSolver, &LittleSolver::solved, 10000000);
-        qd() << "solved";
 
-        //littleSolver.solve();
-        solution = littleSolver.solution();
+        while (!_stop || solved)
+        {
+            wait(100);
+        }
+
+        if (solved)
+        {
+            qd() << "solved";
+            solution = littleSolver.solution();
+        }
 
         thread.quit();
         wait(1000);
@@ -147,33 +149,33 @@ void TaskBestPathPrivate::run()
     }
 
     // 4. Получили элементы выстроенные по кратчайшему пути
-    QList<BlobItem*> blobsOptimized;
-    for (size_t i : solution)
-        blobsOptimized.append(blobs.at(i));
+    // QList<BlobItem*> blobsOptimized;
+    // for (size_t i : solution)
+    //     blobsOptimized.append(blobs.at(i));
 
 
 
-    QList<QPair<int, int>> arclist;
-    QList<int> points;
+    // QList<QPair<int, int>> arclist;
+    // QList<int> points;
 
-    points.push_back(arclist.first().first);
-    int last = arclist.first().second;
+    // points.push_back(arclist.first().first);
+    // int last = arclist.first().second;
 
-    while (arclist.size() > 0)
-    {
-        for (int i = 0; i < arclist.size(); ++i)
-        {
-            QPair<int, int> next = arclist[i];
+    // while (arclist.size() > 0)
+    // {
+    //     for (int i = 0; i < arclist.size(); ++i)
+    //     {
+    //         QPair<int, int> next = arclist[i];
 
-            if (next.first == last)
-            {
-                points.push_back(next.second);
-                last = next.second;
-                arclist.removeAt(i);
-                break;
-            }
-        }
-    }
+    //         if (next.first == last)
+    //         {
+    //             points.push_back(next.second);
+    //             last = next.second;
+    //             arclist.removeAt(i);
+    //             break;
+    //         }
+    //     }
+    // }
 
 
 
@@ -181,7 +183,7 @@ void TaskBestPathPrivate::run()
 
     // Тут бы надо бы найти ближайшую точки из пути к начальной точке, но пока пофигу, пусть так.
 
-    db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
+    //db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 
