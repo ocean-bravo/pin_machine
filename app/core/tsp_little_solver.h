@@ -44,6 +44,7 @@ public slots:
 
 signals:
     void newRecord(double);
+    void newSolution( QList<QPair<int, int>>);
     void solved();
 
 private:

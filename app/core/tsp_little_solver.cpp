@@ -174,6 +174,7 @@ void LittleSolver::candidateSolution(const arclist &arcs)
     _record = curCost;
 
     emit newRecord(_record);
+    emit newSolution(arcs);
     _arcs = arcs;
 }
 

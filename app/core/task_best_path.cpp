@@ -126,6 +126,11 @@ void TaskBestPathPrivate::run()
             qd() << "new record is: " << record;
         });
 
+        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution)
+        {
+            qd() << "new record is: " << solution;
+        });
+
         QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
         waitForSignal(&littleSolver, &LittleSolver::solved, 10000000);
         qd() << "solved";
