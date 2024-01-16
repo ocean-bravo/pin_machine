@@ -268,3 +268,13 @@ bool GraphicsView::event(QEvent* event)
     //qd() << "view event type " << event->type();
     return QGraphicsView::event(event);
 }
+
+void GraphicsView::showPath(const std::list<std::pair<size_t, size_t> > &path, QColor color)
+{
+    // if (path.empty())
+    //     return;
+
+    // for (const auto &iter : path)
+    //     // добавление линии между вершинами по заданным номерам
+    //     addLine(_vertexList.at(iter.first)->pos(), _vertexList.at(iter.second)->pos(), color);
+}

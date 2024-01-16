@@ -115,7 +115,15 @@ void TaskBestPathPrivate::run()
     try
     {
         LittleSolver littleSolver(distances);
-        littleSolver.solve();
+        QThread thread;
+        thread.start();
+        wait(300);
+        runOnThread(&thread, [&]()
+        {
+            littleSolver.solve();
+        });
+
+        //littleSolver.solve();
         solution = littleSolver.getSolution();
     }
     catch (...)

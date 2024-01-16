@@ -21,6 +21,8 @@ public:
 
     void setSizeToFit(QSizeF size);
 
+    void showPath(const std::list<std::pair<size_t, size_t> > &path, QColor color);
+
 signals:
     void sizeChanged(QSize);
     void selectModeChanged(bool mode);
