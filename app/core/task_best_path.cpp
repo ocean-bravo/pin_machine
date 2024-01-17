@@ -119,6 +119,7 @@ void TaskBestPathPrivate::run()
     {
         LittleSolver littleSolver(distances);
         QThread thread;
+        thread.setTerminationEnabled();
         littleSolver.moveToThread(&thread);
         thread.start();
         wait(300);
@@ -143,7 +144,8 @@ void TaskBestPathPrivate::run()
         }
 
         thread.terminate();
-        thread.wait(1000);
+        thread.wait(10000);
+        wait(10000);
     }
     catch (...)
     {
