@@ -142,8 +142,8 @@ void TaskBestPathPrivate::run()
             solution = littleSolver.solution();
         }
 
-        thread.quit();
-        wait(1000);
+        thread.terminate();
+        thread.wait(1000);
     }
     catch (...)
     {
