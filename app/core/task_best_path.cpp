@@ -26,14 +26,16 @@
 #include "tsp_matrix.h"
 #include "tsp_little_solver.h"
 
+using MatrixD = Matrix<double>;
+
 namespace {
 
-Matrix<double> distanceMatrix(const QList<BlobItem*>& blobs)
+MatrixD distanceMatrix(const MatrixD::List<BlobItem*>& blobs)
 {
     // создание матрицы размерности количества вершин
-    Matrix<double> distances(blobs.size());
-    int i = 0;
-    int j = 0;
+    MatrixD distances(blobs.size());
+    MatrixD::Size i = 0;
+    MatrixD::Size j = 0;
 
     for (BlobItem* b1 : blobs)
     {
@@ -99,19 +101,19 @@ void TaskBestPathPrivate::run()
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     // 1. Получили все блобы для забивки
-    QList<BlobItem*> blobs;
+    MatrixD::List<BlobItem*> blobs;
 
     every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
     {
         if (blob->isPunch())
-            blobs.append(blob);
+            blobs.push_back(blob);
     });
 
     // 2. Преобразовали блобы в матрицу
-    Matrix<double> distances = distanceMatrix(blobs);
+    MatrixD distances = distanceMatrix(blobs);
 
     // 3. Подали на вход алгоритму и получили решение
-    QList<int> solution;
+    MatrixD::List<MatrixD::Size> solution;
 
     try
     {
@@ -122,7 +124,7 @@ void TaskBestPathPrivate::run()
         wait(300);
 
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
-        connect(&littleSolver, &LittleSolver::newSolution, [](QList<QPair<int, int>> solution) { /*qd() << "new solution is: " << solution;*/ });
+        connect(&littleSolver, &LittleSolver::newSolution, [](MatrixD::List<MatrixD::Pair<MatrixD::Size, MatrixD::Size>> solution) { /*qd() << "new solution is: " << solution;*/ });
 
         QAtomicInteger<bool> solved = false;
         connect(&littleSolver, &LittleSolver::solved, [&solved]() { solved = true; });

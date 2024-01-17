@@ -3,45 +3,55 @@
 
 #include "utils.h"
 
+#include <list>
+#include <utility>
+
+template<typename T>
+using List = std::list<T>;
+
+template<typename T1, typename T2>
+using Pair = std::pair<T1, T2>;
+
+using Size = size_t;
 
 using std::mutex;
 using std::lock_guard;
 
 namespace {
 
-LittleSolver::arclist listToPairs(const QList<int>& l)
-{
-    LittleSolver::arclist p;
+// LittleSolver::arclist listToPairs(const List<Size>& l)
+// {
+//     LittleSolver::arclist p;
 
-    if (l.empty())
-        return p;
+//     if (l.empty())
+//         return p;
 
-    auto iter1 = l.cbegin();
-    auto iter2 = l.cbegin();
-    ++iter2;
-    while (iter2 != l.cend())
-    {
-        p.push_back(QPair<int, int>(*iter1, *iter2));
-        ++iter1;
-        ++iter2;
-    }
-    return p;
+//     auto iter1 = l.cbegin();
+//     auto iter2 = l.cbegin();
+//     ++iter2;
+//     while (iter2 != l.cend())
+//     {
+//         p.push_back(Pair<Size, Size>(*iter1, *iter2));
+//         ++iter1;
+//         ++iter2;
+//     }
+//     return p;
+// }
+
 }
 
-}
 
-
-LittleSolver::LittleSolver(const Matrix<double> &m, double record)
+LittleSolver::LittleSolver(const MatrixD& m, double record)
     : _record(record)
     , _infinity(0)
 {
     _sourceMatrix = std::make_unique<MatrixD>(m);
     // сумма всех элементов матрицы выступает в качестве бесконечности
-    for (int i = 0; i < m.size(); i++)
-        for (int j = i + 1; j < m.size(); j++)
+    for (Size i = 0; i < m.size(); i++)
+        for (Size j = i + 1; j < m.size(); j++)
             _infinity += (m.item(i, j) + m.item(j, i));
     // заполнение диагонали бесконечностями
-    for (int i = 0; i < _sourceMatrix->size(); i++)
+    for (Size i = 0; i < _sourceMatrix->size(); i++)
         _sourceMatrix->item(i, i) = _infinity;
 }
 
@@ -77,7 +87,7 @@ void LittleSolver::solve()
     emit solved();
 }
 
-QList<int> LittleSolver::solution() const
+List<Size> LittleSolver::solution() const
 {
     return _solution;
 }
@@ -87,7 +97,7 @@ bool LittleSolver::isSolved() const
     return _solution.size() != 1;
 }
 
-void LittleSolver::handleMatrix(const Matrix<double> &m, const arclist &path, double bottomLimit)
+void LittleSolver::handleMatrix(const MatrixD &m, const arclist &path, double bottomLimit)
 {
     if (m.size() < 2)
         throw std::logic_error("Matrix smaller than 2x2");
@@ -98,12 +108,12 @@ void LittleSolver::handleMatrix(const Matrix<double> &m, const arclist &path, do
         // записать текущий путь как последний рассмотренный
         logPath(path);
         // выбор элемента, не равного бесконечности, в первой строке
-        int i = m.item(0, 0) >= _infinity ? 1 : 0;
+        Size i = m.item(0, 0) >= _infinity ? 1 : 0;
         // создание списка с результирующим путем
         arclist result(path);
         // добавление индексов элементов, не равных бесконечности
-        result.push_back(QPair<int, int>(m.rowIndex(0), m.columnIndex(i)));
-        result.push_back(QPair<int, int>(m.rowIndex(1), m.columnIndex(1 - i)));
+        result.push_back(Pair<Size, Size>(m.rowIndex(0), m.columnIndex(i)));
+        result.push_back(Pair<Size, Size>(m.rowIndex(1), m.columnIndex(1 - i)));
         // сравнение пути с минимальным
         candidateSolution(result);
         return;
@@ -111,7 +121,7 @@ void LittleSolver::handleMatrix(const Matrix<double> &m, const arclist &path, do
 
 
     // создается копия переданной матрицы, т.к. он константна
-    Matrix<double> matrix(m);
+    MatrixD matrix(m);
     // вычитание минимальных элементов строк и столбцов
     // увеличение нижней границы
     bottomLimit += subtractFromMatrix(matrix);
@@ -135,7 +145,7 @@ void LittleSolver::handleMatrix(const Matrix<double> &m, const arclist &path, do
     newMatrix.removeRowColumn(edge.first, edge.second);
     //     ребро iter добавляется к пути
     auto newPath(path);
-    newPath.push_back(QPair<int, int>(matrix.rowIndex(edge.first), matrix.columnIndex(edge.second)));
+    newPath.push_back(Pair<Size, Size>(matrix.rowIndex(edge.first), matrix.columnIndex(edge.second)));
     // добавление бесконечности для избежания преждевремнного цикла
     addInfinity(newMatrix);
     // обработка множества, содержащего ребро edge
@@ -178,21 +188,21 @@ void LittleSolver::candidateSolution(const arclist &arcs)
     _arcs = arcs;
 }
 
-void LittleSolver::addInfinity(Matrix<double> &m)
+void LittleSolver::addInfinity(MatrixD &m)
 {
     // массивы с информацией о том, в каких столбцах и строках содержится бесконечность
-    QVector<bool> infRow(m.size(), false), infColumn(m.size(), false);
+    Vector<bool> infRow(m.size(), false), infColumn(m.size(), false);
     // обход всей матрицы
-    for (int i = 0; i < m.size(); i++)
-        for (int j = 0; j < m.size(); j++)
+    for (Size i = 0; i < m.size(); i++)
+        for (Size j = 0; j < m.size(); j++)
             if (m.item(i, j) == _infinity)
             {
                 infRow[i] = true;
                 infColumn[j] = true;
             }
     // поиск строки, не содержащей бесконечности
-    int notInf;
-    for (int i = 0; i < infRow.size(); i++)
+    Size notInf;
+    for (Size i = 0; i < infRow.size(); i++)
         if (!infRow[i])
         {
             notInf = i;
@@ -200,7 +210,7 @@ void LittleSolver::addInfinity(Matrix<double> &m)
         }
 
     // поиск столбца, не содаржащего бесконечности и добавление бесконечности
-    for (int j = 0; j < infColumn.size(); j++)
+    for (Size j = 0; j < infColumn.size(); j++)
         if (!infColumn[j])
         {
             m.item(notInf, j) = _infinity;
@@ -213,16 +223,16 @@ double LittleSolver::subtractFromMatrix(MatrixD &m) const
     // сумма всех вычтенных значений
     double substractSum = 0;
     // массивы с минимальными элементами строк и столбцов
-    QVector<double> minRow(m.size(), DBL_MAX), minColumn(m.size(), DBL_MAX);
+    Vector<double> minRow(m.size(), DBL_MAX), minColumn(m.size(), DBL_MAX);
     // обход всей матрицы
-    for (int i = 0; i < m.size(); ++i)
+    for (Size i = 0; i < m.size(); ++i)
     {
-        for (int j = 0; j < m.size(); ++j)
+        for (Size j = 0; j < m.size(); ++j)
             // поиск минимального элемента в строке
             if (m(i, j) < minRow[i])
                 minRow[i] = m(i, j);
 
-        for (int j = 0; j < m.size(); ++j)
+        for (Size j = 0; j < m.size(); ++j)
         {
             // вычитание минимальных элементов из всех
             // элементов строки кроме бесконечностей
@@ -237,8 +247,8 @@ double LittleSolver::subtractFromMatrix(MatrixD &m) const
 
     // вычитание минимальных элементов из всех
     // элементов столбца кроме бесконечностей
-    for (int j = 0; j < m.size(); ++j)
-        for (int i = 0; i < m.size(); ++i)
+    for (Size j = 0; j < m.size(); ++j)
+        for (Size i = 0; i < m.size(); ++i)
             if (m(i, j) < _infinity)
             {
                 m(i, j) -= minColumn[j];
@@ -254,23 +264,23 @@ double LittleSolver::subtractFromMatrix(MatrixD &m) const
     return substractSum;
 }
 
-QList<QPair<int, int>> LittleSolver::findBestZeros(const MatrixD &matrix) const
+List<Pair<Size, Size>> LittleSolver::findBestZeros(const MatrixD &matrix) const
 {
     // список координат нулевых элементов
-    QList<QPair<int, int>> zeros;
+    List<Pair<Size, Size>> zeros;
     // список их коэффициентов
-    QList<double> coeffList;
+    List<double> coeffList;
 
     // максимальный коэффициент
     double maxCoeff = 0;
     // поиск нулевых элементов
-    for (int i = 0; i < matrix.size(); ++i)
-        for (int j = 0; j < matrix.size(); ++j)
+    for (Size i = 0; i < matrix.size(); ++i)
+        for (Size j = 0; j < matrix.size(); ++j)
             // если равен нулю
             if (!matrix(i, j))
             {
                 // добавление в список координат
-                zeros.push_back(QPair<int, int>(i, j));
+                zeros.push_back(Pair<Size, Size>(i, j));
                 // расчет коэффициена и добавление в список
                 coeffList.push_back(getCoefficient(matrix, i, j));
                 // сравнение с максимальным
@@ -298,12 +308,12 @@ QList<QPair<int, int>> LittleSolver::findBestZeros(const MatrixD &matrix) const
     return zeros;
 }
 
-double LittleSolver::getCoefficient(const MatrixD &m, int r, int c)
+double LittleSolver::getCoefficient(const MatrixD &m, Size r, Size c)
 {
     double rmin, cmin;
     rmin = cmin = DBL_MAX;
     // обход строки и столбца
-    for (int i = 0; i < m.size(); ++i)
+    for (Size i = 0; i < m.size(); ++i)
     {
         if (i != r)
             rmin = std::min(rmin, m(i, c));

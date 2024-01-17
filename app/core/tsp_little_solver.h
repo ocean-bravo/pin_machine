@@ -2,9 +2,8 @@
 
 #include <QObject>
 
-#include <QList>
-#include <QPair>
-
+#include <list>
+#include <vector>
 #include <utility>
 #include <memory>
 #include <cfloat>
@@ -19,17 +18,28 @@ class LittleSolver : public QObject
     Q_OBJECT
 
 public:
+    template<typename T>
+    using Vector = std::vector<T>;
+
+    template<typename T>
+    using List = std::list<T>;
+
+    template<typename T1, typename T2>
+    using Pair = std::pair<T1, T2>;
+
+    using Size = size_t;
+
     // список вершин как список пар номеров смежных вершин
-    using arclist = QList<QPair<int, int>>;
+    using arclist = List<Pair<Size, Size>>;
     using MatrixD = Matrix<double>;
     using MatrixPtr = std::unique_ptr<MatrixD>;
 
     // на вход матрица расстояний и требуемая верхняя граница
-    LittleSolver(const Matrix<double> &m, double record = DBL_MAX);
+    LittleSolver(const MatrixD &m, double record = DBL_MAX);
     ~LittleSolver();
 
     // получить решение
-    QList<int> solution() const;
+    List<Size> solution() const;
 
     // было ли найдето решение, не превышающее заданную границу
     bool isSolved() const;
@@ -44,7 +54,7 @@ public slots:
 
 signals:
     void newRecord(double);
-    void newSolution( QList<QPair<int, int>>);
+    void newSolution(List<Pair<Size, Size>>);
     void solved();
 
 private:
@@ -52,7 +62,7 @@ private:
     // m - текущая матрица стоимостей
     // arcs - текущий найденный путь
     // bottomLimit - текущая нижняя граница
-    void handleMatrix(const Matrix<double> &m, const arclist &arcs, double bottomLimit);
+    void handleMatrix(const MatrixD &m, const arclist &arcs, double bottomLimit);
     // скммарная длина набора ребер
     double cost(const arclist &arcs) const;
     // сравнить предложенное решение с оптимальным
@@ -65,10 +75,10 @@ private:
     // возвращает значение, на которое увеличится нижняя граница
     double subtractFromMatrix(MatrixD &m) const;
     // поиск нулевых коэффициентов с максимальными коэффициентами
-    QList<QPair<int, int>>  findBestZeros(const MatrixD &matrix) const;
+    List<Pair<Size, Size>>  findBestZeros(const MatrixD &matrix) const;
     // получение коэффициента для элемента (r, c)
     // r - row; c - column
-    static double getCoefficient(const MatrixD &m, int r, int c);
+    static double getCoefficient(const MatrixD &m, Size r, Size c);
     // записать последний проверенный путь
     void logPath(const arclist &path);
 
@@ -79,7 +89,7 @@ private:
     // лучшее решение
     arclist _arcs;
     // итоговое решение
-    QList<int> _solution;
+    List<Size> _solution;
     // последний просмотренный список ребер
     arclist _lastStep;
     // для доступа к промежуточным результатам из другого потока
