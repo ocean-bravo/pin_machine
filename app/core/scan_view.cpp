@@ -55,8 +55,8 @@ ScanView::ScanView(QWidget *parent)
             {
                 scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red, 0.5));
             }
-
-            scene().addLine(QLineF(path.at(path.size()-1)->pos(), path.at(0)->pos()), QPen(Qt::red, 0.5));
+            // Замыкаю кольцо
+            scene().addLine(QLineF(path.at(path.size()-1)->pos(), path.at(0)->pos()), QPen(Qt::magenta, 0.5));
         }
     });
 
