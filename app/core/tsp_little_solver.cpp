@@ -62,6 +62,10 @@ void LittleSolver::solve()
 {
     // решение
     handleMatrix(*_sourceMatrix, arclist(), 0);
+
+    if (stop)
+        return;
+
     // запись решения
     // доюавление нулевой вершины как начальной
     _solution.push_back(0);
