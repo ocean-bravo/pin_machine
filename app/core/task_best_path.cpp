@@ -30,7 +30,7 @@ using MatrixD = Matrix<double>;
 
 namespace {
 
-MatrixD distanceMatrix(const MatrixD::List<BlobItem*>& blobs)
+MatrixD distanceMatrix(const QList<BlobItem*>& blobs)
 {
     // создание матрицы размерности количества вершин
     MatrixD distances(blobs.size());
@@ -101,7 +101,7 @@ void TaskBestPathPrivate::run()
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     // 1. Получили все блобы для забивки
-    MatrixD::List<BlobItem*> blobs;
+    QList<BlobItem*> blobs;
 
     every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
     {
@@ -112,19 +112,24 @@ void TaskBestPathPrivate::run()
     // 2. Преобразовали блобы в матрицу
     MatrixD distances = distanceMatrix(blobs);
 
-    // 3. Подали на вход алгоритму и получили решение
-    MatrixD::List<MatrixD::Size> solution;
+    QList<BlobItem*> blobsOptimized;
 
+    // 3. Подали на вход алгоритму и получили решение
     try
     {
         LittleSolver littleSolver(distances);
         QThread thread;
         littleSolver.moveToThread(&thread);
         thread.start();
-        wait(300);
+        wait(100);
 
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
-        connect(&littleSolver, &LittleSolver::newSolution, [](MatrixD::List<MatrixD::Pair<MatrixD::Size, MatrixD::Size>> solution) { /*qd() << "new solution is: " << solution;*/ });
+        connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
+        {
+            // 4. Получили промежуточные элементы выстроенные по кратчайшему пути
+            for (int i : solution)
+                blobsOptimized.append(blobs.at(i));
+        });
 
         QAtomicInteger<bool> solved = false;
         connect(&littleSolver, &LittleSolver::solved, [&solved]() { solved = true; });
@@ -145,7 +150,11 @@ void TaskBestPathPrivate::run()
         if (solved)
         {
             qd() << "solved";
-            solution = littleSolver.solution();
+            QList<int> finalSolution = littleSolver.finalSolution();
+            // 4. Получили элементы выстроенные по кратчайшему пути
+
+            for (int i : finalSolution)
+                blobsOptimized.append(blobs.at(i));
         }
 
         thread.quit();
@@ -157,42 +166,9 @@ void TaskBestPathPrivate::run()
 
     }
 
-    // 4. Получили элементы выстроенные по кратчайшему пути
-    // QList<BlobItem*> blobsOptimized;
-    // for (size_t i : solution)
-    //     blobsOptimized.append(blobs.at(i));
-
-
-
-    // QList<QPair<int, int>> arclist;
-    // QList<int> points;
-
-    // points.push_back(arclist.first().first);
-    // int last = arclist.first().second;
-
-    // while (arclist.size() > 0)
-    // {
-    //     for (int i = 0; i < arclist.size(); ++i)
-    //     {
-    //         QPair<int, int> next = arclist[i];
-
-    //         if (next.first == last)
-    //         {
-    //             points.push_back(next.second);
-    //             last = next.second;
-    //             arclist.removeAt(i);
-    //             break;
-    //         }
-    //     }
-    // }
-
-
-
-
-
     // Тут бы надо бы найти ближайшую точки из пути к начальной точке, но пока пофигу, пусть так.
 
-    //db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
+    db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 

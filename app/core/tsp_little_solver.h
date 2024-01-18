@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <QAtomicInteger>
 
@@ -19,19 +20,8 @@ class LittleSolver : public QObject
     Q_OBJECT
 
 public:
-    template<typename T>
-    using Vector = std::vector<T>;
-
-    template<typename T>
-    using List = std::list<T>;
-
-    template<typename T1, typename T2>
-    using Pair = std::pair<T1, T2>;
-
-    using Size = size_t;
-
     // список вершин как список пар номеров смежных вершин
-    using arclist = List<Pair<Size, Size>>;
+    using arclist = std::list<std::pair<size_t, size_t>>;
     using MatrixD = Matrix<double>;
     using MatrixPtr = std::unique_ptr<MatrixD>;
 
@@ -40,7 +30,7 @@ public:
     ~LittleSolver();
 
     // получить решение
-    List<Size> solution() const;
+    QList<int> finalSolution() const;
 
     // было ли найдето решение, не превышающее заданную границу
     bool isSolved() const;
@@ -58,7 +48,7 @@ public slots:
 
 signals:
     void newRecord(double);
-    void newSolution(List<Pair<Size, Size>>);
+    void newSolution(QList<int>);
     void solved();
 
 private:
@@ -79,12 +69,10 @@ private:
     // возвращает значение, на которое увеличится нижняя граница
     double subtractFromMatrix(MatrixD &m) const;
     // поиск нулевых коэффициентов с максимальными коэффициентами
-    List<Pair<Size, Size>>  findBestZeros(const MatrixD &matrix) const;
+    std::list<std::pair<size_t, size_t>>  findBestZeros(const MatrixD &matrix) const;
     // получение коэффициента для элемента (r, c)
     // r - row; c - column
-    static double getCoefficient(const MatrixD &m, Size r, Size c);
-    // записать последний проверенный путь
-    void logPath(const arclist &path);
+    static double getCoefficient(const MatrixD &m, size_t r, size_t c);
 
     // исходная матрица расстояний
     MatrixPtr _sourceMatrix;
@@ -93,9 +81,9 @@ private:
     // лучшее решение
     arclist _arcs;
     // итоговое решение
-    List<Size> _solution;
+    std::list<size_t> _solution;
     // последний просмотренный список ребер
-    arclist _lastStep;
+    //arclist _lastStep;
     // для доступа к промежуточным результатам из другого потока
     mutable std::mutex _mutex;
     // значение, принимаемое за бесконечность
