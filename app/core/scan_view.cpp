@@ -53,7 +53,7 @@ ScanView::ScanView(QWidget *parent)
 
             for (int i = 0; i < path.size() - 1; ++i)
             {
-                scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red, 0));
+                scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red, 1));
             }
 
         }
