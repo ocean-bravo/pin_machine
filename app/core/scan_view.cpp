@@ -6,6 +6,7 @@
 #include "data_bus.h"
 
 #include "scene.h"
+#include "blob_item.h"
 #include "task_scan_position.h"
 
 
@@ -34,6 +35,29 @@ ScanView::ScanView(QWidget *parent)
     {
         if (key == "xPos" || key == "yPos")
             updateCameraView();
+    });
+
+    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+    {
+        if (key == "blobs_optimized")
+        {
+            every<QGraphicsLineItem>(scene().items(), [](QGraphicsLineItem* line)
+            {
+                delete line;
+            });
+
+            QList<BlobItem*> path = value.value<QList<BlobItem*>>();
+
+            if (path.empty())
+                return;
+
+            for (int i = 0; i < path.size() - 1; ++i)
+            {
+                scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red));
+            }
+
+        }
+
     });
 
     QLabel* message1 = new QLabel;
