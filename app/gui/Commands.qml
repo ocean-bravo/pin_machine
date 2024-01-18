@@ -427,6 +427,7 @@ Item {
                         folder: applicationDirPath
                         fileMode: FileDialog.SaveFile
                         onAccepted: Engine.save(currentFile)
+                        modality: Qt.ApplicationModal
                     }
                 }
                 SmButton {
