@@ -53,11 +53,11 @@ ScanView::ScanView(QWidget *parent)
 
             for (int i = 0; i < path.size() - 1; ++i)
             {
-                scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red, 1));
+                scene().addLine(QLineF(path.at(i)->pos(), path.at(i+1)->pos()), QPen(Qt::red, 0.5));
             }
 
+            scene().addLine(QLineF(path.at(path.size()-1)->pos(), path.at(0)->pos()), QPen(Qt::red, 0.5));
         }
-
     });
 
     QLabel* message1 = new QLabel;
