@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QAtomicInteger>
 
 #include <list>
 #include <vector>
@@ -47,6 +48,9 @@ public:
     // не должен быть скопирован
     LittleSolver(const LittleSolver&) = delete;
     LittleSolver &operator=(const LittleSolver&) = delete;
+
+    QAtomicInteger<bool> stop = false;
+
 
 public slots:
     // основной метод

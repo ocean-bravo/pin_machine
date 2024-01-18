@@ -99,6 +99,9 @@ bool LittleSolver::isSolved() const
 
 void LittleSolver::handleMatrix(const MatrixD &m, const arclist &path, double bottomLimit)
 {
+    if (stop)
+        return;
+
     if (m.size() < 2)
         throw std::logic_error("Matrix smaller than 2x2");
 
@@ -151,6 +154,9 @@ void LittleSolver::handleMatrix(const MatrixD &m, const arclist &path, double bo
     // обработка множества, содержащего ребро edge
     handleMatrix(newMatrix, newPath, bottomLimit);
 
+    if (stop)
+        return;
+
     // переход к множеству, не сожержащему ребро edge
     // снова копирование матрицы текущего шага
     newMatrix = matrix;
@@ -158,6 +164,9 @@ void LittleSolver::handleMatrix(const MatrixD &m, const arclist &path, double bo
     newMatrix(edge.first, edge.second) = _infinity + 1;
     // обработка множества, не сожержащего ребро edge
     handleMatrix(newMatrix, path, bottomLimit);
+
+    if (stop)
+        return;
 }
 
 double LittleSolver::cost(const arclist &arcs) const
