@@ -328,7 +328,7 @@ Item {
             CollapsiblePanel {
                 id: jogPanel
                 width: parent.width
-                height: checked ? 360 : 30
+                height: checked ? 400 : 30
                 text: "Jog control"
                 onCheckedChanged: {
                     jogControl.visible = checked

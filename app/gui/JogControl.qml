@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     color: "azure"
 
-    height: width * 7 / 9
+    height: width * 9 / 10
     //implicitHeight: grid.implicitHeight
     //implicitWidth: grid.implicitWidth
 
@@ -44,32 +44,34 @@ Rectangle {
         id: grid
         anchors.fill: parent
 
-        columns: 9
-        columnSpacing: 5
-        rowSpacing: 5
+        columns: 10
+        columnSpacing: 1
+        rowSpacing: 1
 
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+50");  onClicked: { jog("Y", 50)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");  onClicked: { jog("Z", 1)} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+10");  onClicked: { jog("Y", 10)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.1");  onClicked: { jog("Z", 0.1)} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");   onClicked: { jog("Y", 1)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.01");  onClicked: { jog("Z", 0.01)} }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+50");  onClicked: { jog("Y", 50)} } Spacer {} Spacer {} Spacer {} Spacer {} Spacer {}
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+10");  onClicked: { jog("Y", 10)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");    onClicked: { jog("Z", 1)}   }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+1");   onClicked: { jog("Y", 1)}  } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.1");  onClicked: { jog("Z", 0.1)} }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.1"); onClicked: { jog("Y", 0.1)}} Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("+0.01"); onClicked: { jog("Z", 0.01)}}
 
 
-        MyButton { text: qsTr("-50"); onClicked: { jog("X", -50)} }
-        MyButton { text: qsTr("-10"); onClicked: { jog("X", -10)} }
-        MyButton { text: qsTr("-1");  onClicked: { jog("X", -1)} }
+        MyButton { text: qsTr("-50");  onClicked: { jog("X", -50)} }
+        MyButton { text: qsTr("-10");  onClicked: { jog("X", -10)} }
+        MyButton { text: qsTr("-1");   onClicked: { jog("X", -1)}  }
+        MyButton { text: qsTr("-0.1"); onClicked: { jog("X", -0.1)}}
 
         MyButton { text: "X/Y"; }
 
-        MyButton { text: qsTr("+1");  onClicked: { jog("X", 1)} }
+        MyButton { text: qsTr("+0.1");  onClicked: { jog("X", 0.1)}}
+        MyButton { text: qsTr("+1");  onClicked: { jog("X", 1)}  }
         MyButton { text: qsTr("+10"); onClicked: { jog("X", 10)} }
         MyButton { text: qsTr("+50"); onClicked: { jog("X", 50)} }
 
-        Spacer {}
         MyButton { text: "Z"; }
 
-
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { jog("Y", -1)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.01");  onClicked: { jog("Z", -0.01)} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-10");  onClicked: { jog("Y", -10)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.1");  onClicked: { jog("Z", -0.1)} }
-        Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-50");   onClicked: { jog("Y", -50)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");  onClicked: { jog("Z", -1)} }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.1"); onClicked: { jog("Y", -0.1)}} Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.01"); onClicked: { jog("Z", -0.01)}}
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");   onClicked: { jog("Y", -1)}  } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-0.1");  onClicked: { jog("Z", -0.1)} }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-10");  onClicked: { jog("Y", -10)} } Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-1");    onClicked: { jog("Z", -1)}   }
+        Spacer {} Spacer {} Spacer {} Spacer {} MyButton { text: qsTr("-50");  onClicked: { jog("Y", -50)} } Spacer {} Spacer {} Spacer {} Spacer {} Spacer {}
     }
 
     Shortcut {
