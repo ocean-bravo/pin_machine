@@ -30,20 +30,27 @@ using MatrixD = Matrix<double>;
 
 namespace {
 
-MatrixD distanceMatrix(const QList<BlobItem*>& blobs)
+QList<QPointF> blobsToScenePositions(const QList<BlobItem*>& blobs)
+{
+    QList<QPointF> points;
+    std::transform(blobs.begin(), blobs.end(), points.begin(), [](BlobItem* blob) { return blob->scenePos(); });
+    return points;
+}
+
+MatrixD distanceMatrix(const QList<QPointF>& positions)
 {
     // создание матрицы размерности количества вершин
-    MatrixD distances(blobs.size());
+    MatrixD distances(positions.size());
     MatrixD::Size i = 0;
     MatrixD::Size j = 0;
 
-    for (BlobItem* b1 : blobs)
+    for (QPointF p1 : positions)
     {
         j = 0;
-        for (BlobItem* b2 : blobs)
+        for (QPointF p2 : positions)
         {
             // подсчет расстояний
-            distances(i, j) = sqrt(pow(b1->x() - b2->x(), 2) + pow(b1->y() - b2->y(), 2));
+            distances(i, j) = sqrt(pow(p1.x() - p2.x(), 2) + pow(p1.y() - p2.y(), 2));
             ++j;
         }
         ++i;
@@ -51,6 +58,8 @@ MatrixD distanceMatrix(const QList<BlobItem*>& blobs)
 
     return distances;
 }
+
+
 
 }
 
@@ -109,10 +118,16 @@ void TaskBestPathPrivate::run()
             blobs.push_back(blob);
     });
 
-    // 2. Преобразовали блобы в матрицу
-    MatrixD distances = distanceMatrix(blobs);
+    // 2. Преобразовали в то координаты
+    QList<QPointF> points = blobsToScenePositions(blobs);
 
-    // 3. Подали на вход алгоритму и получили решение
+    // 3. Добавили точку начала программы, куда уезжает каретка.
+    points.push_back(QPointF(0,0));
+
+    // 4. Преобразовали блобы в матрицу
+    MatrixD distances = distanceMatrix(points);
+
+    // 5. Подали на вход алгоритму и получили решение
     try
     {
         LittleSolver littleSolver(distances);
@@ -126,7 +141,7 @@ void TaskBestPathPrivate::run()
         {
             QList<BlobItem*> blobsOptimized;
 
-            // 4. Получили промежуточные элементы выстроенные по кратчайшему пути
+            // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
             for (int i : solution)
                 blobsOptimized.append(blobs.at(i));
 
@@ -153,7 +168,7 @@ void TaskBestPathPrivate::run()
         {
             qd() << "solved";
             QList<int> finalSolution = littleSolver.finalSolution();
-            // 4. Получили элементы выстроенные по кратчайшему пути
+            // 6. Получили элементы выстроенные по кратчайшему пути
 
             QList<BlobItem*> blobsOptimized;
 
