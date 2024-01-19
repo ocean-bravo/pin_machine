@@ -354,30 +354,6 @@ void Scene::removeDuplicatedBlobs()
                 }
             }
         });
-
-        // Пока блоб представляет собой кольцо. Т.е. Внутренность круга не принадлежит блобу,
-        // так сделана shape. Поэтому нужно еще и поискать блобы, которые входят полностью друг в друга, без пересечения.
-        every<BlobItem>(items(), [this](BlobItem* blob)
-        {
-            qd() << "blob type: " << blob->type();
-
-            // если есть вхождение одного блоба в другой, то удалить его
-            const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::ContainsItemBoundingRect);
-            if (collidingItems.size() > 0)
-                qd() << "collidingItems.size() " << collidingItems.size();
-
-            for (QGraphicsItem* collidingItem : collidingItems)
-            {
-                qd() << "type " << collidingItem->type();
-                if (is<BlobItem>(collidingItem))
-                {
-                    qd() << "delete blob";
-                    delete blob;
-                    break;
-                }
-            }
-        });
-
     };
 
     runOnThreadWait(this, foo);
