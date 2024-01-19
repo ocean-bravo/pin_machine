@@ -160,7 +160,7 @@ void TaskCheckCameraPrivate::run()
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
     QList<QPointF> coords;
 
-    coords = db().value("coords_optimized").value<QList<QPointF>>();
+    coords = db().value("path_optimized").value<QList<QPointF>>();
 
     if (coords.isEmpty())
     {

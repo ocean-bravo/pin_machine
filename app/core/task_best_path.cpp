@@ -60,7 +60,29 @@ MatrixD distanceMatrix(const QList<QPointF>& positions)
     return distances;
 }
 
+// nonoptimizedPointCoords - координаты блобов для забивки, с случайном порядке, как получены со сцены
+// solution - решение, получено от алгоритма Литтла. Упорядоченный список индексов узказывающих на nonoptimizedPointCoords
+// Прокручиваю по кругу точки, пока первой точкой не будет точка после координат начала. Стартовой точки не будет в выходном пути
+QList<QPointF> solutionToPath(const QList<QPointF>& nonoptimizedPointCoords, const QList<int>& solution, QPointF startPoint)
+{
+    QList<QPointF> optimizedPointCoords;
+    for (int i : solution)
+        optimizedPointCoords.append(nonoptimizedPointCoords.at(i));
 
+
+    // Прокручиваю по кругу точки - беру первую; проверяю, ровна ли она стартовой; если нет, запихиваю в конец; если да - готово
+    for (int i = 0; i < optimizedPointCoords.size(); ++i)
+    {
+        QPointF point = optimizedPointCoords.takeFirst();
+
+        if (point == startPoint)
+            break;
+
+        optimizedPointCoords.push_back(point);
+    }
+
+    return optimizedPointCoords;
+}
 
 }
 
@@ -101,7 +123,7 @@ TaskBestPathPrivate::TaskBestPathPrivate()
 }
 
 // Скан может быть неудачным для какого то разрешения. Определить, и предупредить
-void TaskBestPathPrivate::run()
+void TaskBestPathPrivate::run(QPointF startPoint)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -119,11 +141,11 @@ void TaskBestPathPrivate::run()
             blobs.push_back(blob);
     });
 
-    // 2. Преобразовали в то координаты
+    // 2. Преобразовали в координаты блобов
     QList<QPointF> coords = blobsToScenePositions(blobs);
 
     // 3. Добавили точку начала программы, куда уезжает каретка.
-    coords.push_back(QPointF(0,0));
+    coords.push_back(startPoint);
 
     // 4. Преобразовали блобы в матрицу
     MatrixD distances = distanceMatrix(coords);
@@ -140,13 +162,9 @@ void TaskBestPathPrivate::run()
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
-            QList<QPointF> coordsOptimized;
-
             // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
-            for (int i : solution)
-                coordsOptimized.append(coords.at(i));
-
-            db().insert("coords_optimized", QVariant::fromValue(coordsOptimized));
+            QList<QPointF> coordsOptimized = solutionToPath(coords, solution, startPoint);
+            db().insert("path_optimized", QVariant::fromValue(coordsOptimized));
         });
 
         QAtomicInteger<bool> solved = false;
@@ -168,15 +186,11 @@ void TaskBestPathPrivate::run()
         if (solved)
         {
             qd() << "solved";
+
+            // 6. Получили координаты точек выстроенных по кратчайшему пути между ними
             QList<int> finalSolution = littleSolver.finalSolution();
-            // 4. Получили элементы выстроенные по кратчайшему пути
-
-            QList<QPointF> coordsOptimized;
-
-            for (int i : finalSolution)
-                coordsOptimized.append(coords.at(i));
-
-            db().insert("coords_optimized", QVariant::fromValue(coordsOptimized));
+            QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
+            db().insert("path_optimized", QVariant::fromValue(coordsOptimized));
         }
 
         thread.quit();
@@ -187,8 +201,6 @@ void TaskBestPathPrivate::run()
     {
 
     }
-
-    // Тут бы надо бы найти ближайшую точки из пути к начальной точке, но пока пофигу, пусть так.
 
 
 

@@ -37,6 +37,8 @@ public:
 
     int images() const;
 
+    void drawPath(const QList<QPointF>& path);
+
 signals:
     void imageSaved(int);
 

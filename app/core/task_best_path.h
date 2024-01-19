@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QPoint>
 
 #include "task_base.h"
 
@@ -38,7 +39,7 @@ public:
     TaskBestPathPrivate();
 
 public slots:
-    void run();
+    void run(QPointF startPoint = QPointF());
 
 private:
 

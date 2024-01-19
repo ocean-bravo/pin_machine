@@ -335,6 +335,20 @@ int Scene::images() const
     return i;
 }
 
+void Scene::drawPath(const QList<QPointF>& path)
+{
+    every<QGraphicsLineItem>(scene().items(), [](QGraphicsLineItem* line) { delete line; });
+
+    if (path.empty())
+        return;
+
+    for (int i = 0; i < path.size() - 1; ++i)
+        scene().addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
+
+    // Замыкаю кольцо
+    scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
+}
+
 void Scene::removeDuplicatedBlobs()
 {
     //QMutexLocker locker(&_mutex);

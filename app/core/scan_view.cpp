@@ -39,24 +39,10 @@ ScanView::ScanView(QWidget *parent)
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
     {
-        if (key == "coords_optimized")
+        if (key == "path_optimized")
         {
-            every<QGraphicsLineItem>(scene().items(), [](QGraphicsLineItem* line)
-            {
-                delete line;
-            });
-
             QList<QPointF> path = value.value<QList<QPointF>>();
-
-            if (path.empty())
-                return;
-
-            for (int i = 0; i < path.size() - 1; ++i)
-            {
-                scene().addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
-            }
-            // Замыкаю кольцо
-            scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
+            scene().drawPath(path);
         }
     });
 
