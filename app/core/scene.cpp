@@ -355,6 +355,8 @@ void Scene::removeDuplicatedBlobs()
             }
         });
 
+        // Пока блоб представляет собой кольцо. Т.е. Внутренность круга не принадлежит блобу,
+        // так сделана shape. Поэтому нужно еще и поискать блобы, которые входят полностью друг в друга, без пересечения.
         every<BlobItem>(items(), [this](BlobItem* blob)
         {
             // если есть вхождение одного блоба в другой, то удалить его
@@ -363,6 +365,7 @@ void Scene::removeDuplicatedBlobs()
             {
                 if (is<BlobItem>(collidingItem))
                 {
+                    qd() << "delete inner blob";
                     delete blob;
                     break;
                 }
