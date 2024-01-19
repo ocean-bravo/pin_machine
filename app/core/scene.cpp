@@ -344,7 +344,7 @@ void Scene::removeDuplicatedBlobs()
         every<BlobItem>(items(), [this](BlobItem* blob)
         {
             // если есть пересечение с кем то, то удалить его
-            const auto collidingItems = QGraphicsScene::collidingItems(blob);
+            const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
             for (QGraphicsItem* collidingItem : collidingItems)
             {
                 if (is<BlobItem>(collidingItem))
@@ -354,6 +354,21 @@ void Scene::removeDuplicatedBlobs()
                 }
             }
         });
+
+        every<BlobItem>(items(), [this](BlobItem* blob)
+        {
+            // если есть вхождение одного блоба в другой, то удалить его
+            const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::ContainsItemBoundingRect);
+            for (QGraphicsItem* collidingItem : collidingItems)
+            {
+                if (is<BlobItem>(collidingItem))
+                {
+                    delete blob;
+                    break;
+                }
+            }
+        });
+
     };
 
     runOnThreadWait(this, foo);
