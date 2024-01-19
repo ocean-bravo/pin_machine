@@ -361,11 +361,13 @@ void Scene::removeDuplicatedBlobs()
         {
             // если есть вхождение одного блоба в другой, то удалить его
             const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::ContainsItemBoundingRect);
+            if (collidingItems.size() > 0)
+                qd() << "collidingItems.size() " << collidingItems.size();
+
             for (QGraphicsItem* collidingItem : collidingItems)
             {
                 if (is<BlobItem>(collidingItem))
                 {
-                    qd() << "delete inner blob";
                     delete blob;
                     break;
                 }
