@@ -33,7 +33,8 @@ namespace {
 QList<QPointF> blobsToScenePositions(const QList<BlobItem*>& blobs)
 {
     QList<QPointF> points;
-    std::transform(blobs.begin(), blobs.end(), points.begin(), [](BlobItem* blob) { return blob->scenePos(); });
+    for (BlobItem* blob : blobs)
+        points.push_back(blob->scenePos());
     return points;
 }
 
@@ -119,13 +120,13 @@ void TaskBestPathPrivate::run()
     });
 
     // 2. Преобразовали в то координаты
-    QList<QPointF> points = blobsToScenePositions(blobs);
+    QList<QPointF> coords = blobsToScenePositions(blobs);
 
     // 3. Добавили точку начала программы, куда уезжает каретка.
-    points.push_back(QPointF(0,0));
+    coords.push_back(QPointF(0,0));
 
     // 4. Преобразовали блобы в матрицу
-    MatrixD distances = distanceMatrix(points);
+    MatrixD distances = distanceMatrix(coords);
 
     // 5. Подали на вход алгоритму и получили решение
     try
@@ -139,13 +140,13 @@ void TaskBestPathPrivate::run()
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
-            QList<BlobItem*> blobsOptimized;
+            QList<QPointF> coordsOptimized;
 
             // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
             for (int i : solution)
-                blobsOptimized.append(blobs.at(i));
+                coordsOptimized.append(coords.at(i));
 
-            db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
+            db().insert("coords_optimized", QVariant::fromValue(coordsOptimized));
         });
 
         QAtomicInteger<bool> solved = false;
@@ -168,14 +169,14 @@ void TaskBestPathPrivate::run()
         {
             qd() << "solved";
             QList<int> finalSolution = littleSolver.finalSolution();
-            // 6. Получили элементы выстроенные по кратчайшему пути
+            // 4. Получили элементы выстроенные по кратчайшему пути
 
-            QList<BlobItem*> blobsOptimized;
+            QList<QPointF> coordsOptimized;
 
             for (int i : finalSolution)
-                blobsOptimized.append(blobs.at(i));
+                coordsOptimized.append(coords.at(i));
 
-            db().insert("blobs_optimized", QVariant::fromValue(blobsOptimized));
+            db().insert("coords_optimized", QVariant::fromValue(coordsOptimized));
         }
 
         thread.quit();

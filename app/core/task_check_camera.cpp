@@ -158,33 +158,31 @@ void TaskCheckCameraPrivate::run()
     //И сделать тест разброса определения координат блоба
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
-    QList<BlobItem*> blobs;
+    QList<QPointF> coords;
 
-    blobs = db().value("blobs_optimized").value<QList<BlobItem*>>();
+    coords = db().value("coords_optimized").value<QList<QPointF>>();
 
-    if (blobs.isEmpty())
+    if (coords.isEmpty())
     {
-        every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
+        every<BlobItem>(scene().items(), [&coords](BlobItem* blob)
         {
             if (blob->isPunch())
-                blobs.append(blob);
+                coords.append(blob->scenePos());
         });
     }
 
     int count  = 0;
-    for (BlobItem* blob : qAsConst(blobs))
+    for (QPointF coord : qAsConst(coords))
     {
-        const double x = blob->scenePos().x();
-        const double y = blob->scenePos().y();
+        const double x = coord.x();
+        const double y = coord.y();
 
         moveToAndWaitPosition(x, y);
-        qd() << QString("board position: %1 %2").arg(toReal3(blob->pos().x()), toReal3(blob->pos().y())); // для отладки
-        qd() << QString("punch position: %1 %2").arg(toReal3(x), toReal3(y));
         wait(500);
         ++count;
     }
 
-    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+    //qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("punch blobs finished");
