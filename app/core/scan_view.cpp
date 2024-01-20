@@ -31,6 +31,11 @@ ScanView::ScanView(QWidget *parent)
 
     connect(ui->graphicsView, &GraphicsView::scanPosition, taskScanPosition, &TaskScanPosition::run);
 
+    connect(ui->graphicsView, &GraphicsView::addBlob, this, [this](QPointF pos)
+    {
+        scene().addBlob(pos.x(), pos.y(), 1.0);
+    });
+
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
     {
         if (key == "xPos" || key == "yPos")

@@ -174,6 +174,11 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     toggleHighlight->setCheckable(true);
     toggleHighlight->setChecked(blobsHighlightState);
 
+    menu.addAction(tr("Add blob here"), this, [this, event]()
+    {
+        emit addBlob(mapToScene(event->pos()));
+    });
+
     menu.exec(event->globalPos());
 }
 
