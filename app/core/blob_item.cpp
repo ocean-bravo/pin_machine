@@ -209,6 +209,11 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
         setFiducial(!isFiducial());
     });
 
+    menu.addAction(tr("Delete blob"), this, [this]()
+    {
+        deleteLater();
+    });
+
     menu.exec(event->screenPos());
 
     event->accept();
