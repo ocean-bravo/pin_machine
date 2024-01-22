@@ -26,6 +26,7 @@ signals:
     void selectModeChanged(bool mode);
     void scanPosition(QPointF pos);
     void addBlob(QPointF pos);
+    void calcPath(QPointF pos);
 
 protected:
     void wheelEvent(QWheelEvent* event) override;

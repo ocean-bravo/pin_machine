@@ -1,6 +1,7 @@
 #include "scan_view.h"
 #include "ui_scan_view.h"
 
+#include "wait.h"
 #include "utils2.h"
 #include "common.h"
 #include "data_bus.h"
@@ -8,6 +9,7 @@
 #include "scene.h"
 #include "blob_item.h"
 #include "task_scan_position.h"
+#include "task_best_path.h"
 
 
 #include <QMessageBox>
@@ -28,12 +30,20 @@ ScanView::ScanView(QWidget *parent)
 
     ui->graphicsView->setScene(_scene);
     TaskScanPosition* taskScanPosition = new TaskScanPosition(this);
+    TaskBestPath* taskBestPath = new TaskBestPath(this);
 
     connect(ui->graphicsView, &GraphicsView::scanPosition, taskScanPosition, &TaskScanPosition::run);
 
     connect(ui->graphicsView, &GraphicsView::addBlob, this, [this](QPointF pos)
     {
         scene().addBlob(pos.x(), pos.y(), 1.0);
+    });
+
+    connect(ui->graphicsView, &GraphicsView::calcPath, this, [=](QPointF pos)
+    {
+        taskBestPath->stopProgram();
+        waitForSignal(taskBestPath, &TaskBestPath::finished, 10000);
+        taskBestPath->run(pos);
     });
 
     connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)

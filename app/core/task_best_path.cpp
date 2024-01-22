@@ -69,16 +69,17 @@ QList<QPointF> solutionToPath(const QList<QPointF>& nonoptimizedPointCoords, con
     for (int i : solution)
         optimizedPointCoords.append(nonoptimizedPointCoords.at(i));
 
-
     // Прокручиваю по кругу точки - беру первую; проверяю, ровна ли она стартовой; если нет, запихиваю в конец; если да - готово
     for (int i = 0; i < optimizedPointCoords.size(); ++i)
     {
         QPointF point = optimizedPointCoords.takeFirst();
+        optimizedPointCoords.push_back(point);
 
         if (point == startPoint)
+        {
+            optimizedPointCoords.push_front(point);
             break;
-
-        optimizedPointCoords.push_back(point);
+        }
     }
 
     return optimizedPointCoords;
@@ -106,10 +107,10 @@ TaskBestPath::~TaskBestPath()
     _thread->wait(1000);
 }
 
-void TaskBestPath::run()
+void TaskBestPath::run(QPointF pos)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QPointF, pos));
 }
 
 void TaskBestPath::stopProgram()
@@ -141,6 +142,10 @@ void TaskBestPathPrivate::run(QPointF startPoint)
             blobs.push_back(blob);
     });
 
+    if (blobs.isEmpty())
+        return;
+
+
     // 2. Преобразовали в координаты блобов
     QList<QPointF> coords = blobsToScenePositions(blobs);
 
@@ -154,7 +159,7 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     try
     {
         LittleSolver littleSolver(distances);
-        QThread thread;
+        QThread thread(this);
         littleSolver.moveToThread(&thread);
         thread.start();
         wait(100);
@@ -179,6 +184,7 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
         if (_stop)
         {
+            qd() << "stopped";
             littleSolver.stop = true;
             wait(100);
         }
@@ -195,14 +201,12 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
         thread.quit();
         thread.wait(1000);
-        wait(1000);
+        wait(100);
     }
     catch (...)
     {
 
     }
-
-
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 

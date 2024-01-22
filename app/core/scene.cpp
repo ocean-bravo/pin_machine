@@ -346,7 +346,7 @@ void Scene::drawPath(const QList<QPointF>& path)
         scene().addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
 
     // Замыкаю кольцо
-    scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
+    //scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
 }
 
 void Scene::removeDuplicatedBlobs()

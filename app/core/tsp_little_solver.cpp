@@ -15,7 +15,7 @@ using std::lock_guard;
 namespace {
 
 // Конвертация в другой тип контейнеров
-QList<int> convertToQ(const list<size_t>& indexes)
+QList<int> convertToQt(const list<size_t>& indexes)
 {
     QList<int> result;
 
@@ -26,7 +26,7 @@ QList<int> convertToQ(const list<size_t>& indexes)
 }
 
 // Конвертация в другой тип контейнеров
-QList<QPair<int,int>> convertToQ(const list<pair<size_t, size_t>>& pairsOfIndexes)
+QList<QPair<int,int>> convertToQt(const list<pair<size_t, size_t>>& pairsOfIndexes)
 {
     QList<QPair<int,int>> result;
 
@@ -125,7 +125,9 @@ void LittleSolver::solve()
 
 QList<int> LittleSolver::finalSolution() const
 {
-    return convertToQ(_solution);
+    auto finalSolution = convertToQt(_solution);
+    finalSolution.removeLast(); // Список закольцован. Т.е. первый элемент равен последнему. Убираю это, не нужно.
+    return finalSolution;
 }
 
 bool LittleSolver::isSolved() const
@@ -226,7 +228,7 @@ void LittleSolver::candidateSolution(const arclist &arcs)
     emit newRecord(_record);
     _arcs = arcs;
     // Конвертировать
-    emit newSolution(convert(convertToQ(_arcs)));
+    emit newSolution(convert(convertToQt(_arcs)));
 }
 
 void LittleSolver::addInfinity(Matrix<double> &m)

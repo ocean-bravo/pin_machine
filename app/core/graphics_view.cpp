@@ -179,6 +179,12 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
         emit addBlob(mapToScene(event->pos()));
     });
 
+    menu.addAction(tr("Calculate path from here"), this, [this, event]()
+    {
+        emit calcPath(mapToScene(event->pos()));
+    });
+
+
     menu.exec(event->globalPos());
 }
 

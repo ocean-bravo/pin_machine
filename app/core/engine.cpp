@@ -27,7 +27,7 @@
 #include "task_check_camera.h"
 #include "task_punch.h"
 #include "task_find_pixel_size.h"
-#include "task_best_path.h"
+//#include "task_best_path.h"
 
 #include "openCv.h"
 
@@ -183,7 +183,7 @@ void Engine::createQmlEngine()
     TaskTestAlgo* ta = new TaskTestAlgo(this);
     TaskPunch* taskPunch = new TaskPunch(this);
     TaskFindPixelSize* taskFindPixelSize = new TaskFindPixelSize(this);
-    TaskBestPath* taskBestPath = new TaskBestPath(this);
+    //TaskBestPath* taskBestPath = new TaskBestPath(this);
 
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
@@ -210,7 +210,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
     _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
     _qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
-    _qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
+    //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
 
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

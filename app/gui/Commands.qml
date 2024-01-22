@@ -74,7 +74,7 @@ Item {
     Connections { target: TaskCheckCamera;   function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskPunch;         function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskFindPixelSize; function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial
@@ -656,38 +656,38 @@ Item {
                         Connections { target: TaskFindPixelSize; function onFinished() { findPixelSize.checked = false } }
                         Layout.row: 4
                     }
-                    SmButton {
-                        id: findBestPath
-                        text: qsTr("Best path")
-                        checkable: true
-                        checked: false
-                        property int count: 0
-                        onCheckedChanged: {
-                            if (checked) {
-                                TaskBestPath.run()
-                                //count = 0
-                                // splash.text = Qt.binding(function() { return "Searching optimal path..." + "\n" + count} )
-                                // splash.backgroundColor = "green"
-                                //splash.open()
-                                //countTimer.start()
-                               }
-                            else {
-                                TaskBestPath.stopProgram()
-                                //splash.close()
-                                //countTimer.stop()
-                            }
-                        }
-                        Timer {
-                            id: countTimer
-                            interval: 1000
-                            repeat: true
-                            running: false
-                            onTriggered: ++findBestPath.count
-                        }
+                    // SmButton {
+                    //     id: findBestPath
+                    //     text: qsTr("Best path")
+                    //     checkable: true
+                    //     checked: false
+                    //     property int count: 0
+                    //     onCheckedChanged: {
+                    //         if (checked) {
+                    //             TaskBestPath.run()
+                    //             //count = 0
+                    //             // splash.text = Qt.binding(function() { return "Searching optimal path..." + "\n" + count} )
+                    //             // splash.backgroundColor = "green"
+                    //             //splash.open()
+                    //             //countTimer.start()
+                    //            }
+                    //         else {
+                    //             TaskBestPath.stopProgram()
+                    //             //splash.close()
+                    //             //countTimer.stop()
+                    //         }
+                    //     }
+                    //     Timer {
+                    //         id: countTimer
+                    //         interval: 1000
+                    //         repeat: true
+                    //         running: false
+                    //         onTriggered: ++findBestPath.count
+                    //     }
 
-                        Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
-                        Layout.row: 5
-                    }
+                    //     Connections { target: TaskBestPath; function onFinished() { findBestPath.checked = false } }
+                    //     Layout.row: 5
+                    // }
                     //Button {onClicked: Engine.capture1();Layout.row: 5; Layout.column: 0; Layout.columnSpan: 4}
                     // Button {
                     //     onClicked: {

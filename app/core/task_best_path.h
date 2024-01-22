@@ -17,7 +17,7 @@ public:
     TaskBestPath(QObject* parent = nullptr);
     ~TaskBestPath();
 
-    Q_INVOKABLE void run();
+    Q_INVOKABLE void run(QPointF pos);
 
     Q_INVOKABLE void stopProgram();
 
@@ -39,7 +39,7 @@ public:
     TaskBestPathPrivate();
 
 public slots:
-    void run(QPointF startPoint = QPointF());
+    void run(QPointF startPoint);
 
 private:
 
