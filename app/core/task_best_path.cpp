@@ -22,6 +22,8 @@
 #include "common.h"
 #include "blob_item.h"
 
+#include <valgrind/callgrind.h>
+
 
 #include "tsp_matrix.h"
 #include "tsp_little_solver.h"
@@ -115,8 +117,15 @@ void TaskBestPath::run(QPointF pos)
 
 void TaskBestPath::stopProgram()
 {
+    qd() << "stop program";
     _impl->_stop = true;
 }
+
+bool TaskBestPath::isRunning() const
+{
+    return _impl->_running;
+}
+
 
 TaskBestPathPrivate::TaskBestPathPrivate()
 {
@@ -126,7 +135,16 @@ TaskBestPathPrivate::TaskBestPathPrivate()
 // Скан может быть неудачным для какого то разрешения. Определить, и предупредить
 void TaskBestPathPrivate::run(QPointF startPoint)
 {
-    const auto fin = qScopeGuard([this]{ emit finished(); });
+    qd() << "run program";
+    _running = true;
+    auto running = qScopeGuard([this]{ _running = false; });
+
+    const auto fin = qScopeGuard([this]
+    {
+        emit finished();
+        qd() << "finished program";
+
+    });
 
     if (!_mutex.tryLock()) return;
     auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
@@ -156,14 +174,19 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     MatrixD distances = distanceMatrix(coords);
 
     // 5. Подали на вход алгоритму и получили решение
+
     try
     {
+        CALLGRIND_START_INSTRUMENTATION;
+        CALLGRIND_TOGGLE_COLLECT;
+        qd() << "start";
         LittleSolver littleSolver(distances);
         QThread thread(this);
         littleSolver.moveToThread(&thread);
         thread.start();
-        wait(100);
+        //wait(100);
 
+        connect(&thread, &QThread::started, &littleSolver, &LittleSolver::solve);
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
@@ -173,20 +196,28 @@ void TaskBestPathPrivate::run(QPointF startPoint)
         });
 
         QAtomicInteger<bool> solved = false;
-        connect(&littleSolver, &LittleSolver::solved, [&solved]() { solved = true; });
+        connect(&littleSolver, &LittleSolver::solved, [&solved]()
+        {
+            qd() << "solved called";
+            solved = true;
+        });
 
-        QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
+        //QMetaObject::invokeMethod(&littleSolver, "solve", Qt::QueuedConnection);
 
         while (!_stop && !solved)
         {
+            CALLGRIND_STOP_INSTRUMENTATION;
             wait(100);
+            CALLGRIND_START_INSTRUMENTATION;
         }
 
         if (_stop)
         {
             qd() << "stopped";
             littleSolver.stop = true;
+            CALLGRIND_STOP_INSTRUMENTATION;
             wait(100);
+            CALLGRIND_START_INSTRUMENTATION;
         }
 
         if (solved)
@@ -198,7 +229,9 @@ void TaskBestPathPrivate::run(QPointF startPoint)
             QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
             db().insert("path_optimized", QVariant::fromValue(coordsOptimized));
         }
-
+        qd() << "stop";
+        CALLGRIND_TOGGLE_COLLECT;
+        CALLGRIND_STOP_INSTRUMENTATION;
         thread.quit();
         thread.wait(1000);
         wait(100);
@@ -207,6 +240,8 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     {
 
     }
+
+    CALLGRIND_DUMP_STATS;
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 

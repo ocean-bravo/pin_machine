@@ -41,8 +41,11 @@ ScanView::ScanView(QWidget *parent)
 
     connect(ui->graphicsView, &GraphicsView::calcPath, this, [=](QPointF pos)
     {
-        taskBestPath->stopProgram();
-        waitForSignal(taskBestPath, &TaskBestPath::finished, 10000);
+        if (taskBestPath->isRunning())
+        {
+            taskBestPath->stopProgram();
+            waitForSignal(taskBestPath, &TaskBestPath::finished, 10000);
+        }
         taskBestPath->run(pos);
     });
 

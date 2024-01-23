@@ -46,6 +46,7 @@ public:
 protected:
     static QMutex _mutex;
     QAtomicInteger<bool> _stop = false;
+    QAtomicInteger<bool> _running = false;
 
 signals:
     void message(QString);

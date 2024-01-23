@@ -21,6 +21,8 @@ public:
 
     Q_INVOKABLE void stopProgram();
 
+    bool isRunning() const;
+
 signals:
     void message(QString);
     void finished();
