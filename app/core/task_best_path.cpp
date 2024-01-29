@@ -151,6 +151,8 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
+    db().insert("best_path_record", double(0.0));
+
     // 1. Получили все блобы для забивки
     QList<BlobItem*> blobs;
 
@@ -187,12 +189,15 @@ void TaskBestPathPrivate::run(QPointF startPoint)
         //wait(100);
 
         connect(&thread, &QThread::started, &littleSolver, &LittleSolver::solve);
-        connect(&littleSolver, &LittleSolver::newRecord, [](double record) { qd() << "new record is: " << record; });
+        connect(&littleSolver, &LittleSolver::newRecord, [](double record) {
+            qd() << "new record is: " << record;
+            db().insert("best_path_record", record);
+        });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
             // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
             QList<QPointF> coordsOptimized = solutionToPath(coords, solution, startPoint);
-            db().insert("path_optimized", QVariant::fromValue(coordsOptimized));
+            db().insert("best_path_optimized", QVariant::fromValue(coordsOptimized));
         });
 
         QAtomicInteger<bool> solved = false;
@@ -227,9 +232,8 @@ void TaskBestPathPrivate::run(QPointF startPoint)
             // 6. Получили координаты точек выстроенных по кратчайшему пути между ними
             QList<int> finalSolution = littleSolver.finalSolution();
             QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
-            db().insert("path_optimized", QVariant::fromValue(coordsOptimized));
+            db().insert("best_path_optimized", QVariant::fromValue(coordsOptimized));
         }
-        qd() << "stop";
         CALLGRIND_TOGGLE_COLLECT;
         CALLGRIND_STOP_INSTRUMENTATION;
         thread.quit();

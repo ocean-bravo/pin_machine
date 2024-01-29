@@ -41,6 +41,25 @@ ApplicationWindow {
         }
     }
 
+    MessageBoxLoader {
+        id: bestPath
+        text: {
+            const record = DataBus.best_path_record
+            if (record === 0.0) {
+                show()
+                return qsTr("Searching best path...")
+            }
+            else {
+                return qsTr("Found path with length ") + record.toFixed(2) + " mm" + "\n" + qsTr("Countinue searching best path...")
+            }
+        }
+        onAccept: {
+            hide()
+            DataBus.best_path_stop = true
+        }
+        backgroundColor: "green"
+    }
+
     Button {
         id: stepNext
         text: "Next"

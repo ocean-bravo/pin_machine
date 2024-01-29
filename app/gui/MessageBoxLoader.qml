@@ -82,7 +82,7 @@ Loader {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width
 
-                    SmText {
+                    Text {
                         id: text
                         anchors.fill: parent
                         text: root.text

@@ -18,7 +18,36 @@
 #include <QLabel>
 #include <QJsonObject>
 
+#include <functional>
+
 #include "camera_view_item.h"
+
+namespace {
+
+// Не понимаю, что я тут делаю - как лямбда передается в функцию. Но работает.
+template<typename T>
+void databusAction(const QString& dbkey, T&& func)
+{
+    qd() << "db action";
+    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant&)
+    {
+        if (key == dbkey)
+            func();
+    });
+}
+
+template<typename T>
+void databusAction2(const QString& dbkey, T&& func)
+{
+    qd() << "db action";
+    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant& value)
+    {
+        if (key == dbkey)
+            func(value);
+    });
+}
+
+}
 
 ScanView::ScanView(QWidget *parent)
     : QMainWindow(parent)
@@ -49,20 +78,17 @@ ScanView::ScanView(QWidget *parent)
         taskBestPath->run(pos);
     });
 
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant&)
-    {
-        if (key == "xPos" || key == "yPos")
-            updateCameraView();
-    });
+    databusAction("xPos", [this]() { updateCameraView(); });
+    databusAction("yPos", [this]() { updateCameraView(); } );
 
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
+    databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
+
+    databusAction2("best_path_optimized", [](const QVariant& value)
     {
-        if (key == "path_optimized")
-        {
-            QList<QPointF> path = value.value<QList<QPointF>>();
-            scene().drawPath(path);
-        }
-    });
+        QList<QPointF> path = value.value<QList<QPointF>>();
+        scene().drawPath(path);
+    } );
+
 
     QLabel* message1 = new QLabel;
     message1->setFixedWidth(150);
