@@ -30,7 +30,7 @@ public:
 
 signals:
     Q_INVOKABLE void user(const QString& message);
-    void common(const QString& message, qint64 time, Qt::HANDLE threadId);
+    void common(const QString& message, qint64 time, Qt::HANDLE threadId, qint32 tid = 0);
     void logToFileChanged();
     void inited();
 
@@ -55,7 +55,7 @@ public:
 public slots:
     void init();
     void user(const QString& message);
-    void common(const QString& message, qint64 time, Qt::HANDLE threadId);
+    void common(const QString& message, qint64 time, Qt::HANDLE threadId, qint32 tid = 0);
     void setLogToFile(bool value);
 
 signals:

@@ -45,6 +45,10 @@ ApplicationWindow {
         id: bestPath
         text: {
             const record = DataBus.best_path_record
+
+            if (isNaN(record)) // Этим значением перезаряжаю параметр. Без перезарядки не сработает
+                return
+
             if (record === 0.0) {
                 show()
                 return qsTr("Searching best path...")

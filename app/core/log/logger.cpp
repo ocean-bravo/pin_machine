@@ -16,6 +16,9 @@
 
 #include "udp_appender.h"
 
+#include <unistd.h>
+#include <sys/syscall.h>
+
 namespace {
 
 const QString defaultUserLogPath = "logs/user.log";
@@ -27,7 +30,8 @@ void loggerMessageHandler(QtMsgType, const QMessageLogContext&, const QString& m
         qt_noop();
 
     const Qt::HANDLE currentTheadId = QThread::currentThreadId();
-    Logger::instance().common(msg, QDateTime::currentMSecsSinceEpoch(), currentTheadId);
+    qint32 tid = syscall(SYS_gettid);
+    Logger::instance().common(msg, QDateTime::currentMSecsSinceEpoch(), currentTheadId, tid);
 }
 
 }
@@ -100,14 +104,14 @@ void LoggerPrivate::user(const QString& message)
     }
 }
 
-void LoggerPrivate::common(const QString& message, qint64 time, Qt::HANDLE threadId)
+void LoggerPrivate::common(const QString& message, qint64 time, Qt::HANDLE threadId, qint32 tid)
 {
     // Надоевшее сообщение от модуля Камеры: Unable to query the parameter info: "Invalid argument"
     if (message.contains("Unable to query"))
         return;
 
     if (_logToRemoteHost)
-        _udpAppender->append(QDateTime::fromMSecsSinceEpoch(time).toString("HH:mm:ss.zzz '[%1]' ").arg(threadIdToAlias(threadId)) + message);
+        _udpAppender->append(QDateTime::fromMSecsSinceEpoch(time).toString("HH:mm:ss.zzz '[%1 %2]' ").arg(threadIdToAlias(threadId)).arg(tid) + message);
 
     if (_logToFile)
         _commonFileAppender->append(message);
