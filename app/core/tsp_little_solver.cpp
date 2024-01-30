@@ -6,6 +6,8 @@
 #include <list>
 #include <utility>
 
+#include <QScopeGuard>
+
 using std::list;
 using std::vector;
 using std::pair;
@@ -88,10 +90,17 @@ LittleSolver::LittleSolver(const Matrix<double> &m, double record)
 }
 
 LittleSolver::~LittleSolver()
-{}
+{
+    //qd() << "Little solver destructor";
+}
 
 void LittleSolver::solve()
 {
+    // const auto fin = qScopeGuard([this]
+    // {
+    //     qd() << "LittleSolver solve exited";
+    // });
+
     // решение
     handleMatrix(*_sourceMatrix, arclist(), 0);
 

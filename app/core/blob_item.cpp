@@ -37,10 +37,12 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     p.setColor(isFiducial() ? Qt::magenta : Qt::red);
     setPen(p);
 
+    painter->save();
+    painter->setPen(p);
+
     if (isFiducial() || isRealFiducial())
     {
         // элемент выглядит единым целым, прозрачности не накладываются
-        painter->setPen(p);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
 
         double rad = rect().width()/2;
@@ -51,15 +53,19 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
         painter->drawLine(QLineF(-rad,  0, -2*rad,  0));
     }
 
-    setBrush(QBrush());
+    QBrush b;
 
     if (_highlighted)
-        setBrush(Qt::red);
+        b = Qt::red;
 
     if (isPunch())
-        setBrush(Qt::blue);
+        b = Qt::blue;
 
-    QGraphicsEllipseItem::paint(painter, &savedOption, widget);
+    painter->setBrush(b);
+    painter->drawEllipse(rect());
+    painter->restore();
+
+    //QGraphicsEllipseItem::paint(painter, &savedOption, widget);
 }
 
 //QVariant BlobItem::itemChange(GraphicsItemChange change, const QVariant &value)
