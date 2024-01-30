@@ -162,29 +162,37 @@ Item {
             color: Material.accent
             width: 2;
             height: 5
-            SequentialAnimation {
-                running: true;
-                loops: ColorAnimation.Infinite
-                NumberAnimation {
-                    easing.type: Easing.InQuint
-                    property: "opacity"
-                    target: cursor; from: 1.0; to: 0.0; duration: 800;
-                }
-                NumberAnimation {
-                    easing.type: Easing.InQuint
-                    property: "opacity"
-                    target: cursor;
-                    from: 0.0;
-                    to: 1.0;
-                    duration: 800;
-                }
+
+            Timer {
+                interval: 600
+                running: true
+                repeat: true
+                onTriggered: cursor.visible = !cursor.visible
             }
-            Behavior on x {
-                SpringAnimation { spring: 3; damping: 0.2  }
-            }
-            Behavior on y {
-                SpringAnimation { spring: 3; damping: 0.2 }
-            }
+
+            // SequentialAnimation {
+            //     running: true;
+            //     loops: ColorAnimation.Infinite
+            //     NumberAnimation {
+            //         easing.type: Easing.InQuint
+            //         property: "opacity"
+            //         target: cursor; from: 1.0; to: 0.0; duration: 800;
+            //     }
+            //     NumberAnimation {
+            //         easing.type: Easing.InQuint
+            //         property: "opacity"
+            //         target: cursor;
+            //         from: 0.0;
+            //         to: 1.0;
+            //         duration: 800;
+            //     }
+            // }
+            // Behavior on x {
+            //     SpringAnimation { spring: 3; damping: 0.2  }
+            // }
+            // Behavior on y {
+            //     SpringAnimation { spring: 3; damping: 0.2 }
+            // }
         }
     }
     function lineNumberWidth(lineCount) {
