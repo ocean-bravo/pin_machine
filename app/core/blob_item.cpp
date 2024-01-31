@@ -90,27 +90,28 @@ QRectF BlobItem::boundingRect() const
     return boundRect;
 }
 
-// Область, чтобы попадать мышью, больше ширины линии, которой нарисован элемент
-// TODO: Внутри блоба пустота получается. Т.е. shape пустой внутри. Из за этого могут быть
-// проблемы с определением пересечений блобов, если один идеально поместитсся внутри другогого, не задевая контуры.
-// Проверить эту тему.
+// Область лучей, чтобы попадать мышью, больше ширины линии, которой лучи нарисованы
 QPainterPath BlobItem::shape() const
 {
     QPainterPath path;
 
+    if (isFiducial() || isRealFiducial())
+    {
+        const double rad = rect().width()/2;
+
+        path.moveTo(0, rad);  path.lineTo(0, 2*rad);
+        path.moveTo(0, -rad); path.lineTo(0, -2*rad);
+        path.moveTo(rad, 0);  path.lineTo(2*rad, 0);
+        path.moveTo(-rad, 0); path.lineTo(-2*rad, 0);
+
+        QPainterPathStroker stroker;
+        stroker.setWidth(0.3);  // ширина области занимаемая линией
+        stroker.setCapStyle(Qt::RoundCap);
+        path = stroker.createStroke(path);
+    }
+
     path.addEllipse(rect());
-
-    double rad = rect().width()/2;
-
-    path.moveTo(0, rad);  path.lineTo(0, 2*rad);
-    path.moveTo(0, -rad); path.lineTo(0, -2*rad);
-    path.moveTo(rad, 0);  path.lineTo(2*rad, 0);
-    path.moveTo(-rad, 0); path.lineTo(-2*rad, 0);
-
-    QPainterPathStroker stroker;
-    stroker.setWidth(0.3);  // ширина области занимаемая линией
-    stroker.setCapStyle(Qt::RoundCap);
-    return stroker.createStroke(path);
+    return path;
 }
 
 bool BlobItem::isFiducial() const
@@ -242,5 +243,6 @@ void BlobItem::unhighlight()
 void BlobItem::repaintLater()
 {
     // Надо принудительно перерисовать блоб. Решил вызвать обновление через очередь. Просто так.
-    runOnThread(this, [this](){ update(); });
+    //runOnThread(this, [this](){ update(); });
+    update();
 }
