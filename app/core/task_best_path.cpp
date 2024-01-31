@@ -151,7 +151,8 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
     db().insert("best_path_record", qQNaN()); // Перезарядка параметра
-    db().insert("best_path_record", double(0.0));
+    db().insert("best_path_record", double(0.0)); // Открытие message box.
+    db().insert("best_path_optimized", QVariant()); // Очистка сцены от старого пути.
 
     // 1. Получили все блобы для забивки
     QList<BlobItem*> blobs;

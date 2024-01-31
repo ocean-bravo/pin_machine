@@ -109,9 +109,8 @@ ScanView::ScanView(QWidget *parent)
     databusAction2("best_path_optimized", [](const QVariant& value)
     {
         QList<QPointF> path = value.value<QList<QPointF>>();
-        runOnThread(&scene(), [path = std::move(path)]() { scene().drawPath(path); });
+        QMetaObject::invokeMethod(&scene(), "drawPath", Qt::QueuedConnection, Q_ARG(QList<QPointF>, path));
     } );
-
 
     QLabel* message1 = new QLabel;
     message1->setFixedWidth(150);
