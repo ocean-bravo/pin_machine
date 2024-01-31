@@ -37,6 +37,9 @@ public:
 
     int images() const;
 
+
+
+public slots:
     void drawPath(const QList<QPointF>& path);
 
 signals:
@@ -51,7 +54,7 @@ private:
 
     QGraphicsItem* _board = nullptr;
 
-    mutable QMutex _mutex;
+    mutable QMutex _drawPathMutex;
 
     friend class Singleton<Scene>;
 };

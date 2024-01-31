@@ -18,6 +18,8 @@
 
 #include <QBuffer>
 
+#include <QScopeGuard>
+
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
@@ -246,13 +248,13 @@ void Scene::loadScene(const QString& url)
 
     if (!file.exists())
     {
-        qd() << "file not exists: " << QUrl(url).toLocalFile();
+        qd() << "file not exists: " << url << QUrl(url).toLocalFile();
         return;
     }
 
     if (!file.open(QFile::ReadOnly))
     {
-        qd() << "cant opent file: " << QUrl(url).toLocalFile();
+        qd() << "cant opent file: " << url << QUrl(url).toLocalFile();
         return;
     }
 
@@ -337,7 +339,10 @@ int Scene::images() const
 
 void Scene::drawPath(const QList<QPointF>& path)
 {
-    runOnThread(this, [this, path]()
+    // if (!_drawPathMutex.tryLock()) return;
+    // auto mutexUnlock = qScopeGuard([this]{ _drawPathMutex.unlock(); });
+
+    //runOnThread(this, [this, path]()
     {
         every<QGraphicsLineItem>(scene().items(), [](QGraphicsLineItem* line) { delete line; });
 
@@ -349,7 +354,8 @@ void Scene::drawPath(const QList<QPointF>& path)
 
         // Замыкаю кольцо
         //scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
-    });
+    }
+    //);
 }
 
 void Scene::removeDuplicatedBlobs()
