@@ -157,6 +157,10 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     // 1. Получили все блобы для забивки
     QList<BlobItem*> blobs;
 
+    // QList<QGraphicsItem*> items;
+
+    // QMetaObject::invokeMethod(&scene(), [&]() { items = scene().items(); }, Qt::DirectConnection );
+
     every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
     {
         if (blob->isPunch())

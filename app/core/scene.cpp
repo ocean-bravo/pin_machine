@@ -327,6 +327,7 @@ void Scene::loadScene(const QString& url)
 
 void Scene::highlightBlobs(bool state)
 {
+    QMutexLocker locker(&_mutex);
     every<BlobItem>(items(), [this, state](BlobItem* blob) { blob->setHighlight(state); });
 }
 
@@ -339,8 +340,7 @@ int Scene::images() const
 
 void Scene::drawPath(const QList<QPointF>& path)
 {
-    // if (!_drawPathMutex.tryLock()) return;
-    // auto mutexUnlock = qScopeGuard([this]{ _drawPathMutex.unlock(); });
+    QMutexLocker locker(&_mutex);
 
     //runOnThread(this, [this, path]()
     {
@@ -360,26 +360,29 @@ void Scene::drawPath(const QList<QPointF>& path)
 
 void Scene::removeDuplicatedBlobs()
 {
-    //QMutexLocker locker(&_mutex);
+    QMutexLocker locker(&_mutex);
 
-    auto foo = [this]()
+    every<BlobItem>(items(), [this](BlobItem* blob)
     {
-        every<BlobItem>(items(), [this](BlobItem* blob)
+        // если есть пересечение с кем то, то удалить его
+        const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
+        for (QGraphicsItem* collidingItem : collidingItems)
         {
-            // если есть пересечение с кем то, то удалить его
-            const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
-            for (QGraphicsItem* collidingItem : collidingItems)
+            if (is<BlobItem>(collidingItem))
             {
-                if (is<BlobItem>(collidingItem))
-                {
-                    delete blob;
-                    break;
-                }
+                delete blob;
+                break;
             }
-        });
-    };
+        }
+    });
 
-    runOnThreadWait(this, foo);
+
+    // auto foo = [this]()
+    // {
+
+    // };
+
+    // runOnThreadWait(this, foo);
 
     //    static const QThread* sceneThread = thread();
     //    const QThread* executorThread = QThread::currentThread();
@@ -441,5 +444,6 @@ void Scene::updateBlob(BlobItem* blob, double sceneX, double sceneY, double dia)
 
 QList<QGraphicsItem*> Scene::items(Qt::SortOrder order) const
 {
+    QMutexLocker locker(&_mutex);
     return QGraphicsScene::items(order);
 }

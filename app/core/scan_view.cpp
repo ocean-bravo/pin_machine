@@ -91,16 +91,13 @@ ScanView::ScanView(QWidget *parent)
     //         updateCameraView();
     // });
 
-    QObject::connect(&db(), &DataBus::valueChanged, this, [taskBestPath](const QString& key, const QVariant& value)
+    databusAction2("best_path_stop", [taskBestPath](const QVariant& value)
     {
-        if (key == "best_path_stop")
+        if (value.toBool() == true)
         {
-            if (value.toBool() == true)
-            {
-                db().insert("best_path_stop", false); // Нужно в каком то месте перезарядить это значение, иначе снова не будет срабатывать
-                if (taskBestPath->isRunning())
-                    taskBestPath->stopProgram();
-            }
+            db().insert("best_path_stop", false); // Нужно в каком то месте перезарядить это значение, иначе снова не будет срабатывать
+            if (taskBestPath->isRunning())
+                taskBestPath->stopProgram();
         }
     });
 

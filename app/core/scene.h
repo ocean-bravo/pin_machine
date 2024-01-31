@@ -54,7 +54,7 @@ private:
 
     QGraphicsItem* _board = nullptr;
 
-    mutable QMutex _drawPathMutex;
+    mutable QRecursiveMutex _mutex;
 
     friend class Singleton<Scene>;
 };
