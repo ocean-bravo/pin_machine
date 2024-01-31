@@ -342,19 +342,26 @@ void Scene::drawPath(const QList<QPointF>& path)
     // if (!_drawPathMutex.tryLock()) return;
     // auto mutexUnlock = qScopeGuard([this]{ _drawPathMutex.unlock(); });
 
-    //runOnThread(this, [this, path]()
+    auto foo = [this, path]()
     {
-        every<QGraphicsLineItem>(scene().items(), [](QGraphicsLineItem* line) { delete line; });
+        every<QGraphicsLineItem>(QGraphicsScene::items(), [](QGraphicsLineItem* line) { delete line; });
 
         if (path.empty())
             return;
 
         for (int i = 0; i < path.size() - 1; ++i)
             scene().addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
+    };
+
+    runOnThread(this, foo);
+
+    //runOnThread(this, [this, path]()
+    //{
+
 
         // Замыкаю кольцо
         //scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
-    }
+    //}
     //);
 }
 
@@ -442,6 +449,10 @@ void Scene::updateBlob(BlobItem* blob, double sceneX, double sceneY, double dia)
 QList<QGraphicsItem*> Scene::items(Qt::SortOrder order) const
 {
     QList<QGraphicsItem*> items;
-    QMetaObject::invokeMethod(this, [order, &items]() { items = QGraphicsScene::items(order); }, Qt::DirectConnection);
+    auto foo = [this, order, &items]()
+    {
+        items = QGraphicsScene::items(order);
+    };
+    runOnThreadWait((QObject*)this, foo);
     return items;
 }
