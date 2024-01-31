@@ -433,15 +433,16 @@ Item {
                 SmButton {
                     id: load
                     text: qsTr("Load")
-                    onClicked: loadDialog.open()
+                    //onClicked: loadDialog.open()
 
-                    FileDialog {
-                        id: loadDialog
-                        folder: applicationDirPath
-                        fileMode: FileDialog.OpenFile
-                        onAccepted: Engine.load(currentFile)
-                        modality: Qt.ApplicationModal
-                    }
+                    onClicked: Engine.load(Qt.resolvedUrl("/home/mint/Desktop/123"))
+                    // FileDialog {
+                    //     id: loadDialog
+                    //     folder: applicationDirPath
+                    //     fileMode: FileDialog.OpenFile
+                    //     onAccepted: Engine.load(currentFile)
+                    //     modality: Qt.ApplicationModal
+                    // }
                 }
 
                 Item { height: 30; width: 10}

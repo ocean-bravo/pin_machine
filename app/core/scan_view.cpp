@@ -174,10 +174,6 @@ ScanView::~ScanView()
 
 void ScanView::updateCameraView()
 {
-
-    qd() << "update camera view";
-
-
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
 
