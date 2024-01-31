@@ -28,7 +28,6 @@ namespace {
 template<typename T>
 void databusAction(const QString& dbkey, T&& func)
 {
-    qd() << "db action";
     QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant&)
     {
         if (key == dbkey)
@@ -39,7 +38,6 @@ void databusAction(const QString& dbkey, T&& func)
 template<typename T>
 void databusAction2(const QString& dbkey, T&& func)
 {
-    qd() << "db action";
     QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant& value)
     {
         if (key == dbkey)
@@ -81,12 +79,37 @@ ScanView::ScanView(QWidget *parent)
     databusAction("xPos", [this]() { updateCameraView(); });
     databusAction("yPos", [this]() { updateCameraView(); } );
 
-    databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
+    // QObject::connect(&db(), &DataBus::valueChanged,this,  [this](const QString& key, const QVariant&)
+    // {
+    //     if (key == "xPos")
+    //         updateCameraView();
+    // });
+
+    // QObject::connect(&db(), &DataBus::valueChanged, this,  [this](const QString& key, const QVariant&)
+    // {
+    //     if (key == "yPos")
+    //         updateCameraView();
+    // });
+
+    QObject::connect(&db(), &DataBus::valueChanged, this, [taskBestPath](const QString& key, const QVariant& value)
+    {
+        if (key == "best_path_stop")
+        {
+            if (value.toBool() == true)
+            {
+                db().insert("best_path_stop", false); // Нужно в каком то месте перезарядить это значение, иначе снова не будет срабатывать
+                if (taskBestPath->isRunning())
+                    taskBestPath->stopProgram();
+            }
+        }
+    });
+
+    //databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
 
     databusAction2("best_path_optimized", [](const QVariant& value)
     {
         QList<QPointF> path = value.value<QList<QPointF>>();
-        scene().drawPath(path);
+        runOnThread(&scene(), [path = std::move(path)]() { scene().drawPath(path); });
     } );
 
 
@@ -152,6 +175,10 @@ ScanView::~ScanView()
 
 void ScanView::updateCameraView()
 {
+
+    qd() << "update camera view";
+
+
     double x = db().value("xPos").toDouble();
     double y = db().value("yPos").toDouble();
 
