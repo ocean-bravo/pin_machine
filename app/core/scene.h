@@ -54,6 +54,9 @@ private:
 
     QGraphicsItem* _board = nullptr;
 
+    QList<QList<QPointF>> _pathQueue;
+    QTimer* _drawPathTimer;
+
     mutable QRecursiveMutex _mutex;
 
     friend class Singleton<Scene>;

@@ -19,6 +19,7 @@
 #include <QBuffer>
 
 #include <QScopeGuard>
+#include <QTimer>
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
@@ -45,6 +46,37 @@ Scene::Scene(QObject* parent)
         if (key == "blobs_highlight")
             highlightBlobs(value.toBool());
     });
+
+    _drawPathTimer = new QTimer(this);
+    _drawPathTimer->setSingleShot(true);
+    _drawPathTimer->setInterval(50);
+
+    connect(_drawPathTimer, &QTimer::timeout, this, [this]()
+    {
+        qd() << "draw timer";
+        if (_pathQueue.empty())
+            return;
+
+        qd() << "draw timer 2";
+        QList<QPointF> path = _pathQueue.front();
+
+        every<QGraphicsLineItem>(QGraphicsScene::items(), [](QGraphicsLineItem* line) { delete line; });
+
+        if (path.empty())
+        {
+            _pathQueue.removeFirst();
+            _drawPathTimer->start();
+            return;
+        }
+
+        qd() << "draw timer 3";
+
+        for (int i = 0; i < path.size() - 1; ++i)
+            addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
+
+        _pathQueue.removeFirst();
+        _drawPathTimer->start();
+    }, Qt::QueuedConnection);
 }
 
 Scene::~Scene()
@@ -342,18 +374,13 @@ void Scene::drawPath(const QList<QPointF>& path)
     // if (!_drawPathMutex.tryLock()) return;
     // auto mutexUnlock = qScopeGuard([this]{ _drawPathMutex.unlock(); });
 
-    auto foo = [this, path]()
+    runOnThread(this, [this, path]()
     {
-        every<QGraphicsLineItem>(QGraphicsScene::items(), [](QGraphicsLineItem* line) { delete line; });
+        _pathQueue.clear();
+        _pathQueue.append(path);
+        _drawPathTimer->start();
+    });
 
-        if (path.empty())
-            return;
-
-        for (int i = 0; i < path.size() - 1; ++i)
-            scene().addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
-    };
-
-    runOnThread(this, foo);
 
     //runOnThread(this, [this, path]()
     //{
@@ -371,7 +398,7 @@ void Scene::removeDuplicatedBlobs()
 
     auto foo = [this]()
     {
-        every<BlobItem>(items(), [this](BlobItem* blob)
+        every<BlobItem>(QGraphicsScene::items(), [this](BlobItem* blob)
         {
             // если есть пересечение с кем то, то удалить его
             const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
