@@ -40,24 +40,15 @@ Scene::Scene(QObject* parent)
 //        });
 //    });
 
-
-    connect(&db(), &DataBus::valueChanged, this, [this](const QString& key, const QVariant& value)
-    {
-        if (key == "blobs_highlight")
-            highlightBlobs(value.toBool());
-    });
-
     _drawPathTimer = new QTimer(this);
     _drawPathTimer->setSingleShot(true);
     _drawPathTimer->setInterval(50);
 
     connect(_drawPathTimer, &QTimer::timeout, this, [this]()
     {
-        qd() << "draw timer";
         if (_pathQueue.empty())
             return;
 
-        qd() << "draw timer 2";
         QList<QPointF> path = _pathQueue.front();
 
         every<QGraphicsLineItem>(QGraphicsScene::items(), [](QGraphicsLineItem* line) { delete line; });
@@ -68,8 +59,6 @@ Scene::Scene(QObject* parent)
             _drawPathTimer->start();
             return;
         }
-
-        qd() << "draw timer 3";
 
         for (int i = 0; i < path.size() - 1; ++i)
             addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
@@ -359,7 +348,7 @@ void Scene::loadScene(const QString& url)
 
 void Scene::highlightBlobs(bool state)
 {
-    every<BlobItem>(items(), [this, state](BlobItem* blob) { blob->setHighlight(state); });
+    every<BlobItem>(QGraphicsScene::items(), [this, state](BlobItem* blob) { blob->setHighlight(state); });
 }
 
 int Scene::images() const
@@ -371,25 +360,12 @@ int Scene::images() const
 
 void Scene::drawPath(const QList<QPointF>& path)
 {
-    // if (!_drawPathMutex.tryLock()) return;
-    // auto mutexUnlock = qScopeGuard([this]{ _drawPathMutex.unlock(); });
-
     runOnThread(this, [this, path]()
     {
         _pathQueue.clear();
         _pathQueue.append(path);
         _drawPathTimer->start();
     });
-
-
-    //runOnThread(this, [this, path]()
-    //{
-
-
-        // Замыкаю кольцо
-        //scene().addLine(QLineF(path.at(path.size()-1), path.at(0)), QPen(Qt::magenta, 0.5));
-    //}
-    //);
 }
 
 void Scene::removeDuplicatedBlobs()

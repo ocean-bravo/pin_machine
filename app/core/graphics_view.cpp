@@ -169,9 +169,6 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this, blobsHighlightState]()
     {
         db().insert("blobs_highlight", !blobsHighlightState);
-        // Возможно костыль. Заставляю сцену обновиться целиком, вместо обновленя каждого блоба по отдельности.
-        // Если это не сделать, происходит задержка в секунду-две перед перерисовкой блоба.
-        viewport()->update();
     });
 
     toggleHighlight->setCheckable(true);

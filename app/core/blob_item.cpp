@@ -151,7 +151,6 @@ void BlobItem::setRealFiducial(bool state)
 void BlobItem::setHighlight(bool state)
 {
     _highlighted = state;
-    repaintLater();
 }
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)

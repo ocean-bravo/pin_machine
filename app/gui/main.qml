@@ -25,7 +25,8 @@ ApplicationWindow {
             if (text.length > 0)
                 open()
         }
-        onClosed: DataBus.messagebox = "" // чтобы одно и тоже сообщение могло показываться
+        onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+        Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
 
     MessageBox {
@@ -39,6 +40,7 @@ ApplicationWindow {
             else
                 close()
         }
+        Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
 
     MessageBoxLoader {
@@ -47,7 +49,7 @@ ApplicationWindow {
             const record = DataBus.best_path_record
 
             if (isNaN(record)) // Этим значением перезаряжаю параметр. Без перезарядки не сработает
-                return
+                return ""
 
             if (record === 0.0) {
                 show()

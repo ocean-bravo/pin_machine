@@ -101,6 +101,27 @@ ScanView::ScanView(QWidget *parent)
         }
     });
 
+    databusAction2("blobs_highlight", [this](const QVariant& value)
+    {
+        //qd() << "hightlight";
+        scene().highlightBlobs(value.toBool());
+        // Возможно костыль. Заставляю сцену обновиться целиком, вместо обновленя каждого блоба по отдельности.
+        // Если это не сделать, происходит задержка в секунду-две перед перерисовкой блоба.
+        ui->graphicsView->viewport()->update();
+    });
+
+    // QTimer* _testTimer = new QTimer(this);
+    // _testTimer->setInterval(1000);
+    // _testTimer->setSingleShot(false);
+    // _testTimer->start();
+
+    // connect(_testTimer, &QTimer::timeout, this, []()
+    // {
+    //     bool stat = db().value("blobs_highlight").toBool();
+    //     db().insert("blobs_highlight", !stat);
+    // });
+
+
     //databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
 
     databusAction2("best_path_optimized", [](const QVariant& value)
