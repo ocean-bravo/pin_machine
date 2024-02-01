@@ -40,6 +40,8 @@ Scene::Scene(QObject* parent)
 //        });
 //    });
 
+    // Для снижения нагрузки на процессор, чуть разряжаю запросы на рисовку пути.
+    // Если много свалилось запросов, выкидываю все, кроме последнего. Его и рисую.
     _drawPathTimer = new QTimer(this);
     _drawPathTimer->setSingleShot(true);
     _drawPathTimer->setInterval(50);
@@ -75,8 +77,6 @@ Scene::~Scene()
 
 BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 {
-    //QMutexLocker locker(&_mutex);
-
     BlobItem* blob = new BlobItem(x, y, dia);
     blob->setHighlight(db().value("blobs_highlight").toBool());
 
@@ -132,10 +132,10 @@ void Scene::addBoard()
 
     runOnThreadWait(this, [this]()
     {
-        every<BoardItem>(scene().items(), [](BoardItem* board) { delete board; });
+        every<BoardItem>(QGraphicsScene::items(), [](BoardItem* board) { delete board; });
         _board = new BoardItem;
         addItem(_board);
-        every<CameraViewItem>(scene().items(), [](CameraViewItem* camera) { delete camera; });
+        every<CameraViewItem>(QGraphicsScene::items(), [](CameraViewItem* camera) { delete camera; });
         addItem(new CameraViewItem);
     });
 }
