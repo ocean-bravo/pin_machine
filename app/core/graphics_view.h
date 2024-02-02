@@ -5,6 +5,7 @@
 #include <QScopedPointer>
 #include <QMouseEvent>
 
+#include <QPainterPath>
 
 class QRubberBand;
 
@@ -42,11 +43,19 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     bool event(QEvent* event) override;
 
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+
+
 private:
     QSizeF _sizeToFit;
     QScopedPointer<QRubberBand> _rb;
     QPoint _origin;
 
+
     bool _dragMode = false;
     QMouseEvent _lastMouseEvent = {QEvent::None, QPointF(), QPointF(), QPointF(), Qt::NoButton, { }, { } };
+    //bool _selectMode = false;
+    QPainterPath _selArea;
 };

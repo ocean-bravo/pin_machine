@@ -12,6 +12,8 @@
 #include <QScrollBar>
 #include <QMenu>
 
+#include <QtGlobal>
+
 GraphicsView::GraphicsView(QWidget* parent)
     : QGraphicsView(parent)
 {
@@ -88,19 +90,18 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
         event->accept();
         return;
     }
+    const QString sceneMode = db().value("scene_mode").toString();
 
-    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
+    qd() << "scene mode " << sceneMode;
+
+    if (event->button() == Qt::LeftButton && sceneMode == "select")
     {
-        //qd() << "rubber band";
+        QCursor c = cursor(); c.setShape(Qt::CrossCursor); setCursor(c);
 
         _origin = event->pos();
-        //qd() << "rubber band pos " << _origin;
         _rb.reset(new QRubberBand(QRubberBand::Rectangle, this));
         _rb->setGeometry(QRect(_origin, QSize()));
         _rb->show();
-
-        QCursor c = cursor(); c.setShape(Qt::CrossCursor); setCursor(c);
-        event->accept();
 
         auto isItemSelectable = [this](QMouseEvent* event)
         {
@@ -112,39 +113,96 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
             return false;
         };
 
-        if (!isItemSelectable(event))
-        {
+        if (isItemSelectable(event))
             QGraphicsView::mousePressEvent(event);
-            return;
-        }
 
-        // Если передать сигнал дальше, т.е. без return, то миниплата выделится по клику, она сама это сделает.
-        // Но если в месте клика будет элемент, который можно двигать, например fake pin, надо чтобы он не двигался.
-        // Для этого, событие mouseMove дальше не прокидывается, когда есть резиновый квадрат.
-        // Как альтернативный вариант, выделять миниплату прямо здесь - создать функцию с вызовом setSelectionArea
-        // размером с 1 пиксель.
-        //QAbstractScrollArea::mousePressEvent(event);
-
+        return;
     }
 
-    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier)
+    if (event->button() == Qt::LeftButton)
     {
         _dragMode = true;
+
         _lastMouseEvent = QMouseEvent(QEvent::MouseMove, event->localPos(), event->windowPos(), event->screenPos(),
-                                                           event->button(), event->buttons(), event->modifiers());
+                                      event->button(), event->buttons(), event->modifiers());
         setCursor(Qt::ClosedHandCursor);
         event->accept();
         return;
     }
+}
 
-    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && (event->modifiers() == Qt::NoModifier))
+
+void GraphicsView::mouseReleaseEvent(QMouseEvent* event)
+{
+    QCursor c = cursor(); c.setShape(Qt::ArrowCursor); setCursor(c);
+
+    if (_rb)
     {
-        // Кликнули мимо всех элементов
+        QRect rubberBandRect = QRect(_origin, event->pos()).normalized();
+        _rb.reset();
+
+        // Если квадрат 1*1, то мышь не двигали, а просто кликнули.
+        // Чтобы получался deselect по клику на блобе. Если событие дойдет до блоба, он поменяет выделение.
+        if (rubberBandRect.width() == 1 && rubberBandRect.height() == 1)
+        {
+            QGraphicsView::mouseReleaseEvent(event);
+            return;
+        }
+
+        QPainterPath selectionArea;
+        selectionArea.addPolygon(mapToScene(rubberBandRect));
+        selectionArea.closeSubpath();
+        scene()->setSelectionArea(selectionArea, Qt::AddToSelection, Qt::IntersectsItemShape, viewportTransform());
+
+        event->accept();
         return;
     }
 
-    QGraphicsView::mousePressEvent(event);
+    if (_dragMode)
+    {
+        _dragMode = false;
+        event->accept();
+        return;
+    }
 }
+
+void GraphicsView::mouseMoveEvent(QMouseEvent* event)
+{
+    const QPoint pos = event->pos();
+
+    QJsonObject jo;
+    jo.insert("label_number", 0);
+    jo.insert("text", QString("%1 %2").arg(toReal3(mapToScene(pos).x())).arg(toReal3(mapToScene(pos).y())));
+
+    db().insert("message", jo);
+
+    if (_dragMode)
+    {
+        QScrollBar *hBar = horizontalScrollBar();
+        QScrollBar *vBar = verticalScrollBar();
+        QPoint delta = event->pos() - _lastMouseEvent.pos();
+        hBar->setValue(hBar->value() + (isRightToLeft() ? delta.x() : -delta.x()));
+        vBar->setValue(vBar->value() - delta.y());
+        _lastMouseEvent = QMouseEvent(QEvent::MouseMove, event->localPos(), event->windowPos(), event->screenPos(),
+                                      event->button(), event->buttons(), event->modifiers());
+        return;
+    }
+
+    const QString sceneMode = db().value("scene_mode").toString();
+
+    if (_rb)
+    {
+        QRect rubberBandRect = QRect(_origin, event->pos()).normalized();
+        _rb->setGeometry(rubberBandRect);
+
+        scene()->setSelectionArea(_selArea, Qt::AddToSelection, Qt::IntersectsItemShape, viewportTransform());
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
 
 void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 {
@@ -188,85 +246,6 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     menu.exec(event->globalPos());
 }
 
-void GraphicsView::mouseReleaseEvent(QMouseEvent* event)
-{
-    _rb.reset();
-
-    QCursor c = cursor(); c.setShape(Qt::ArrowCursor); setCursor(c);
-
-    if (_dragMode)
-    {
-        _dragMode = false;
-        //setCursor(Qt::ArrowCursor);
-        event->accept();
-        return;
-    }
-
-    QGraphicsView::mouseReleaseEvent(event);
-}
-
-void GraphicsView::mouseMoveEvent(QMouseEvent* event)
-{
-    const QPoint pos = event->pos();
-
-    QJsonObject jo;
-    jo.insert("label_number", 0);
-    jo.insert("text", QString("%1 %2").arg(toReal3(mapToScene(pos).x())).arg(toReal3(mapToScene(pos).y())));
-
-    db().insert("message", jo);
-
-
-//    if (_dragMode)
-//    {
-
-//        event->ignore();
-
-//    }
-
-    if (_dragMode)
-    {
-//        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _panStartX));
-//        verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _panStartY));
-////        _panStartX = event->x();
-////        _panStartY = event->y();
-//        event->accept();
-
-
-//        QPointF delta = _lastScreenPos - event->screenPos();
-//        int newX = horizontalScrollBar()->value() + delta.x();
-//        int newY = verticalScrollBar()->value() + delta.y();
-//        horizontalScrollBar()->setValue(newX);
-//        verticalScrollBar()->setValue(newY);
-
-
-                    QScrollBar *hBar = horizontalScrollBar();
-                    QScrollBar *vBar = verticalScrollBar();
-                    QPoint delta = event->pos() - _lastMouseEvent.pos();
-                    hBar->setValue(hBar->value() + (isRightToLeft() ? delta.x() : -delta.x()));
-                    vBar->setValue(vBar->value() - delta.y());
-                    _lastMouseEvent = QMouseEvent(QEvent::MouseMove, event->localPos(), event->windowPos(), event->screenPos(),
-                                                                   event->button(), event->buttons(), event->modifiers());
-        return;
-    }
-
-
-
-    if (_rb)
-    {
-        QRect rubberBandRect = QRect(_origin, event->pos()).normalized();
-        _rb->setGeometry(rubberBandRect);
-
-        QPainterPath selectionArea;
-        selectionArea.addPolygon(mapToScene(rubberBandRect));
-        selectionArea.closeSubpath();
-        scene()->setSelectionArea(selectionArea, Qt::AddToSelection, Qt::IntersectsItemShape, viewportTransform());
-        event->accept();
-        return;
-    }
-
-    QGraphicsView::mouseMoveEvent(event);
-}
-
 void GraphicsView::resizeEvent(QResizeEvent* event)
 {
     _dragMode = false;
@@ -278,4 +257,37 @@ bool GraphicsView::event(QEvent* event)
 {
     //qd() << "view event type " << event->type();
     return QGraphicsView::event(event);
+}
+
+void GraphicsView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_S)
+    {
+        db().insert("scene_mode", QString("select"));
+
+        QJsonObject jo;
+        jo.insert("label_number", 5);
+        jo.insert("text", QString("mode: Select"));
+        db().insert("message", jo);
+    }
+}
+
+void GraphicsView::keyReleaseEvent(QKeyEvent* /*event*/)
+{
+    db().insert("scene_mode", QString("drag"));
+
+    QJsonObject jo;
+    jo.insert("label_number", 5);
+    jo.insert("text", QString("mode: Drag"));
+    db().insert("message", jo);
+}
+
+void GraphicsView::focusOutEvent(QFocusEvent* /*event*/)
+{
+    db().insert("scene_mode", QString("drag"));
+
+    QJsonObject jo;
+    jo.insert("label_number", 5);
+    jo.insert("text", QString("mode: Drag"));
+    db().insert("message", jo);
 }

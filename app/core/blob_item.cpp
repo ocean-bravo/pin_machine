@@ -27,7 +27,7 @@ BlobItem::BlobItem(double x, double y, double dia, QGraphicsItem* parent)
     //setFlag(QGraphicsItem::ItemIsMovable, true);
 }
 
-void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* /*widget*/)
 {
     // Передаю дальше отрисовку невыделенного состояния.
     QStyleOptionGraphicsItem savedOption = *option;
@@ -191,9 +191,16 @@ void BlobItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::CTRL)
+    const QString sceneMode = db().value("scene_mode").toString();
+
+    if (event->button() == Qt::LeftButton && (sceneMode == "select"))
+    {
+        qd() << "blob select";
         setSelected(!isSelected());
-    QGraphicsEllipseItem::mousePressEvent(event);
+        event->accept();
+    }
+
+    //QGraphicsEllipseItem::mousePressEvent(event);
 }
 
 void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
@@ -201,6 +208,7 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     Q_UNUSED(event)
     // В базовом классе какое-то действие, которое снимает выделение
     // Не прокидываю дальше событие
+    qd() << "blob release";
     return;
 }
 
