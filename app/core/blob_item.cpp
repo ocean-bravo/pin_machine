@@ -195,7 +195,7 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
     if (event->button() == Qt::LeftButton && (sceneMode == "select"))
     {
-        qd() << "blob select";
+        //qd() << "blob select";
         setSelected(!isSelected());
         event->accept();
     }
@@ -208,7 +208,7 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     Q_UNUSED(event)
     // В базовом классе какое-то действие, которое снимает выделение
     // Не прокидываю дальше событие
-    qd() << "blob release";
+    //qd() << "blob release";
     return;
 }
 

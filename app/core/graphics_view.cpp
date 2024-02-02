@@ -92,7 +92,7 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
     }
     const QString sceneMode = db().value("scene_mode").toString();
 
-    qd() << "scene mode " << sceneMode;
+    //qd() << "scene mode " << sceneMode;
 
     if (event->button() == Qt::LeftButton && sceneMode == "select")
     {
