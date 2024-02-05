@@ -220,14 +220,13 @@ void BlobItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
-    QMenu menu;
-
     const QString sceneMode = db().value("scene_mode").toString();
 
     if (sceneMode == "drag")
     {
-
         QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");
+
+        QMenu menu;
 
         menu.addAction(menuText, this, [this]()
         {
@@ -242,7 +241,10 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
         menu.exec(event->screenPos());
 
         event->accept();
+        return;
     }
+
+    QGraphicsItem::contextMenuEvent(event);
 }
 
 void BlobItem::highlight()
