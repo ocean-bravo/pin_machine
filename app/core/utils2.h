@@ -6,6 +6,7 @@
 #include <QEventLoop>
 
 #include <tuple>
+#include "data_bus.h"
 
 inline std::tuple<double, double, double> blobToDouble(const QString& blob)
 {
@@ -40,3 +41,23 @@ auto runOnThreadWait(QObject* targetObject, Function foo)
     loop.exec();
 }
 
+template<typename T>
+void databusAction2(const QString& dbkey, T&& func)
+{
+    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant& value)
+    {
+        if (key == dbkey)
+            func(value);
+    });
+}
+
+// Не понимаю, что я тут делаю - как лямбда передается в функцию. Но работает.
+template<typename T>
+void databusAction(const QString& dbkey, T&& func)
+{
+    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant&)
+    {
+        if (key == dbkey)
+            func();
+    });
+}

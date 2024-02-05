@@ -21,29 +21,11 @@
 #include <functional>
 
 #include "camera_view_item.h"
+#include "manual_path.h"
 
 namespace {
 
-// Не понимаю, что я тут делаю - как лямбда передается в функцию. Но работает.
-template<typename T>
-void databusAction(const QString& dbkey, T&& func)
-{
-    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant&)
-    {
-        if (key == dbkey)
-            func();
-    });
-}
 
-template<typename T>
-void databusAction2(const QString& dbkey, T&& func)
-{
-    QObject::connect(&db(), &DataBus::valueChanged, [func = std::move(func), dbkey](const QString& key, const QVariant& value)
-    {
-        if (key == dbkey)
-            func(value);
-    });
-}
 
 }
 
@@ -124,11 +106,29 @@ ScanView::ScanView(QWidget *parent)
 
     //databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
 
-    databusAction2("best_path_optimized", [](const QVariant& value)
+    databusAction2("punch_path", [](const QVariant& value)
     {
         QList<QPointF> path = value.value<QList<QPointF>>();
         QMetaObject::invokeMethod(&scene(), "drawPath", Qt::QueuedConnection, Q_ARG(QList<QPointF>, path));
     } );
+
+    databusAction2("scene_mode", [](const QVariant& value)
+    {
+        const QString sceneMode = value.toString();
+
+        QJsonObject jo;
+        jo.insert("label_number", 5);
+
+        if (sceneMode == "drag")        jo.insert("text", QString("mode: Drag"));
+        if (sceneMode == "select")      jo.insert("text", QString("mode: Select"));
+        if (sceneMode == "manual_path") jo.insert("text", QString("mode: Manual Path"));
+
+        db().insert("message", jo);
+    });
+
+
+    ManualPath* manPth = new ManualPath(this);
+
 
     QLabel* message1 = new QLabel;
     message1->setFixedWidth(150);

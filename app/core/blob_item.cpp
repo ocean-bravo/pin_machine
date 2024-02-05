@@ -200,6 +200,12 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
         event->accept();
     }
 
+    if (event->button() == Qt::LeftButton && (sceneMode == "manual_path"))
+    {
+        db().insert("new_point_path", QVariant::fromValue(this));
+        event->accept();
+    }
+
     //QGraphicsEllipseItem::mousePressEvent(event);
 }
 
@@ -216,21 +222,27 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
     QMenu menu;
 
-    QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");
+    const QString sceneMode = db().value("scene_mode").toString();
 
-    menu.addAction(menuText, this, [this]()
+    if (sceneMode == "drag")
     {
-        setFiducial(!isFiducial());
-    });
 
-    menu.addAction(tr("Delete blob"), this, [this]()
-    {
-        deleteLater();
-    });
+        QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");
 
-    menu.exec(event->screenPos());
+        menu.addAction(menuText, this, [this]()
+        {
+            setFiducial(!isFiducial());
+        });
 
-    event->accept();
+        menu.addAction(tr("Delete blob"), this, [this]()
+        {
+            deleteLater();
+        });
+
+        menu.exec(event->screenPos());
+
+        event->accept();
+    }
 }
 
 void BlobItem::highlight()

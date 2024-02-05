@@ -119,6 +119,25 @@ void GraphicsView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
+    if (event->button() == Qt::LeftButton && sceneMode == "manual_path")
+    {
+        QCursor c = cursor(); c.setShape(Qt::CrossCursor); setCursor(c);
+        auto isItemSelectable = [this](QMouseEvent* event)
+        {
+            for (QGraphicsItem* item : items(event->pos()))
+            {
+                if (item->flags() & QGraphicsItem::ItemIsSelectable)
+                    return true;
+            }
+            return false;
+        };
+
+        if (isItemSelectable(event))
+            QGraphicsView::mousePressEvent(event);
+
+        return;
+    }
+
     if (event->button() == Qt::LeftButton)
     {
         _dragMode = true;
@@ -216,34 +235,48 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     if (event->isAccepted())
         return;
 
-    QMenu menu;
-
-    menu.addAction(tr("Scan here"), this, [this, event]()
+    if (db().value("scene_mode").toString() == "drag")
     {
-        emit scanPosition(mapToScene(event->pos()));
-    });
+        QMenu menu;
 
-    const bool blobsHighlightState = db().value("blobs_highlight").toBool();
-    QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this, blobsHighlightState]()
+        menu.addAction(tr("Scan here"), this, [this, event]()
+        {
+            emit scanPosition(mapToScene(event->pos()));
+        });
+
+        const bool blobsHighlightState = db().value("blobs_highlight").toBool();
+        QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this, blobsHighlightState]()
+        {
+            db().insert("blobs_highlight", !blobsHighlightState);
+        });
+
+        toggleHighlight->setCheckable(true);
+        toggleHighlight->setChecked(blobsHighlightState);
+
+        menu.addAction(tr("Add blob here"), this, [this, event]()
+        {
+            emit addBlob(mapToScene(event->pos()));
+        });
+
+        menu.addAction(tr("Calculate path from here"), this, [this, event]()
+        {
+            emit calcPath(mapToScene(event->pos()));
+        });
+
+        menu.exec(event->globalPos());
+    }
+
+    if (db().value("scene_mode").toString() == "manual_path")
     {
-        db().insert("blobs_highlight", !blobsHighlightState);
-    });
+        QMenu menu;
 
-    toggleHighlight->setCheckable(true);
-    toggleHighlight->setChecked(blobsHighlightState);
+        menu.addAction(tr("Reset"), this, [this, event]()
+        {
+            db().insert("manual_path_reset", true);
+        });
 
-    menu.addAction(tr("Add blob here"), this, [this, event]()
-    {
-        emit addBlob(mapToScene(event->pos()));
-    });
-
-    menu.addAction(tr("Calculate path from here"), this, [this, event]()
-    {
-        emit calcPath(mapToScene(event->pos()));
-    });
-
-
-    menu.exec(event->globalPos());
+        menu.exec(event->globalPos());
+    }
 }
 
 void GraphicsView::resizeEvent(QResizeEvent* event)
@@ -264,30 +297,24 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_S)
     {
         db().insert("scene_mode", QString("select"));
+    }
 
-        QJsonObject jo;
-        jo.insert("label_number", 5);
-        jo.insert("text", QString("mode: Select"));
-        db().insert("message", jo);
+    if (event->key() == Qt::Key_M)
+    {
+        db().insert("scene_mode", QString("manual_path"));
     }
 }
 
 void GraphicsView::keyReleaseEvent(QKeyEvent* /*event*/)
 {
     db().insert("scene_mode", QString("drag"));
-
-    QJsonObject jo;
-    jo.insert("label_number", 5);
-    jo.insert("text", QString("mode: Drag"));
-    db().insert("message", jo);
 }
 
-void GraphicsView::focusOutEvent(QFocusEvent* /*event*/)
+void GraphicsView::focusOutEvent(QFocusEvent* event)
 {
-    db().insert("scene_mode", QString("drag"));
+    if (event->reason() == Qt::PopupFocusReason)
+        return;
 
-    QJsonObject jo;
-    jo.insert("label_number", 5);
-    jo.insert("text", QString("mode: Drag"));
-    db().insert("message", jo);
+
+    db().insert("scene_mode", QString("drag"));
 }
