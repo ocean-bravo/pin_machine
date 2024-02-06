@@ -6,8 +6,6 @@
 
 #include "utils2.h"
 
-
-
 ManualPath::ManualPath(QObject *parent)
     : QObject(parent)
 {
@@ -23,9 +21,17 @@ ManualPath::ManualPath(QObject *parent)
         }
     });
 
-    databusAction2("new_point_path", [this](const QVariant& value)
+    databusAction2("manual_path_add_point", [this](const QVariant& value)
     {
         BlobItem* blob = value.value<BlobItem*>();
+
+        // Без повторов точек
+        if (_points.contains(blob))
+            return;
+
+        // Нужно только punch точки
+        if (!blob->isPunch())
+            return;
 
         _points.append(blob);
 

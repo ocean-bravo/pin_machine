@@ -195,14 +195,13 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
     if (event->button() == Qt::LeftButton && (sceneMode == "select"))
     {
-        //qd() << "blob select";
         setSelected(!isSelected());
         event->accept();
     }
 
     if (event->button() == Qt::LeftButton && (sceneMode == "manual_path"))
     {
-        db().insert("new_point_path", QVariant::fromValue(this));
+        db().insert("manual_path_add_point", QVariant::fromValue(this));
         event->accept();
     }
 

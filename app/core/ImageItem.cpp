@@ -41,8 +41,11 @@ void ImageItem::wheelEvent(QWheelEvent *event)
 {
     if (event->orientation() == Qt::Vertical)
     {
-        auto pos = event->pos();
-        m_scale = 1 + (float(event->delta())/1200);
+
+        qd() << "angle delta " <<  event->angleDelta();
+
+        auto pos = event->position();
+        m_scale = 1 + (float(event->angleDelta().y())/1200);
         auto tm = QTransform()
                 .translate(pos.x(), pos.y())
                 .scale(m_scale, m_scale)

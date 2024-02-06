@@ -20,6 +20,7 @@
 
 #include <QScopeGuard>
 #include <QTimer>
+#include <QJsonObject>
 
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
@@ -62,8 +63,17 @@ Scene::Scene(QObject* parent)
             return;
         }
 
+        double length = 0;
         for (int i = 0; i < path.size() - 1; ++i)
-            addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
+        {
+            auto lineItem = addLine(QLineF(path.at(i), path.at(i+1)), QPen(Qt::red, 0.5));
+            length += lineItem->line().length();
+        }
+
+        QJsonObject jo;
+        jo.insert("label_number", 4);
+        jo.insert("text", QString("length: %1").arg(toReal2(length)));
+        db().insert("message", jo);
 
         _pathQueue.removeFirst();
         _drawPathTimer->start();

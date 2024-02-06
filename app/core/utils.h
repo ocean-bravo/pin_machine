@@ -23,6 +23,11 @@ inline QString toReal3(double value)
     return QString::number(value, 'f', 3);
 }
 
+inline QString toReal2(double value)
+{
+    return QString::number(value, 'f', 2);
+}
+
 inline QString toReal1(double value)
 {
     return QString::number(value, 'f', 1);
