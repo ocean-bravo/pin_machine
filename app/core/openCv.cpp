@@ -21,18 +21,18 @@ cv::Scalar Black(0, 0, 0, 0);
 
 namespace {
 
-void Rearrange(cv::Mat& src, cv::Mat& dst)
-{
-    int cx = src.cols / 2;
-    int cy = src.rows / 2;
-    cv::Mat tmp;
-    tmp.create(src.size(), src.type());
-    src(cv::Rect(0, 0, cx, cy)).copyTo(tmp(cv::Rect(cx, cy, cx, cy)));
-    src(cv::Rect(cx, cy, cx, cy)).copyTo(tmp(cv::Rect(0, 0, cx, cy)));
-    src(cv::Rect(cx, 0, cx, cy)).copyTo(tmp(cv::Rect(0, cy, cx, cy)));
-    src(cv::Rect(0, cy, cx, cy)).copyTo(tmp(cv::Rect(cx, 0, cx, cy)));
-    dst = tmp;
-}
+// void Rearrange(cv::Mat& src, cv::Mat& dst)
+// {
+//     int cx = src.cols / 2;
+//     int cy = src.rows / 2;
+//     cv::Mat tmp;
+//     tmp.create(src.size(), src.type());
+//     src(cv::Rect(0, 0, cx, cy)).copyTo(tmp(cv::Rect(cx, cy, cx, cy)));
+//     src(cv::Rect(cx, cy, cx, cy)).copyTo(tmp(cv::Rect(0, 0, cx, cy)));
+//     src(cv::Rect(cx, 0, cx, cy)).copyTo(tmp(cv::Rect(0, cy, cx, cy)));
+//     src(cv::Rect(0, cy, cx, cy)).copyTo(tmp(cv::Rect(cx, 0, cx, cy)));
+//     dst = tmp;
+// }
 
 // cv::Mat XCorrelation(cv::Mat const& I, cv::Mat const& I1)
 // {

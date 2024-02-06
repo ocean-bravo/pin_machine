@@ -87,7 +87,7 @@ void Stream::submitBuffer(const uint8_t *ptr, size_t bytes)
     // Generate warning every 100 frames if the frame buffer is not
     // the expected size. 
     
-    const uint32_t wantSize = m_width*m_height*3;
+//    const uint32_t wantSize = m_width*m_height*3;
 //    if ((bytes != wantSize) && ((m_frames % 100) == 0))
 //    {
 //        LOG(LOG_WARNING, "Warning: captureFrame received incorrect buffer size (got %d want %d)\n", bytes, wantSize);

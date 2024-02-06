@@ -50,35 +50,35 @@ void SerialPrivate::setPortName(const QString& pn)
 
 void SerialPrivate::setBaudRate(const QString& br)
 {
-    QSerialPort::BaudRate baudRate = QSerialPort::Baud115200;
-    if (br == "1200")
-    {
-        baudRate = QSerialPort::Baud1200;
-    }
-    else if (br == "2400")
-    {
-        baudRate = QSerialPort::Baud2400;
-    }
-    else if (br == "4800")
-    {
-        baudRate = QSerialPort::Baud4800;
-    }
-    else if (br == "9600")
-    {
-        baudRate = QSerialPort::Baud9600;
-    }
-    else if (br == "19200")
-    {
-        baudRate = QSerialPort::Baud19200;
-    }
-    else if (br == "38400")
-    {
-        baudRate = QSerialPort::Baud38400;
-    }
-    else if (br == "57600")
-    {
-        baudRate = QSerialPort::Baud57600;
-    }
+    // QSerialPort::BaudRate baudRate = QSerialPort::Baud115200;
+    // if (br == "1200")
+    // {
+    //     baudRate = QSerialPort::Baud1200;
+    // }
+    // else if (br == "2400")
+    // {
+    //     baudRate = QSerialPort::Baud2400;
+    // }
+    // else if (br == "4800")
+    // {
+    //     baudRate = QSerialPort::Baud4800;
+    // }
+    // else if (br == "9600")
+    // {
+    //     baudRate = QSerialPort::Baud9600;
+    // }
+    // else if (br == "19200")
+    // {
+    //     baudRate = QSerialPort::Baud19200;
+    // }
+    // else if (br == "38400")
+    // {
+    //     baudRate = QSerialPort::Baud38400;
+    // }
+    // else if (br == "57600")
+    // {
+    //     baudRate = QSerialPort::Baud57600;
+    // }
 
     _port->setBaudRate(br.toUInt());
 }

@@ -58,7 +58,7 @@ ScanView::ScanView(QWidget *parent)
         taskBestPath->run(pos);
     });
 
-    databusAction("xPos", [this]() { updateCameraView(); });
+    databusAction("xPos", [this]() { updateCameraView(); } );
     databusAction("yPos", [this]() { updateCameraView(); } );
 
     // QObject::connect(&db(), &DataBus::valueChanged,this,  [this](const QString& key, const QVariant&)

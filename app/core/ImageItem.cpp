@@ -39,14 +39,11 @@ void ImageItem::paint(QPainter *painter)
 
 void ImageItem::wheelEvent(QWheelEvent *event)
 {
-    QPoint angleDelta = event->angleDelta();
+    const QPoint angleDelta = event->angleDelta();
 
-    if (angleDelta.x() == 0 && angleDelta.y() != 0)
+    if (angleDelta.x() == 0 && angleDelta.y() != 0) // Вертикальный скролл
     {
-
-        qd() << "angle delta " <<  angleDelta;
-
-        auto pos = event->position();
+        QPointF pos = event->position();
         m_scale = 1 + (float(angleDelta.y())/1200);
         auto tm = QTransform()
                 .translate(pos.x(), pos.y())

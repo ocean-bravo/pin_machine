@@ -103,8 +103,8 @@ void MainWindow::updateLogMessages()
 
 void MainWindow::changeCamera()
 {
-    QVariant v = ui->cameraChooser->currentData();
-    CustomComboBoxData data = v.value<CustomComboBoxData>();
+    //QVariant v = ui->cameraChooser->currentData();
+    //CustomComboBoxData data = v.value<CustomComboBoxData>();
 
 //    _video3->changeCamera(data.m_device, data.m_format);
 
