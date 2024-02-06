@@ -39,13 +39,15 @@ void ImageItem::paint(QPainter *painter)
 
 void ImageItem::wheelEvent(QWheelEvent *event)
 {
-    if (event->orientation() == Qt::Vertical)
+    QPoint angleDelta = event->angleDelta();
+
+    if (angleDelta.x() == 0 && angleDelta.y() != 0)
     {
 
-        qd() << "angle delta " <<  event->angleDelta();
+        qd() << "angle delta " <<  angleDelta;
 
         auto pos = event->position();
-        m_scale = 1 + (float(event->angleDelta().y())/1200);
+        m_scale = 1 + (float(angleDelta.y())/1200);
         auto tm = QTransform()
                 .translate(pos.x(), pos.y())
                 .scale(m_scale, m_scale)
@@ -77,7 +79,7 @@ void ImageItem::mouseMoveEvent(QMouseEvent *event)
     update();
 }
 
-void ImageItem::mouseReleaseEvent(QMouseEvent *event)
+void ImageItem::mouseReleaseEvent(QMouseEvent */*event*/)
 {
 
 }
