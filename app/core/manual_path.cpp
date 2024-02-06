@@ -15,9 +15,9 @@ ManualPath::ManualPath(QObject *parent)
         if (value.toBool() == true)
         {
             _points.clear();
-            db().insert("manual_path_reset", false); // Перезарядка
+            db("manual_path_reset") = false; // Перезарядка
 
-            buildPath();
+            createPathToDraw();
         }
     });
 
@@ -35,20 +35,22 @@ ManualPath::ManualPath(QObject *parent)
 
         _points.append(blob);
 
-        buildPath();
+        createPathToDraw();
     });
 }
 
-void ManualPath::buildPath()
+void ManualPath::createPathToDraw()
 {
     QList<QPointF> path;
 
-    path.append(QPointF(0,0));
+    const QPointF startPoint = db().value("punchpath_start_point").toPointF();
 
-    for (BlobItem* blob : _points)
+    path.append(startPoint);
+
+    for (BlobItem* blob : qAsConst(_points))
         path.append(blob->scenePos());
 
-    path.append(QPointF(0,0));
+    path.append(startPoint);
 
-    db().insert("punch_path", QVariant::fromValue(path));
+    db("punchpath") = QVariant::fromValue(path);
 }

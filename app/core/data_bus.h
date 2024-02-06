@@ -9,6 +9,8 @@
 
 #include "utils.h"
 
+class DataBusRef;
+
 class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 {
     Q_OBJECT
@@ -27,6 +29,8 @@ public:
     void insert(const QString &key, const QVariant &value);
     QVariant value(const QString& key) const;
 
+    DataBusRef operator[](const QString& key);
+
 signals:
     void pixelSizeChanged();
     void imageChanged(QString key);
@@ -44,9 +48,30 @@ private:
     mutable QReadWriteLock _lock;
 
     friend class Singleton<DataBus>;
-
-
 };
+
+class DataBusRef
+{
+public:
+    void operator = (const QVariant& value)
+    {
+        DataBus::instance().insert(_key, value);
+    }
+
+private:
+    DataBusRef(const QString& key)
+    {
+        _key = key;
+    }
+    QString _key;
+
+    friend class DataBus;
+};
+
+inline DataBusRef db(const QString& key)
+{
+    return DataBus::instance()[key];
+}
 
 inline DataBus& db()
 {

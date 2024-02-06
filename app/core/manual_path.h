@@ -14,7 +14,7 @@ public:
 
 
 private:
-    void buildPath();
+    void createPathToDraw();
 
     QList<BlobItem*> _points;
 };

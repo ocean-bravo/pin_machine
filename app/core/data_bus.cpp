@@ -33,6 +33,11 @@ DataBus::DataBus(QObject *parent)
         if (key == "resolution_width")
             emit pixelSizeChanged();
     });
+
+    QPointF startPoint;
+    startPoint.rx() = settings().value("punchpath_start_point_x", 0.0).toDouble();
+    startPoint.ry() = settings().value("punchpath_start_point_y", 0.0).toDouble();
+    insert("punchpath_start_point", startPoint);
 }
 
 DataBus::~DataBus()
@@ -73,4 +78,9 @@ QVariant DataBus::value(const QString& key) const
     QVariant var = QQmlPropertyMap::value(key);
     _lock.unlock();
     return var;
+}
+
+DataBusRef DataBus::operator [](const QString& key)
+{
+    return DataBusRef(key);
 }
