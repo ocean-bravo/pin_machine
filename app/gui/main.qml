@@ -46,7 +46,7 @@ ApplicationWindow {
     MessageBoxLoader {
         id: bestPath
         text: {
-            const record = DataBus.best_path_record
+            const record = DataBus.punchpath_auto_record
             const solved = DataBus.punchpath_auto_solved
 
             if (isNaN(record)) // Этим значением перезаряжаю параметр. Без перезарядки не сработает
@@ -70,7 +70,7 @@ ApplicationWindow {
         }
         onAccept: {
             hide()
-            DataBus.best_path_stop = true
+            DataBus.punchpath_auto_stop = true
         }
         backgroundColor: "green"
     }

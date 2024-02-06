@@ -150,9 +150,9 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    db().insert("best_path_record", qQNaN()); // Перезарядка параметра
-    db().insert("best_path_record", double(0.0)); // Открытие message box.
-    db().insert("punchpath", QVariant()); // Очистка сцены от старого пути.
+    db("punchpath_auto_record") = qQNaN(); // Перезарядка параметра
+    db("punchpath_auto_record") = double(0.0); // Открытие message box.
+    db("punchpath") = QVariant(); // Очистка сцены от старого пути.
 
     // 1. Получили все блобы для забивки
     QList<BlobItem*> blobs;
@@ -195,13 +195,13 @@ void TaskBestPathPrivate::run(QPointF startPoint)
         connect(&thread, &QThread::started, &littleSolver, &LittleSolver::solve);
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) {
             qd() << "new record is: " << record;
-            db().insert("best_path_record", record);
+            db("punchpath_auto_record") = record;
         });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
             // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
             QList<QPointF> coordsOptimized = solutionToPath(coords, solution, startPoint);
-            db().insert("punchpath", QVariant::fromValue(coordsOptimized));
+            db("punchpath") = QVariant::fromValue(coordsOptimized);
         });
 
         QAtomicInteger<bool> solved = false;
@@ -236,7 +236,7 @@ void TaskBestPathPrivate::run(QPointF startPoint)
             // 6. Получили координаты точек выстроенных по кратчайшему пути между ними
             QList<int> finalSolution = littleSolver.finalSolution();
             QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
-            db().insert("punchpath", QVariant::fromValue(coordsOptimized));
+            db("punchpath") = QVariant::fromValue(coordsOptimized);
         }
         //CALLGRIND_TOGGLE_COLLECT;
         //CALLGRIND_START_INSTRUMENTATION;

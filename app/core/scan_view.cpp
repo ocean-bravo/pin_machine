@@ -73,11 +73,11 @@ ScanView::ScanView(QWidget *parent)
     //         updateCameraView();
     // });
 
-    databusAction2("best_path_stop", [taskBestPath](const QVariant& value)
+    databusAction2("punchpath_auto_stop", [taskBestPath](const QVariant& value)
     {
         if (value.toBool() == true)
         {
-            db().insert("best_path_stop", false); // Нужно в каком то месте перезарядить это значение, иначе снова не будет срабатывать
+            db().insert("punchpath_auto_stop", false); // Нужно в каком то месте перезарядить это значение, иначе снова не будет срабатывать
             if (taskBestPath->isRunning())
                 taskBestPath->stopProgram();
         }
@@ -104,7 +104,7 @@ ScanView::ScanView(QWidget *parent)
     // });
 
 
-    //databusAction("best_path_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
+    //databusAction("punchpath_auto_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
 
     databusAction2("punchpath", [](const QVariant& value)
     {
