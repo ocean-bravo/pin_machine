@@ -231,6 +231,8 @@ void TaskBestPathPrivate::run(QPointF startPoint)
         {
             qd() << "solved";
 
+            db("punchpath_auto_solved") = true; // Чтобы закрыть окно
+
             // 6. Получили координаты точек выстроенных по кратчайшему пути между ними
             QList<int> finalSolution = littleSolver.finalSolution();
             QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
