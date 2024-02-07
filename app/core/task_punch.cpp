@@ -150,23 +150,26 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
     const double dx = db().value("punch_dx_mm").toDouble(); // сдвиг инструмента
     const double dy = db().value("punch_dy_mm").toDouble(); // сдвиг инструмента
     const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
-    every<BlobItem>(scene().items(), [this, dx, dy, punchCode, &count](BlobItem* blob)
+
+    QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
+
+    if (blobs.isEmpty())
+        blobs = scene().punchBlobs();
+
+    for (BlobItem* blob : qAsConst(blobs))
     {
-        if (blob->isPunch())
+        moveToAndWaitPosition(blob->scenePos() + QPointF(dx, dy)); // Приехали на позицию
+        if (_stop) { emit message("program interrupted"); return; }
+        for (const QString& gCode : punchCode)
         {
-            moveToAndWaitPosition(QPointF(blob->scenePos().x() + dx, blob->scenePos().y() + dy)); // Приехали на позицию
             if (_stop) { emit message("program interrupted"); return; }
-            for (const QString& gCode : punchCode)
-            {
-                if (_stop) { emit message("program interrupted"); return; }
-                serial().write(gCode.toLatin1() + "\n");
-                emit message(gCode);
-                const double z = extractFromGcodeZ(gCode);
-                waitPosZ(z);
-            }
-            ++count;
+            serial().write(gCode.toLatin1() + "\n");
+            emit message(gCode);
+            const double z = extractFromGcodeZ(gCode);
+            waitPosZ(z);
         }
-    });
+        ++count;
+    }
 
     // А если в Gcode нет одной из осей - X или Y? Нужно, чтобы нормально это отрабатывалось.
     // Если не добыли позицию из кода -
