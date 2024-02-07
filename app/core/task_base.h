@@ -13,8 +13,8 @@ class TaskBase : public QObject
     Q_OBJECT
 
 public:
-    void moveTo(double x, double y);
-    void moveToAndWaitPosition(double x, double y);
+    void moveTo(QPointF pos);
+    void moveToAndWaitPosition(QPointF pos);
 
     int updateBlobPosition(BlobItem* blob);
 

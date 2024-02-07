@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QScopeGuard>
+#include <QPointF>
 
 namespace {
 
@@ -15,15 +16,15 @@ bool okValue(double targetValue, double currentValue)
 
 }
 
-void waitPosXY(double xTarget, double yTarget)
+void waitPosXY(QPointF target)
 {
-    auto condition = [xTarget, yTarget]() -> bool
+    auto condition = [target]() -> bool
     {
         const QString status = db().value("status").toString();
         const double xPos = db().value("xPos").toDouble();
         const double yPos = db().value("yPos").toDouble();
 
-        return (status == "Idle") && okValue(xTarget, xPos) && okValue(yTarget, yPos);
+        return (status == "Idle") && okValue(target.x(), xPos) && okValue(target.y(), yPos);
     };
 
     QEventLoop loop;

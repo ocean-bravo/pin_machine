@@ -17,6 +17,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
+#include <algorithm>
+
 #include "openCv.h"
 #include "settings.h"
 #include "common.h"
@@ -34,6 +36,7 @@ namespace {
 QList<QPointF> blobsToScenePositions(const QList<BlobItem*>& blobs)
 {
     QList<QPointF> points;
+    points.reserve(blobs.size());
     for (BlobItem* blob : blobs)
         points.push_back(blob->scenePos());
     return points;
@@ -84,6 +87,20 @@ QList<QPointF> solutionToPath(const QList<QPointF>& nonoptimizedPointCoords, con
     }
 
     return optimizedPointCoords;
+}
+
+QList<BlobItem*> pathToBlobs(const QList<QPointF>& path, const QList<BlobItem*>& blobs)
+{
+    QList<BlobItem*> optimizedBlobs;
+    optimizedBlobs.reserve(path.size());
+
+    for (const QPointF& point : path)
+    {
+        auto it = std::find_if(blobs.begin(), blobs.end(), [&point](BlobItem* blob) { return blob->scenePos() == point; });
+        optimizedBlobs.push_back(*it);
+    }
+
+    return optimizedBlobs;
 }
 
 }
@@ -152,24 +169,14 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
     db("punchpath_auto_record") = qQNaN(); // Перезарядка параметра
     db("punchpath_auto_record") = double(0.0); // Открытие message box.
-    db("punchpath") = QVariant(); // Очистка сцены от старого пути.
+    db("punchpath") = QVariant();
+    db("punchpath_draw") = QVariant(); // Очистка сцены от старого пути.
 
     // 1. Получили все блобы для забивки
-    QList<BlobItem*> blobs;
-
-    // QList<QGraphicsItem*> items;
-
-    // QMetaObject::invokeMethod(&scene(), [&]() { items = scene().items(); }, Qt::DirectConnection );
-
-    every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
-    {
-        if (blob->isPunch())
-            blobs.push_back(blob);
-    });
+    QList<BlobItem*> blobs = scene().punchBlobs();
 
     if (blobs.isEmpty())
         return;
-
 
     // 2. Преобразовали в координаты блобов
     QList<QPointF> coords = blobsToScenePositions(blobs);
@@ -180,8 +187,10 @@ void TaskBestPathPrivate::run(QPointF startPoint)
     // 4. Преобразовали блобы в матрицу
     MatrixD distances = distanceMatrix(coords);
 
-    // 5. Подали на вход алгоритму и получили решение
+    //   (1)       (2)        (3)
+    // blobs -> positions -> matrix  -> algo  -> indexes in (2) -> positions opt -> blobs opt
 
+    // 5. Подали на вход алгоритму и получили решение
     try
     {
         //CALLGRIND_START_INSTRUMENTATION;
@@ -194,14 +203,16 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
         connect(&thread, &QThread::started, &littleSolver, &LittleSolver::solve);
         connect(&littleSolver, &LittleSolver::newRecord, [](double record) {
-            qd() << "new record is: " << record;
+            //qd() << "new record is: " << record;
             db("punchpath_auto_record") = record;
         });
         connect(&littleSolver, &LittleSolver::newSolution, [&](QList<int> solution)
         {
             // 6. Получили промежуточные элементы выстроенные по кратчайшему пути
             QList<QPointF> coordsOptimized = solutionToPath(coords, solution, startPoint);
-            db("punchpath") = QVariant::fromValue(coordsOptimized);
+            QList<BlobItem*> blobsOptimized = pathToBlobs(coordsOptimized, blobs);
+            db("punchpath") = QVariant::fromValue(blobsOptimized);
+            db("punchpath_draw") = QVariant::fromValue(coordsOptimized);
         });
 
         QAtomicInteger<bool> solved = false;
@@ -236,7 +247,9 @@ void TaskBestPathPrivate::run(QPointF startPoint)
             // 6. Получили координаты точек выстроенных по кратчайшему пути между ними
             QList<int> finalSolution = littleSolver.finalSolution();
             QList<QPointF> coordsOptimized = solutionToPath(coords, finalSolution, startPoint);
-            db("punchpath") = QVariant::fromValue(coordsOptimized);
+            QList<BlobItem*> blobsOptimized = pathToBlobs(coordsOptimized, blobs);
+            db("punchpath") = QVariant::fromValue(blobsOptimized);
+            db("punchpath_draw") = QVariant::fromValue(coordsOptimized);
         }
         //CALLGRIND_TOGGLE_COLLECT;
         //CALLGRIND_START_INSTRUMENTATION;

@@ -158,26 +158,16 @@ void TaskCheckCameraPrivate::run()
     //И сделать тест разброса определения координат блоба
 
     // Теперь определяем реальные координаты точек для забивания и посещаем их.
-    QList<QPointF> coords;
 
-    coords = db().value("punchpath").value<QList<QPointF>>();
+    QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
 
-    if (coords.isEmpty())
-    {
-        every<BlobItem>(scene().items(), [&coords](BlobItem* blob)
-        {
-            if (blob->isPunch())
-                coords.append(blob->scenePos());
-        });
-    }
+    if (blobs.isEmpty())
+        blobs = scene().punchBlobs();
 
     int count  = 0;
-    for (QPointF coord : qAsConst(coords))
+    for (BlobItem* blob : qAsConst(blobs))
     {
-        const double x = coord.x();
-        const double y = coord.y();
-
-        moveToAndWaitPosition(x, y);
+        moveToAndWaitPosition(blob->scenePos());
         wait(500);
         ++count;
     }

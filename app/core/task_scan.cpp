@@ -201,7 +201,7 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 
         if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
 
-            waitPosXY(_xTarget, _yTarget);
+            waitPosXY(QPointF(_xTarget, _yTarget));
 
             emit message("capturing ...");
             auto a = QDateTime::currentMSecsSinceEpoch();

@@ -75,7 +75,7 @@ void TaskScanPositionPrivate::run(QPointF pos)
     });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    moveToAndWaitPosition(pos.x(), pos.y());
+    moveToAndWaitPosition(pos);
     wait(300);
     video().capture();
     waitForSignal(&video(), &Video4::captured, 2000);

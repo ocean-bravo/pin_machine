@@ -84,7 +84,7 @@ void TaskFindPixelSizePrivate::run()
 
     // 1 стадия
     QMap<int, QImage> stage1;
-    moveToAndWaitPosition(currPos().x() + 3, currPos().y());
+    moveToAndWaitPosition(currPos() + QPointF(3.0, 0.0));
 
     for (int i = 0; i < widths.size(); ++i)
     {
@@ -117,7 +117,7 @@ void TaskFindPixelSizePrivate::run()
 
     // 2 стадия
     QMap<int, QImage> stage2;
-    moveToAndWaitPosition(currPos().x() - 6, currPos().y());
+    moveToAndWaitPosition(currPos() + QPointF(-6.0, 0.0));
 
     for (int i = 0; i < widths.size(); ++i)
     {

@@ -154,7 +154,7 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
     {
         if (blob->isPunch())
         {
-            moveToAndWaitPosition(blob->scenePos().x() + dx, blob->scenePos().y() + dy); // Приехали на позицию
+            moveToAndWaitPosition(QPointF(blob->scenePos().x() + dx, blob->scenePos().y() + dy)); // Приехали на позицию
             if (_stop) { emit message("program interrupted"); return; }
             for (const QString& gCode : punchCode)
             {
@@ -183,7 +183,7 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
 
         const double x = extractFromGcodeX(gCode, xCurrent);
         const double y = extractFromGcodeY(gCode, yCurrent);
-        moveToAndWaitPosition(x, y); // Приехали на позицию
+        moveToAndWaitPosition(QPointF(x, y)); // Приехали на позицию
     }
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();

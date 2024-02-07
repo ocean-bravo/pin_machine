@@ -25,21 +25,21 @@
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
-//    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
-//    {
-//        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
-//        {
-//            auto pix = pixmap->pixmap();
-//            //auto pos = pixmap->pos();
+    //    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
+    //    {
+    //        every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [this](QGraphicsPixmapItem* pixmap)
+    //        {
+    //            auto pix = pixmap->pixmap();
+    //            //auto pos = pixmap->pos();
 
-//            double pixInMm = db().pixInMm();
-//            pix.setDevicePixelRatio(pixInMm);
-//            pixmap->setPixmap(pix);
+    //            double pixInMm = db().pixInMm();
+    //            pix.setDevicePixelRatio(pixInMm);
+    //            pixmap->setPixmap(pix);
 
 
-//            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
-//        });
-//    });
+    //            pixmap->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
+    //        });
+    //    });
 
     // Для снижения нагрузки на процессор, чуть разряжаю запросы на рисовку пути.
     // Если много свалилось запросов, выкидываю все, кроме последнего. Его и рисую.
@@ -186,14 +186,14 @@ void Scene::setImagePrivate(QImage img)
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
 
-//    qd() << "pix rect " << pix.rect();
+    //    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     item->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-//        qd() << "pix rect " << pix.rect();
-//            qd() << "pix offset " << item->offset();
+    //        qd() << "pix rect " << pix.rect();
+    //            qd() << "pix offset " << item->offset();
 }
 
 void Scene::saveScene(const QString& url)
@@ -215,9 +215,9 @@ void Scene::saveScene(const QString& url)
 
         QImage img = pixmap->pixmap().toImage();
         QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.sizeInBytes());
-//        QBuffer buffer(&ba);
-//        buffer.open(QIODevice::WriteOnly);
-//        img.save(&buffer, "PNG");
+        //        QBuffer buffer(&ba);
+        //        buffer.open(QIODevice::WriteOnly);
+        //        img.save(&buffer, "PNG");
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
@@ -366,6 +366,23 @@ int Scene::images() const
     int i = 0;
     every<QGraphicsPixmapItem>(items(), [&i](QGraphicsPixmapItem*) { ++i; });
     return i;
+}
+
+QList<BlobItem*> Scene::punchBlobs()
+{
+    QList<BlobItem*> blobs;
+    blobs.reserve(300);
+
+    runOnThreadWait(this, [this, &blobs]()
+    {
+        every<BlobItem>(QGraphicsScene::items(), [&blobs](BlobItem* blob)
+        {
+            if (blob->isPunch())
+                blobs.push_back(blob);
+        });
+    });
+
+    return blobs;
 }
 
 void Scene::drawPath(const QList<QPointF>& path)

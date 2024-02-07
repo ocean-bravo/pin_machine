@@ -18,27 +18,25 @@
 
 QMutex TaskBase::_mutex;
 
-void TaskBase::moveTo(double x, double y)
+void TaskBase::moveTo(QPointF pos)
 {
-    const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(x), toReal3(y));
+    const QString line = QString("G1 G90 F5000 X%1 Y%2").arg(toReal3(pos.x()), toReal3(pos.y()));
     emit message(line);
     serial().write(line.toLatin1() + "\n");
 
 }
 
-void TaskBase::moveToAndWaitPosition(double x, double y)
+void TaskBase::moveToAndWaitPosition(QPointF pos)
 {
-    moveTo(x, y);
-    waitPosXY(x, y);
+    moveTo(pos);
+    waitPosXY(pos);
 }
 
 int TaskBase::updateBlobPosition(BlobItem *blob)
 {
-    const double xBlob = blob->scenePos().x();
-    const double yBlob = blob->scenePos().y();
     const double diaBlob = blob->rect().width();
 
-    moveToAndWaitPosition(xBlob, yBlob);
+    moveToAndWaitPosition(blob->scenePos());
 
     waitForNext();
 

@@ -37,6 +37,9 @@ public:
 
     int images() const;
 
+    QList<BlobItem*> punchBlobs();
+
+
 
 
 public slots:

@@ -106,7 +106,7 @@ ScanView::ScanView(QWidget *parent)
 
     //databusAction("punchpath_auto_stop", [taskBestPath]() { if (taskBestPath->isRunning()) taskBestPath->stopProgram(); } );
 
-    databusAction2("punchpath", [](const QVariant& value)
+    databusAction2("punchpath_draw", [](const QVariant& value)
     {
         QList<QPointF> path = value.value<QList<QPointF>>();
         QMetaObject::invokeMethod(&scene(), "drawPath", Qt::QueuedConnection, Q_ARG(QList<QPointF>, path));
