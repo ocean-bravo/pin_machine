@@ -1,40 +1,38 @@
 #include "manual_path.h"
 
 #include "data_bus.h"
-
 #include "blob_item.h"
-
 #include "utils2.h"
 
 ManualPath::ManualPath(QObject *parent)
     : QObject(parent)
 {
-
-    databusAction2("manual_path_reset", [this](const QVariant& value)
+    databusAction2("punchpath_manual_reset", [this](const QVariant& value)
     {
         if (value.toBool() == true)
         {
-            _points.clear();
-            db("manual_path_reset") = false; // Перезарядка
+            db("punchpath_manual_reset") = false; // Перезарядка
 
+            _blobs.clear();
             createPathToDraw();
         }
     });
 
-    databusAction2("manual_path_add_point", [this](const QVariant& value)
+    databusAction2("punchpath_manual_add_point", [this](const QVariant& value)
     {
         BlobItem* blob = value.value<BlobItem*>();
 
         // Без повторов точек
-        if (_points.contains(blob))
+        if (_blobs.contains(blob))
             return;
 
         // Нужно только punch точки
         if (!blob->isPunch())
             return;
 
-        _points.append(blob);
+        _blobs.push_back(blob);
 
+        db("punchpath") = QVariant::fromValue(_blobs);
         createPathToDraw();
     });
 }
@@ -47,10 +45,10 @@ void ManualPath::createPathToDraw()
 
     path.append(startPoint);
 
-    for (BlobItem* blob : qAsConst(_points))
+    for (BlobItem* blob : qAsConst(_blobs))
         path.append(blob->scenePos());
 
     path.append(startPoint);
 
-    db("punchpath") = QVariant::fromValue(path);
+    db("punchpath_draw") = QVariant::fromValue(path);
 }

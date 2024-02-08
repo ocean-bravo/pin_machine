@@ -272,7 +272,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
 
         menu.addAction(tr("Reset"), this, [this, event]()
         {
-            db().insert("manual_path_reset", true);
+            db().insert("punchpath_manual_reset", true);
         });
 
         menu.exec(event->globalPos());

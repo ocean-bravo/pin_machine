@@ -11,10 +11,8 @@ class ManualPath : public QObject
 public:
     ManualPath(QObject* parent = nullptr);
 
-
-
 private:
     void createPathToDraw();
 
-    QList<BlobItem*> _points;
+    QList<BlobItem*> _blobs;
 };

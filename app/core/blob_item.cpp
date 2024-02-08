@@ -201,7 +201,7 @@ void BlobItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
     if (event->button() == Qt::LeftButton && (sceneMode == "manual_path"))
     {
-        db().insert("manual_path_add_point", QVariant::fromValue(this));
+        db().insert("punchpath_manual_add_point", QVariant::fromValue(this));
         event->accept();
     }
 
