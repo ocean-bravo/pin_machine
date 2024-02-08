@@ -38,6 +38,9 @@ DataBus::DataBus(QObject *parent)
     startPoint.rx() = settings().value("punchpath_start_point_x", 10.0).toDouble();
     startPoint.ry() = settings().value("punchpath_start_point_y", 10.0).toDouble();
     insert("punchpath_start_point", startPoint);
+
+    insert("punch_dx_mm", settings().value("punch_dx_mm", 85.0).toDouble());
+    insert("punch_dy_mm", settings().value("punch_dy_mm", -90.0).toDouble());
 }
 
 DataBus::~DataBus()

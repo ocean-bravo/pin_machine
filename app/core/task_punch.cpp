@@ -23,9 +23,6 @@ TaskPunch::TaskPunch(QObject* parent)
     , _impl(new TaskPunchPrivate)
     , _thread(new QThread)
 {
-    db().insert("punch_dx_mm", settings().value("punch_dx_mm", 85.0).toDouble());
-    db().insert("punch_dy_mm", settings().value("punch_dy_mm", -90.0).toDouble());
-
     connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
     connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
 

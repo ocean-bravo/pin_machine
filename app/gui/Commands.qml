@@ -492,7 +492,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 70
 
-                                text: "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0"
+                                text: Settings.value("punch_code", "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0")
                                 // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
                                 // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
                                 // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
@@ -516,7 +516,7 @@ Item {
                                     cancelButtonText: qsTr("No")
 
                                     onAccept: {
-
+                                        Settings.setValue("punch_code", punchCode.text)
                                         hide()
                                     }
                                     onReject: hide()
@@ -574,8 +574,8 @@ Item {
                                     cancelButtonText: qsTr("No")
 
                                     onAccept: {
-                                        // Settings.setValue("punchpath_start_point_x", startPointX.value)
-                                        // Settings.setValue("punchpath_start_point_y", startPointY.value)
+                                        Settings.setValue("punch_dx_mm", DataBus.punch_dx_mm)
+                                        Settings.setValue("punch_dy_mm", DataBus.punch_dy_mm)
                                         hide()
                                     }
                                     onReject: hide()

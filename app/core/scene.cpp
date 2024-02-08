@@ -41,6 +41,10 @@ Scene::Scene(QObject* parent)
     //        });
     //    });
 
+
+    _board = new BoardItem;
+    addItem(_board);
+
     // Для снижения нагрузки на процессор, чуть разряжаю запросы на рисовку пути.
     // Если много свалилось запросов, выкидываю все, кроме последнего. Его и рисую.
     _drawPathTimer = new QTimer(this);

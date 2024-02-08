@@ -38,6 +38,10 @@ ScanView::ScanView(QWidget *parent)
     _scene = &scene();
 
     ui->graphicsView->setScene(_scene);
+
+    QTimer::singleShot(50, this, [this]() { ui->graphicsView->fit();}); // Костылик. Вызов сразу почему то не работает.
+
+
     TaskScanPosition* taskScanPosition = new TaskScanPosition(this);
     TaskBestPath* taskBestPath = new TaskBestPath(this);
 
