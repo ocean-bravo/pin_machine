@@ -41,10 +41,10 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run(QString punchProgram, QString goToBeginProgram)
+void TaskPunch::run(QString punchProgram)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram), Q_ARG(QString, goToBeginProgram));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram));
 }
 
 void TaskPunch::stopProgram()
@@ -58,7 +58,7 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
+void TaskPunchPrivate::run(QString punchProgram)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -171,23 +171,8 @@ void TaskPunchPrivate::run(QString punchProgram, QString goToBeginProgram)
         ++count;
     }
 
-    // А если в Gcode нет одной из осей - X или Y? Нужно, чтобы нормально это отрабатывалось.
-    // Если не добыли позицию из кода -
-    // Вообще, не очень подход с кодом возврата. Нужно, чтобы весь машрут расчитывался. Но пока так
-    const QStringList goToBeginCode = goToBeginProgram.split("\n", Qt::SkipEmptyParts);
-    for (const QString& gCode : goToBeginCode)
-    {
-        if (_stop) { emit message("program interrupted"); return; }
-        serial().write(gCode.toLatin1() + "\n");
-        emit message(gCode);
+    // Поехали назад в домашнюю точку
 
-        const double xCurrent = db().value("xPos").toDouble();
-        const double yCurrent = db().value("yPos").toDouble();
-
-        const double x = extractFromGcodeX(gCode, xCurrent);
-        const double y = extractFromGcodeY(gCode, yCurrent);
-        moveToAndWaitPosition(QPointF(x, y)); // Приехали на позицию
-    }
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 

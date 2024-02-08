@@ -258,6 +258,11 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
             emit addBlob(mapToScene(event->pos()));
         });
 
+        menu.addAction(tr("Calculate path from starting point"), this, [this, event]()
+        {
+            emit calcPath(db().value("punchpath_start_point").toPointF());
+        });
+
         menu.addAction(tr("Calculate path from here"), this, [this, event]()
         {
             emit calcPath(mapToScene(event->pos()));

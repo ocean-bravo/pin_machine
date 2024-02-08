@@ -35,8 +35,8 @@ DataBus::DataBus(QObject *parent)
     });
 
     QPointF startPoint;
-    startPoint.rx() = settings().value("punchpath_start_point_x", 0.0).toDouble();
-    startPoint.ry() = settings().value("punchpath_start_point_y", 0.0).toDouble();
+    startPoint.rx() = settings().value("punchpath_start_point_x", 10.0).toDouble();
+    startPoint.ry() = settings().value("punchpath_start_point_y", 10.0).toDouble();
     insert("punchpath_start_point", startPoint);
 }
 

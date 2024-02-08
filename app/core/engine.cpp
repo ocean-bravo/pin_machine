@@ -202,6 +202,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     //_qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
+    _qmlEngine->rootContext()->setContextProperty("Settings", &Settings::instance());
 
     _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
     _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);

@@ -459,7 +459,7 @@ Item {
             CollapsiblePanel {
                 id: punchPanel
                 width: parent.width
-                height: checked ? 220 : 30
+                height: checked ? 230 : 30
                 text: "Punch"
                 onCheckedChanged: {
                     punchGrid.visible = checked
@@ -468,78 +468,213 @@ Item {
                     punchGrid.visible = checked
                 }
 
-                GridLayout {
+                ColumnLayout {
                     id: punchGrid
                     width: parent.width
-                    columns: 10
-                    columnSpacing: 5
-                    rowSpacing: 5
-
 
                     Rectangle {
                         color: "lightgrey"
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
-                        Layout.columnSpan: 10
 
-                        CodeEditor2 {
-                            id: punchCode
+                        RowLayout {
                             anchors.fill: parent
-                            text: "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0"
-                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
-                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
-                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
-                            // https://github.com/SakamotoMari/FileIO
-                            // https://github.com/chili-epfl/qml-fileio
+
+                            Text {
+                                text: qsTr("Code")
+                                Layout.preferredWidth: 80
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            CodeEditor2 {
+                                id: punchCode
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 70
+
+                                text: "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0"
+                                // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                                // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                                // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                                // https://github.com/SakamotoMari/FileIO
+                                // https://github.com/chili-epfl/qml-fileio
+                            }
+                            SmButton {
+                                text: ("💾")
+
+                                Layout.preferredWidth: 30
+                                Layout.preferredHeight: 30
+
+                                onClicked: savePunchCodeMessageBox.show()
+
+                                MessageBoxLoader {
+                                    id: savePunchCodeMessageBox
+                                    text: qsTr("Really?")
+                                    backgroundColor: "lightblue"
+                                    hasCancelButton: true
+                                    okButtonText: qsTr("Save")
+                                    cancelButtonText: qsTr("No")
+
+                                    onAccept: {
+
+                                        hide()
+                                    }
+                                    onReject: hide()
+                                }
+                            }
                         }
                     }
-                    Text {
-                        text: qsTr("dx")
+
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+
+                        RowLayout {
+                            anchors.fill: parent
+
+                            Text {
+                                text: qsTr("Tool shift")
+                                Layout.preferredWidth: 80
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            Text {
+                                text: qsTr("dx")
+                            }
+
+                            DoubleSpinBox {
+                                value: DataBus.punch_dx_mm
+                                onValueModified: DataBus.punch_dx_mm = value
+                                Layout.preferredWidth: 100
+                            }
+
+                            Text {
+                                text: qsTr("dy")
+                            }
+                            DoubleSpinBox {
+                                value: DataBus.punch_dy_mm
+                                onValueModified: DataBus.punch_dy_mm = value
+                                Layout.preferredWidth: 100
+                            }
+                            SmButton {
+                                text: ("💾")
+
+                                Layout.preferredWidth: 30
+                                Layout.preferredHeight: 30
+
+                                onClicked: savePunchShiftMessageBox.show()
+
+                                MessageBoxLoader {
+                                    id: savePunchShiftMessageBox
+                                    text: qsTr("Really?")
+                                    backgroundColor: "lightblue"
+                                    hasCancelButton: true
+                                    okButtonText: qsTr("Save")
+                                    cancelButtonText: qsTr("No")
+
+                                    onAccept: {
+                                        // Settings.setValue("punchpath_start_point_x", startPointX.value)
+                                        // Settings.setValue("punchpath_start_point_y", startPointY.value)
+                                        hide()
+                                    }
+                                    onReject: hide()
+                                }
+                            }
+                        }
                     }
 
-                    DoubleSpinBox {
-                        value: DataBus.punch_dx_mm
-                        onValueModified: DataBus.punch_dx_mm = value
-                        Layout.preferredWidth: 100
+
+                    Rectangle {
+                        color: "lightgrey"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+
+                        RowLayout {
+                            anchors.fill: parent
+
+                            Text {
+                                text: qsTr("Start point")
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.preferredWidth: 80
+                            }
+
+                            Text {
+                                text: qsTr("x")
+                                verticalAlignment: Text.AlignVCenter
+                                height: 30
+                            }
+                            DoubleSpinBox {
+                                id: startPointX
+                                decimals: 3
+                                value: DataBus.punchpath_start_point.x
+                                onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
+
+                                height: 30
+                                width: 100
+                            }
+                            Text {
+                                text: qsTr("y")
+                                verticalAlignment: Text.AlignVCenter
+                                height: 30
+                            }
+                            DoubleSpinBox {
+                                id: startPointY
+                                decimals: 3
+                                value: DataBus.punchpath_start_point.y
+                                onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
+                                height: 30
+                                width: 100
+                            }
+                            SmButton {
+                                text: ("💾")
+
+                                Layout.preferredWidth: 30
+                                Layout.preferredHeight: 30
+
+                                onClicked: saveStartPointMessageBox.show()
+
+                                MessageBoxLoader {
+                                    id: saveStartPointMessageBox
+                                    text: qsTr("Really?")
+                                    backgroundColor: "lightblue"
+                                    hasCancelButton: true
+                                    okButtonText: qsTr("Save")
+                                    cancelButtonText: qsTr("No")
+
+                                    onAccept: {
+                                        Settings.setValue("punchpath_start_point_x", startPointX.value)
+                                        Settings.setValue("punchpath_start_point_y", startPointY.value)
+                                        hide()
+                                    }
+                                    onReject: hide()
+                                }
+                            }
+                        }
                     }
 
-                    Text {
-                        text: qsTr("dy")
-                    }
-                    DoubleSpinBox {
-                        value: DataBus.punch_dy_mm
-                        onValueModified: DataBus.punch_dy_mm = value
-                        Layout.preferredWidth: 100
-                    }
+                    // CodeEditor2 {
+                    //     id: goToBeginCode
+                    //     anchors.fill: parent
+                    //     //text: "G1 G90 F4000 Z20"
+                    //     // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
+                    //     // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
+                    //     // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+                    //     // https://github.com/SakamotoMari/FileIO
+                    //     // https://github.com/chili-epfl/qml-fileio
+                    // }
+
+
 
                     SmButton {
                         id: punch
                         text: qsTr("Punch")
                         checkable: true
-                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text, goToBeginCode.text) : TaskPunch.stopProgram()
+                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
                         Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
-
-                        Layout.row: 1
-                        Layout.column: 9
-                    }
-                    Rectangle {
-                        color: "lightgrey"
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 50
-                        Layout.columnSpan: 10
-
-                        CodeEditor2 {
-                            id: goToBeginCode
-                            anchors.fill: parent
-                            //text: "G1 G90 F4000 Z20"
-                            // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
-                            // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
-                            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
-                            // https://github.com/SakamotoMari/FileIO
-                            // https://github.com/chili-epfl/qml-fileio
-                        }
                     }
                 }
+
             }
 
             CollapsiblePanel {
