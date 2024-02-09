@@ -543,8 +543,8 @@ Item {
                             }
 
                             DoubleSpinBox {
-                                value: DataBus.punch_dx_mm
-                                onValueModified: DataBus.punch_dx_mm = value
+                                value: DataBus.punch_tool_shift_dx_mm
+                                onValueModified: DataBus.punch_tool_shift_dx_mm = value
                                 Layout.preferredWidth: 100
                             }
 
@@ -557,8 +557,8 @@ Item {
 
                             }
                             DoubleSpinBox {
-                                value: DataBus.punch_dy_mm
-                                onValueModified: DataBus.punch_dy_mm = value
+                                value: DataBus.punch_tool_shift_dy_mm
+                                onValueModified: DataBus.punch_tool_shift_dy_mm = value
                                 Layout.preferredWidth: 100
                             }
                             SmButton {
@@ -578,8 +578,8 @@ Item {
                                     cancelButtonText: qsTr("No")
 
                                     onAccept: {
-                                        Settings.setValue("punch_dx_mm", DataBus.punch_dx_mm)
-                                        Settings.setValue("punch_dy_mm", DataBus.punch_dy_mm)
+                                        Settings.setValue("punch_tool_shift_dx_mm", DataBus.punch_tool_shift_dx_mm)
+                                        Settings.setValue("punch_tool_shift_dy_mm", DataBus.punch_tool_shift_dy_mm)
                                         hide()
                                     }
                                     onReject: hide()
