@@ -493,11 +493,6 @@ Item {
                                 Layout.preferredHeight: 70
 
                                 text: Settings.value("punch_code", "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0")
-                                // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
-                                // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
-                                // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
-                                // https://github.com/SakamotoMari/FileIO
-                                // https://github.com/chili-epfl/qml-fileio
                             }
                             SmButton {
                                 text: ("💾")
@@ -541,6 +536,10 @@ Item {
 
                             Text {
                                 text: qsTr("dx")
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 20
+
                             }
 
                             DoubleSpinBox {
@@ -551,6 +550,11 @@ Item {
 
                             Text {
                                 text: qsTr("dy")
+
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 20
+
                             }
                             DoubleSpinBox {
                                 value: DataBus.punch_dy_mm
@@ -602,7 +606,10 @@ Item {
                             Text {
                                 text: qsTr("x")
                                 verticalAlignment: Text.AlignVCenter
-                                height: 30
+
+
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 20
                             }
                             DoubleSpinBox {
                                 id: startPointX
@@ -610,21 +617,25 @@ Item {
                                 value: DataBus.punchpath_start_point.x
                                 onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
 
-                                height: 30
-                                width: 100
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 100
                             }
                             Text {
                                 text: qsTr("y")
                                 verticalAlignment: Text.AlignVCenter
-                                height: 30
+
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 20
+
                             }
                             DoubleSpinBox {
                                 id: startPointY
                                 decimals: 3
                                 value: DataBus.punchpath_start_point.y
                                 onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
-                                height: 30
-                                width: 100
+
+                                Layout.preferredHeight: 30
+                                Layout.preferredWidth: 100
                             }
                             SmButton {
                                 text: ("💾")
