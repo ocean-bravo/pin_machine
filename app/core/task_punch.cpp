@@ -144,8 +144,8 @@ void TaskPunchPrivate::run(QString punchProgram)
 
     // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
     int count  = 0;
-    const double dx = db().value("punch_tool_shift_dx_mm").toDouble(); // сдвиг инструмента
-    const double dy = db().value("punch_tool_shift_dy_mm").toDouble(); // сдвиг инструмента
+    const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
+    const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
     const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
 
     QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();

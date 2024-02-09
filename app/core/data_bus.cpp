@@ -39,8 +39,8 @@ DataBus::DataBus(QObject *parent)
     startPoint.ry() = settings().value("punchpath_start_point_y", 10.0).toDouble();
     insert("punchpath_start_point", startPoint);
 
-    insert("punch_tool_shift_dx_mm", settings().value("punch_tool_shift_dx_mm", 85.0).toDouble());
-    insert("punch_tool_shift_dy_mm", settings().value("punch_tool_shift_dy_mm", -90.0).toDouble());
+    insert("punch_tool_shift_dx", settings().value("punch_tool_shift_dx", 85.0).toDouble());
+    insert("punch_tool_shift_dy", settings().value("punch_tool_shift_dy", -90.0).toDouble());
 }
 
 DataBus::~DataBus()
