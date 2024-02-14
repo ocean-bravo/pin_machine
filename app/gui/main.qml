@@ -45,17 +45,17 @@ ApplicationWindow {
 
     MessageBoxLoader {
         id: bestPath
+
         text: {
             const record = DataBus.punchpath_auto_record
             const solved = DataBus.punchpath_auto_solved
 
-            if (isNaN(record)) // Этим значением перезаряжаю параметр. Без перезарядки не сработает
-                return ""
-
             if (solved) {
-                DataBus.punchpath_auto_solved = false // перезарядка
                 return qsTr("Search finished.") + "\n" + qsTr("Found path with length ") + record.toFixed(2) + " mm"
             }
+
+            if (isNaN(record)) // Этим значением перезаряжаю параметр. Без перезарядки не сработает
+                return ""
 
             if (record === 0.0) {
                 show()
@@ -64,9 +64,6 @@ ApplicationWindow {
             else {
                 return qsTr("Found path with length ") + record.toFixed(2) + " mm" + "\n" + qsTr("Searching best path in progress...")
             }
-
-
-
         }
         onAccept: {
             hide()

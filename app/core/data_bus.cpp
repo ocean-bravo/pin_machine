@@ -87,3 +87,11 @@ DataBusRef DataBus::operator [](const QString& key)
 {
     return DataBusRef(key);
 }
+
+// QVariant DataBus::updateValue(const QString &key, const QVariant &input)
+// {
+//     qd() << "key " << key  << " value "  << input;
+
+//         emit valueChanged(key, value);
+//     return QQmlPropertyMap::updateValue(key, input);
+// }

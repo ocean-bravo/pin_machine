@@ -167,8 +167,9 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
+    db("punchpath_auto_solved") = false; // Перезарядка параметра
     db("punchpath_auto_record") = qQNaN(); // Перезарядка параметра
-    db("punchpath_auto_record") = double(0.0); // Открытие message box.
+    db("punchpath_auto_record") = double(0.0); // Открытие messagebox
     db("punchpath") = QVariant();
     db("punchpath_draw") = QVariant(); // Очистка сцены от старого пути.
 
