@@ -14,6 +14,11 @@ CollapsiblePanel {
     }
     Component.onCompleted: {
         column.visible = checked
+
+        let startPoint = Qt.point(0,0)
+        startPoint.x = Settings.value("punchpath_start_point_x", 10.0)
+        startPoint.y = Settings.value("punchpath_start_point_y", 10.0)
+        DataBus.punchpath_start_point = startPoint
     }
 
     ColumnLayout {

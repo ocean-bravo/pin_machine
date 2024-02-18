@@ -33,11 +33,6 @@ DataBus::DataBus(QObject *parent)
         if (key == "resolution_width")
             emit pixelSizeChanged();
     });
-
-    QPointF startPoint;
-    startPoint.rx() = settings().value("punchpath_start_point_x", 10.0).toDouble();
-    startPoint.ry() = settings().value("punchpath_start_point_y", 10.0).toDouble();
-    insert("punchpath_start_point", startPoint);
 }
 
 DataBus::~DataBus()
