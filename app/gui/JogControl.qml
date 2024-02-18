@@ -35,11 +35,6 @@ Rectangle {
         height: width
     }
 
-    function jog(axis, mm) {
-        let feed = 1000
-        write("$J=G91 " + axis + mm + " F" + feed)
-    }
-
     Grid {
         id: grid
         anchors.fill: parent

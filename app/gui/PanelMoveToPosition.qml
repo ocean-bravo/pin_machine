@@ -17,7 +17,6 @@ CollapsiblePanel {
         grid.visible = checked
     }
 
-    //Layout.fillWidth: true
 
     GridLayout {
         id: grid

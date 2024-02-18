@@ -24,6 +24,11 @@ Item {
         appendLog(msg+"\n")
     }
 
+    function jog(axis, mm) {
+        let feed = 1000
+        write("$J=G91 " + axis + mm + " F" + feed)
+    }
+
     function appendLog(message, color) {
         if (color === undefined)
             color = 'red'
@@ -218,7 +223,7 @@ Item {
                 width: parent.width
                 height: checked ? 220 : 30
                 text: "Machine Commands"
-                checked: true
+                checked: false
                 onCheckedChanged: machineCommands.visible = checked
                 Component.onCompleted: machineCommands.visible = checked
 
@@ -416,7 +421,50 @@ Item {
 
             PanelPunchCode {}
             PanelStartPoint {}
-            PanelToolShift {}
+            Pane {
+                id: pane
+                width: parent.width
+                height: loader.item === null ? 10 : loader.item.height
+
+                padding: 0
+                spacing: 0
+                leftInset: 0
+                rightInset: 0
+                topInset: 0
+                bottomInset: 0
+
+                Loader {
+                    id: loader
+
+                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelToolShift.qml"  // Эта строка меняется на нужную
+
+                    function reload() {
+                        loader.source = ""
+                        QmlEngine.clearCache()
+
+                        loader.source = path
+                    }
+
+                    source: path
+
+                    onLoaded : {
+                        parent.height = loader.item.height
+
+                    }
+
+                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
+                        if (path === loader.path) {
+                            loader.reload()
+                        }
+
+                    }
+                    }
+
+                    // Костыль. Проблемы какие-то постоянно с filesystemwatcher
+                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+                    }
+                }
+            }
 
             CollapsiblePanel {
                 id: debugPanel
