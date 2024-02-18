@@ -6,7 +6,7 @@ CollapsiblePanel {
     id: root
     //width: parent.width
     width: 400
-    checked: true
+    checked: false
     height: checked ? 230 : 30
 
     text: qsTr("Tool Shift")
