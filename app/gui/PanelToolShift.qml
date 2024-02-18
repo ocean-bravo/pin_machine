@@ -106,6 +106,7 @@ CollapsiblePanel {
                 }
 
                 DoubleSpinBox {
+                    id: deltaZeroX
                     value: xPos - zeroPoint.x
                     // /onValueModified: DataBus.punch_tool_shift_dx = value
                     //Layout.preferredWidth: 100
@@ -120,14 +121,13 @@ CollapsiblePanel {
 
                 }
                 DoubleSpinBox {
+                    id: deltaZeroY
                     value: yPos - zeroPoint.y
                     //onValueModified: DataBus.punch_tool_shift_dy = value
                     //Layout.preferredWidth: 100
                 }
 
                 Item {Layout.preferredWidth: 30}
-
-
             }
         }
 
@@ -141,12 +141,16 @@ CollapsiblePanel {
             }
         }
 
-        SmButton {
+        SaveButton {
             text: qsTr("Save delta zero as tool shift")
             Layout.preferredWidth: 200
 
-            onClicked: {
+            acceptFunc: function() {
+                DataBus.punch_tool_shift_dx = deltaZeroX.value
+                DataBus.punch_tool_shift_dy = deltaZeroY.value
 
+                Settings.setValue("punch_tool_shift_dx", DataBus.punch_tool_shift_dx)
+                Settings.setValue("punch_tool_shift_dy", DataBus.punch_tool_shift_dy)
             }
         }
     }
