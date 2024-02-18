@@ -81,7 +81,7 @@ CollapsiblePanel {
         SmButton {
             text: qsTr("Save current position as zero")
             Layout.preferredWidth: 200
-            onClicked: zeroPoint = currentPosition
+            onClicked: zeroPoint = Qt.point(xPos, yPos)
         }
 
         Rectangle {
