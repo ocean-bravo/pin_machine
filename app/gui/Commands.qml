@@ -280,47 +280,51 @@ Item {
             }
 
 
-            CollapsiblePanel {
-                id: moveToPositionPanel
+            Pane {
+                id: pane
                 width: parent.width
-                height: checked ? 200 : 30
-                text: "Move to position"
-                onCheckedChanged: {
-                    buttons1.visible = checked
-                }
-                Component.onCompleted: {
-                    buttons1.visible = checked
-                }
+                height: loader.item === null ? 10 : loader.item.height
 
-                Grid {
-                    id: buttons1
-                    width: parent.width
-                    columns: 3
-                    columnSpacing: 5
-                    rowSpacing: 5
+                padding: 0
+                spacing: 0
+                leftInset: 0
+                rightInset: 0
+                topInset: 0
+                bottomInset: 0
 
-                    DoubleSpinBox { id: moveX; }
-                    SmButton { text: qsTr("Move X");
-                        onClicked: {
-                            write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F1000 X" + moveX.text) }
+                // Component.onCompleted: {
+                //     execAfterDelay(function () { pane.width = 300 }, 500 )
+                // }
+
+                Loader {
+                    id: loader
+
+                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelMoveToPosition.qml"
+
+                    function reload() {
+                        loader.source = ""
+                        QmlEngine.clearCache()
+
+                        loader.source = path
                     }
-                    SmButton { id: relAbsX; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
 
-                    DoubleSpinBox { id: moveY; }
-                    SmButton { text: qsTr("Move Y");
-                        onClicked: {
-                            write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F1000 Y" + moveY.text) }
-                    }
-                    SmButton { id: relAbsY; checkable: true; text: checked ? "Rel" : "Abs"; width: 50 }
+                    source: path
 
-                    DoubleSpinBox { id: moveZ; }
-                    SmButton { text: qsTr("Move Z");
-                        onClicked: {
-                            write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F1000 Z" + moveZ.text) }
+                    onLoaded : {
+                        parent.height = loader.item.height
+
                     }
-                    SmButton { id: relAbsZ; checkable: true; text: checked ? "Rel" : "Abs"; width: 50  }
-                    SmTextEdit { id: sendText;  GridLayout.columnSpan: 2; Layout.fillWidth: true}
-                    SmButton { text: qsTr("Send");       onClicked: { write(sendText.text) } }
+
+                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
+                        if (path === loader.path) {
+                            loader.reload()
+                        }
+
+                    }
+                    }
+
+                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+                    }
                 }
             }
 
@@ -456,237 +460,10 @@ Item {
                 }
             }
 
-            CollapsiblePanel {
-                id: punchPanel
-                width: parent.width
-                height: checked ? 230 : 30
-                text: "Punch"
-                onCheckedChanged: {
-                    punchGrid.visible = checked
-                }
-                Component.onCompleted: {
-                    punchGrid.visible = checked
-                }
+            PanelPunchCode {}
+            PanelStartPoint {}
+            PanelToolShift {}
 
-                ColumnLayout {
-                    id: punchGrid
-                    width: parent.width
-
-                    Rectangle {
-                        color: "lightgrey"
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 70
-
-                        RowLayout {
-                            anchors.fill: parent
-
-                            Text {
-                                text: qsTr("Code")
-                                Layout.preferredWidth: 80
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            CodeEditor2 {
-                                id: punchCode
-
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 70
-
-                                text: Settings.value("punch_code", "G1 G90 F4000 Z20\nG1 G90 F4000 Z-8.0\nG1 G90 F4000 Z0")
-                            }
-                            SmButton {
-                                text: ("💾")
-
-                                Layout.preferredWidth: 30
-                                Layout.preferredHeight: 30
-
-                                onClicked: savePunchCodeMessageBox.show()
-
-                                MessageBoxLoader {
-                                    id: savePunchCodeMessageBox
-                                    text: qsTr("Really?")
-                                    backgroundColor: "lightblue"
-                                    hasCancelButton: true
-                                    okButtonText: qsTr("Save")
-                                    cancelButtonText: qsTr("No")
-
-                                    onAccept: {
-                                        Settings.setValue("punch_code", punchCode.text)
-                                        hide()
-                                    }
-                                    onReject: hide()
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        color: "lightgrey"
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-
-                        RowLayout {
-                            anchors.fill: parent
-
-                            Text {
-                                text: qsTr("Tool shift")
-                                Layout.preferredWidth: 80
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            Text {
-                                text: qsTr("dx")
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 20
-
-                            }
-
-                            DoubleSpinBox {
-                                value: DataBus.punch_tool_shift_dx
-                                onValueModified: DataBus.punch_tool_shift_dx = value
-                                Layout.preferredWidth: 100
-                            }
-
-                            Text {
-                                text: qsTr("dy")
-
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 20
-
-                            }
-                            DoubleSpinBox {
-                                value: DataBus.punch_tool_shift_dy
-                                onValueModified: DataBus.punch_tool_shift_dy = value
-                                Layout.preferredWidth: 100
-                            }
-                            SmButton {
-                                text: ("💾")
-
-                                Layout.preferredWidth: 30
-                                Layout.preferredHeight: 30
-
-                                onClicked: savePunchShiftMessageBox.show()
-
-                                MessageBoxLoader {
-                                    id: savePunchShiftMessageBox
-                                    text: qsTr("Really?")
-                                    backgroundColor: "lightblue"
-                                    hasCancelButton: true
-                                    okButtonText: qsTr("Save")
-                                    cancelButtonText: qsTr("No")
-
-                                    onAccept: {
-                                        Settings.setValue("punch_tool_shift_dx", DataBus.punch_tool_shift_dx)
-                                        Settings.setValue("punch_tool_shift_dy", DataBus.punch_tool_shift_dy)
-                                        hide()
-                                    }
-                                    onReject: hide()
-                                }
-                            }
-                        }
-                    }
-
-
-                    Rectangle {
-                        color: "lightgrey"
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-
-                        RowLayout {
-                            anchors.fill: parent
-
-                            Text {
-                                text: qsTr("Start point")
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.preferredWidth: 80
-                            }
-
-                            Text {
-                                text: qsTr("x")
-                                verticalAlignment: Text.AlignVCenter
-
-
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 20
-                            }
-                            DoubleSpinBox {
-                                id: startPointX
-                                decimals: 3
-                                value: DataBus.punchpath_start_point.x
-                                onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
-
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 100
-                            }
-                            Text {
-                                text: qsTr("y")
-                                verticalAlignment: Text.AlignVCenter
-
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 20
-
-                            }
-                            DoubleSpinBox {
-                                id: startPointY
-                                decimals: 3
-                                value: DataBus.punchpath_start_point.y
-                                onValueModified: DataBus.punchpath_start_point = Qt.point(startPointX.value, startPointY.value)
-
-                                Layout.preferredHeight: 30
-                                Layout.preferredWidth: 100
-                            }
-                            SmButton {
-                                text: ("💾")
-
-                                Layout.preferredWidth: 30
-                                Layout.preferredHeight: 30
-
-                                onClicked: saveStartPointMessageBox.show()
-
-                                MessageBoxLoader {
-                                    id: saveStartPointMessageBox
-                                    text: qsTr("Really?")
-                                    backgroundColor: "lightblue"
-                                    hasCancelButton: true
-                                    okButtonText: qsTr("Save")
-                                    cancelButtonText: qsTr("No")
-
-                                    onAccept: {
-                                        Settings.setValue("punchpath_start_point_x", startPointX.value)
-                                        Settings.setValue("punchpath_start_point_y", startPointY.value)
-                                        hide()
-                                    }
-                                    onReject: hide()
-                                }
-                            }
-                        }
-                    }
-
-                    // CodeEditor2 {
-                    //     id: goToBeginCode
-                    //     anchors.fill: parent
-                    //     //text: "G1 G90 F4000 Z20"
-                    //     // TODO: сделать маленькую кнопочку сохранения этого G кода в файл
-                    //     // https://www.qt.io/product/qt6/qml-book/ch18-extensions-using-fileio
-                    //     // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
-                    //     // https://github.com/SakamotoMari/FileIO
-                    //     // https://github.com/chili-epfl/qml-fileio
-                    // }
-
-
-
-                    SmButton {
-                        id: punch
-                        text: qsTr("Punch")
-                        checkable: true
-                        onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
-                        Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
-                    }
-                }
-
-            }
 
             CollapsiblePanel {
                 id: debugPanel
@@ -860,10 +637,13 @@ Item {
                     anchors.fill: parent
                     orientation: Qt.Vertical
 
-                    Log {
-                        id: logViewer
+                    Item {
                         SplitView.minimumHeight: 50
                         SplitView.preferredHeight: parent.height / 2
+                        Log {
+                            id: logViewer
+                            anchors.fill:parent
+                        }
                         Button {
                             anchors.top: parent.top
                             anchors.left: parent.left

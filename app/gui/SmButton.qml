@@ -7,6 +7,9 @@ import QtQuick.Layouts 1.12
 Button {
     id: root
     height: 30
+    Layout.preferredHeight: 30
+    Layout.preferredWidth: 100
+
     property int span: 1
 
     property string tooltipText

@@ -18,6 +18,7 @@
 
 #include <QQuickStyle>
 #include <QScopeGuard>
+#include <QTimer>
 
 #include "data_bus.h"
 #include "task_scan.h"
@@ -37,6 +38,23 @@
 #include "settings.h"
 
 #include "ImageItem.h"
+
+
+#include "file_system_watcher.h"
+
+
+EnhancedQmlApplicationEngine::EnhancedQmlApplicationEngine(QObject *parent)
+    : QQmlApplicationEngine(parent)
+{
+
+}
+
+void EnhancedQmlApplicationEngine::clearCache()
+{
+    trimComponentCache();
+    clearComponentCache();
+    trimComponentCache();
+}
 
 
 Engine::Engine(QObject* parent)
@@ -88,11 +106,11 @@ void Engine::load(const QString& url)
 
     scene().loadScene(url);
 
-//    QList<QGraphicsView *> views = scene().views();
+    //    QList<QGraphicsView *> views = scene().views();
 
-//    for (QGraphicsView * view : views)
-//    {
-//        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
+    //    for (QGraphicsView * view : views)
+    //    {
+    //        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
     //    }
 }
 
@@ -185,10 +203,12 @@ void Engine::createQmlEngine()
     TaskFindPixelSize* taskFindPixelSize = new TaskFindPixelSize(this);
     //TaskBestPath* taskBestPath = new TaskBestPath(this);
 
+    FileSystemWatcher* filesystemwatcher = new FileSystemWatcher(this);
+
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
-    _qmlEngine.reset(new QQmlApplicationEngine());
+    _qmlEngine.reset(new EnhancedQmlApplicationEngine());
 
     _qmlEngine->addImportPath(appDir() + "libs");
 
@@ -213,5 +233,8 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
 
+
+    _qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
+    _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

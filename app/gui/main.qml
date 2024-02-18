@@ -16,6 +16,33 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
+    // Loader {
+    //     id: loader
+
+    //     function reload() {
+    //         loader.source = ""
+    //         QmlEngine.clearCache()
+
+    //         loader.source = "Commands.qml"
+
+    //     }
+
+    //     source: "Commands.qml"
+
+    //     Timer { interval: 5000; repeat: true; triggeredOnStart: true; running: true; onTriggered: loader.reload(); }
+    // }
+
+    Shortcut {
+        sequence: "F5"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            console.log("reload")
+            loader.reload()
+
+
+        }
+    }
+
     FlashMessageBox {
         id: message
         text: DataBus.messagebox
@@ -83,24 +110,24 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
     }
 
-//    MyCamera {
-//        id: camera
-//        anchors.fill: parent
-//    }
-//    OpenCV {
-//        id: opencv
-//        anchors.fill: parent
-//    }
+    //    MyCamera {
+    //        id: camera
+    //        anchors.fill: parent
+    //    }
+    //    OpenCV {
+    //        id: opencv
+    //        anchors.fill: parent
+    //    }
 
-//    Shortcut {
-//        sequence: "F1"
-//        context: Qt.ApplicationShortcut
-//        onActivated: {
-//            commands.visible = true
-//            camera.visible = false
-//            opencv.visible = false
-//        }
-//    }
+    //    Shortcut {
+    //        sequence: "F1"
+    //        context: Qt.ApplicationShortcut
+    //        onActivated: {
+    //            commands.visible = true
+    //            camera.visible = false
+    //            opencv.visible = false
+    //        }
+    //    }
     Shortcut {
         sequence: "F2"
         context: Qt.ApplicationShortcut
@@ -109,13 +136,33 @@ ApplicationWindow {
         }
     }
 
-//    Shortcut {
-//        sequence: "F3"
-//        context: Qt.ApplicationShortcut
-//        onActivated: {
-//            commands.visible = false
-//            camera.visible = false
-//            opencv.visible = true
-//        }
-//    }
+    //    Shortcut {
+    //        sequence: "F3"
+    //        context: Qt.ApplicationShortcut
+    //        onActivated: {
+    //            commands.visible = false
+    //            camera.visible = false
+    //            opencv.visible = true
+    //        }
+    //    }
+
+    // Выполняет заданную функцию через интервал времени
+    function execAfterDelay(func, interval, ...params) {
+        return setTimeoutComponent.createObject(null, { func, interval, params} );
+    }
+
+    // Однократный таймер с самоудалением
+    Component {
+        id: setTimeoutComponent
+        Timer {
+            property var func
+            property var params
+            running: true
+            repeat: false
+            onTriggered: {
+                func(...params);
+                destroy();
+            }
+        }
+    }
 }

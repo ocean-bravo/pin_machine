@@ -11,8 +11,11 @@ Item {
     property bool editable: true
     property real value: 0.0
 
-    width: 120
-    height: 30
+    width: 100
+    height: 25
+
+    Layout.preferredWidth: 100
+    Layout.preferredHeight: 30
 
     //onValueChanged: spinbox.value = root.value * self.factor
 

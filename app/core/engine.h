@@ -7,9 +7,19 @@
 //#include "video3.h"
 #include "video4.h"
 
-
-class QQmlApplicationEngine;
 class Serial;
+
+#include <QQmlApplicationEngine>
+
+class EnhancedQmlApplicationEngine : public QQmlApplicationEngine
+{
+    Q_OBJECT
+
+public:
+    explicit EnhancedQmlApplicationEngine(QObject* parent = nullptr);
+
+    Q_INVOKABLE void clearCache();
+};
 
 class Engine : public QObject
 {
@@ -36,7 +46,7 @@ signals:
 private:
     void createQmlEngine();
 
-    QScopedPointer<QQmlApplicationEngine> _qmlEngine;
+    QScopedPointer<EnhancedQmlApplicationEngine> _qmlEngine;
 
     //V4L2 _videoDriver;
 //    Video3* _videoDriver3;

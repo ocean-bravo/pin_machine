@@ -16,6 +16,9 @@ Rectangle {
 
     property alias text: sendText.text
 
+    Layout.preferredHeight: 30
+    Layout.preferredWidth: 100
+
     TextInput {
         id: sendText
         text: ""
