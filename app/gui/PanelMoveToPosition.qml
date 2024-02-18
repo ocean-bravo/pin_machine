@@ -8,7 +8,6 @@ CollapsiblePanel {
     width: 400
     height: checked ? 320 : 30
 
-    checked: true
     text: qsTr("Move to position")
 
     onCheckedChanged: {
@@ -42,7 +41,7 @@ CollapsiblePanel {
         DoubleSpinBox { id: moveX; }
         SmButton { text: qsTr("Move X");
             onClicked: {
-                write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F1000 X" + moveX.text) }
+                write("G1 " + (relAbsX.text === "Abs" ? "G90" : "G91") + " F" + xyFeedRate.value + " X" + moveX.text) }
         }
         SmButton { id: relAbsX; checkable: true; text: checked ? "Rel" : "Abs"; Layout.preferredWidth: 40 }
         Item {Layout.fillWidth: true; Layout.preferredHeight: 30}
@@ -51,7 +50,7 @@ CollapsiblePanel {
         DoubleSpinBox { id: moveY; }
         SmButton { text: qsTr("Move Y");
             onClicked: {
-                write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F1000 Y" + moveY.text) }
+                write("G1 " + (relAbsY.text === "Abs" ? "G90" : "G91") + " F" + xyFeedRate.value + " Y" + moveY.text) }
         }
         SmButton { id: relAbsY; checkable: true; text: checked ? "Rel" : "Abs"; Layout.preferredWidth: 40 }
         //Item {Layout.fillWidth: true; Layout.preferredHeight: 30}
@@ -73,14 +72,17 @@ CollapsiblePanel {
         DoubleSpinBox { id: moveZ; }
         SmButton { text: qsTr("Move Z");
             onClicked: {
-                write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F1000 Z" + moveZ.text) }
+                write("G1 " + (relAbsZ.text === "Abs" ? "G90" : "G91") + " F" + zFeedRate.value + " Z" + moveZ.text) }
         }
         SmButton { id: relAbsZ; checkable: true; text: checked ? "Rel" : "Abs"; Layout.preferredWidth: 40 }
         Item {Layout.fillWidth: true; Layout.preferredHeight: 10}
 
         // 7.
-        DoubleSpinBox { id: cutZ; from: -50; to: 50;}
-        SmButton { text: "Cut Z"; }
+        DoubleSpinBox { id: cutZ; from: -50; to: 50; value: Settings.value("cut_z", 0.0)}
+        SmButton { text: "Cut Z";
+            onClicked: {
+                write("G1 G90 F" + zFeedRate.value + " Z" + cutZ.text) }
+        }
         SaveButton {
             acceptFunc: function() {
                 Settings.setValue("cut_z", cutZ.value)
@@ -89,8 +91,10 @@ CollapsiblePanel {
         Item {Layout.fillWidth: true; Layout.preferredHeight: 10}
 
         // 8.
-        DoubleSpinBox { id: insertZ; from: -50; to: 50; }
-        SmButton { text: "Insert Z"; }
+        DoubleSpinBox { id: insertZ; from: -50; to: 50; value: Settings.value("insert_z", 0.0) }
+        SmButton { text: "Insert Z";
+            onClicked: {
+                write("G1 G90 F" + zFeedRate.value + " Z" + insertZ.text) }}
         SaveButton {
             acceptFunc: function() {
                 Settings.setValue("insert_z", insertZ.value)

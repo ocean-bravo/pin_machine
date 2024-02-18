@@ -280,53 +280,7 @@ Item {
             }
 
 
-            Pane {
-                id: pane
-                width: parent.width
-                height: loader.item === null ? 10 : loader.item.height
-
-                padding: 0
-                spacing: 0
-                leftInset: 0
-                rightInset: 0
-                topInset: 0
-                bottomInset: 0
-
-                // Component.onCompleted: {
-                //     execAfterDelay(function () { pane.width = 300 }, 500 )
-                // }
-
-                Loader {
-                    id: loader
-
-                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelMoveToPosition.qml"
-
-                    function reload() {
-                        loader.source = ""
-                        QmlEngine.clearCache()
-
-                        loader.source = path
-                    }
-
-                    source: path
-
-                    onLoaded : {
-                        parent.height = loader.item.height
-
-                    }
-
-                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
-                        if (path === loader.path) {
-                            loader.reload()
-                        }
-
-                    }
-                    }
-
-                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
-                    }
-                }
-            }
+            PanelMoveToPosition {}
 
 
             CollapsiblePanel {
@@ -463,7 +417,6 @@ Item {
             PanelPunchCode {}
             PanelStartPoint {}
             PanelToolShift {}
-
 
             CollapsiblePanel {
                 id: debugPanel
