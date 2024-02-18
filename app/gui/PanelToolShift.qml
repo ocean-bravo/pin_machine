@@ -46,13 +46,11 @@ CollapsiblePanel {
                     verticalAlignment: Text.AlignVCenter
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 20
-
                 }
 
                 DoubleSpinBox {
                     value: DataBus.punch_tool_shift_dx
                     onValueModified: DataBus.punch_tool_shift_dx = value
-                    //Layout.preferredWidth: 100
                 }
 
                 Text {
@@ -66,7 +64,6 @@ CollapsiblePanel {
                 DoubleSpinBox {
                     value: DataBus.punch_tool_shift_dy
                     onValueModified: DataBus.punch_tool_shift_dy = value
-                    //Layout.preferredWidth: 100
                 }
 
                 SaveButton {
@@ -102,14 +99,11 @@ CollapsiblePanel {
                     verticalAlignment: Text.AlignVCenter
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 20
-
                 }
 
                 DoubleSpinBox {
                     id: deltaZeroX
                     value: xPos - zeroPoint.x
-                    // /onValueModified: DataBus.punch_tool_shift_dx = value
-                    //Layout.preferredWidth: 100
                 }
 
                 Text {
@@ -123,8 +117,6 @@ CollapsiblePanel {
                 DoubleSpinBox {
                     id: deltaZeroY
                     value: yPos - zeroPoint.y
-                    //onValueModified: DataBus.punch_tool_shift_dy = value
-                    //Layout.preferredWidth: 100
                 }
 
                 Item {Layout.preferredWidth: 30}
