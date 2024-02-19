@@ -24,8 +24,9 @@ Item {
         appendLog(msg+"\n")
     }
 
-    function jog(axis, mm) {
-        let feed = 1000
+    function jog(axis, mm, feed) {
+        if (feed === undefined)
+            feed = 1000
         write("$J=G91 " + axis + mm + " F" + feed)
     }
 
@@ -287,24 +288,51 @@ Item {
 
             PanelMoveToPosition {}
 
+            // Pane {
+            //     id: pane
+            //     width: parent.width
+            //     height: loader.item === null ? 10 : loader.item.height
 
-            CollapsiblePanel {
-                id: jogPanel
-                width: parent.width
-                height: checked ? 400 : 30
-                text: "Jog control"
-                onCheckedChanged: {
-                    jogControl.visible = checked
-                }
-                Component.onCompleted: {
-                    jogControl.visible = checked
-                }
+            //     padding: 0
+            //     spacing: 0
+            //     leftInset: 0
+            //     rightInset: 0
+            //     topInset: 0
+            //     bottomInset: 0
 
-                JogControl {
-                    id: jogControl
-                    width: parent.width
-                }
-            }
+            //     Loader {
+            //         id: loader
+
+            //         readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelMoveToPosition.qml"  // Эта строка меняется на нужную
+
+            //         function reload() {
+            //             loader.source = ""
+            //             QmlEngine.clearCache()
+
+            //             loader.source = path
+            //         }
+
+            //         source: path
+
+            //         onLoaded : {
+            //             parent.height = loader.item.height
+
+            //         }
+
+            //         Connections { target: FileSystemWatcher; function onFileChanged (path) {
+            //             if (path === loader.path) {
+            //                 loader.reload()
+            //             }
+
+            //         }
+            //         }
+
+            //         // Костыль. Проблемы какие-то постоянно с filesystemwatcher
+            //         Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+            //         }
+            //     }
+            // }
+
 
             Grid {
                 width: parent.width
@@ -421,50 +449,7 @@ Item {
 
             PanelPunchCode {}
             PanelStartPoint {}
-            Pane {
-                id: pane
-                width: parent.width
-                height: loader.item === null ? 10 : loader.item.height
-
-                padding: 0
-                spacing: 0
-                leftInset: 0
-                rightInset: 0
-                topInset: 0
-                bottomInset: 0
-
-                Loader {
-                    id: loader
-
-                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelToolShift.qml"  // Эта строка меняется на нужную
-
-                    function reload() {
-                        loader.source = ""
-                        QmlEngine.clearCache()
-
-                        loader.source = path
-                    }
-
-                    source: path
-
-                    onLoaded : {
-                        parent.height = loader.item.height
-
-                    }
-
-                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
-                        if (path === loader.path) {
-                            loader.reload()
-                        }
-
-                    }
-                    }
-
-                    // Костыль. Проблемы какие-то постоянно с filesystemwatcher
-                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
-                    }
-                }
-            }
+            PanelJogControl {}
 
             CollapsiblePanel {
                 id: debugPanel
