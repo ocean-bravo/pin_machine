@@ -447,9 +447,10 @@ Item {
                 }
             }
 
+            PanelJogControl {}
             PanelPunchCode {}
             PanelStartPoint {}
-            PanelJogControl {}
+
 
             CollapsiblePanel {
                 id: debugPanel
