@@ -71,8 +71,8 @@ int main(int argc, char* argv[])
     QObject::connect(&app, &QApplication::aboutToQuit, engine.data(), [&engine]() { engine.reset(); });
 
 // Test 1
-    //MainWindow w;
-    //w.show();
+    // MainWindow w;
+    // w.show();
 
     ScanView scene;
     scene.show();

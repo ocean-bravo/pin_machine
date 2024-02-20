@@ -1,4 +1,4 @@
-#include "V4l2MmapDevice.h"
+#include "my_video_driver.h"
 
 #include "data_bus.h"
 #include "common.h"
@@ -34,22 +34,22 @@ const size_t V4L2MMAP_NBBUFFER = 2;
 
 }
 
-v4l2_buf_type MyDriver::_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-quint32 MyDriver::_memory = V4L2_MEMORY_MMAP;
+v4l2_buf_type MyVideoDriver::_type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+quint32 MyVideoDriver::_memory = V4L2_MEMORY_MMAP;
 
-MyDriver::MyDriver()
+MyVideoDriver::MyVideoDriver()
     : n_buffers(V4L2MMAP_NBBUFFER)
 {
     m_buffers.resize(V4L2MMAP_NBBUFFER);
     std::fill(m_buffers.begin(), m_buffers.end(), buffer());
 }
 
-MyDriver::~MyDriver()
+MyVideoDriver::~MyVideoDriver()
 {
     stop();
 }
 
-bool MyDriver::init(int device, int width, int height, int fourcc)
+bool MyVideoDriver::init(int device, int width, int height, int fourcc)
 {
     qd() << "Camera: init device";
 
@@ -66,7 +66,7 @@ bool MyDriver::init(int device, int width, int height, int fourcc)
     return true;
 }
 
-bool MyDriver::open(QString deviceName)
+bool MyVideoDriver::open(QString deviceName)
 {
     const QByteArray ba = deviceName.toLatin1();
 
@@ -82,13 +82,13 @@ bool MyDriver::open(QString deviceName)
     return true;
 }
 
-void MyDriver::close()
+void MyVideoDriver::close()
 {
     ::close(_fd);
     _fd = -1;
 }
 
-bool MyDriver::start()
+bool MyVideoDriver::start()
 {
     qd() << "Camera: starting device " << _deviceName << "...";
 
@@ -108,7 +108,7 @@ bool MyDriver::start()
     return true;
 }
 
-bool MyDriver::stop()
+bool MyVideoDriver::stop()
 {
     qd() << "Camera: stop device " << _deviceName;
 
@@ -119,12 +119,12 @@ bool MyDriver::stop()
     return true;
 }
 
-bool MyDriver::isReady()
+bool MyVideoDriver::isReady()
 {
     return  ((_fd != -1)&& (n_buffers != 0));
 }
 
-bool MyDriver::requestBuffers(int count)
+bool MyVideoDriver::requestBuffers(int count)
 {
     v4l2_requestbuffers req = {};
 
@@ -136,7 +136,7 @@ bool MyDriver::requestBuffers(int count)
     qd() << "Camera: request buffers OK"; return true;
 }
 
-bool MyDriver::queryBuffers(int count)
+bool MyVideoDriver::queryBuffers(int count)
 {
     for (int i = 0; i < count; ++i)
     {
@@ -169,7 +169,7 @@ bool MyDriver::queryBuffers(int count)
     return true;
 }
 
-bool MyDriver::queueBuffers(int count)
+bool MyVideoDriver::queueBuffers(int count)
 {
     for (int i = 0; i < count; ++i)
     {
@@ -184,7 +184,7 @@ bool MyDriver::queueBuffers(int count)
     return true;
 }
 
-bool MyDriver::setFormat(int width, int height, int fourcc)
+bool MyVideoDriver::setFormat(int width, int height, int fourcc)
 {
     v4l2_format format = {};
     format.type                = _type;
@@ -205,7 +205,7 @@ bool MyDriver::setFormat(int width, int height, int fourcc)
     return true;
 }
 
-bool MyDriver::unmapAndDeleteBuffers()
+bool MyVideoDriver::unmapAndDeleteBuffers()
 {
     bool result = true;
     for(uint32_t i=0; i< m_buffers.size(); i++)
@@ -223,7 +223,7 @@ bool MyDriver::unmapAndDeleteBuffers()
     return result;
 }
 
-bool MyDriver::freeBuffers()
+bool MyVideoDriver::freeBuffers()
 {
     n_buffers = 0;
 
@@ -238,7 +238,7 @@ bool MyDriver::freeBuffers()
     return true;
 }
 
-bool MyDriver::isReadable(int timeoutMs) const
+bool MyVideoDriver::isReadable(int timeoutMs) const
 {
     if (_fd == -1)
     {
@@ -253,18 +253,18 @@ bool MyDriver::isReadable(int timeoutMs) const
     return ret == 1;
 }
 
-size_t MyDriver::bufSize() const
+size_t MyVideoDriver::bufSize() const
 {
     return _bufSize;
 }
 
-bool MyDriver::streamOn()
+bool MyVideoDriver::streamOn()
 {
     if (ioctl(_fd, VIDIOC_STREAMON, &_type) == -1) { qd() << "Camera: error VIDIOC_STREAMON"; return false; }
     qd() << "Camera: stream on OK"; return true;
 }
 
-bool MyDriver::streamOff()
+bool MyVideoDriver::streamOff()
 {
     if (ioctl(_fd, VIDIOC_STREAMOFF, &_type) == -1) { qd() << "Camera: error VIDIOC_STREAMOFF"; return false; }
     qd() << "Camera: stream off OK"; return true;
@@ -288,7 +288,7 @@ bool MyDriver::streamOff()
 //    dequeue_buffer(camera);
 //}
 
-size_t MyDriver::readInternal(char* buffer, size_t bufferSize)
+size_t MyVideoDriver::readInternal(char* buffer, size_t bufferSize)
 {
     size_t size = 0;
 
@@ -323,7 +323,60 @@ size_t MyDriver::readInternal(char* buffer, size_t bufferSize)
     return size;
 }
 
-quint32 MyDriver::maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint32 height)
+void MyVideoDriver::setExposureType(v4l2_exposure_auto_type type)
+{
+    setProperty("exposure_type", type);
+}
+
+void MyVideoDriver::setExposureTime(qint32 value)
+{
+    setProperty("exposure_time", value);
+}
+
+void MyVideoDriver::setApertureSize(qint32 value)
+{
+    setProperty("aperture_size", value);
+}
+
+// V4L2_CID_EXPOSURE_AUTO (enum v4l2_exposure_auto_type)
+// Enables automatic adjustments of the exposure time and/or iris aperture. The effect of manual changes of the exposure time or iris aperture while these features are enabled is undefined, drivers should ignore such requests. Possible values are:
+
+// V4L2_CID_IRIS_ABSOLUTE (integer)
+// This control sets the camera’s aperture to the specified value. The unit is undefined. Larger values open the iris wider, smaller values close it.
+
+bool MyVideoDriver::setProperty(const QString& property, qint32 value)
+{
+    v4l2_control ctrl = {};
+
+    if (property == "exposure_type")
+    {
+        ctrl.id = V4L2_CID_EXPOSURE_AUTO;
+        ctrl.value = value;
+    }
+    else if (property == "exposure_time")
+    {
+        ctrl.id = V4L2_CID_EXPOSURE_ABSOLUTE;
+        ctrl.value = value;
+    }
+    else if (property == "aperture_size")
+    {
+        ctrl.id = V4L2_CID_IRIS_ABSOLUTE;
+        ctrl.value = value;
+    }
+    else
+    {
+        return false;
+    }
+
+    if (ioctl(_fd, VIDIOC_S_CTRL, &ctrl) == -1)
+    {
+        qd() << QString("setProperty \"%1\" failed on VIDIOC_S_CTRL (errno %2)").arg(property).arg(errno);
+        return false;
+    }
+    return true;
+}
+
+quint32 MyVideoDriver::maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint32 height)
 {
     quint32 fps = 0;
 
@@ -349,7 +402,7 @@ quint32 MyDriver::maxFrameRate(int fd, quint32 pixelformat, quint32 width, quint
     return fps;
 }
 
-QJsonArray MyDriver::imageFormats(int fd)
+QJsonArray MyVideoDriver::imageFormats(int fd)
 {
     v4l2_fmtdesc fmtdesc = {};
 
@@ -386,7 +439,7 @@ QJsonArray MyDriver::imageFormats(int fd)
     return formats;
 }
 
-QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
+QVector<QRect> MyVideoDriver::frameSizes(int fd, quint32 pixelformat)
 {
     v4l2_frmsizeenum frmsize = {};
 
@@ -411,7 +464,7 @@ QVector<QRect> MyDriver::frameSizes(int fd, quint32 pixelformat)
     return frameSizes;
 }
 
-void MyDriver::reloadDevices()
+void MyVideoDriver::reloadDevices()
 {
     const int maxDevices = 32;
 

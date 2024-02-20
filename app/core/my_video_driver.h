@@ -8,11 +8,11 @@
 
 class QJsonArray;
 
-class MyDriver
+class MyVideoDriver
 {	
 public:
-    MyDriver();
-    ~MyDriver();
+    MyVideoDriver();
+    ~MyVideoDriver();
 
     bool init(int device, int width, int height, int fourcc);
     bool isReady();
@@ -26,6 +26,17 @@ public:
     size_t bufSize() const;
 
     size_t readInternal(char* buffer, size_t bufferSize);
+
+
+    // V4L2_EXPOSURE_AUTO	Automatic exposure time, automatic iris aperture.
+    // V4L2_EXPOSURE_MANUAL	Manual exposure time, manual iris.
+    // V4L2_EXPOSURE_SHUTTER_PRIORITY	Manual exposure time, auto iris.
+    // V4L2_EXPOSURE_APERTURE_PRIORITY	Auto exposure time, manual iris.
+    void setExposureType(v4l2_exposure_auto_type type);
+    void setExposureTime(qint32 value); // 1 unit - 100 us
+    void setApertureSize(qint32 value);
+
+    bool setProperty(const QString& property, qint32 value);
 
     int width = 640;
     int height = 480;

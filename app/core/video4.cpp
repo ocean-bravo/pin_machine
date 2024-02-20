@@ -3,6 +3,7 @@
 #include "wait.h"
 
 #include "data_bus.h"
+#include "utils2.h"
 
 #include <QBuffer>
 #include <QEventLoop>
@@ -19,7 +20,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 
-#include "V4l2MmapDevice.h"
+#include "my_video_driver.h"
 #include "yuvconverters.h"
 
 #include "mjpeghelper.h"
@@ -51,6 +52,15 @@ Video4::Video4()
 
     _impl->moveToThread(_thread);
     _thread->start();
+
+
+    db().insert("cam_prop_exp_type", QVariant());
+    db().insert("cam_prop_exp_time", QVariant());
+    db().insert("cam_prop_ape_size", QVariant());
+
+    databusAction2("cam_prop_exp_type", [this](const QVariant& value) { setProperty("exposure_type", value.toUInt()); } );
+    databusAction2("cam_prop_exp_time", [this](const QVariant& value) { setProperty("exposure_time", value.toUInt()); } );
+    databusAction2("cam_prop_ape_size", [this](const QVariant& value) { setProperty("aperture_size", value.toUInt()); } );
 }
 
 Video4::~Video4()
@@ -88,6 +98,11 @@ QImage Video4::smallRegion()
 //    _smallRegion.setText("x", toReal3(x));
 //    _smallRegion.setText("y", toReal3(y));
     return _smallRegion.copy();
+}
+
+void Video4::setProperty(const QString& property, qint32 value)
+{
+    QMetaObject::invokeMethod(_impl, "setProperty", Qt::QueuedConnection, Q_ARG(QString, property), Q_ARG(qint32, value));
 }
 
 void Video4::reloadDevices()
@@ -128,6 +143,11 @@ void Video4Private::capture(double widthMm)
 void Video4Private::reloadDevices()
 {
     _videoCapture->reloadDevices();
+}
+
+void Video4Private::setProperty(const QString &property, qint32 value)
+{
+    _videoCapture->setProperty(property, value);
 }
 
 void Video4Private::update()
@@ -258,7 +278,7 @@ void Video4Private::imageDispatch(QImage img)
 
 void Video4Private::changeCamera(int device, int width, int height, QString fourcc)
 {
-    _videoCapture.reset(new MyDriver);
+    _videoCapture.reset(new MyVideoDriver);
     _videoCapture->init(device, width, height, fourccToInt(fourcc));
     _currentFourcc = fourcc;
 }

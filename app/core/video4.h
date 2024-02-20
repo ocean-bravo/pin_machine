@@ -9,7 +9,7 @@
 #include <tuple>
 
 #include <QMutex>
-#include "V4l2MmapDevice.h"
+#include "my_video_driver.h"
 
 #include "singleton.h"
 
@@ -30,6 +30,7 @@ public:
 
     QImage smallRegion();
 
+    void setProperty(const QString& property, qint32 value);
 
     Q_INVOKABLE void reloadDevices();
 
@@ -65,6 +66,8 @@ public slots:
 
     void reloadDevices();
 
+    void setProperty(const QString& property, qint32 value);
+
 signals:
     void rawImage(QImage);
     void captured(QImage);
@@ -76,7 +79,7 @@ signals:
 private:
     void imageDispatch(QImage img);
 
-    QScopedPointer<MyDriver> _videoCapture;
+    QScopedPointer<MyVideoDriver> _videoCapture;
 
     QMutex _mutex;
     QAtomicInteger<bool> _stop = false;

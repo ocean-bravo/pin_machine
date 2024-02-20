@@ -39,23 +39,23 @@ public slots:
     void updateLogMessages();
     void changeCamera();
 
-//    void onAutoExposure(bool state);
-//    void onAutoWhiteBalance(bool state);
-//    void onAutoGain(bool state);
-//    void onAutoFocus(bool state);
-//    void onExposureSlider(int value);
-//    void onWhiteBalanceSlider(int value);
-//    void onGainSlider(int value);
-//    void onContrastSlider(int value);
-//    void onBrightnessSlider(int value);
-//    void onSaturationSlider(int value);
-//    void onFocusSlider(int value);
-//    void onZoomSlider(int value);
-//    void onGammaSlider(int value);
-//    void onHueSlider(int value);
-//    void onBacklightSlider(int value);
-//    void onSharpnessSlider(int value);
-//    void onColorEnableSlider(int value);
+   // void onAutoExposure(bool state);
+   // void onAutoWhiteBalance(bool state);
+   // void onAutoGain(bool state);
+   // void onAutoFocus(bool state);
+   // void onExposureSlider(int value);
+   // void onWhiteBalanceSlider(int value);
+   // void onGainSlider(int value);
+   // void onContrastSlider(int value);
+   // void onBrightnessSlider(int value);
+   // void onSaturationSlider(int value);
+   // void onFocusSlider(int value);
+   // void onZoomSlider(int value);
+   // void onGammaSlider(int value);
+   // void onHueSlider(int value);
+   // void onBacklightSlider(int value);
+   // void onSharpnessSlider(int value);
+   // void onColorEnableSlider(int value);
 
 private:
     bool        m_hasBrightness;
