@@ -181,6 +181,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         cv::Mat grey;
         cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
+        cv::Mat blur;
+        cv::medianBlur(grey, blur, 5);
+
         cv::Mat adtr;
 
         const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
@@ -189,13 +192,13 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
 
 
-        cv::adaptiveThreshold(grey, adtr, 255, typeAdTr, typeTr, blockSize, c);
+        cv::adaptiveThreshold(blur, adtr, 255, typeAdTr, typeTr, blockSize, c);
 
         //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
         db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
 
-        cv::Mat blur;
-        cv::medianBlur(adtr, blur, 3);
+        // cv::Mat blur;
+        // cv::medianBlur(adtr, blur, 3);
         //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
         // Storage for blobs
