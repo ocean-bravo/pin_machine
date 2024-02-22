@@ -25,7 +25,6 @@ CollapsiblePanel {
         BlobSettings {
             Layout.preferredHeight: 200
             Layout.fillWidth: true
-
         }
     }
 }
