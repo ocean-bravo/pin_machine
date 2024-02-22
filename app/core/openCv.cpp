@@ -210,7 +210,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     }
     catch (...)
     {
-        db("messagebox") = "blob crashed";
+        db("message") = "blob crashed";
     }
 
     return {img, std::vector<cv::KeyPoint>()};
