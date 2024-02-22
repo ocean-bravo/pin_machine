@@ -210,7 +210,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     }
     catch (...)
     {
-        db("message") = "blob crashed";
+        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
+        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        qd() << "blob crashed" << typeAdTr << typeTr;
     }
 
     return {img, std::vector<cv::KeyPoint>()};
