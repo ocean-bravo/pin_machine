@@ -3,7 +3,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
+
 import Process 1.0
 import ImageItem 1.0
 
@@ -219,242 +219,62 @@ Item {
                 height: 30
             }
 
-            CollapsiblePanel {
-                id: machineCommandsPanel
-                width: parent.width
-                height: checked ? 220 : 30
-                text: "Machine Commands"
-                checked: false
-                onCheckedChanged: machineCommands.visible = checked
-                Component.onCompleted: machineCommands.visible = checked
-
-                Column {
-                    id: machineCommands
-                    width: parent.width
-
-                    Grid {
-                        width: parent.width
-                        columns: 4
-                        columnSpacing: 5
-                        rowSpacing: 5
-
-                        SmButton { text: qsTr("$H");  onClicked: { write("$H" )} }
-                        SmButton { text: qsTr("$HX"); onClicked: { write("$HX" ) } }
-                        SmButton { text: qsTr("$HY"); onClicked: { write("$HY" ) } }
-                        SmButton { text: qsTr("$HZ"); onClicked: { write("$HZ" ) } }
-                    }
-
-                    Item { height: 30; width: 10}
-
-                    Grid {
-                        width: parent.width
-                        columns: 3
-                        columnSpacing: 5
-                        rowSpacing: 5
-
-                        SmButton { text: qsTr("Unlock($X)"); onClicked: { write("$X" )     } }
-                        SmButton { text: qsTr("Jog cancel");   onClicked: {  write("\x85" )    } }
-                        SmButton { text: qsTr("Feed Hold(!)");   onClicked: { write("!" )     } }
-                        SmButton { text: qsTr("Start/Resume(~)");   onClicked: { write("~" )     } }
-
-                        SmButton {
-                            text: qsTr("Status(?)")
-                            tooltipText: "F5";
-                            checkable: true
-                            onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
-
-                            Timer {
-                                id: statusTimer
-                                interval: 500
-                                repeat: true
-                                triggeredOnStart: true
-                                running: false
-                                onTriggered: Serial.write("?\n")
-                            }
-                        }
-
-                        ComboBox {
-                            height: 30
-                            model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
-                                "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
-                            onActivated: write(currentText)
-                        }
-
-                        SmButton { text: qsTr("Soft Reset(ctrl+x)"); onClicked: { write("\x18" )       } }
-                    }
-                }
-            }
-
-
+            PanelMachineComands {}
+            PanelTasks {}
             PanelMoveToPosition {}
-
-            // Pane {
-            //     id: pane
-            //     width: parent.width
-            //     height: loader.item === null ? 10 : loader.item.height
-
-            //     padding: 0
-            //     spacing: 0
-            //     leftInset: 0
-            //     rightInset: 0
-            //     topInset: 0
-            //     bottomInset: 0
-
-            //     Loader {
-            //         id: loader
-
-            //         readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelMoveToPosition.qml"  // Эта строка меняется на нужную
-
-            //         function reload() {
-            //             loader.source = ""
-            //             QmlEngine.clearCache()
-
-            //             loader.source = path
-            //         }
-
-            //         source: path
-
-            //         onLoaded : {
-            //             parent.height = loader.item.height
-
-            //         }
-
-            //         Connections { target: FileSystemWatcher; function onFileChanged (path) {
-            //             if (path === loader.path) {
-            //                 loader.reload()
-            //             }
-
-            //         }
-            //         }
-
-            //         // Костыль. Проблемы какие-то постоянно с filesystemwatcher
-            //         Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
-            //         }
-            //     }
-            // }
-
-
-            Grid {
-                width: parent.width
-                //height: 100
-                columns: 3
-
-                SmTextEdit {
-                    id: programParams
-                    width: 200
-                    text: "85 120  165  170  10  8  5000"
-                }
-                SmButton {
-                    text: qsTr("Generate program")
-                    onClicked: {
-                        codeEditor.clear()
-                        let p = programParams.text.split(' ').filter(e => e).map(Number) // Выкидываю нулевые строки и преобразую в массив чисел
-                        codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
-                    }
-                }
-                Item { height: 20; width: 10}
-
-                SmButton {
-                    id: scan
-                    text: qsTr("Fast scan")
-                    checkable: true
-                    onCheckedChanged: checked ?  TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskScan.stopProgram()
-                    Connections { target: TaskScan; function onFinished() { scan.checked = false } }
-                    function selectedResolution() {
-                        return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForScan.currentIndex]
-                    }
-                }
-                ComboBox {
-                    id: resolutionListForScan
-                    width: 200
-                    textRole: "display"
-                    model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
-                    onModelChanged: {
-                        let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
-
-                        for (let i = 0; i < res.length; i++) {
-                            let r = res[i]
-                            if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
-                                currentIndex = i
-                        }
-                    }
-                }
-                Item { height: 30; width: 10}
-
-                SmButton {
-                    id: update
-                    text: qsTr("Update selected")
-                    checkable: true
-                    onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskUpdate.stopProgram()
-                    Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
-                    function selectedResolution() {
-                        return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
-                    }
-                }
-                ComboBox {
-                    id: resolutionListForUpdate
-                    width: 200
-                    textRole: "display"
-                    model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
-                    onModelChanged: {
-                        let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
-
-                        for (let i = 0; i < res.length; i++) {
-                            let r = res[i]
-                            if (r.width === 1280 && r.height === 960 && r.fourcc === "YUYV")
-                                currentIndex = i
-                        }
-                    }
-                }
-                Item { height: 30; width: 10}
-
-                SmButton {
-                    id: save
-                    text: qsTr("Save")
-                    onClicked: saveDialog.open()
-
-                    FileDialog {
-                        id: saveDialog
-                        folder: applicationDirPath
-                        fileMode: FileDialog.SaveFile
-                        onAccepted: Engine.save(currentFile)
-                        modality: Qt.ApplicationModal
-                    }
-                }
-                SmButton {
-                    id: load
-                    text: qsTr("Load")
-                    //onClicked: loadDialog.open()
-
-                    onClicked: Engine.load(Qt.resolvedUrl("/home/mint/Desktop/123"))
-                    // FileDialog {
-                    //     id: loadDialog
-                    //     folder: applicationDirPath
-                    //     fileMode: FileDialog.OpenFile
-                    //     onAccepted: Engine.load(currentFile)
-                    //     modality: Qt.ApplicationModal
-                    // }
-                }
-
-                Item { height: 30; width: 10}
-
-                SmButton {
-                    id: checkCamera
-                    text: qsTr("Check camera")
-                    checkable: true
-                    onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
-                    Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
-                }
-            }
-
             PanelJogControl {}
             PanelPunchCode {}
             PanelStartPoint {}
             PanelToolShift {}
+
+            //PanelBlobDetectionSettings {}
+
+            Pane {
+                id: pane
+                width: parent.width
+                height: loader.item === null ? 10 : loader.item.height
+
+                padding: 0
+                spacing: 0
+                leftInset: 0
+                rightInset: 0
+                topInset: 0
+                bottomInset: 0
+
+                Loader {
+                    id: loader
+
+                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"  // Эта строка меняется на нужную
+
+                    function reload() {
+                        loader.source = ""
+                        QmlEngine.clearCache()
+
+                        loader.source = path
+                    }
+
+                    source: path
+
+                    onLoaded : {
+                        parent.height = loader.item.height
+
+                    }
+
+                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
+                        if (path === loader.path) {
+                            loader.reload()
+                        }
+
+                    }
+                    }
+
+                    // Костыль. Проблемы какие-то постоянно с filesystemwatcher
+                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+                    }
+                }
+            }
             PanelDebug {}
             PanelCameraSettings {}
-
-
         }
 
         SplitView {
