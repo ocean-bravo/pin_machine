@@ -93,17 +93,17 @@ Item {
             Sp {} Sp {} Sp {} Sp {} MyButton { text: qsTr("+0.01"); onClicked: { jog("Y", 0.01, xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Nsp {} MyButtonZ { text: qsTr("+0.01"); onClicked: { jog("Z", 0.01, zFeedRate.value)} }
 
 
-            MyButton { text: qsTr("-10");   onClicked: { jog("X", -10,  xyFeedRate.value)} }
-            MyButton { text: qsTr("-1");    onClicked: { jog("X", -1,  xyFeedRate.value)} }
-            MyButton { text: qsTr("-0.1");  onClicked: { jog("X", -0.1,   xyFeedRate.value)} }
+            MyButton { text: qsTr("-10");   onClicked: { jog("X", -10,   xyFeedRate.value)} }
+            MyButton { text: qsTr("-1");    onClicked: { jog("X", -1,    xyFeedRate.value)} }
+            MyButton { text: qsTr("-0.1");  onClicked: { jog("X", -0.1,  xyFeedRate.value)} }
             MyButton { text: qsTr("-0.01"); onClicked: { jog("X", -0.01, xyFeedRate.value)} }
 
             MyButton { text: "X/Y"; }
 
             MyButton { text: qsTr("+0.01"); onClicked: { jog("X", 0.01, xyFeedRate.value)} }
-            MyButton { text: qsTr("+0.1");  onClicked: { jog("X", 0.1,   xyFeedRate.value)} }
-            MyButton { text: qsTr("+1");    onClicked: { jog("X", 1,  xyFeedRate.value)} }
-            MyButton { text: qsTr("+10");   onClicked: { jog("X", 10,  xyFeedRate.value)} }
+            MyButton { text: qsTr("+0.1");  onClicked: { jog("X", 0.1,  xyFeedRate.value)} }
+            MyButton { text: qsTr("+1");    onClicked: { jog("X", 1,    xyFeedRate.value)} }
+            MyButton { text: qsTr("+10");   onClicked: { jog("X", 10,   xyFeedRate.value)} }
 
             Nsp {}
             MyButtonZ { text: "Z"; }
