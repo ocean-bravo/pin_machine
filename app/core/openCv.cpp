@@ -136,74 +136,84 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     static quint32 count = 0;
     ++count;
 
-    //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
+    try {
 
-    //qd() << "detect blobs " << img.width() << img.height();
+        //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
 
-    cv::SimpleBlobDetector::Params params;
+        //qd() << "detect blobs " << img.width() << img.height();
 
-    // Filter by Area.
-    params.filterByArea = true;
-    double minDia = db().value("blob_minDia_mm").toDouble();
-    double maxDia = db().value("blob_maxDia_mm").toDouble();
+        cv::SimpleBlobDetector::Params params;
 
-    params.minArea = minDia * minDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
-    params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+        // Filter by Area.
+        params.filterByArea = true;
+        double minDia = db().value("blob_minDia_mm").toDouble();
+        double maxDia = db().value("blob_maxDia_mm").toDouble();
 
-    // Filter by Circularity
-    // params.filterByCircularity = true;
-    // params.minCircularity = 0.3;
-    // params.maxCircularity = 5.0;
+        params.minArea = minDia * minDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+        params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
 
-    // Filter by Convexity
-    //params.filterByConvexity = false;
-    //params.minConvexity = 0.87
+        // Filter by Circularity
+        // params.filterByCircularity = true;
+        // params.minCircularity = 0.3;
+        // params.maxCircularity = 5.0;
 
-    // Filter by Inertia
-    //    params.filterByInertia = true;
-    //    params.minInertiaRatio = 0.8;
-    //    params.maxInertiaRatio = 5.0;
+        // Filter by Convexity
+        //params.filterByConvexity = false;
+        //params.minConvexity = 0.87
 
-    // Distance Between Blobs
-    params.minDistBetweenBlobs = 2.0;
+        // Filter by Inertia
+        //    params.filterByInertia = true;
+        //    params.minInertiaRatio = 0.8;
+        //    params.maxInertiaRatio = 5.0;
 
-    params.thresholdStep = db().value("blob_thresholdStep").toFloat();
-    params.minThreshold = db().value("blob_minThreshold").toFloat();
-    params.maxThreshold = db().value("blob_maxThreshold").toFloat();
+        // Distance Between Blobs
+        params.minDistBetweenBlobs = 2.0;
 
-    // Create a detector with the parameters
-    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+        params.thresholdStep = db().value("blob_thresholdStep").toFloat();
+        params.minThreshold = db().value("blob_minThreshold").toFloat();
+        params.maxThreshold = db().value("blob_maxThreshold").toFloat();
 
-    // Detect blobs
-    cv::Mat rgbimg = qimage2matRef(img);
-    cv::Mat grey;
-    cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
+        // Create a detector with the parameters
+        cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
 
-    cv::Mat adtr;
+        // Detect blobs
+        cv::Mat rgbimg = qimage2matRef(img);
+        cv::Mat grey;
+        cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
 
-    const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
-    const double c = db().value("blob_ad_tr_c").toDouble();
-    const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
-    const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        cv::Mat adtr;
 
-    cv::adaptiveThreshold(grey, adtr, 255, typeAdTr, typeTr, blockSize, c);
+        const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
+        const double c = db().value("blob_ad_tr_c").toDouble();
+        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
+        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
 
-    //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
-    db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
 
-    cv::Mat blur;
-    cv::medianBlur(adtr, blur, 3);
-    //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
+        cv::adaptiveThreshold(grey, adtr, 255, typeAdTr, typeTr, blockSize, c);
 
-    // Storage for blobs
-    std::vector<cv::KeyPoint> keypoints;
-    detector->detect(blur, keypoints);
+        //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
+        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
 
-    drawKeyPoints(rgbimg, keypoints);
+        cv::Mat blur;
+        cv::medianBlur(adtr, blur, 3);
+        //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
-    //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+        // Storage for blobs
+        std::vector<cv::KeyPoint> keypoints;
+        detector->detect(blur, keypoints);
 
-    return {img, keypoints};
+        drawKeyPoints(rgbimg, keypoints);
+
+        //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
+
+        return {img, keypoints};
+    }
+    catch (...)
+    {
+        db("messagebox") = "blob crashed";
+    }
+
+    return {img, std::vector<cv::KeyPoint>()};
 }
 
 }
@@ -272,8 +282,8 @@ double OpenCv::corr(QImage cap1, QImage cap2)
     gr1.convertTo(gr1, CV_32F);
     gr2.convertTo(gr2, CV_32F);
 
-//    cv::Mat res = XCorrelation(gr1, gr2);
-//    db().insert("image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
+    //    cv::Mat res = XCorrelation(gr1, gr2);
+    //    db().insert("image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
 
     cv::Point2d res = cv::phaseCorrelate(gr1, gr2);
 
