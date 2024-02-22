@@ -10,7 +10,7 @@ Item {
     Column {
         anchors.fill: parent
 
-        RowSpinSlider { text: "ad tr block size"; from: 3; to: 201; stepSize: 2; value: DataBus.blob_ad_tr_blockSize
+        RowSpinSlider { text: "ad tr block size"; from: 3; to: 2001; stepSize: 2; value: DataBus.blob_ad_tr_blockSize
             valueBind: function() { return DataBus.blob_ad_tr_blockSize }
             onValueChanged: DataBus.blob_ad_tr_blockSize = value
         }
