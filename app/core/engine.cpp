@@ -169,7 +169,7 @@ void Engine::createQmlEngine()
         if (mode == "circle")
             opencv().searchCirclesLive(img.copy());
 
-        if (mode == "blob" || mode == "adapt_threshold_1" || mode == "adapt_threshold_2")
+        if (mode == "blob" || mode == "adapt_threshold_2")
             opencv().blobDetectorLive(img.copy());
     });
 

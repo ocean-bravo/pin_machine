@@ -151,9 +151,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
     params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
 
     // Filter by Circularity
-    params.filterByCircularity = true;
-    params.minCircularity = 0.3;
-    params.maxCircularity = 5.0;
+    // params.filterByCircularity = true;
+    // params.minCircularity = 0.3;
+    // params.maxCircularity = 5.0;
 
     // Filter by Convexity
     //params.filterByConvexity = false;
@@ -183,9 +183,12 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
     const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
     const double c = db().value("blob_ad_tr_c").toDouble();
-    cv::adaptiveThreshold(grey, adtr, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, blockSize, c);
+    const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
+    const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
 
-    db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
+    cv::adaptiveThreshold(grey, adtr, 255, typeAdTr, typeTr, blockSize, c);
+
+    //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
     db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
 
     cv::Mat blur;

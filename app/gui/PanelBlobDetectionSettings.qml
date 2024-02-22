@@ -7,7 +7,7 @@ CollapsiblePanel {
     //width: parent.width
     width: 400
     checked: false
-    height: checked ? 230 : 30
+    height: checked ? 270 : 30
 
     text: qsTr("Blob detection settings")
 

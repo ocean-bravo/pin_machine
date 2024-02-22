@@ -3,7 +3,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
-
 import Process 1.0
 import ImageItem 1.0
 
@@ -382,7 +381,7 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_1", "adapt_threshold_2", "corr"]
+                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_2", "corr"]
                             onActivated: DataBus.mode = currentText
                             Component.onCompleted: DataBus.mode = "raw"
                             MouseArea {
@@ -473,12 +472,12 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                     }
-                    BlobSettings {
-                        visible: imgType.currentText === "blob" || imgType.currentText === "adapt_threshold_1" || imgType.currentText === "adapt_threshold_2"
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                    }
+                    // BlobSettings {
+                    //     visible: imgType.currentText === "blob" || imgType.currentText === "adapt_threshold_2"
+                    //     anchors.bottom: parent.bottom
+                    //     anchors.left: parent.left
+                    //     anchors.right: parent.right
+                    // }
                 }
             }
         }
