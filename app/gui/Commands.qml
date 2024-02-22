@@ -450,6 +450,7 @@ Item {
             PanelJogControl {}
             PanelPunchCode {}
             PanelStartPoint {}
+            PanelToolShift {}
 
 
             CollapsiblePanel {
