@@ -80,7 +80,9 @@ void TaskFindPixelSizePrivate::run()
     wait(500);
     video().stop();
 
-    QVector<int> widths = uniqueWidths();
+    QList<int> widths = uniqueWidths();
+
+    qd() << "unique widths " << widths;
 
     // 1 стадия
     QMap<int, QImage> stage1;

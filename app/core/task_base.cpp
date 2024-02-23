@@ -156,15 +156,15 @@ int TaskBase::cameraId() const
     return -1;
 }
 
-QVector<int> TaskBase::uniqueWidths() const
+QList<int> TaskBase::uniqueWidths() const
 {
     const QJsonArray cameraImageFormats = db().value("camera_image_formats_" + QString::number(cameraId())).toJsonArray();
-    QVector<int> widths;
+    QSet<int> widths;
     for (const QJsonValue& format : cameraImageFormats)
     {
-        widths.push_back(format.toObject().value("width").toInt());
+        widths.insert(format.toObject().value("width").toInt());
     }
-    return widths;
+    return widths.values();
 }
 
 int TaskBase::anyHeightForWidth(int width) const

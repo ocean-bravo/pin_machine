@@ -28,7 +28,7 @@ public:
 
 
     // Список уникальных ширин форматов, т.е., например, [160, 320, 640, 1024]
-    QVector<int> uniqueWidths() const;
+    QList<int> uniqueWidths() const;
 
     // Любая из доступных высота для данной ширины изображения
     int anyHeightForWidth(int width) const;
