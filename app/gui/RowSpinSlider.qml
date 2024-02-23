@@ -6,8 +6,10 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    height: 25
-    width: parent.width
+    //height: 25
+    Layout.preferredHeight: 25
+    //width: parent.width
+    Layout.fillWidth: true
 
     property alias text: text.text
 
@@ -20,20 +22,24 @@ Item {
     property var valueBind
 
 
-    Row {
+    RowLayout {
         anchors.fill: parent
         spacing: 0
+
         Text {
             id: text
-            width: 70
+            Layout.preferredWidth: 70
+            Layout.preferredHeight: 25
+
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
 
         SpinBox {
             id: spinbox
-            height: root.height
-            width: 50
+            //height: root.height
+            Layout.preferredWidth: 50
+            Layout.preferredHeight: 25
             value: root.value
             editable: true
 
@@ -63,8 +69,9 @@ Item {
         Slider {
             id: slider
 
-            width: root.width - text.width - spinbox.width
-            height: root.height
+            Layout.preferredWidth: root.width - text.width - spinbox.width
+            //height: root.height
+            Layout.preferredHeight: 25
 
             from: root.from
             to: root.to

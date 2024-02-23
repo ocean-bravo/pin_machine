@@ -98,7 +98,7 @@ void TaskFindPixelSizePrivate::run()
 
         const int width = widths[i];
         const int height = anyHeightForWidth(width);
-        const QString fourcc = anyFourcc(width, height);
+        const QString fourcc = anyFourcc(width, height); // TODO: сделать, чтобы приоритетнее было YUYV
 
         video().stop();
         db().insert("resolution_width", width);

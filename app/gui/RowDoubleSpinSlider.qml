@@ -6,8 +6,10 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    height: 25
-    width: parent.width
+    //height: 25
+    Layout.preferredHeight: 25
+    //width: parent.width
+    Layout.fillWidth: true
 
     property alias text: text.text
 

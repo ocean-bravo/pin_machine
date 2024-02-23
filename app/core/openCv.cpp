@@ -129,6 +129,30 @@ cv::Mat qimage2matCopy(const QImage& qimage)
     return qimage2matRef(qimage).clone();
 }
 
+cv::Mat adaptiveThreshold(const cv::Mat& in)
+{
+    cv::Mat out;
+
+    const bool adTrEnable = db().value("blob_ad_tr_enable").toBool();
+    if (adTrEnable)
+    {
+        const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
+        const double c = db().value("blob_ad_tr_c").toDouble();
+        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
+        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        cv::adaptiveThreshold(in, out, 255, typeAdTr, typeTr, blockSize, c);
+    }
+    else
+    {
+        out = in;
+    }
+
+    return out;
+}
+
+
+
+
 // img должно быть скопировано, при передаче в эту функцию
 // Круги рисуются прямо на переданном изображении, без копирования.
 OpenCv::BlobInfo detectBlobs(QImage img)
@@ -183,19 +207,13 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
         cv::Mat blur;
         cv::medianBlur(grey, blur, 5);
+        //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
-        cv::Mat adtr;
+        cv::Mat adTr = adaptiveThreshold(blur);
 
-        const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
-        const double c = db().value("blob_ad_tr_c").toDouble();
-        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
-        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
-
-
-        cv::adaptiveThreshold(blur, adtr, 255, typeAdTr, typeTr, blockSize, c);
 
         //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
-        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adtr, QImage::Format_Grayscale8).copy());
+        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
 
         // cv::Mat blur;
         // cv::medianBlur(adtr, blur, 3);
@@ -203,7 +221,7 @@ OpenCv::BlobInfo detectBlobs(QImage img)
 
         // Storage for blobs
         std::vector<cv::KeyPoint> keypoints;
-        detector->detect(blur, keypoints);
+        detector->detect(adTr, keypoints);
 
         drawKeyPoints(rgbimg, keypoints);
 
