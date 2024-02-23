@@ -177,16 +177,16 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
 
         // Filter by Circularity
-        // params.filterByCircularity = true;
-        // params.minCircularity = 0.3;
-        // params.maxCircularity = 5.0;
+        params.filterByCircularity = false;
+        //params.minCircularity = 0.01;
+        //params.maxCircularity = 5.0;
 
         // Filter by Convexity
-        //params.filterByConvexity = false;
+        params.filterByConvexity = false;
         //params.minConvexity = 0.87
 
         // Filter by Inertia
-        //    params.filterByInertia = true;
+            params.filterByInertia = false;
         //    params.minInertiaRatio = 0.8;
         //    params.maxInertiaRatio = 5.0;
 
