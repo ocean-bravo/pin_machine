@@ -177,8 +177,8 @@ Item {
             id: flick
             Layout.preferredWidth: 400
             Layout.fillHeight: true
-            contentWidth: edit.paintedWidth
-            contentHeight: edit.paintedHeight + 5
+            // contentWidth: edit.paintedWidth
+            // contentHeight: edit.paintedHeight + 5
             clip: true
 
             ColumnLayout {
