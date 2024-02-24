@@ -6,6 +6,10 @@ CollapsiblePanel {
     id: root
     width: parent.width
     height: checked ? 220 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 220 : 30
+
     text: qsTr("Machine Commands")
     checked: false
     onCheckedChanged: {

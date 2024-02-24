@@ -4,10 +4,14 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
-    //width: parent.width
-    width: 400
+    width: parent.width
+    height: checked ? 240 + loader.item.height : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 240 + loader.item.height : 30
+
     checked: false
-    height: checked ? 240 + pane.height : 30
+
 
     text: qsTr("Blob detection settings")
 
@@ -27,21 +31,25 @@ CollapsiblePanel {
         //     Layout.fillWidth: true
         //     color: "yellow"
 
-            Pane {
-                id: pane
-                //width: parent.width
-                Layout.preferredHeight: loader.item === null ? 10 : loader.item.contentHeight
-                //Layout.preferredWidth: parent.width
-                Layout.fillWidth: true
-                padding: 0
-                spacing: 0
-                leftInset: 0
-                rightInset: 0
-                topInset: 0
-                bottomInset: 0
+            // Pane {
+            //     id: pane
+            //     //width: parent.width
+            //     Layout.preferredHeight: loader.item === null ? 10 : loader.item.contentHeight
+            //     //Layout.preferredWidth: parent.width
+            //     Layout.fillWidth: true
+            //     padding: 0
+            //     spacing: 0
+            //     leftInset: 0
+            //     rightInset: 0
+            //     topInset: 0
+            //     bottomInset: 0
 
                 DebugLoader {
-                    width: parent.width
+                    id: loader
+                    //width: parent.width
+                    //anchors.fill: parent
+                    Layout.preferredHeight: item.height  //loader.item === null ? 10 : loader.item.contentHeight
+                    Layout.fillWidth: true
                     path: "/home/mint/devel/pin_machine/app/gui/BlobSettings.qml"
                 }
 
@@ -84,6 +92,6 @@ CollapsiblePanel {
             // BlobSettings {
             //     anchors.fill: parent
             // }
-        }
+        //}
     }
 }

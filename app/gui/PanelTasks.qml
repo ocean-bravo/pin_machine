@@ -6,10 +6,14 @@ import "utils.js" as Utils
 
 CollapsiblePanel {
     id: root
-    //width: parent.width
-    width: 400
-    checked: true
+    //width: 400
+    width: parent.width
     height: checked ? 230 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 230 : 30
+
+    checked: true
 
     text: qsTr("Task")
 

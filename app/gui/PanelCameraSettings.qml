@@ -4,13 +4,14 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
-    //width: parent.width
-    width: 400
-    checked: false
-    height: checked ? 230 : 30
+
+    width: parent.width
+    height: checked ? 120 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 120 : 30
 
     text: qsTr("Camera settings")
-
 
     onCheckedChanged: {
         column.visible = checked

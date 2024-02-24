@@ -4,10 +4,12 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
-    //width: parent.width
-    width: 400
-    checked: false
+
+    width: parent.width
     height: checked ? 230 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 230 : 30
 
     text: qsTr("Tool Shift")
 

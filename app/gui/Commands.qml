@@ -172,11 +172,15 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        Column {
+
+        ColumnLayout {
             Layout.preferredWidth: 400
             Layout.fillHeight: true
+
             Grid {
-                width:parent.width
+                //width:parent.width
+                Layout.preferredWidth: 400
+                Layout.preferredHeight: 30
                 columns: 4
                 columnSpacing: 5
                 rowSpacing: 5
@@ -213,9 +217,10 @@ Item {
 
             Text {
                 text: fullStatus + status
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                height: 30
+                Layout.preferredWidth: 400
+                Layout.preferredHeight: 30
             }
 
             PanelMachineComands {}
@@ -228,52 +233,60 @@ Item {
 
             //PanelBlobDetectionSettings {}
 
-            Pane {
-                id: pane
-                width: parent.width
-                height: loader.item === null ? 10 : loader.item.height
-
-                padding: 0
-                spacing: 0
-                leftInset: 0
-                rightInset: 0
-                topInset: 0
-                bottomInset: 0
-
-                Loader {
-                    id: loader
-
-                    readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"  // Эта строка меняется на нужную
-
-                    function reload() {
-                        loader.source = ""
-                        QmlEngine.clearCache()
-
-                        loader.source = path
-                    }
-
-                    source: path
-
-                    onLoaded : {
-                        parent.height = loader.item.height
-
-                    }
-
-                    Connections { target: FileSystemWatcher; function onFileChanged (path) {
-                        if (path === loader.path) {
-                            loader.reload()
-                        }
-
-                    }
-                    }
-
-                    // Костыль. Проблемы какие-то постоянно с filesystemwatcher
-                    Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
-                    }
-                }
+            DebugLoader {
+                Layout.preferredWidth: 400
+                Layout.preferredHeight: item.height
+                path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
             }
+
+            // Pane {
+            //     id: pane
+            //     width: parent.width
+            //     height: loader.item === null ? 10 : loader.item.height
+
+            //     padding: 0
+            //     spacing: 0
+            //     leftInset: 0
+            //     rightInset: 0
+            //     topInset: 0
+            //     bottomInset: 0
+
+            //     Loader {
+            //         id: loader
+
+            //         readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"  // Эта строка меняется на нужную
+
+            //         function reload() {
+            //             loader.source = ""
+            //             QmlEngine.clearCache()
+
+            //             loader.source = path
+            //         }
+
+            //         source: path
+
+            //         onLoaded : {
+            //             parent.height = loader.item.height
+
+            //         }
+
+            //         Connections { target: FileSystemWatcher; function onFileChanged (path) {
+            //             if (path === loader.path) {
+            //                 loader.reload()
+            //             }
+
+            //         }
+            //         }
+
+            //         // Костыль. Проблемы какие-то постоянно с filesystemwatcher
+            //         Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+            //         }
+            //     }
+            // }
             PanelDebug {}
             PanelCameraSettings {}
+            Item {
+            Layout.fillHeight: true}
         }
 
         SplitView {

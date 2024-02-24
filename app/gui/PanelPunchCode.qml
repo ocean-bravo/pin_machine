@@ -6,6 +6,10 @@ CollapsiblePanel {
     id: root
     width: parent.width
     height: checked ? 160 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 160 : 30
+
     text: qsTr("Punch")
     onCheckedChanged: {
         column.visible = checked

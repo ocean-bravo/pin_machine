@@ -22,7 +22,7 @@ Loader {
     source: path
 
     onLoaded : {
-        //Layout.preferredHeight =  loader.item === null ? 10 : loader.item.contentHeight
+        //Layout.preferredHeight =  item === null ? 10 : item.contentHeight
     }
 
     Connections {

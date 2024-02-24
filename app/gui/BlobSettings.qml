@@ -4,11 +4,15 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-Frame {
-    //color: "white"
-    //height: lay.height
+Rectangle {
+    //color: "red"
+    //height: 30//lay.height
      // height: 100
      // width: 100
+
+
+    Layout.preferredHeight: checkbox.checked ? 30 +pane.height : 30
+    Layout.fillWidth: true
 
     Component.onCompleted: {
         DataBus.blob_ad_tr_enable = false
@@ -19,7 +23,8 @@ Frame {
         anchors.fill: parent
 
         Rectangle {
-            color: "lightgrey"
+            //color: "lightgrey"
+            color: "transparent"
             Layout.preferredHeight: checkbox.checked ? 20+pane.height : 20
             Layout.fillWidth: true
             Behavior on Layout.preferredHeight {
@@ -48,7 +53,7 @@ Frame {
                     id: pane
                     visible: checkbox.checked
                     Layout.fillWidth: true
-                    padding: 0
+                    // padding: 0
 
                     ColumnLayout {
                         id: column
@@ -147,7 +152,6 @@ Frame {
         //     onCheckedChanged: DataBus.blob_ad_tr_enable = checked
         //     text: qsTr("adaptive threshold")
         // }
-
 
         RowDoubleSpinSlider { text: "minDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
             valueBind: function() { return DataBus.blob_minDia_mm }

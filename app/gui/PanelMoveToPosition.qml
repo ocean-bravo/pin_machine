@@ -5,8 +5,11 @@ import QtQuick.Layouts 1.15
 CollapsiblePanel {
     id: root
     //width: parent.width
-    width: 400
+    width: parent.width
     height: checked ? 320 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 320 : 30
 
     text: qsTr("Move to position")
 

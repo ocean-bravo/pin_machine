@@ -7,6 +7,9 @@ CollapsiblePanel {
     width: parent.width
     height: checked ? 95 : 30
 
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 95 : 30
+
     text: qsTr("Start Point")
 
     onCheckedChanged: {

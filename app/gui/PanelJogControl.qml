@@ -7,8 +7,11 @@ CollapsiblePanel {
     id: jogPanel
     width: parent.width
     height: checked ? 440 : 30
+
+    Layout.preferredWidth: 400
+    Layout.preferredHeight: checked ? 440 : 30
+
     text: qsTr("Jog control")
-    //checked: true
 
     onCheckedChanged: {
         jogControl.visible = checked
