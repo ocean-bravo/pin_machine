@@ -7,7 +7,7 @@ CollapsiblePanel {
     //width: parent.width
     width: 400
     checked: false
-    height: checked ? 270 : 30
+    height: checked ? 240 + pane.height : 30
 
     text: qsTr("Blob detection settings")
 
@@ -21,10 +21,69 @@ CollapsiblePanel {
     ColumnLayout {
         id: column
         width: parent.width
+        // Rectangle
+        // {
+        //     Layout.preferredHeight: 200
+        //     Layout.fillWidth: true
+        //     color: "yellow"
 
-        BlobSettings {
-            Layout.preferredHeight: 200
-            Layout.fillWidth: true
+            Pane {
+                id: pane
+                //width: parent.width
+                Layout.preferredHeight: loader.item === null ? 10 : loader.item.contentHeight
+                //Layout.preferredWidth: parent.width
+                Layout.fillWidth: true
+                padding: 0
+                spacing: 0
+                leftInset: 0
+                rightInset: 0
+                topInset: 0
+                bottomInset: 0
+
+                DebugLoader {
+                    width: parent.width
+                    path: "/home/mint/devel/pin_machine/app/gui/BlobSettings.qml"
+                }
+
+                // Loader {
+                //     id: loader
+                //     width: parent.width
+                //     //anchors.fill: parent
+                //     //height: contentHeight
+                //     readonly property string path: "/home/mint/devel/pin_machine/app/gui/BlobSettings.qml"  // Эта строка меняется на нужную
+
+                //     function reload() {
+                //         loader.source = ""
+                //         QmlEngine.clearCache()
+
+                //         loader.source = path
+                //     }
+
+                //     source: path
+
+                //     onLoaded : {
+                //         Layout.preferredHeight =  loader.item === null ? 10 : loader.item.contentHeight
+
+                //     }
+
+                //     Connections { target: FileSystemWatcher; function onFileChanged (path) {
+                //         if (path === loader.path) {
+                //             loader.reload()
+                //         }
+
+                //     }
+                //     }
+
+                //     // Костыль. Проблемы какие-то постоянно с filesystemwatcher
+                //     Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
+                //     }
+                //}
+            //}
+
+
+            // BlobSettings {
+            //     anchors.fill: parent
+            // }
         }
     }
 }

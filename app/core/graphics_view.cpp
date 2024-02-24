@@ -37,7 +37,7 @@ GraphicsView::GraphicsView(QWidget* parent)
 void GraphicsView::fit()
 {
     const QRectF scRect = scene()->itemsBoundingRect();
-    qd() << "rect " << scRect;
+    //qd() << "rect " << scRect;
     //const QRectF scRect(QPointF(0,0), _sizeToFit);
     const double max = std::max(scRect.width(), scRect.height());
     const int margin = max * 0.05;

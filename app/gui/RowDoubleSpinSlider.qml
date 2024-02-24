@@ -6,9 +6,7 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    //height: 25
     Layout.preferredHeight: 25
-    //width: parent.width
     Layout.fillWidth: true
 
     property alias text: text.text
@@ -18,24 +16,16 @@ Item {
     property alias stepSize: spinbox.stepSize
 
     property var value
-
     property var valueBind
 
-
-    Row {
+    RowLayout {
         anchors.fill: parent
-        spacing: 0
-        Text {
-            id: text
-            width: 70
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-        }
+        spacing: 5
 
         DoubleSpinBox {
             id: spinbox
-            height: root.height
-            width: 50
+            Layout.preferredWidth: 50
+            Layout.preferredHeight: 25
             value: root.value
             decimals: 1
             property real stepSize
@@ -44,40 +34,33 @@ Item {
                 root.value = value
                 spinbox.value = Qt.binding(root.valueBind)
             }
-
-//            MouseArea {
-//                anchors.fill: parent
-//                onWheel: {
-//                    if (Math.sign(wheel.angleDelta.y) > 0) {
-//                        spinbox.increase()
-//                        root.value = spinbox.value
-//                        root.value = Qt.binding(root.valueBind)
-//                    }
-
-//                    if (Math.sign(wheel.angleDelta.y) < 0) {
-//                        spinbox.decrease()
-//                        root.value = value
-//                        root.value = Qt.binding(root.valueBind)
-//                    }
-//                }
-//            }
         }
 
-        Slider {
-            id: slider
+        ColumnLayout {
+            spacing: 0
 
-            width: root.width - text.width - spinbox.width
-            height: root.height
+            Text {
+                id: text
+                Layout.preferredWidth: 70
+                Layout.preferredHeight: 10
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft
+            }
 
-            from: root.from
-            to: root.to
-            stepSize: root.stepSize
-            value: root.value
+            Slider {
+                id: slider
+                Layout.fillWidth: true
+                Layout.preferredHeight: 10
 
+                from: root.from
+                to: root.to
+                stepSize: root.stepSize
+                value: root.value
 
-            onMoved: {
-                root.value = value
-                root.value = Qt.binding(root.valueBind)
+                onMoved: {
+                    root.value = value
+                    root.value = Qt.binding(root.valueBind)
+                }
             }
         }
     }
