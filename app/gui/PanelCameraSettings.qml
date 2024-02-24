@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 120 : 30
+    height: checked ? 120 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 120 : 30
+    Layout.preferredHeight: checked ? 120 : 25
 
     text: qsTr("Camera settings")
 

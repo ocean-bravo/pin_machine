@@ -4,11 +4,12 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
+
     width: parent.width
-    height: checked ? 95 : 30
+    height: checked ? 95 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 95 : 30
+    Layout.preferredHeight: checked ? 95 : 25
 
     text: qsTr("Start Point")
 

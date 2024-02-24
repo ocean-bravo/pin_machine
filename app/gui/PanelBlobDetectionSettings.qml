@@ -4,11 +4,12 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
+
     width: parent.width
-    height: checked ? 240 + loader.item.height : 30
+    height: checked ? 240 + loader.item.height : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 240 + loader.item.height : 30
+    Layout.preferredHeight: checked ? 240 + loader.item.height : 25
 
     checked: false
 

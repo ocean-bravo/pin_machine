@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
     //width: parent.width
     width: parent.width
-    height: checked ? 320 : 30
+    height: checked ? 320 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 320 : 30
+    Layout.preferredHeight: checked ? 320 : 25
 
     text: qsTr("Move to position")
 
@@ -19,7 +19,6 @@ CollapsiblePanel {
     Component.onCompleted: {
         grid.visible = checked
     }
-
 
     GridLayout {
         id: grid

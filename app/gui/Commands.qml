@@ -173,122 +173,82 @@ Item {
     RowLayout {
         anchors.fill: parent
 
-        ColumnLayout {
+        ScrollView {
+            id: flick
             Layout.preferredWidth: 400
             Layout.fillHeight: true
+            contentWidth: edit.paintedWidth
+            contentHeight: edit.paintedHeight + 5
+            clip: true
 
-            Grid {
-                //width:parent.width
+            ColumnLayout {
                 Layout.preferredWidth: 400
-                Layout.preferredHeight: 30
-                columns: 4
-                columnSpacing: 5
-                rowSpacing: 5
+                Layout.fillHeight: true
 
-                SmTextEdit {
-                    id: serialPortName
-                    span: 2
+                RowLayout {
+                    Layout.preferredWidth: 400
+                    Layout.preferredHeight: 30
 
-                    FindUsb {
-                        onUsbFound: serialPortName.text = device
+                    SmTextEdit {
+                        id: serialPortName
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+
+                        FindUsb { onUsbFound: serialPortName.text = device }
                     }
+
+                    SmButton {
+                        id: openPort
+                        text: qsTr("Open")
+                        onClicked: {
+                            Serial.close()
+                            let serPort = serialPortName.text
+                            console.log(serPort)
+                            Serial.setPortName(serPort)
+                            Serial.setBaudRate("115200")
+                            Serial.setDataBits("8")
+                            Serial.setParity("N")
+                            Serial.setStopBits("1")
+                            Serial.open()
+                        }
+                    }
+
+                    SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
                 }
 
-                SmButton {
-                    id: openPort
-                    text: qsTr("Open")
-                    onClicked: {
-                        Serial.close()
-                        let serPort = serialPortName.text
-                        console.log(serPort)
-                        Serial.setPortName(serPort)
-                        Serial.setBaudRate("115200")
-                        Serial.setDataBits("8")
-                        Serial.setParity("N")
-                        Serial.setStopBits("1")
-                        Serial.open()
-                    }
+                //Item { height: 30; width: 10}
+
+                Text {
+                    text: fullStatus + status
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.preferredWidth: 400
+                    Layout.preferredHeight: 25
                 }
 
-                SmButton { text: qsTr("Close");  onClicked: { Serial.close() } }
+                PanelMachineComands {}
+                PanelTasks {}
+                PanelMoveToPosition {}
+                PanelJogControl {}
+                PanelPunchCode {}
+                PanelStartPoint {}
+                PanelToolShift {}
+                PanelDebug {}
+                PanelCameraSettings {}
+
+                //PanelBlobDetectionSettings {}
+                DebugLoader {
+                    Layout.preferredWidth: 400
+                    Layout.preferredHeight: item.height
+                    path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
             }
-
-            //Item { height: 30; width: 10}
-
-            Text {
-                text: fullStatus + status
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                Layout.preferredWidth: 400
-                Layout.preferredHeight: 30
-            }
-
-            PanelMachineComands {}
-            PanelTasks {}
-            PanelMoveToPosition {}
-            PanelJogControl {}
-            PanelPunchCode {}
-            PanelStartPoint {}
-            PanelToolShift {}
-
-            //PanelBlobDetectionSettings {}
-
-            DebugLoader {
-                Layout.preferredWidth: 400
-                Layout.preferredHeight: item.height
-                path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
-            }
-
-            // Pane {
-            //     id: pane
-            //     width: parent.width
-            //     height: loader.item === null ? 10 : loader.item.height
-
-            //     padding: 0
-            //     spacing: 0
-            //     leftInset: 0
-            //     rightInset: 0
-            //     topInset: 0
-            //     bottomInset: 0
-
-            //     Loader {
-            //         id: loader
-
-            //         readonly property string path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"  // Эта строка меняется на нужную
-
-            //         function reload() {
-            //             loader.source = ""
-            //             QmlEngine.clearCache()
-
-            //             loader.source = path
-            //         }
-
-            //         source: path
-
-            //         onLoaded : {
-            //             parent.height = loader.item.height
-
-            //         }
-
-            //         Connections { target: FileSystemWatcher; function onFileChanged (path) {
-            //             if (path === loader.path) {
-            //                 loader.reload()
-            //             }
-
-            //         }
-            //         }
-
-            //         // Костыль. Проблемы какие-то постоянно с filesystemwatcher
-            //         Timer { interval: 100; running: true; repeat: true; onTriggered: {  FileSystemWatcher.addPath(loader.path) }
-            //         }
-            //     }
-            // }
-            PanelDebug {}
-            PanelCameraSettings {}
-            Item {
-            Layout.fillHeight: true}
         }
-
         SplitView {
             Layout.fillWidth: true
             Layout.fillHeight: true

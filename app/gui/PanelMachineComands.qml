@@ -4,14 +4,15 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
+
     width: parent.width
-    height: checked ? 220 : 30
+    height: checked ? 220 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 220 : 30
+    Layout.preferredHeight: checked ? 220 : 25
 
     text: qsTr("Machine Commands")
-    checked: false
+
     onCheckedChanged: {
         column.visible = checked
     }

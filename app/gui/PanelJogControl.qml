@@ -5,11 +5,12 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: jogPanel
+
     width: parent.width
-    height: checked ? 440 : 30
+    height: checked ? 440 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 440 : 30
+    Layout.preferredHeight: checked ? 440 : 25
 
     text: qsTr("Jog control")
 

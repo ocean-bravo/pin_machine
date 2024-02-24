@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 230 : 30
+    height: checked ? 230 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 230 : 30
+    Layout.preferredHeight: checked ? 230 : 25
 
     text: "Debug"
 
