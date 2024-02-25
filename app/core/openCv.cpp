@@ -169,13 +169,16 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         cv::SimpleBlobDetector::Params params;
 
         // Filter by Area.
-        params.filterByArea = true;
-        double minDia = db().value("blob_minDia_mm").toDouble();
-        double maxDia = db().value("blob_maxDia_mm").toDouble();
+        params.filterByArea = db().value("blob_filter_area_enabled").toBool();
 
-        params.minArea = minDia * minDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
-        params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+        if (params.filterByArea)
+        {
+            double minDia = db().value("blob_minDia_mm").toDouble();
+            double maxDia = db().value("blob_maxDia_mm").toDouble();
 
+            params.minArea = minDia * minDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+            params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+        }
         // Filter by Circularity
         params.filterByCircularity = false;
         //params.minCircularity = 0.01;

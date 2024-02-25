@@ -11,11 +11,15 @@ Rectangle {
      // width: 100
 
 
-    Layout.preferredHeight: checkbox.checked ? 30 +pane.height : 30
+    Layout.preferredHeight: checkbox.checked ? 30 +pane.height + pane2.height  : 30
     Layout.fillWidth: true
 
     Component.onCompleted: {
         DataBus.blob_ad_tr_enable = false
+        DataBus.blob_filter_area_enabled = true
+        DataBus.blob_filter_convexity_enabled = false
+        DataBus.blob_filter_convexity_min = 0.8
+        DataBus.blob_filter_convexity_max = 1.0
     }
 
     ColumnLayout {
@@ -23,8 +27,8 @@ Rectangle {
         anchors.fill: parent
 
         Rectangle {
-            //color: "lightgrey"
-            color: "transparent"
+            color: "lightgrey"
+            //color: "transparent"
             Layout.preferredHeight: checkbox.checked ? 20+pane.height : 20
             Layout.fillWidth: true
             Behavior on Layout.preferredHeight {
@@ -147,22 +151,111 @@ Rectangle {
                 }
             }
         }
-        // CheckBox {
-        //     checked: DataBus.blob_ad_tr_enable
-        //     onCheckedChanged: DataBus.blob_ad_tr_enable = checked
-        //     text: qsTr("adaptive threshold")
-        // }
 
-        RowDoubleSpinSlider { text: "minDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
-            valueBind: function() { return DataBus.blob_minDia_mm }
-            onValueChanged: DataBus.blob_minDia_mm = value
+        Rectangle {
+            color: "lightgrey"
+            //color: "transparent"
+            Layout.preferredHeight: checkbox2.checked ? 20+pane2.height : 20
             Layout.fillWidth: true
-            Layout.preferredHeight: 25
+            Behavior on Layout.preferredHeight {
+                NumberAnimation { duration: 30 }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                anchors.fill: parent
+
+                CheckBox {
+                    id: checkbox2
+                    padding: 0
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 20
+                    topInset: 0
+                    bottomInset: 0
+                    spacing: 0
+
+                    checked: DataBus.blob_filter_area_enabled
+                    onCheckedChanged: DataBus.blob_filter_area_enabled = checked
+                    text: qsTr("filter by area")
+                }
+
+                Pane {
+                    id: pane2
+                    visible: checkbox2.checked
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+                        id: column2
+                        anchors.fill: parent
+                        visible: checkbox2.checked
+                        spacing: 0
+
+                        RowDoubleSpinSlider { text: "minDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_minDia_mm
+                            valueBind: function() { return DataBus.blob_minDia_mm }
+                            onValueChanged: DataBus.blob_minDia_mm = value
+                        }
+                        RowDoubleSpinSlider { text: "maxDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia_mm
+                            valueBind: function() { return DataBus.blob_maxDia_mm }
+                            onValueChanged: DataBus.blob_maxDia_mm = value
+                        }
+                    }
+                }
+            }
         }
-        RowDoubleSpinSlider { text: "maxDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: DataBus.blob_maxDia_mm
-            valueBind: function() { return DataBus.blob_maxDia_mm }
-            onValueChanged: DataBus.blob_maxDia_mm = value
+
+        Rectangle {
+            color: "lightgrey"
+            //color: "transparent"
+            Layout.preferredHeight: checkbox3.checked ? 20+pane3.height : 20
+            Layout.fillWidth: true
+            Behavior on Layout.preferredHeight {
+                NumberAnimation { duration: 30 }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                anchors.fill: parent
+
+                CheckBox {
+                    id: checkbox3
+                    padding: 0
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 20
+                    topInset: 0
+                    bottomInset: 0
+                    spacing: 0
+
+                    checked: DataBus.blob_filter_convexity_enabled
+                    onCheckedChanged: DataBus.blob_filter_convexity_enabled = checked
+                    text: qsTr("filter by convexity")
+                }
+
+                Pane {
+                    id: pane3
+                    visible: checkbox3.checked
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+                        id: column3
+                        anchors.fill: parent
+                        visible: checkbox3.checked
+                        spacing: 0
+
+                        RowDoubleSpinSlider { text: "convexity_min"; from: 0.01; to: 1.0; stepSize: 0.01; value: DataBus.blob_filter_convexity_min
+                            valueBind: function() { return DataBus.blob_filter_convexity_min }
+                            onValueChanged: DataBus.blob_filter_convexity_min = value
+                        }
+                        RowDoubleSpinSlider { text: "convexity_max"; from: 0.01; to: 1.0; stepSize: 0.01; value: DataBus.blob_filter_convexity_max
+                            valueBind: function() { return DataBus.blob_filter_convexity_max }
+                            onValueChanged: DataBus.blob_filter_convexity_max = value
+                        }
+                    }
+                }
+            }
         }
+
+
+
         RowSpinSlider { text: "thresholdStep"; from: 0; to: 100; stepSize: 1; value: DataBus.blob_thresholdStep
             valueBind: function() { return DataBus.blob_thresholdStep }
             onValueChanged: DataBus.blob_thresholdStep = value
