@@ -182,11 +182,12 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         //params.maxCircularity = 5.0;
 
         // Filter by Convexity
-        params.filterByConvexity = false;
-        //params.minConvexity = 0.87
+        params.filterByConvexity = db().value("blob_filter_convexity_enabled").toBool();
+        params.minConvexity = db().value("blob_filter_convexity_min").toDouble();
+        params.maxConvexity = db().value("blob_filter_convexity_max").toDouble();
 
         // Filter by Inertia
-            params.filterByInertia = false;
+        params.filterByInertia = false;
         //    params.minInertiaRatio = 0.8;
         //    params.maxInertiaRatio = 5.0;
 
