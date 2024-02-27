@@ -14,9 +14,12 @@ Loader {
     property string path: ""  // Эта строка меняется на нужную
 
     function reload() {
-        loader.source = ""
+        loader.active = false
+        //loader.source = ""
         QmlEngine.clearCache()
-        loader.source = path
+        loader.setSource(path)
+        loader.active = true
+        //loader.source = path
     }
 
     source: path

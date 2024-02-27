@@ -4,10 +4,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 
-Item {
+Rectangle {
     id: root
     Layout.preferredHeight: 25
     Layout.fillWidth: true
+
+    //color: "#400000F0"
+    color: "transparent"
 
     property alias text: text.text
 

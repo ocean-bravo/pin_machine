@@ -20,7 +20,7 @@ CollapsiblePanel {
     Component.onCompleted: {
         jogControl.visible = checked
     }
-    padding: 1
+    //padding: 1
 
     // RowLayout {
     //     id: jogControl

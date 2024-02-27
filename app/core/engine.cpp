@@ -54,6 +54,8 @@ void EnhancedQmlApplicationEngine::clearCache()
     trimComponentCache();
     clearComponentCache();
     trimComponentCache();
+
+    qd() << "cache cleared";
 }
 
 
@@ -236,5 +238,12 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
+    _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+}
+
+void Engine::reload()
+{
+    //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
+    //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

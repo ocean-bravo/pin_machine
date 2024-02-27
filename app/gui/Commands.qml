@@ -184,6 +184,7 @@ Item {
             ColumnLayout {
                 Layout.preferredWidth: 400
                 Layout.fillHeight: true
+                spacing: 0
 
                 RowLayout {
                     Layout.preferredWidth: 400

@@ -5,11 +5,11 @@ import QtQuick.Layouts 1.15
 CollapsiblePanel {
     id: root
 
-    width: parent.width
-    height: checked ? 160 : 25
+    // width: parent.width
+    // height: 30 + column.childrenRect.height
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 160 : 25
+    Layout.preferredHeight: checked ? 26 + column.childrenRect.height : 26
 
     text: qsTr("Punch")
 
@@ -23,6 +23,7 @@ CollapsiblePanel {
     ColumnLayout {
         id: column
         width: parent.width
+        spacing: 3
 
         Rectangle {
             color: "lightgrey"

@@ -40,6 +40,8 @@ public:
     // Q_INVOKABLE void capture2();
     // Q_INVOKABLE void corr();
 
+    Q_INVOKABLE void reload();
+
 signals:
     void imageChanged(QString id);
 

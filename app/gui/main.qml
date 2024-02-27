@@ -136,6 +136,16 @@ ApplicationWindow {
         }
     }
 
+    Shortcut {
+        sequence: "F9"
+        context: Qt.WindowShortcut
+        onActivated: {
+            QmlEngine.clearCache()
+            appWin.close()
+            Engine.reload()
+        }
+    }
+
     //    Shortcut {
     //        sequence: "F3"
     //        context: Qt.ApplicationShortcut
