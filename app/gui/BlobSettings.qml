@@ -9,28 +9,13 @@ Rectangle {
     color: "transparent"
     height: lay.height
 
-    //Layout.preferredHeight: lay.height
-
-//     component ColPanel2 : CollapsiblePanel {
-//         height: checked ? 30  + contentItem.height : 30
-
-//         onHeightChanged: {
-//             console.log("heght 1", height)
-// console.log("cont1 1", contentItem.height)
-
-//         }
-
-//         onContentItemChanged: {
-//             console.log("cont1 1", contentItem.height)
-//         }
-
-//         onCheckedChanged: {
-//             contentItem.visible = checked
-//         }
-//         Component.onCompleted: {
-//             contentItem.visible = checked
-//         }
-//     }
+    component SmallCollapsiblePanel : CollapsiblePanel {
+        height: checked ? 30 + implicitContentHeight : 30
+        anchors.left: lay.left
+        anchors.right: lay.right
+        onCheckedChanged: contentItem.visible = checked
+        Component.onCompleted: contentItem.visible = checked
+    }
 
     Component.onCompleted: {
         DataBus.blob_ad_tr_enable = false
@@ -50,9 +35,6 @@ Rectangle {
         SmallCollapsiblePanel {
             id: col1
             text: qsTr("adaptive threshold")
-
-            anchors.left: parent.left
-            anchors.right: parent.right
 
             checked: DataBus.blob_ad_tr_enable
             onCheckedChanged: DataBus.blob_ad_tr_enable = checked
@@ -120,9 +102,6 @@ Rectangle {
 
             text: qsTr("filter by area")
 
-            anchors.left: parent.left
-            anchors.right: parent.right
-
             checked: DataBus.blob_filter_area_enabled
             onCheckedChanged: DataBus.blob_filter_area_enabled = checked
 
@@ -148,9 +127,6 @@ Rectangle {
             id: col3
 
             text: qsTr("filter by convexity")
-
-            anchors.left: parent.left
-            anchors.right: parent.right
 
             checked: DataBus.blob_filter_convexity_enabled
             onCheckedChanged: DataBus.blob_filter_convexity_enabled = checked
