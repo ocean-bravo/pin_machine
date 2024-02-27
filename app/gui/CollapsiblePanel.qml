@@ -11,6 +11,7 @@ GroupBox {
 
     topPadding:30
     bottomPadding: 0
+
     property alias checked: checkBox.checked
 
     property alias text: checkBox.text
