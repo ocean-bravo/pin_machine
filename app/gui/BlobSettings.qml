@@ -15,6 +15,10 @@ Rectangle {
         anchors.right: lay.right
         onCheckedChanged: contentItem.visible = checked
         Component.onCompleted: contentItem.visible = checked
+
+        property alias checked: checkBox.checked
+        property alias text: checkBox.text
+        label: CheckBox { id: checkBox }
     }
 
     Component.onCompleted: {
@@ -94,8 +98,6 @@ Rectangle {
                 }
             }
         }
-
-
 
         SmallCollapsiblePanel {
             id: col2

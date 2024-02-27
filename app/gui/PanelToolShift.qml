@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 230 : 25
+    height: checked ? 200 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 230 : 25
+    Layout.preferredHeight: checked ? 200 : 25
 
     text: qsTr("Tool Shift")
 
@@ -27,7 +27,9 @@ CollapsiblePanel {
 
     ColumnLayout {
         id: column
-        width: parent.width
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         Rectangle {
             color: "lightgrey"

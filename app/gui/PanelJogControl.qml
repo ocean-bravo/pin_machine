@@ -71,8 +71,8 @@ CollapsiblePanel {
 
     JogControl {
         id: jogControl
-        //width: parent.width
-        anchors.fill: parent
-        //height: parent.height
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 }

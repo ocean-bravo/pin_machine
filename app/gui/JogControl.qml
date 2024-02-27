@@ -13,7 +13,7 @@ Item {
     //width: 300
 
     //width: parent.width
-    //height: width * 9 / 10
+    height: contentItem.childrenRect.height
     //implicitHeight: grid.implicitHeight
     //implicitWidth: grid.implicitWidth
 
@@ -55,7 +55,9 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         Slider { id: xyFeedRate; from: 10; to: 5000; value: 5000; stepSize: 10;
             Layout.fillWidth: true;

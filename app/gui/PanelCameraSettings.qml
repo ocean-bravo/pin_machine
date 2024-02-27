@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 120 : 25
+    height: checked ? 90 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 120 : 25
+    Layout.preferredHeight: checked ? 90 : 25
 
     text: qsTr("Camera settings")
 
@@ -22,7 +22,9 @@ CollapsiblePanel {
 
     ColumnLayout {
         id: column
-        width: parent.width
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         RowLayout {
             Layout.fillWidth: true

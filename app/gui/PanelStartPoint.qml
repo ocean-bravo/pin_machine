@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 95 : 25
+    height: checked ? 70 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 95 : 25
+    Layout.preferredHeight: checked ? 70 : 25
 
     text: qsTr("Start Point")
 
@@ -27,7 +27,9 @@ CollapsiblePanel {
 
     ColumnLayout {
         id: column
-        width: parent.width
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         Rectangle {
             color: "lightgrey"

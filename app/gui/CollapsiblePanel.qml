@@ -14,6 +14,7 @@ GroupBox {
 
     property alias checked: checkBox.checked
 
+
     property alias text: checkBox.text
 
     Behavior on height {
@@ -59,20 +60,21 @@ GroupBox {
         }
 
         contentItem: Text {
-            text: checkBox.text
+            text: label.text
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHLeft
-            leftPadding: indic.width + checkBox.spacing
+            leftPadding: indic.width + label.spacing
         }
     }
 
     background: Rectangle {
         //y: root.topPadding - root.bottomPadding
-        anchors.top: checkBox.bottom
+        anchors.top: label.bottom
         width: parent.width
-        height: parent.height - root.topPadding + root.bottomPadding
-        //color: "transparent"
-        color: "#8000FF00"
+        //height: parent.height - root.topPadding + root.bottomPadding
+        height: checked ? implicitContentHeight : 0
+        color: "transparent"
+        //color: "#8000FF00"
         border.color: "#21be2b"
         radius: 2
     }

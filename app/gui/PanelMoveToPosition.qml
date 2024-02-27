@@ -6,10 +6,10 @@ CollapsiblePanel {
     id: root
     //width: parent.width
     width: parent.width
-    height: checked ? 320 : 25
+    height: checked ? 300 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 320 : 25
+    Layout.preferredHeight: checked ? 300 : 25
 
     text: qsTr("Move to position")
 
@@ -22,8 +22,9 @@ CollapsiblePanel {
 
     GridLayout {
         id: grid
-        //width: // parent.width
-        anchors.fill: parent
+        anchors.top:parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         columns: 4
         columnSpacing: 5
         rowSpacing: 5
