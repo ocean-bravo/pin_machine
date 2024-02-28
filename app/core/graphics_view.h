@@ -28,6 +28,8 @@ signals:
     void scanPosition(QPointF pos);
     void addBlob(QPointF pos);
     void calcPath(QPointF pos);
+    void setSelectedAsPunch(bool state);
+    void deleteSelectedBlobs();
 
 protected:
     void wheelEvent(QWheelEvent* event) override;

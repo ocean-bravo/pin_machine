@@ -13,7 +13,7 @@ CollapsiblePanel {
     Layout.preferredWidth: 400
     Layout.preferredHeight: checked ? 200 : 25
 
-    //checked: true
+    checked: true
 
     text: qsTr("Task")
 

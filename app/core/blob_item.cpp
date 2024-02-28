@@ -61,6 +61,9 @@ void BlobItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     if (isPunch())
         b = Qt::blue;
 
+    if (isSelected())
+        b = Qt::yellow;
+
     painter->setBrush(b);
     painter->drawEllipse(rect());
     painter->restore();
@@ -127,12 +130,12 @@ void BlobItem::setFiducial(bool state)
 
 bool BlobItem::isPunch() const
 {
-    return isSelected();
+    return data(2).toBool();
 }
 
 void BlobItem::setPunch(bool state)
 {
-    setSelected(state);
+    setData(2, state);
     repaintLater();
 }
 

@@ -161,18 +161,18 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent* event)
         QRect rubberBandRect = QRect(_origin, event->pos()).normalized();
         _rb.reset();
 
-        // Если квадрат 1*1, то мышь не двигали, а просто кликнули.
-        // Чтобы получался deselect по клику на блобе. Если событие дойдет до блоба, он поменяет выделение.
-        if (rubberBandRect.width() == 1 && rubberBandRect.height() == 1)
-        {
-            QGraphicsView::mouseReleaseEvent(event);
-            return;
-        }
+        // // Если квадрат 1*1, то мышь не двигали, а просто кликнули.
+        // // Чтобы получался deselect по клику на блобе. Если событие дойдет до блоба, он поменяет выделение.
+        // if (rubberBandRect.width() == 1 && rubberBandRect.height() == 1)
+        // {
+        //     QGraphicsView::mouseReleaseEvent(event);
+        //     return;
+        // }
 
         QPainterPath selectionArea;
         selectionArea.addPolygon(mapToScene(rubberBandRect));
         selectionArea.closeSubpath();
-        scene()->setSelectionArea(selectionArea, Qt::AddToSelection, Qt::IntersectsItemShape, viewportTransform());
+        scene()->setSelectionArea(selectionArea, Qt::ReplaceSelection, Qt::IntersectsItemShape, viewportTransform());
 
         event->accept();
         return;
@@ -240,6 +240,17 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     {
         QMenu menu;
 
+        menu.addAction(tr("Set punch"), this, [this, event]()
+        {
+            emit setSelectedAsPunch(true);
+        });
+
+        menu.addAction(tr("Reset punch"), this, [this, event]()
+        {
+            emit setSelectedAsPunch(false);
+        });
+
+
         menu.addAction(tr("Scan here"), this, [this, event]()
         {
             emit scanPosition(mapToScene(event->pos()));
@@ -267,6 +278,11 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
         menu.addAction(tr("Calculate path from here"), this, [this, event]()
         {
             emit calcPath(mapToScene(event->pos()));
+        });
+
+        menu.addAction(tr("Delete selected blobs"), this, [this]()
+        {
+            emit deleteSelectedBlobs();
         });
 
         menu.exec(event->globalPos());

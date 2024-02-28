@@ -62,6 +62,10 @@ ScanView::ScanView(QWidget *parent)
         taskBestPath->run(pos);
     });
 
+    connect(ui->graphicsView, &GraphicsView::setSelectedAsPunch, &scene(), &Scene::setSelectedAsPunch);
+    connect(ui->graphicsView, &GraphicsView::deleteSelectedBlobs, &scene(), &Scene::deleteSelectedBlobs);
+
+
     databusAction("xPos", [this]() { updateCameraView(); } );
     databusAction("yPos", [this]() { updateCameraView(); } );
 

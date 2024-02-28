@@ -365,6 +365,18 @@ void Scene::highlightBlobs(bool state)
     every<BlobItem>(QGraphicsScene::items(), [this, state](BlobItem* blob) { blob->setHighlight(state); });
 }
 
+void Scene::setSelectedAsPunch(bool state)
+{
+    every<BlobItem>(QGraphicsScene::items(), [this, state](BlobItem* blob)
+    {
+        if (blob->isSelected())
+        {
+            blob->setPunch(state);
+            blob->setSelected(false);
+        }
+    });
+}
+
 int Scene::images() const
 {
     int i = 0;
@@ -387,6 +399,15 @@ QList<BlobItem*> Scene::punchBlobs()
     });
 
     return blobs;
+}
+
+void Scene::deleteSelectedBlobs()
+{
+    every<BlobItem>(QGraphicsScene::items(), [this](BlobItem* blob)
+    {
+        if (blob->isSelected())
+            blob->deleteLater();
+    });
 }
 
 void Scene::drawPath(const QList<QPointF>& path)

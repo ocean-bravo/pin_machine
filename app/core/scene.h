@@ -35,9 +35,13 @@ public:
 
     void highlightBlobs(bool state);
 
+    void setSelectedAsPunch(bool state);
+
     int images() const;
 
     QList<BlobItem*> punchBlobs();
+
+    void deleteSelectedBlobs();
 
 
 
