@@ -35,6 +35,17 @@ ManualPath::ManualPath(QObject *parent)
         db("punchpath") = QVariant::fromValue(_blobs);
         createPathToDraw();
     });
+
+    databusAction2("punchpath_manual_remove_point", [this](const QVariant& value)
+    {
+        BlobItem* blob = value.value<BlobItem*>();
+
+        _blobs.removeAll(blob);
+
+        db("punchpath") = QVariant::fromValue(_blobs);
+        createPathToDraw();
+    });
+
 }
 
 void ManualPath::createPathToDraw()

@@ -224,11 +224,11 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
     const QString sceneMode = db().value("scene_mode").toString();
 
+    QMenu menu;
+
     if (sceneMode == "drag")
     {
         QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");
-
-        QMenu menu;
 
         menu.addAction(menuText, this, [this]()
         {
@@ -238,6 +238,19 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
         menu.addAction(tr("Delete blob"), this, [this]()
         {
             deleteLater();
+        });
+
+        menu.exec(event->screenPos());
+
+        event->accept();
+        return;
+    }
+
+    if (sceneMode == "manual_path")
+    {
+        menu.addAction(tr("Remove from path"), this, [this]()
+        {
+            db().insert("punchpath_manual_remove_point", QVariant::fromValue(this));
         });
 
         menu.exec(event->screenPos());
