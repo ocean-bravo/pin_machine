@@ -356,7 +356,7 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
         ba = qUncompress(ba);
 
         // img и ba располалагают 1 буфером. Владеет им ba.
-        QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
+        QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB888); // Такой формат у сохраняемого изображения.
         img.setDevicePixelRatio(devicePixelRatio);
 
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
