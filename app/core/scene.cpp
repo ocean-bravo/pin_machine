@@ -91,6 +91,7 @@ Scene::~Scene()
 
 BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 {
+    qd() << "add blob " << x << y << dia;
     BlobItem* blob = new BlobItem(x, y, dia);
     blob->setHighlight(db().value("blobs_highlight").toBool());
 
@@ -181,8 +182,10 @@ void Scene::setImagePrivate(QImage img)
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = std::move(img.mirrored(false, true)); // тут копия img и это правильно
 
+    qd() << "img format befor pixmap " << img.format();
     QPixmap pix = QPixmap::fromImage(img);
-    pix.setDevicePixelRatio(pixInMm);
+
+    //pix.setDevicePixelRatio(pixInMm);
 
     if (!_board)
         addBoard();
@@ -200,64 +203,20 @@ void Scene::setImagePrivate(QImage img)
     //            qd() << "pix offset " << item->offset();
 }
 
+QList<QGraphicsPixmapItem*> Scene::pixmaps() const
+{
+    QList<QGraphicsPixmapItem*> pix;
+    // Порядок items важен. Именно так выглядит как сканировалось.
+    every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&pix](QGraphicsPixmapItem* pixmap)
+    {
+        pix.append(pixmap);
+    });
+    return pix;
+}
+
 void Scene::saveScene(const QString& url)
 {
-    qd() << "save scene begin";
-
-    ScopedMeasure sm("save scene end");
-
-    Measure mes("get pixmap");
-
-    QVariantMap map;
-
-    int i = 0;
-    // Порядок items важен. Именно так выглядит как сканировалось.
-    every<QGraphicsPixmapItem>(items(Qt::AscendingOrder), [&map, &i, this](QGraphicsPixmapItem* pixmap)
-    {
-        const QString mainKey = "background_" + toInt(i);
-        ++i;
-
-        QImage img = pixmap->pixmap().toImage();
-        QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.sizeInBytes());
-        //        QBuffer buffer(&ba);
-        //        buffer.open(QIODevice::WriteOnly);
-        //        img.save(&buffer, "PNG");
-
-        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
-        map.insert(mainKey + ".img.width", img.width());
-        map.insert(mainKey + ".img.height", img.height());
-        map.insert(mainKey + ".img.devicePixelRatio", pixmap->pixmap().devicePixelRatio());
-
-        map.insert(mainKey + ".offset" , pixmap->offset());
-        map.insert(mainKey + ".scale" , pixmap->scale());
-        map.insert(mainKey + ".pos" , pixmap->pos());
-        map.insert(mainKey + ".zValue" , pixmap->zValue());
-        emit imageSaved(i);
-    });
-
-    mes.stop();
-
-    i = 0;
-    every<BlobItem>(items(), [&map, &i, this](BlobItem* blob)
-    {
-        const QString mainKey = "blob" + toInt(i);
-        ++i;
-
-        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
-        map.insert(mainKey + ".pos" , blob->pos());
-        map.insert(mainKey + ".dia" , blob->rect().width());
-        map.insert(mainKey + ".isFiducial" , blob->isFiducial());
-        map.insert(mainKey + ".isPunch" , blob->isPunch());
-    });
-
-    Measure mes2("datastream");
-    QByteArray ba;
-    QDataStream out(&ba, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_15);
-    out << map;
-    mes2.stop();
-
+    QByteArray ba = sceneToByteArray();
 
     Measure mes3("safetofile");
 
@@ -296,6 +255,79 @@ void Scene::loadScene(const QString& url)
     const QByteArray ba = file.readAll();
     file.close();
 
+    sceneFromByteArray(ba);
+}
+
+QByteArray Scene::sceneToByteArray()
+{
+    qd() << "save scene begin";
+
+    ScopedMeasure sm("save scene end");
+
+    Measure mes("get pixmap");
+
+    QVariantMap map;
+
+    QList<QGraphicsPixmapItem*> pixs = pixmaps();
+
+    for (int i = 0; i < pixs.size(); ++i)
+    {
+        QGraphicsPixmapItem* pixmap = pixs[i];
+
+        const QString mainKey = "background_" + toInt(i);
+
+        QImage img = pixmap->pixmap().toImage(); // format получается Format_RGB32
+        img.convertTo(QImage::Format_RGB888, Qt::ColorOnly);
+
+        qd() << " img formata in save " << img.format();
+        QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.sizeInBytes());
+        //        QBuffer buffer(&ba);
+        //        buffer.open(QIODevice::WriteOnly);
+        //        img.save(&buffer, "PNG");
+
+        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
+        map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
+        map.insert(mainKey + ".img.width", img.width());
+        map.insert(mainKey + ".img.height", img.height());
+        //map.insert(mainKey + ".img.devicePixelRatio", pixmap->pixmap().devicePixelRatio());
+        map.insert(mainKey + ".img.devicePixelRatio", img.devicePixelRatioF());
+
+        map.insert(mainKey + ".offset" , pixmap->offset());
+        map.insert(mainKey + ".scale" , pixmap->scale());
+        map.insert(mainKey + ".pos" , pixmap->pos());
+        map.insert(mainKey + ".zValue" , pixmap->zValue());
+        emit imageSaved(i+1);
+    }
+
+    mes.stop();
+
+    int i = 0;
+    every<BlobItem>(items(), [&map, &i, this](BlobItem* blob)
+    {
+        const QString mainKey = "blob" + toInt(i);
+        ++i;
+
+        map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
+        map.insert(mainKey + ".pos" , blob->pos());
+        map.insert(mainKey + ".dia" , blob->rect().width());
+        map.insert(mainKey + ".isFiducial" , blob->isFiducial());
+        map.insert(mainKey + ".isPunch" , blob->isPunch());
+    });
+
+    Measure mes2("datastream");
+    QByteArray ba;
+
+    QDataStream out(&ba, QIODevice::WriteOnly);
+
+    out.setVersion(QDataStream::Qt_5_15);
+    out << map;
+    mes2.stop();
+
+    return ba;
+}
+
+void Scene::sceneFromByteArray(const QByteArray& ba)
+{
     QVariantMap map;
     QDataStream in(ba);
     in.setVersion(QDataStream::Qt_5_15);
@@ -325,11 +357,12 @@ void Scene::loadScene(const QString& url)
 
         // img и ba располалагают 1 буфером. Владеет им ba.
         QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB32); // Такой формат у сохраняемого изображения.
+        img.setDevicePixelRatio(devicePixelRatio);
 
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
         QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
-        pix.setDevicePixelRatio(devicePixelRatio);
+        //pix.setDevicePixelRatio(devicePixelRatio);
 
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 

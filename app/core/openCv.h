@@ -19,8 +19,16 @@ class OpenCv : public QObject, public Singleton<OpenCv>
     Q_OBJECT
 
 public:
-    using BlobInfo = std::tuple<QImage, std::vector<cv::KeyPoint>>;
-    using BlobInfo2 = std::tuple<std::vector<cv::KeyPoint>, QString, QString, int, int>; // координаты центра, размеры изображения
+    struct Blob
+    {
+        double xMm = 0.0;
+        double yMm = 0.0;
+        double diameterMm = 0.0;
+    };
+
+    //using Blob = std::tuple<QPointF, double>;
+    using BlobsOnImage = std::tuple<QImage, QVector<Blob>>;
+    //using BlobsOnImage2 = std::tuple<QVector<Blob>, QString, QString, int, int>; // координаты центра, размеры изображения
 
 
     static double corr(QImage cap1, QImage cap2);
@@ -28,15 +36,7 @@ public:
     void searchCirclesLive(QImage img);
     void blobDetectorLive(QImage img);
 
-    void blobDetectorCaptured(QImage img);
-
-    static QImage drawText(const QImage& img, const QString& text);
-
-    void placeFoundBlobsOnScene(const BlobInfo2 &blobs) const;
-
-
-    static QImage drawCross(const QImage& img);
-
+    void appendToBlobDetectorQueue(QImage img);
 
     Q_INVOKABLE void blobDetectorUpdated(QImage img);
     std::tuple<bool, double, double, double> smallRegionBlob() const;
@@ -58,8 +58,8 @@ private:
 
     QQueue<QImage> _detectBlobQueue;
     //QVector<BlobInfo2> _detectBlobResult;
-    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCaptured;
-    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherCapturedSmallRegion;
+    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCaptured;
+    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCapturedSmallRegion;
     QMetaObject::Connection _smallRegConn;
     std::tuple<bool, double, double, double> _smallRegionBlob;
 
@@ -72,7 +72,6 @@ class OpenCvPrivate : public QObject
 
 public:
     OpenCvPrivate();
-    void init();
 
 public slots:
     void searchCirclesLive(QImage img);
@@ -87,7 +86,7 @@ private:
     QImage searchCirclesWorker(QImage img);
 
     QFutureWatcher<QImage> _circleWatcherLive;
-    QFutureWatcher<OpenCv::BlobInfo> _blobWatcherLive;
+    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherLive;
     QMutex _blobQueueMutex;
 };
 

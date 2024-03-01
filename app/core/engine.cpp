@@ -29,6 +29,7 @@
 #include "task_punch.h"
 #include "task_find_pixel_size.h"
 //#include "task_best_path.h"
+#include "task_find_blob.h"
 
 #include "openCv.h"
 
@@ -204,6 +205,7 @@ void Engine::createQmlEngine()
     TaskPunch* taskPunch = new TaskPunch(this);
     TaskFindPixelSize* taskFindPixelSize = new TaskFindPixelSize(this);
     //TaskBestPath* taskBestPath = new TaskBestPath(this);
+    TaskFindBlob* taskFindBlob = new TaskFindBlob(this);
 
     FileSystemWatcher* filesystemwatcher = new FileSystemWatcher(this);
 
@@ -234,6 +236,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
     _qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
+    _qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
 
 
     _qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());

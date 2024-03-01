@@ -71,13 +71,32 @@ double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
     return frameCenterPos + (posOriginRelativeCenter / db().pixInMm());
 }
 
-
 double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
     return frameCenterPos - (posOriginRelativeCenter / db().pixInMm());
+}
+
+QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, const QImage& im)
+{
+    QVector<OpenCv::Blob> blobs;
+    blobs.resize(kps.size());
+
+    for (const cv::KeyPoint& kp : kps)
+    {
+        OpenCv::Blob blob;
+        QString x = im.text("x");
+        QString y = im.text("y");
+        double pixInMm = im.devicePixelRatioF();
+        blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, im.width());
+        blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        blob.diameterMm = kp.size / pixInMm;
+        qd() << "blob" << blob.xMm << blob.yMm << blob.diameterMm;
+        blobs.push_back(blob);
+    }
+    return blobs;
 }
 
 // В нижнем левом углу
@@ -150,15 +169,19 @@ cv::Mat adaptiveThreshold(const cv::Mat& in)
     return out;
 }
 
-
-
-
 // img должно быть скопировано, при передаче в эту функцию
 // Круги рисуются прямо на переданном изображении, без копирования.
-OpenCv::BlobInfo detectBlobs(QImage img)
+OpenCv::BlobsOnImage detectBlobs(QImage img)
 {
     static quint32 count = 0;
     ++count;
+
+    //qd() << "detect blobs";
+
+    auto dbg = [](const cv::Mat& mat)
+    {
+        qd() << mat.cols <<  mat.rows << mat.step;
+    };
 
     try {
 
@@ -205,19 +228,31 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
 
         // Detect blobs
+        qd() << "img fmt " << img.format();
+
         cv::Mat rgbimg = qimage2matRef(img);
+        dbg(rgbimg);
+
+
+
         cv::Mat grey;
         cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
+        dbg(grey);
+
+        int img_fmt = db().value("img_fmt").toInt();
+        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(grey, QImage::Format(img_fmt)).copy());
 
         cv::Mat blur;
         cv::medianBlur(grey, blur, 5);
+        dbg(blur);
         //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
         cv::Mat adTr = adaptiveThreshold(blur);
-
+        dbg(adTr);
 
         //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
-        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
+        //db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
+
 
         // cv::Mat blur;
         // cv::medianBlur(adtr, blur, 3);
@@ -227,11 +262,11 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         std::vector<cv::KeyPoint> keypoints;
         detector->detect(adTr, keypoints);
 
-        drawKeyPoints(rgbimg, keypoints);
+        //drawKeyPoints(rgbimg, keypoints);
 
         //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-        return {img, keypoints};
+        return {img, keypointsToBlobs(keypoints, img)};
     }
     catch (...)
     {
@@ -240,60 +275,9 @@ OpenCv::BlobInfo detectBlobs(QImage img)
         qd() << "blob crashed" << typeAdTr << typeTr;
     }
 
-    return {img, std::vector<cv::KeyPoint>()};
+    return {img, QVector<OpenCv::Blob>()};
 }
 
-}
-
-
-OpenCv::OpenCv()
-    : _impl(new OpenCvPrivate)
-    , _thread(new QThread)
-{
-    connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
-    connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
-    connect(_impl, &OpenCvPrivate::smallRegionBlobImage,   this, &OpenCv::smallRegionBlobImage, Qt::QueuedConnection);
-
-    connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
-    connect(_thread.data(), &QThread::started,  _impl, &OpenCvPrivate::init, Qt::QueuedConnection);
-
-    _impl->moveToThread(_thread.data());
-    _thread->start();
-
-
-    connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
-    {
-        QImage im = std::get<0>(_blobWatcherCaptured.result());
-        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherCaptured.result());
-
-        if (kps.empty())
-            return;
-
-        QString x = im.text("x");
-        QString y = im.text("y");
-
-        placeFoundBlobsOnScene({kps, x, y, im.width(), im.height()});
-    });
-
-    QTimer* timer = new QTimer;
-    timer->start(50);
-
-    connect(timer, &QTimer::timeout, this, [this]()
-    {
-        if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
-        {
-            QImage img = _detectBlobQueue.first();
-            _detectBlobQueue.pop_front();
-            QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
-            _blobWatcherCaptured.setFuture(future);
-        }
-    });
-}
-
-OpenCv::~OpenCv()
-{
-    _thread->quit();
-    _thread->wait(1000);
 }
 
 double OpenCv::corr(QImage cap1, QImage cap2)
@@ -319,6 +303,54 @@ double OpenCv::corr(QImage cap1, QImage cap2)
     return res.x;
 }
 
+OpenCv::OpenCv()
+    : _impl(new OpenCvPrivate)
+    , _thread(new QThread)
+{
+    connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
+    connect(_impl, &OpenCvPrivate::blobChanged,   this, &OpenCv::blobChanged, Qt::QueuedConnection);
+    connect(_impl, &OpenCvPrivate::smallRegionBlobImage,   this, &OpenCv::smallRegionBlobImage, Qt::QueuedConnection);
+
+    connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
+
+    _impl->moveToThread(_thread.data());
+    _thread->start();
+
+    connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
+    {
+        //qd() << "finished";
+
+        const QVector<Blob> blobs = std::get<1>(_blobWatcherCaptured.result());
+
+        for (const Blob& blob : blobs)
+            scene().addBlob(blob.xMm, blob.yMm, blob.diameterMm);
+    });
+
+    QTimer* timer = new QTimer;
+    timer->start(50);
+
+    connect(timer, &QTimer::timeout, this, [this]()
+    {
+        if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
+        {
+            //qd() << "next image";
+            QImage img = _detectBlobQueue.first();
+            _detectBlobQueue.pop_front();
+            QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
+            _blobWatcherCaptured.setFuture(future);
+        }
+    });
+
+    db().insert("img_fmt", 0);
+}
+
+OpenCv::~OpenCv()
+{
+    _thread->quit();
+    _thread->wait(1000);
+}
+
+
 void OpenCv::searchCirclesLive(QImage img)
 {
     QMetaObject::invokeMethod(_impl, "searchCirclesLive", Qt::QueuedConnection, Q_ARG(QImage, img));
@@ -329,7 +361,7 @@ void OpenCv::blobDetectorLive(QImage img)
     QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::blobDetectorCaptured(QImage img)
+void OpenCv::appendToBlobDetectorQueue(QImage img)
 {
     _detectBlobQueue.push_back(img);
 }
@@ -339,48 +371,36 @@ void OpenCv::blobDetectorUpdated(QImage img)
     if (!_blobWatcherCapturedSmallRegion.isFinished())
         return;
 
-    QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
+    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
     _blobWatcherCapturedSmallRegion.setFuture(future);
 
     disconnect(_smallRegConn);
 
-    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobInfo>::resultReadyAt, this, [this](int index)
+    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobsOnImage>::resultReadyAt, this, [this](int index)
     {
-        OpenCv::BlobInfo result = _blobWatcherCapturedSmallRegion.resultAt(index);
+        OpenCv::BlobsOnImage result = _blobWatcherCapturedSmallRegion.resultAt(index);
 
-        QImage im = std::get<0>(result);
-        std::vector<cv::KeyPoint> kps = std::get<1>(result);
+        QVector<Blob> blobs = std::get<1>(result);
 
-        if (kps.empty())
+        if (blobs.empty())
         {
-            qd() << "kps is empty";
+            qd() << "blobs is empty";
             _smallRegionBlob = {false, 0, 0, 0};
             emit smallRegionBlobDetectionFinished();
             return;
         }
 
-
+        QImage im = std::get<0>(result);
         emit smallRegionBlobImage(im.copy());
 
-        auto kp = kps[0];
+        auto blob = blobs[0];
 
-        qd() << "kp size " << kps.size();
+        _smallRegionBlob = {true, blob.xMm, blob.yMm, blob.diameterMm};
 
-        //qd() << "kp size " << kp.size;
-        //qd() << "smakl region width " << im.width();
+        // const double xBlobError = pixToRealX(0.0, blob.xPix, im.width());
+        // const double yBlobError = pixToRealY(0.0, blob.yPix, im.height());
 
-        QString x = im.text("x");
-        QString y = im.text("y");
-        const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-        const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-        const double diaBlob = kp.size / db().pixInMm();
-
-        _smallRegionBlob = {true, xBlob, yBlob, diaBlob};
-
-        const double xBlobError = pixToRealX(0.0, kp.pt.x, im.width());
-        const double yBlobError = pixToRealY(0.0, kp.pt.y, im.height());
-
-        qd() << "blob error " << xBlobError << yBlobError;
+        // qd() << "blob error " << xBlobError << yBlobError;
 
         emit smallRegionBlobDetectionFinished();
     });
@@ -389,58 +409,6 @@ void OpenCv::blobDetectorUpdated(QImage img)
 std::tuple<bool, double, double, double> OpenCv::smallRegionBlob() const
 {
     return _smallRegionBlob;
-}
-
-// Текст рисуется на переданном изображение. И возвращается оно же просто для удобства.
-QImage OpenCv::drawText(const QImage& img, const QString& text)
-{
-    cv::Mat image = qimage2matRef(img);
-    ::drawTextBottomLeft(image, text);
-    return img;
-}
-
-QImage OpenCv::drawCross(const QImage& img)
-{
-    cv::Mat image = qimage2matRef(img);
-
-    cv::Point a1((image.cols / 2) - 2, 0);
-    cv::Point a2((image.cols / 2) - 2, image.rows - 1);
-
-    cv::Point b1((image.cols / 2) + 1, 0);
-    cv::Point b2((image.cols / 2) + 1, image.rows - 1);
-
-    cv::Point c1(0,              (image.rows / 2) - 2);
-    cv::Point c2(image.cols - 1, (image.rows / 2) - 2);
-
-    cv::Point d1(0,              (image.rows / 2) + 1);
-    cv::Point d2(image.cols - 1, (image.rows / 2) + 1);
-
-    cv::line(image, a1, a2, ColorRgb::White);
-    cv::line(image, b1, b2, ColorRgb::White);
-    cv::line(image, c1, c2, ColorRgb::White);
-    cv::line(image, d1, d2, ColorRgb::White);
-
-    return img;
-}
-
-void OpenCv::placeFoundBlobsOnScene(const BlobInfo2& blobs) const
-{
-    auto kps = std::get<0>(blobs);
-
-    const QString imX = std::get<1>(blobs);
-    const QString imY = std::get<2>(blobs);
-
-    const int imWidth = std::get<3>(blobs);
-    const int imHeight = std::get<4>(blobs);
-
-    for (const cv::KeyPoint& kp : kps)
-    {
-        const double xBlob = pixToRealX(imX.toDouble(), kp.pt.x, imWidth);
-        const double yBlob = pixToRealY(imY.toDouble(), kp.pt.y, imHeight);
-        const double diaBlob = kp.size / db().pixInMm();
-
-        scene().addBlob(xBlob, yBlob, diaBlob);
-    }
 }
 
 OpenCvPrivate::OpenCvPrivate()
@@ -470,53 +438,35 @@ OpenCvPrivate::OpenCvPrivate()
         emit circleChanged(_circleWatcherLive.result());
     });
 
-    connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobInfo>::finished, this, [this]()
+    connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
         QImage im = std::get<0>(_blobWatcherLive.result());
         emit blobChanged(im);
 
-        std::vector<cv::KeyPoint> kps = std::get<1>(_blobWatcherLive.result());
+        const QVector<OpenCv::Blob> blobs = std::get<1>(_blobWatcherLive.result());
 
         QString res;
-        res += "x_pix \t y_pix \t dia_pix \t x_mm \t y_mm \t dia_mm \t dx_mm \t dy_mm \n";
+        res += "x_mm \t y_mm \t dia_mm \n";
 
-        QString x = im.text("x");
-        QString y = im.text("y");
-
-        for (const cv::KeyPoint& kp : kps)
+        for (const OpenCv::Blob& blob : blobs)
         {
-            const double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-            const double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-            const double diaBlob = kp.size / db().pixInMm();
+            res.append(QString("%1 \t %2 \t %3 \n")
+                       .arg(toReal1(blob.xMm))
+                       .arg(toReal1(blob.yMm))
+                       .arg(toReal1(blob.diameterMm)));
 
-            res.append(QString("%1 \t %2 \t %3 \t %4 \t %5 \t %6 \t %7 \t %8 \n")
-                       .arg(toReal1(kp.pt.x))
-                       .arg(toReal1(kp.pt.y))
-                       .arg(toReal1(kp.size))
-                       .arg(toReal3(xBlob))
-                       .arg(toReal3(yBlob))
-                       .arg(toReal3(diaBlob))
-                       .arg(toReal3(xBlob - x.toDouble())) // дельта между блобом и центром
-                       .arg(toReal3(yBlob - y.toDouble()))); // дельта между блобом и центром
         }
         db().insert("blob_info", res);
-
-        //        res.clear();
-        //        if (!kps.empty())
-        //        {
-        //            auto kp = kps[0];
-        //            double xBlob = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-        //            double yBlob = pixToRealY(y.toDouble(), kp.pt.y, im.height());
-
-        //            res = QString("%1 %2").arg(x.toDouble() - xBlob).arg(y.toDouble() - yBlob);
-        //        }
-        //        db().insert("blob_info4", res);
     });
 }
 
-void OpenCvPrivate::init()
+void OpenCvPrivate::blobDetectorLive(QImage img)
 {
+    if (!_blobWatcherLive.isFinished())
+        return;
 
+    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
+    _blobWatcherLive.setFuture(future);
 }
 
 void OpenCvPrivate::searchCirclesLive(QImage img)
@@ -574,12 +524,4 @@ QImage OpenCvPrivate::searchCirclesWorker(QImage img)
     return QImage();
 }
 
-void OpenCvPrivate::blobDetectorLive(QImage img)
-{
-    if (!_blobWatcherLive.isFinished())
-        return;
-
-    QFuture<OpenCv::BlobInfo> future = QtConcurrent::run(detectBlobs, img);
-    _blobWatcherLive.setFuture(future);
-}
 

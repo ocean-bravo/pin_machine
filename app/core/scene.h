@@ -30,8 +30,12 @@ public:
     // Координаты изображения идут вместе с изображением
     void setImage(QImage img);
 
+    QList<QGraphicsPixmapItem*> pixmaps() const;
     void saveScene(const QString &url);
     void loadScene(const QString &url);
+
+    QByteArray sceneToByteArray();
+    void sceneFromByteArray(const QByteArray& ba);
 
     void highlightBlobs(bool state);
 
@@ -42,9 +46,6 @@ public:
     QList<BlobItem*> punchBlobs();
 
     void deleteSelectedBlobs();
-
-
-
 
 public slots:
     void drawPath(const QList<QPointF>& path);

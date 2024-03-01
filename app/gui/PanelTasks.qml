@@ -148,5 +148,19 @@ CollapsiblePanel {
             Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
             Layout.preferredWidth: 120
         }
+
+        SmButton {
+            id: findBlobs
+            text: qsTr("Find blobs")
+            checkable: true
+            onCheckedChanged: checked ? TaskFindBlob.run(slowFindBlobs.checked) : TaskFindBlob.stopProgram()
+            Connections { target: TaskFindBlob; function onFinished() { findBlobs.checked = false } }
+            Layout.preferredWidth: 120
+        }
+
+        CheckBox {
+            id: slowFindBlobs
+            text: "find blobs slowly"
+        }
     }
 }

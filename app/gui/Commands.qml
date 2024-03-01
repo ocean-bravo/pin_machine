@@ -80,6 +80,7 @@ Item {
     Connections { target: TaskPunch;         function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskFindPixelSize; function onMessage(msg) { appendLog(msg + '<br>') } }
     // Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
+    Connections { target: TaskFindBlob;      function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: Serial

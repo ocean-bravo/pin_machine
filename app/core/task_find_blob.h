@@ -19,9 +19,9 @@ public:
     TaskFindBlob(QObject* parent = nullptr);
     ~TaskFindBlob();
 
-    void run(QPointF pos);
+    Q_INVOKABLE void run(bool slow = false);
 
-    void stopProgram();
+    Q_INVOKABLE void stopProgram();
 
 signals:
     void message(QString);
@@ -41,7 +41,7 @@ public:
     TaskFindBlobPrivate();
 
 public slots:
-    void run(QPointF pos);
+    void run(bool slow);
 
 private:
 

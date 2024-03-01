@@ -57,6 +57,8 @@ void ImageItem::wheelEvent(QWheelEvent *event)
 void ImageItem::setImage(const QImage &image)
 {
     _image = image;
+
+    qd() << "iimage changed";
     update();
 }
 
