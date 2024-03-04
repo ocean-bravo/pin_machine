@@ -79,7 +79,7 @@ double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
     return frameCenterPos - (posOriginRelativeCenter / db().pixInMm());
 }
 
-QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, const QImage& im)
+QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, const QImage& img)
 {
     QVector<OpenCv::Blob> blobs;
     blobs.resize(kps.size());
@@ -87,11 +87,14 @@ QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, con
     for (const cv::KeyPoint& kp : kps)
     {
         OpenCv::Blob blob;
-        QString x = im.text("x");
-        QString y = im.text("y");
-        double pixInMm = im.devicePixelRatioF();
-        blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, im.width());
-        blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, im.height());
+        QString x = img.text("x");
+        QString y = img.text("y");
+        qd() << "x " << x;
+        qd() << "y " << y;
+        const double pixInMm = img.devicePixelRatioF();
+        qd() << "pixel ratio " << pixInMm;
+        blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, img.width());
+        blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, img.height());
         blob.diameterMm = kp.size / pixInMm;
         qd() << "blob" << blob.xMm << blob.yMm << blob.diameterMm;
         blobs.push_back(blob);
@@ -176,12 +179,14 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
     static quint32 count = 0;
     ++count;
 
-    //qd() << "detect blobs";
+    qd() << "detect blobs";
 
     auto dbg = [](const cv::Mat& mat)
     {
         qd() << mat.cols <<  mat.rows << mat.step;
     };
+
+    const double pixInMm = img.devicePixelRatioF();
 
     try {
 
@@ -199,8 +204,8 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
             double minDia = db().value("blob_minDia_mm").toDouble();
             double maxDia = db().value("blob_maxDia_mm").toDouble();
 
-            params.minArea = minDia * minDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
-            params.maxArea = maxDia * maxDia * 3.14159 * db().pixInMm() * db().pixInMm() / 4;
+            params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
+            params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
         }
         // Filter by Circularity
         params.filterByCircularity = false;
@@ -228,31 +233,20 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
 
         // Detect blobs
-        qd() << "img fmt " << img.format();
-
         cv::Mat rgbimg = qimage2matRef(img);
-        dbg(rgbimg);
-
-
 
         cv::Mat grey;
         cv::cvtColor(rgbimg, grey, cv::COLOR_RGB2GRAY);
-        dbg(grey);
-
-        int img_fmt = db().value("img_fmt").toInt();
-        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(grey, QImage::Format(img_fmt)).copy());
 
         cv::Mat blur;
         cv::medianBlur(grey, blur, 5);
-        dbg(blur);
+        //dbg(blur);
         //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
         cv::Mat adTr = adaptiveThreshold(blur);
-        dbg(adTr);
+        //dbg(adTr);
 
-        //db().insert("image_adapt_threshold_1", mat_to_qimage_ref(adtr, QImage::Format_Alpha8).copy());
-        //db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
-
+        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
 
         // cv::Mat blur;
         // cv::medianBlur(adtr, blur, 3);
@@ -262,7 +256,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         std::vector<cv::KeyPoint> keypoints;
         detector->detect(adTr, keypoints);
 
-        //drawKeyPoints(rgbimg, keypoints);
+        drawKeyPoints(rgbimg, keypoints);
 
         //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 

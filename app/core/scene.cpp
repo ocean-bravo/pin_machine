@@ -174,11 +174,6 @@ void Scene::setImage(QImage img)
 
 void Scene::setImagePrivate(QImage img)
 {
-    const double x = img.text("x").toDouble();
-    const double y = img.text("y").toDouble();
-
-    const double pixInMm = db().pixInMm();
-
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = std::move(img.mirrored(false, true)); // тут копия img и это правильно
 
@@ -192,10 +187,12 @@ void Scene::setImagePrivate(QImage img)
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
-
     //    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
+    const double pixInMm = img.devicePixelRatioF();
     item->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
+    const double x = img.text("x").toDouble();
+    const double y = img.text("y").toDouble();
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
@@ -294,7 +291,8 @@ QByteArray Scene::sceneToByteArray()
 
         map.insert(mainKey + ".offset" , pixmap->offset());
         map.insert(mainKey + ".scale" , pixmap->scale());
-        map.insert(mainKey + ".pos" , pixmap->pos());
+        map.insert(mainKey + ".pos.x" , img.text("x"));
+        map.insert(mainKey + ".pos.y" , img.text("y"));
         map.insert(mainKey + ".zValue" , pixmap->zValue());
         emit imageSaved(i+1);
     }
@@ -350,7 +348,8 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
 
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale = map.value(mainKey + ".scale").toDouble();
-        QPointF pos = map.value(mainKey + ".pos").toPointF();
+        QString x = map.value(mainKey + ".pos.x").toString();
+        QString y = map.value(mainKey + ".pos.y").toString();
         double zValue = map.value(mainKey + ".zValue").toDouble();
 
         ba = qUncompress(ba);
@@ -358,6 +357,8 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
         // img и ba располалагают 1 буфером. Владеет им ba.
         QImage img(reinterpret_cast<const uchar *>(ba.constData()), imgWidth, imgHeight, QImage::Format_RGB888); // Такой формат у сохраняемого изображения.
         img.setDevicePixelRatio(devicePixelRatio);
+        img.setText("x", x);
+        img.setText("y", y);
 
         img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
@@ -369,7 +370,7 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
         // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
         item->setOffset(offset);
         item->setScale(scale);
-        item->setPos(pos);
+        item->setPos(QPointF(x.toDouble(), y.toDouble()));
         item->setZValue(zValue); // Чтобы изображения были позади блобов
     }
 
