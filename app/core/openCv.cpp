@@ -63,20 +63,20 @@ namespace {
 
 // frameCenterPos - позиция центра изображения. Позиция находится между центральными пикселями.
 // pixPos - [0, pixelInLine)
-double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine)
+double pixToRealX(double frameCenterPos, double pixPos, int pixelInLine, double pixInMm)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos + (posOriginRelativeCenter / db().pixInMm());
+    return frameCenterPos + (posOriginRelativeCenter / pixInMm);
 }
 
-double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine)
+double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine, double pixInMm)
 {
     // При 4 пикселях ширине изображения, координата 2,1 находится в положительной части. 1,9 в отрицательной, относительно
     // центра.
     const double posOriginRelativeCenter = pixPos - (pixelInLine / 2);
-    return frameCenterPos - (posOriginRelativeCenter / db().pixInMm());
+    return frameCenterPos - (posOriginRelativeCenter / pixInMm);
 }
 
 QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, const QImage& img)
@@ -87,14 +87,12 @@ QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, con
     for (const cv::KeyPoint& kp : kps)
     {
         OpenCv::Blob blob;
-        QString x = img.text("x");
-        QString y = img.text("y");
-        qd() << "x " << x;
-        qd() << "y " << y;
+        const QString x = img.text("x");
+        const QString y = img.text("y");
         const double pixInMm = img.devicePixelRatioF();
-        qd() << "pixel ratio " << pixInMm;
-        blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, img.width());
-        blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, img.height());
+        qd() << "pixel ratio x y " << pixInMm << x << y;
+        blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, img.width(), pixInMm);
+        blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, img.height(), pixInMm);
         blob.diameterMm = kp.size / pixInMm;
         qd() << "blob" << blob.xMm << blob.yMm << blob.diameterMm;
         blobs.push_back(blob);
@@ -179,7 +177,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
     static quint32 count = 0;
     ++count;
 
-    qd() << "detect blobs";
+    qd() << "detect blobs " << img.text("x") << img.text("y") << img.devicePixelRatioF();
 
     auto dbg = [](const cv::Mat& mat)
     {
