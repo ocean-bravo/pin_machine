@@ -82,7 +82,6 @@ double pixToRealY(double frameCenterPos, double pixPos, int pixelInLine, double 
 QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, const QImage& img)
 {
     QVector<OpenCv::Blob> blobs;
-    blobs.resize(kps.size());
 
     for (const cv::KeyPoint& kp : kps)
     {
@@ -91,6 +90,7 @@ QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, con
         const QString y = img.text("y");
         const double pixInMm = img.devicePixelRatioF();
         qd() << "pixel ratio x y " << pixInMm << x << y;
+        qd() << "kp " << kp.pt.x << kp.pt.y << kp.size;
         blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, img.width(), pixInMm);
         blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, img.height(), pixInMm);
         blob.diameterMm = kp.size / pixInMm;
