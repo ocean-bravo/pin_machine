@@ -92,6 +92,10 @@ Scene::~Scene()
 BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 {
     qd() << "add blob " << x << y << dia;
+
+    if (x == 0)
+        asm("nop");
+
     BlobItem* blob = new BlobItem(x, y, dia);
     blob->setHighlight(db().value("blobs_highlight").toBool());
 
@@ -271,23 +275,20 @@ QByteArray Scene::sceneToByteArray()
     {
         QGraphicsPixmapItem* pixmap = pixs[i];
 
-        const QString mainKey = "background_" + toInt(i);
+        const QString mainKey = "bg." + toInt(i);
 
         QImage img = pixmap->pixmap().toImage(); // format получается Format_RGB32
         img.convertTo(QImage::Format_RGB888, Qt::ColorOnly);
 
-        qd() << " img formata in save " << img.format();
+        //qd() << " img formata in save " << img.format();
         QByteArray ba(reinterpret_cast<const char *>(img.constBits()), img.sizeInBytes());
-        //        QBuffer buffer(&ba);
-        //        buffer.open(QIODevice::WriteOnly);
-        //        img.save(&buffer, "PNG");
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".img" , qCompress(ba, 1)); // Уровень компрессии достаточный
-        map.insert(mainKey + ".img.width", img.width());
-        map.insert(mainKey + ".img.height", img.height());
-        //map.insert(mainKey + ".img.devicePixelRatio", pixmap->pixmap().devicePixelRatio());
-        map.insert(mainKey + ".img.devicePixelRatio", img.devicePixelRatioF());
+        map.insert(mainKey + ".width", img.width());
+        map.insert(mainKey + ".height", img.height());
+        //map.insert(mainKey + ".devicePixelRatio", pixmap->pixmap().devicePixelRatio());
+        map.insert(mainKey + ".devicePixelRatio", img.devicePixelRatioF());
 
         map.insert(mainKey + ".offset" , pixmap->offset());
         map.insert(mainKey + ".scale" , pixmap->scale());
@@ -302,8 +303,7 @@ QByteArray Scene::sceneToByteArray()
     int i = 0;
     every<BlobItem>(items(), [&map, &i, this](BlobItem* blob)
     {
-        const QString mainKey = "blob" + toInt(i);
-        ++i;
+        const QString mainKey = "blob." + toInt(i++);
 
         map.insert(mainKey, QVariant()); // Для удобства поиска, пустая запись
         map.insert(mainKey + ".pos" , blob->pos());
@@ -335,16 +335,15 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
 
     while (true)
     {
-        const QString mainKey = "background_" + toInt(i);
-        ++i;
+        const QString mainKey = "bg." + toInt(i++);
 
         if (!map.contains(mainKey))
             break;
 
         QByteArray ba = map.value(mainKey + ".img").toByteArray();
-        int imgWidth = map.value(mainKey + ".img.width").toInt();
-        int imgHeight = map.value(mainKey + ".img.height").toInt();
-        double devicePixelRatio = map.value(mainKey + ".img.devicePixelRatio").toDouble();
+        int imgWidth = map.value(mainKey + ".width").toInt();
+        int imgHeight = map.value(mainKey + ".height").toInt();
+        double devicePixelRatio = map.value(mainKey + ".devicePixelRatio").toDouble();
 
         QPointF offset = map.value(mainKey + ".offset").toPointF();
         double scale = map.value(mainKey + ".scale").toDouble();
@@ -377,8 +376,7 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
     i = 0;
     while (true)
     {
-        const QString mainKey = "blob" + toInt(i);
-        ++i;
+        const QString mainKey = "blob." + toInt(i++);
 
         if (!map.contains(mainKey))
             break;
