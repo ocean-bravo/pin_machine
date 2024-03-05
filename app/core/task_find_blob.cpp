@@ -82,7 +82,7 @@ void TaskFindBlobPrivate::run(bool slow)
 
         db().insert("image_raw_captured", img.copy());
         opencv().appendToBlobDetectorQueue(img);
-        wait(slow ? 1000 : 10);
+        wait(slow ? 2000 : 10);
 
         if (_stop)
         {

@@ -27,7 +27,7 @@ public:
     };
 
     //using Blob = std::tuple<QPointF, double>;
-    using BlobsOnImage = std::tuple<QImage, QVector<Blob>>;
+    using BlobsOnImage = std::tuple<QImage, QVector<Blob>>; // 3 параметр - временно
     //using BlobsOnImage2 = std::tuple<QVector<Blob>, QString, QString, int, int>; // координаты центра, размеры изображения
 
 

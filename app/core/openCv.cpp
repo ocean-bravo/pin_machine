@@ -89,12 +89,15 @@ QVector<OpenCv::Blob> keypointsToBlobs(const std::vector<cv::KeyPoint>& kps, con
         const QString x = img.text("x");
         const QString y = img.text("y");
         const double pixInMm = img.devicePixelRatioF();
-        qd() << "pixel ratio x y " << pixInMm << x << y;
-        qd() << "kp " << kp.pt.x << kp.pt.y << kp.size;
+
+        //qd() << "pixel ratio x y " << pixInMm << x << y;
+        //qd() << "kp " << kp.pt.x << kp.pt.y << kp.size;
+
         blob.xMm = pixToRealX(x.toDouble(), kp.pt.x, img.width(), pixInMm);
         blob.yMm = pixToRealY(y.toDouble(), kp.pt.y, img.height(), pixInMm);
         blob.diameterMm = kp.size / pixInMm;
-        qd() << "blob" << blob.xMm << blob.yMm << blob.diameterMm;
+
+        //qd() << "blob" << blob.xMm << blob.yMm << blob.diameterMm;
         blobs.push_back(blob);
     }
     return blobs;
@@ -184,8 +187,6 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         qd() << mat.cols <<  mat.rows << mat.step;
     };
 
-    const double pixInMm = img.devicePixelRatioF();
-
     try {
 
         //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
@@ -202,6 +203,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
             double minDia = db().value("blob_minDia_mm").toDouble();
             double maxDia = db().value("blob_maxDia_mm").toDouble();
 
+            const double pixInMm = img.devicePixelRatioF();
             params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
             params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
         }
@@ -311,6 +313,9 @@ OpenCv::OpenCv()
     connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
         //qd() << "finished";
+        QImage img = std::get<0>(_blobWatcherCaptured.result());
+
+        emit blobChanged(img);
 
         const QVector<Blob> blobs = std::get<1>(_blobWatcherCaptured.result());
 
