@@ -17,6 +17,7 @@
 #include <QGraphicsEllipseItem>
 #include <QLabel>
 #include <QJsonObject>
+#include <QShortcut>
 
 #include <functional>
 
@@ -191,6 +192,14 @@ ScanView::ScanView(QWidget *parent)
         else if (labelNumber == 5)
             message6->setText(text);
     });
+
+    auto keyDel = new QShortcut(this);
+    keyDel->setKey(Qt::Key_Delete);
+    connect(keyDel, &QShortcut::activated, &scene(), &Scene::deleteSelectedBlobs);
+
+    auto keySelectAll = new QShortcut(this);
+    keySelectAll->setKey(Qt::CTRL + Qt::Key_A);
+    connect(keySelectAll, &QShortcut::activated, &scene(), &Scene::selectAllBlobs);
 }
 
 ScanView::~ScanView()

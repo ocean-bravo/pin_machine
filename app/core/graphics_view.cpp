@@ -283,7 +283,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
         menu.addAction(tr("Delete selected blobs"), this, [this]()
         {
             emit deleteSelectedBlobs();
-        });
+        }, QKeySequence(Qt::Key_Delete)); // shortcut не работает, просто для отметки,что удаляет по Del. А на самом деле удаляет глобальный шорткат
 
         menu.exec(event->globalPos());
     }

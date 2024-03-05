@@ -47,6 +47,8 @@ public:
 
     void deleteSelectedBlobs();
 
+    void selectAllBlobs();
+
 public slots:
     void drawPath(const QList<QPointF>& path);
 

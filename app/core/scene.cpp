@@ -442,6 +442,14 @@ void Scene::deleteSelectedBlobs()
     });
 }
 
+void Scene::selectAllBlobs()
+{
+    every<BlobItem>(QGraphicsScene::items(), [this](BlobItem* blob)
+    {
+        blob->setSelected(true);
+    });
+}
+
 void Scene::drawPath(const QList<QPointF>& path)
 {
     runOnThread(this, [this, path]()
