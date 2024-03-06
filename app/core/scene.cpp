@@ -200,6 +200,8 @@ void Scene::setImagePrivate(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
+    static int i = 0;
+    qd() << "set image i x y pos offset " << i << x << y << item->pos() << item->offset();
     //        qd() << "pix rect " << pix.rect();
     //            qd() << "pix offset " << item->offset();
 }
@@ -295,6 +297,8 @@ QByteArray Scene::sceneToByteArray()
         map.insert(mainKey + ".pos.x" , img.text("x"));
         map.insert(mainKey + ".pos.y" , img.text("y"));
         map.insert(mainKey + ".zValue" , pixmap->zValue());
+
+        qd() << "save image i x y pos offset " << i << img.text("x") << img.text("y") << pixmap->pos() << pixmap->offset();
         emit imageSaved(i+1);
     }
 
@@ -335,7 +339,7 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
 
     while (true)
     {
-        const QString mainKey = "bg." + toInt(i++);
+        const QString mainKey = "bg." + toInt(i);
 
         if (!map.contains(mainKey))
             break;
@@ -371,6 +375,9 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
         item->setScale(scale);
         item->setPos(QPointF(x.toDouble(), y.toDouble()));
         item->setZValue(zValue); // Чтобы изображения были позади блобов
+
+        qd() << "load image i x y pos offset " << i << img.text("x") << img.text("y") << item->pos() << item->offset();
+        ++i;
     }
 
     i = 0;
