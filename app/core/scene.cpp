@@ -239,7 +239,7 @@ void Scene::saveScene(const QString& url)
 void Scene::loadScene(const QString& url)
 {
     clear();
-    //addBoard();
+    addBoard();
 
     QFile file(QUrl(url).toLocalFile());
 
