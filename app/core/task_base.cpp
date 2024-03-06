@@ -50,7 +50,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     waitForNext();
 
-    opencv().blobDetectorUpdated(std::move(video().smallRegion()));
+    opencv().blobDetectorUpdated(std::move(video().smallRegion().copy()));
 
     waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
 

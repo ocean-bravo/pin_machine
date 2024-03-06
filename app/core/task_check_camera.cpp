@@ -81,7 +81,7 @@ void TaskCheckCameraPrivate::run()
     video().changeCamera(cameraId(), 800, 600, "YUYV");
     video().start();
 
-    auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза

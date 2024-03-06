@@ -179,7 +179,7 @@ void Scene::setImage(QImage img)
 void Scene::setImagePrivate(QImage img)
 {
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
-    img = std::move(img.mirrored(false, true)); // тут копия img и это правильно
+    img = std::move(img.mirrored(false, true));
 
     //qd() << "img format befor pixmap " << img.format();
     QPixmap pix = QPixmap::fromImage(img);

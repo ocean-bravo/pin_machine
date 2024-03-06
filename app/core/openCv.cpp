@@ -387,8 +387,8 @@ void OpenCv::blobDetectorUpdated(QImage img)
             return;
         }
 
-        QImage im = std::get<0>(result);
-        emit smallRegionBlobImage(im.copy());
+        QImage img = std::get<0>(result);
+        emit smallRegionBlobImage(img.copy());
 
         auto blob = blobs[0];
 

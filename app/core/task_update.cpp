@@ -79,7 +79,7 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
     video().changeCamera(cameraId(), width, height, fourcc);
     video().start();
 
-    auto connection = connect(&video(), &Video4::capturedSmallRegion, &scene(), &Scene::setImage);
+    auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 
     QList<BlobItem*> blobs;
