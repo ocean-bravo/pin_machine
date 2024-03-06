@@ -34,8 +34,8 @@ public:
     void saveScene(const QString &url);
     void loadScene(const QString &url);
 
-    QByteArray sceneToByteArray();
-    void sceneFromByteArray(const QByteArray& ba);
+    QByteArray saveSceneToByteArray();
+    void loadSceneFromByteArray(const QByteArray& ba);
 
     void highlightBlobs(bool state);
 

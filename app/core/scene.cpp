@@ -181,7 +181,7 @@ void Scene::setImagePrivate(QImage img)
     // Изображение нужно перевернуть по вертикали, т.к. сцена перевернута
     img = std::move(img.mirrored(false, true)); // тут копия img и это правильно
 
-    qd() << "img format befor pixmap " << img.format();
+    //qd() << "img format befor pixmap " << img.format();
     QPixmap pix = QPixmap::fromImage(img);
 
     //pix.setDevicePixelRatio(pixInMm);
@@ -194,7 +194,7 @@ void Scene::setImagePrivate(QImage img)
     //    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     const double pixInMm = img.devicePixelRatioF();
-    item->setOffset(-pix.rect().width() / (2*pixInMm), -pix.rect().height() / (2*pixInMm));
+    item->setOffset(-img.width() / (2*pixInMm), -img.height() / (2*pixInMm));
     const double x = img.text("x").toDouble();
     const double y = img.text("y").toDouble();
     item->setPos(x, y);
@@ -219,7 +219,7 @@ QList<QGraphicsPixmapItem*> Scene::pixmaps() const
 
 void Scene::saveScene(const QString& url)
 {
-    QByteArray ba = sceneToByteArray();
+    QByteArray ba = saveSceneToByteArray();
 
     Measure mes3("safetofile");
 
@@ -239,7 +239,7 @@ void Scene::saveScene(const QString& url)
 void Scene::loadScene(const QString& url)
 {
     clear();
-    addBoard();
+    //addBoard();
 
     QFile file(QUrl(url).toLocalFile());
 
@@ -258,10 +258,10 @@ void Scene::loadScene(const QString& url)
     const QByteArray ba = file.readAll();
     file.close();
 
-    sceneFromByteArray(ba);
+    loadSceneFromByteArray(ba);
 }
 
-QByteArray Scene::sceneToByteArray()
+QByteArray Scene::saveSceneToByteArray()
 {
     qd() << "save scene begin";
 
@@ -280,6 +280,7 @@ QByteArray Scene::sceneToByteArray()
         const QString mainKey = "bg." + toInt(i);
 
         QImage img = pixmap->pixmap().toImage(); // format получается Format_RGB32
+        img = std::move(img.mirrored(false, true)); // надо повернуть img, т.к. при загрузке img будет повернуто снова
         img.convertTo(QImage::Format_RGB888, Qt::ColorOnly);
 
         //qd() << " img formata in save " << img.format();
@@ -298,7 +299,7 @@ QByteArray Scene::sceneToByteArray()
         map.insert(mainKey + ".pos.y" , img.text("y"));
         map.insert(mainKey + ".zValue" , pixmap->zValue());
 
-        qd() << "save image i x y pos offset " << i << img.text("x") << img.text("y") << pixmap->pos() << pixmap->offset();
+        //qd() << "save image i x y pos offset " << i << img.text("x") << img.text("y") << pixmap->pos() << pixmap->offset();
         emit imageSaved(i+1);
     }
 
@@ -328,7 +329,7 @@ QByteArray Scene::sceneToByteArray()
     return ba;
 }
 
-void Scene::sceneFromByteArray(const QByteArray& ba)
+void Scene::loadSceneFromByteArray(const QByteArray& ba)
 {
     QVariantMap map;
     QDataStream in(ba);
@@ -363,21 +364,23 @@ void Scene::sceneFromByteArray(const QByteArray& ba)
         img.setText("x", x);
         img.setText("y", y);
 
-        img = img.copy(); // Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
+        setImagePrivate(img); // Внутри делается копия. Копия нужна. Теперь у img свой буфер, не зависимый от ba. Когда ba удалится, img будет жить.
 
-        QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
-        //pix.setDevicePixelRatio(devicePixelRatio);
+        // img = img.copy();
 
-        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
+        // QPixmap pix = std::move(QPixmap::fromImage(std::move(img)));
+        // //pix.setDevicePixelRatio(devicePixelRatio);
 
-        // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
-        item->setOffset(offset);
-        item->setScale(scale);
-        item->setPos(QPointF(x.toDouble(), y.toDouble()));
-        item->setZValue(zValue); // Чтобы изображения были позади блобов
+        // QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
-        qd() << "load image i x y pos offset " << i << img.text("x") << img.text("y") << item->pos() << item->offset();
-        ++i;
+        // // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
+        // item->setOffset(offset);
+        // item->setScale(scale);
+        // item->setPos(QPointF(x.toDouble(), y.toDouble()));
+        // item->setZValue(zValue); // Чтобы изображения были позади блобов
+
+        // //qd() << "load image i x y pos offset " << i << img.text("x") << img.text("y") << item->pos() << item->offset();
+        // ++i;
     }
 
     i = 0;
