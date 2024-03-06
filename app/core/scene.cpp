@@ -340,7 +340,7 @@ void Scene::loadSceneFromByteArray(const QByteArray& ba)
 
     while (true)
     {
-        const QString mainKey = "bg." + toInt(i);
+        const QString mainKey = "bg." + toInt(i++);
 
         if (!map.contains(mainKey))
             break;
