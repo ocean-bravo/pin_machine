@@ -187,8 +187,6 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         qd() << mat.cols <<  mat.rows << mat.step;
     };
 
-    img = std::move(img.mirrored(false, true)); // ??
-
     try {
 
         //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
