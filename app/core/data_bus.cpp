@@ -19,6 +19,8 @@ DataBus::DataBus(QObject *parent)
         insert(res, settings().value(res).toDouble());
     }
 
+    qd() << "resulutions " << resolutions;
+
     insert("x_coord", QString("0.000"));
     insert("y_coord", QString("0.000"));
 
