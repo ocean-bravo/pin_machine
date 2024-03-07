@@ -6,9 +6,18 @@
 DataBus::DataBus(QObject *parent)
     : QQmlPropertyMap(this, parent)
 {
-    insert("pixel_size_800", settings().value("pixel_size_800").toDouble());
-    insert("pixel_size_1280", settings().value("pixel_size_1280").toDouble());
-    insert("pixel_size_2592", settings().value("pixel_size_2592").toDouble());
+
+    QStringList resolutions;
+    for (const QString& key : settings().allKeys())
+    {
+        if (key.contains("pixel_size_"))
+            resolutions.append(key);
+    }
+
+    for (const QString& res : resolutions)
+    {
+        insert(res, settings().value(res).toDouble());
+    }
 
     insert("x_coord", QString("0.000"));
     insert("y_coord", QString("0.000"));
@@ -44,7 +53,12 @@ double DataBus::pixInMm() const
 {
     int width = value("resolution_width").toInt();
 
-    return value(QString("pixel_size_%1").arg(width)).toDouble();
+    QVariant val = value(QString("pixel_size_%1").arg(width));
+
+    if (val.isNull())
+        return 1.0; // Индикатор того, что нет pixInMm для данного разрешения
+
+    return val.toDouble();
 }
 
 void DataBus::setPixInMm(double size)

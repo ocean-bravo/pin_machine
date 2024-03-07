@@ -8,19 +8,21 @@
 //_settings->setIniCodec("UTF-8");
 // Тогда не возможны не ASCII символы в ini файлах
 
-Settings::Settings()
-{
-    const QString iniFilePath = QApplication::applicationDirPath() + "/settings.ini";
-
-    _settings = new QSettings(iniFilePath, QSettings::IniFormat, this);
+namespace {
+const QString iniFilePath = QApplication::applicationDirPath() + "/settings.ini";
 }
+
+Settings::Settings()
+    : QSettings(iniFilePath, QSettings::IniFormat)
+{ }
+
 
 void Settings::setValue(const QString& key, const QVariant& value)
 {
-    _settings->setValue(key, value);
+    QSettings::setValue(key, value);
 }
 
 QVariant Settings::value(const QString& key, const QVariant& defaultValue) const
 {
-    return _settings->value(key, defaultValue);
+    return QSettings::value(key, defaultValue);
 }

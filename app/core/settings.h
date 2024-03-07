@@ -4,11 +4,12 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QSettings>
 
 class QString;
 class QSettings;
 
-class Settings : public QObject, public Singleton<Settings>
+class Settings : public QSettings, public Singleton<Settings>
 {
     Q_OBJECT
 
@@ -18,8 +19,6 @@ public:
 
 private:
     Settings();
-
-    QSettings* _settings = nullptr;
 
     friend class Singleton<Settings>;
 };
