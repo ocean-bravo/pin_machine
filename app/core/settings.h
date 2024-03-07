@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QVariant>
 #include <QSettings>
+#include <QApplication>
+
 
 class QString;
 class QSettings;
@@ -18,7 +20,7 @@ public:
     Q_INVOKABLE QVariant value(const QString& key, const QVariant& defaultValue = QVariant()) const;
 
 private:
-    Settings();
+    Settings(QString filename = QApplication::applicationDirPath() + "/settings.ini");
 
     friend class Singleton<Settings>;
 };

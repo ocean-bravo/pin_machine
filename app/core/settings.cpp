@@ -1,19 +1,12 @@
 #include "settings.h"
 #include "utils.h"
 
-#include <QSettings>
-#include <QApplication>
-
 // Решил не ставить кодек для ini файлов
 //_settings->setIniCodec("UTF-8");
 // Тогда не возможны не ASCII символы в ini файлах
 
-namespace {
-const QString iniFilePath = QApplication::applicationDirPath() + "/settings.ini";
-}
-
-Settings::Settings()
-    : QSettings(iniFilePath, QSettings::IniFormat)
+Settings::Settings(QString filename)
+    : QSettings(filename, QSettings::IniFormat)
 { }
 
 
