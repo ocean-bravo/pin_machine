@@ -8,10 +8,10 @@ CollapsiblePanel {
     id: root
 
     width: parent.width
-    height: checked ? 200 : 25
+    height: checked ? 270 : 25
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 200 : 25
+    Layout.preferredHeight: checked ? 270 : 25
 
     checked: true
 
@@ -24,44 +24,56 @@ CollapsiblePanel {
         grid.visible = checked
     }
 
+    property var currentOptions
+
     GridLayout {
         id: grid
         anchors.top:parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        columns: 3
+        columns: 4
 
+        // 1.
         SmTextEdit {
             id: programParams
-            Layout.preferredWidth: 200
+            Layout.preferredWidth: 180
             text: "85 120  165  170  10  8  5000"
+            Layout.columnSpan: 2
         }
+
         SmButton {
             text: qsTr("Generate program")
-            Layout.preferredWidth: 150
+            Layout.preferredWidth: 180
+            Layout.columnSpan: 2
+
             onClicked: {
                 codeEditor.clear()
                 let p = programParams.text.split(' ').filter(e => e).map(Number) // Выкидываю нулевые строки и преобразую в массив чисел
                 codeEditor.append(Utils.generateSteps(p[0], p[1], p[2], p[3], p[4], p[5], p[6]).join("\n"))
             }
         }
-        Item { height: 20; width: 10}
+        // Item { height: 20; width: 10}
 
+        // 2.
         SmButton {
             id: scan
             text: qsTr("Fast scan")
             checkable: true
-            onCheckedChanged: checked ?  TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskScan.stopProgram()
+            onCheckedChanged: checked ? TaskScan.run(codeEditor.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
+                                      : TaskScan.stopProgram()
             Connections { target: TaskScan; function onFinished() { scan.checked = false } }
             function selectedResolution() {
                 return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForScan.currentIndex]
             }
             Layout.preferredWidth: 120
         }
+
+        Item { height: 20; width: 10}
         ComboBox {
             id: resolutionListForScan
             //width: 200
-            Layout.preferredWidth: 150
+            Layout.preferredWidth: 180
+            Layout.columnSpan: 2
             textRole: "display"
             model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
             onModelChanged: {
@@ -74,13 +86,14 @@ CollapsiblePanel {
                 }
             }
         }
-        Item { height: 30; width: 10}
 
+        // 3.
         SmButton {
             id: update
             text: qsTr("Update selected")
             checkable: true
-            onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc) : TaskUpdate.stopProgram()
+            onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc, currentOptions)
+                                      : TaskUpdate.stopProgram()
             Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
             function selectedResolution() {
                 return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForUpdate.currentIndex]
@@ -88,10 +101,13 @@ CollapsiblePanel {
 
             Layout.preferredWidth: 120
         }
+        Item { height: 30; width: 10}
+
         ComboBox {
             id: resolutionListForUpdate
             //width: 200
-            Layout.preferredWidth: 150
+            Layout.preferredWidth: 180
+            Layout.columnSpan: 2
             textRole: "display"
             model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
             onModelChanged: {
@@ -104,8 +120,9 @@ CollapsiblePanel {
                 }
             }
         }
-        Item { height: 30; width: 10}
+        //Item { height: 30; width: 10}
 
+        // 4.
         SmButton {
             id: save
             text: qsTr("Save")
@@ -121,10 +138,11 @@ CollapsiblePanel {
                 modality: Qt.ApplicationModal
             }
         }
+        Item { height: 30; width: 10}
         SmButton {
             id: load
             text: qsTr("Load")
-            //Layout.preferredWidth: 120
+            Layout.preferredWidth: 120
 
             onClicked: loadDialog.open()
 
@@ -137,30 +155,65 @@ CollapsiblePanel {
                 modality: Qt.ApplicationModal
             }
         }
-
         Item { height: 30; width: 10}
 
+        // 5.
         SmButton {
             id: checkCamera
             text: qsTr("Check camera")
             checkable: true
-            onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
+            onCheckedChanged: checked ? TaskCheckCamera.run(currentOptions) : TaskCheckCamera.stopProgram()
             Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
             Layout.preferredWidth: 120
         }
 
+        Item { height: 30; width: 10}
+        Item { height: 30; width: 10}
+        Item { height: 30; width: 10}
+
+        // 6.
         SmButton {
             id: findBlobs
             text: qsTr("Find blobs")
             checkable: true
-            onCheckedChanged: checked ? TaskFindBlob.run(slowFindBlobs.checked) : TaskFindBlob.stopProgram()
+            onCheckedChanged: checked ? TaskFindBlob.run(currentOptions, false)
+                                      : TaskFindBlob.stopProgram()
             Connections { target: TaskFindBlob; function onFinished() { findBlobs.checked = false } }
             Layout.preferredWidth: 120
         }
 
-        CheckBox {
-            id: slowFindBlobs
-            text: "find blobs slowly"
+        Item { height: 30; width: 10}
+        Item { height: 30; width: 10}
+        Item { height: 30; width: 10}
+
+        // 7.
+        Text {
+            text: qsTr("Scene")
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignLeft
+            Layout.preferredHeight: 30
+            Layout.preferredWidth: 60
         }
+
+        ComboBox {
+            id: findBlobScenes
+            model: Engine.filesInDirectory("find_blob_scenes")
+            Layout.preferredWidth: 180
+            onActivated: {
+                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+            }
+            onModelChanged: {
+                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+            }
+            Layout.columnSpan: 2
+        }
+
+        // CheckBox {
+        //     id: slowFindBlobs
+        //     text: "find blobs slowly"
+
+        //     Layout.preferredHeight: 30
+        //     Layout.preferredWidth: 20
+        // }
     }
 }

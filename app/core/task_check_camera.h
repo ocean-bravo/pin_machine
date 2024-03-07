@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QVariantMap>
 
 #include "task_base.h"
 
@@ -16,7 +17,7 @@ public:
     TaskCheckCamera(QObject* parent = nullptr);
     ~TaskCheckCamera();
 
-    Q_INVOKABLE void run();
+    Q_INVOKABLE void run(QVariantMap options);
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -37,7 +38,7 @@ public:
     TaskCheckCameraPrivate();
 
 public slots:
-    void run();
+    void run(QVariantMap options);
 
 private:
     friend class TaskCheckCamera;

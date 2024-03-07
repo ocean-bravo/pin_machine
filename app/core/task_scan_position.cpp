@@ -71,7 +71,7 @@ void TaskScanPositionPrivate::run(QPointF pos)
     {
         scene().setImage(img.copy()); // копия не нужна. Внутри делается копия
         db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.copy());
+        //opencv().appendToBlobDetectorQueue(img.copy());
     });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 

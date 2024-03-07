@@ -42,6 +42,9 @@ public:
 
     Q_INVOKABLE void reload();
 
+    Q_INVOKABLE QStringList filesInDirectory(QString dir);
+    Q_INVOKABLE QVariantMap readFile(QString path);
+
 signals:
     void imageChanged(QString id);
 

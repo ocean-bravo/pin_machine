@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QVariantMap>
 
 #include "task_base.h"
 
@@ -16,7 +17,7 @@ public:
     TaskUpdate(QObject* parent = nullptr);
     ~TaskUpdate();
 
-    Q_INVOKABLE void run(int width, int height, QString fourcc);
+    Q_INVOKABLE void run(int width, int height, QString fourcc, QVariantMap options);
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -37,7 +38,7 @@ public:
     TaskUpdatePrivate();
 
 public slots:
-    void run(int width, int height, QString fourcc);
+    void run(int width, int height, QString fourcc, QVariantMap options);
 
 private:
     friend class TaskUpdate;

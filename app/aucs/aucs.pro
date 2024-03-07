@@ -5,3 +5,5 @@ DISTFILES = $$PWD/*.sh \
             $$PWD/*.ini \
 
 copyFiles($$DISTFILES) # Копирует файлы в директорию установки приложения
+
+copyFiles($$PWD/find_blob_scenes/*, find_blob_scenes)

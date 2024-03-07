@@ -37,10 +37,10 @@ TaskCheckCamera::~TaskCheckCamera()
     _thread->wait(1000);
 }
 
-void TaskCheckCamera::run()
+void TaskCheckCamera::run(QVariantMap options)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QVariantMap, options));
 }
 
 void TaskCheckCamera::stopProgram()
@@ -54,7 +54,7 @@ TaskCheckCameraPrivate::TaskCheckCameraPrivate()
 
 }
 
-void TaskCheckCameraPrivate::run()
+void TaskCheckCameraPrivate::run(QVariantMap options)
 {
     // Разница в диаметрах блобов, больше которой считается что блоб неправильный
     //static const double wrongBlobDiaError = 0.3;
@@ -119,15 +119,15 @@ void TaskCheckCameraPrivate::run()
         //realFiducialBlob->setRealFiducial(true);
         runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
-        updateBlobPosition(realFiducialBlob);
-        updateBlobPosition(realFiducialBlob);
-        updateBlobPosition(realFiducialBlob);
-        int result = updateBlobPosition(realFiducialBlob);
+        updateBlobPosition(realFiducialBlob, options);
+        updateBlobPosition(realFiducialBlob, options);
+        updateBlobPosition(realFiducialBlob, options);
+        int result = updateBlobPosition(realFiducialBlob, options);
         if (result > 0)
         {
-            result = updateBlobPosition(realFiducialBlob);
+            result = updateBlobPosition(realFiducialBlob, options);
             if (result > 0)
-                result = updateBlobPosition(realFiducialBlob);
+                result = updateBlobPosition(realFiducialBlob, options);
         }
         fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
     }

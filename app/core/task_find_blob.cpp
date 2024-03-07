@@ -8,6 +8,7 @@
 
 #include <QScopeGuard>
 #include <QDateTime>
+#include <QVariantMap>
 
 #include <QGraphicsPixmapItem>
 
@@ -31,10 +32,10 @@ TaskFindBlob::~TaskFindBlob()
     _thread->wait(1000);
 }
 
-void TaskFindBlob::run(bool slow)
+void TaskFindBlob::run(QVariantMap options, bool slow)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(bool, slow));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QVariantMap, options), Q_ARG(bool, slow));
 }
 
 void TaskFindBlob::stopProgram()
@@ -48,7 +49,7 @@ TaskFindBlobPrivate::TaskFindBlobPrivate()
 
 }
 
-void TaskFindBlobPrivate::run(bool slow)
+void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -57,11 +58,11 @@ void TaskFindBlobPrivate::run(bool slow)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
+    auto connection = connect(&video(), &Video4::captured, this, [options](QImage img)
     {
         scene().setImage(img); // копия не нужна. Внутри делается копия
         db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.copy());
+        opencv().appendToBlobDetectorQueue(options, img.copy());
     });
 
     auto guard = qScopeGuard([=]() { disconnect(connection); });
@@ -81,7 +82,7 @@ void TaskFindBlobPrivate::run(bool slow)
         QImage img = std::move(pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly));
 
         db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.copy());
+        opencv().appendToBlobDetectorQueue(options, img.copy());
         wait(slow ? 2000 : 10);
 
         if (_stop)

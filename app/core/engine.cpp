@@ -19,6 +19,7 @@
 #include <QQuickStyle>
 #include <QScopeGuard>
 #include <QTimer>
+#include <QDir>
 
 #include "data_bus.h"
 #include "task_scan.h"
@@ -249,4 +250,18 @@ void Engine::reload()
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+}
+
+QStringList Engine::filesInDirectory(QString dir)
+{
+    const QString fullDirName = appDir() + dir + "/";
+    qd() << "dir " << fullDirName;
+    const QStringList filesInDir = QDir(fullDirName).entryList(QStringList{"*.ini"}, QDir::Files | QDir::NoDotAndDotDot);
+    //qd() << "entry list " <<
+    return filesInDir;
+}
+
+QVariantMap Engine::readFile(QString path)
+{
+    return openIniFile(path);
 }

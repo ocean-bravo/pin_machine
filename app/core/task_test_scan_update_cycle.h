@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QVariantMap>
 
 #include "task_base.h"
 
@@ -44,7 +45,7 @@ public:
     TaskTestScanUpdateCyclePrivate(TaskScan* sb, TaskUpdate* ub);
 
 public slots:
-    void run(QString program);
+    void run(QString program, QVariantMap options);
 
 private:
     TaskScan* _sb = nullptr;

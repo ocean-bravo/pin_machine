@@ -32,7 +32,7 @@ void TaskBase::moveToAndWaitPosition(QPointF pos)
     waitPosXY(pos);
 }
 
-int TaskBase::updateBlobPosition(BlobItem *blob)
+int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options)
 {
     const double diaBlob = blob->rect().width();
 
@@ -50,7 +50,7 @@ int TaskBase::updateBlobPosition(BlobItem *blob)
 
     waitForNext();
 
-    opencv().blobDetectorUpdated(std::move(video().smallRegion().copy()));
+    opencv().blobDetectorUpdated(video().smallRegion(), options);
 
     waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
 

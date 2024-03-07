@@ -152,17 +152,17 @@ cv::Mat qimage2matCopy(const QImage& qimage)
     return qimage2matRef(qimage).clone();
 }
 
-cv::Mat adaptiveThreshold(const cv::Mat& in)
+cv::Mat adaptiveThreshold(const cv::Mat& in, QVariantMap options)
 {
     cv::Mat out;
 
-    const bool adTrEnable = db().value("blob_ad_tr_enable").toBool();
+    const bool adTrEnable = options.value("blob_ad_tr_enable").toBool();
     if (adTrEnable)
     {
-        const int blockSize = db().value("blob_ad_tr_blockSize").toInt();
-        const double c = db().value("blob_ad_tr_c").toDouble();
-        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
-        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        const int blockSize = options.value("blob_ad_tr_blockSize").toInt();
+        const double c = options.value("blob_ad_tr_c").toDouble();
+        const int typeAdTr = options.value("blob_ad_tr_type").toInt(); // 0, 1
+        const int typeTr = options.value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
         cv::adaptiveThreshold(in, out, 255, typeAdTr, typeTr, blockSize, c);
     }
     else
@@ -175,7 +175,7 @@ cv::Mat adaptiveThreshold(const cv::Mat& in)
 
 // img должно быть скопировано, при передаче в эту функцию
 // Круги рисуются прямо на переданном изображении, без копирования.
-OpenCv::BlobsOnImage detectBlobs(QImage img)
+OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
 {
     static quint32 count = 0;
     ++count;
@@ -188,34 +188,29 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
     };
 
     try {
-
-        //ScopedMeasure mes (QString("blob detect (%1) ").arg(count), ScopedMeasure::Milli);
-
-        //qd() << "detect blobs " << img.width() << img.height();
-
         cv::SimpleBlobDetector::Params params;
 
         // Filter by Area.
-        params.filterByArea = db().value("blob_filter_area_enabled").toBool();
-
+        params.filterByArea = options.value("blob_filter_area_enabled").toBool();
         if (params.filterByArea)
         {
-            double minDia = db().value("blob_minDia_mm").toDouble();
-            double maxDia = db().value("blob_maxDia_mm").toDouble();
+            double minDia = options.value("blob_minDia_mm").toDouble();
+            double maxDia = options.value("blob_maxDia_mm").toDouble();
 
             const double pixInMm = img.devicePixelRatioF();
             params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
             params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
         }
+
         // Filter by Circularity
         params.filterByCircularity = false;
         //params.minCircularity = 0.01;
         //params.maxCircularity = 5.0;
 
         // Filter by Convexity
-        params.filterByConvexity = db().value("blob_filter_convexity_enabled").toBool();
-        params.minConvexity = db().value("blob_filter_convexity_min").toDouble();
-        params.maxConvexity = db().value("blob_filter_convexity_max").toDouble();
+        params.filterByConvexity = options.value("blob_filter_convexity_enabled").toBool();
+        params.minConvexity = options.value("blob_filter_convexity_min").toDouble();
+        params.maxConvexity = options.value("blob_filter_convexity_max").toDouble();
 
         // Filter by Inertia
         params.filterByInertia = false;
@@ -225,9 +220,9 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         // Distance Between Blobs
         params.minDistBetweenBlobs = 2.0;
 
-        params.thresholdStep = db().value("blob_thresholdStep").toFloat();
-        params.minThreshold = db().value("blob_minThreshold").toFloat();
-        params.maxThreshold = db().value("blob_maxThreshold").toFloat();
+        params.thresholdStep = options.value("blob_thresholdStep").toFloat();
+        params.minThreshold = options.value("blob_minThreshold").toFloat();
+        params.maxThreshold = options.value("blob_maxThreshold").toFloat();
 
         // Create a detector with the parameters
         cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
@@ -243,7 +238,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
         //dbg(blur);
         //cv::GaussianBlur(adtr, blur, cv::Size(19, 19), 0, 0, cv::BORDER_CONSTANT);
 
-        cv::Mat adTr = adaptiveThreshold(blur);
+        cv::Mat adTr = adaptiveThreshold(blur, options);
         //dbg(adTr);
 
         db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
@@ -264,8 +259,8 @@ OpenCv::BlobsOnImage detectBlobs(QImage img)
     }
     catch (...)
     {
-        const int typeAdTr = db().value("blob_ad_tr_type").toInt(); // 0, 1
-        const int typeTr = db().value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        const int typeAdTr = options.value("blob_ad_tr_type").toInt(); // 0, 1
+        const int typeTr = options.value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
         qd() << "blob crashed" << typeAdTr << typeTr;
     }
 
@@ -331,9 +326,9 @@ OpenCv::OpenCv()
         if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
         {
             //qd() << "next image";
-            QImage img = _detectBlobQueue.first();
+            auto[options, img] = _detectBlobQueue.first();
             _detectBlobQueue.pop_front();
-            QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
+            QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
             _blobWatcherCaptured.setFuture(future);
         }
     });
@@ -358,17 +353,17 @@ void OpenCv::blobDetectorLive(QImage img)
     QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::appendToBlobDetectorQueue(QImage img)
+void OpenCv::appendToBlobDetectorQueue(QVariantMap options, QImage img)
 {
-    _detectBlobQueue.push_back(img);
+    _detectBlobQueue.push_back(std::make_tuple(options, img));
 }
 
-void OpenCv::blobDetectorUpdated(QImage img)
+void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)
 {
     if (!_blobWatcherCapturedSmallRegion.isFinished())
         return;
 
-    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
+    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
     _blobWatcherCapturedSmallRegion.setFuture(future);
 
     disconnect(_smallRegConn);
@@ -410,15 +405,15 @@ std::tuple<bool, double, double, double> OpenCv::smallRegionBlob() const
 
 OpenCvPrivate::OpenCvPrivate()
 {
-    db().insert("blob_minDia_mm", settings().value("blob_minDia_mm", 0.3).toDouble());
-    db().insert("blob_maxDia_mm", settings().value("blob_maxDia_mm", 6.0).toDouble());
-    db().insert("blob_thresholdStep", 10);
-    db().insert("blob_minThreshold", 1);
-    db().insert("blob_maxThreshold", 200);
-    //    db().insert("circle_maxRadius", 110);
+    // db().insert("blob_minDia_mm", settings().value("blob_minDia_mm", 0.3).toDouble());
+    // db().insert("blob_maxDia_mm", settings().value("blob_maxDia_mm", 6.0).toDouble());
+    // db().insert("blob_thresholdStep", 10);
+    // db().insert("blob_minThreshold", 1);
+    // db().insert("blob_maxThreshold", 200);
+    // //    db().insert("circle_maxRadius", 110);
 
-    db().insert("blob_ad_tr_blockSize", settings().value("blob_ad_tr_blockSize", 29).toInt());
-    db().insert("blob_ad_tr_c",         settings().value("blob_ad_tr_c", 9.0).toDouble());
+    // db().insert("blob_ad_tr_blockSize", settings().value("blob_ad_tr_blockSize", 29).toInt());
+    // db().insert("blob_ad_tr_c",         settings().value("blob_ad_tr_c", 9.0).toDouble());
 
     db().insert("blob_info", "");
 
@@ -457,12 +452,12 @@ OpenCvPrivate::OpenCvPrivate()
     });
 }
 
-void OpenCvPrivate::blobDetectorLive(QImage img)
+void OpenCvPrivate::blobDetectorLive(QImage img, QVariantMap options)
 {
     if (!_blobWatcherLive.isFinished())
         return;
 
-    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img);
+    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
     _blobWatcherLive.setFuture(future);
 }
 

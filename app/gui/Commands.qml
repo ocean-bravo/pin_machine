@@ -230,7 +230,14 @@ Item {
                 }
 
                 PanelMachineComands {}
-                PanelTasks {}
+
+                //PanelTasks {}
+                DebugLoader {
+                    Layout.preferredWidth: 400
+                    Layout.preferredHeight: item.height
+                    path: "/home/mint/devel/pin_machine/app/gui/PanelTasks.qml"
+                }
+
                 PanelMoveToPosition {}
                 PanelJogControl {}
                 PanelPunchCode {}

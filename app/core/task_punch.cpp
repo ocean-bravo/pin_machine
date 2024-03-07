@@ -38,10 +38,10 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run(QString punchProgram)
+void TaskPunch::run(QString punchProgram, QVariantMap options)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram), Q_ARG(QVariantMap, options));
 }
 
 void TaskPunch::stopProgram()
@@ -55,7 +55,7 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run(QString punchProgram)
+void TaskPunchPrivate::run(QString punchProgram, QVariantMap options)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -113,15 +113,15 @@ void TaskPunchPrivate::run(QString punchProgram)
         //realFiducialBlob->setRealFiducial(true);
         runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
-        updateBlobPosition(realFiducialBlob);
-        updateBlobPosition(realFiducialBlob);
-        updateBlobPosition(realFiducialBlob);
-        int result = updateBlobPosition(realFiducialBlob);
+        updateBlobPosition(realFiducialBlob, options);
+        updateBlobPosition(realFiducialBlob, options);
+        updateBlobPosition(realFiducialBlob, options);
+        int result = updateBlobPosition(realFiducialBlob, options);
         if (result > 0)
         {
-            result = updateBlobPosition(realFiducialBlob);
+            result = updateBlobPosition(realFiducialBlob, options);
             if (result > 0)
-                result = updateBlobPosition(realFiducialBlob);
+                result = updateBlobPosition(realFiducialBlob, options);
         }
         fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
     }

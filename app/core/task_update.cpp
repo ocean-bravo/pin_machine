@@ -38,10 +38,14 @@ TaskUpdate::~TaskUpdate()
     _thread->wait(1000);
 }
 
-void TaskUpdate::run(int width, int height, QString fourcc)
+void TaskUpdate::run(int width, int height, QString fourcc, QVariantMap options)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(QString, fourcc));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
+                              Q_ARG(int, width),
+                              Q_ARG(int, height),
+                              Q_ARG(QString, fourcc),
+                              Q_ARG(QVariantMap, options));
 }
 
 void TaskUpdate::stopProgram()
@@ -55,7 +59,7 @@ TaskUpdatePrivate::TaskUpdatePrivate()
 
 }
 
-void TaskUpdatePrivate::run(int width, int height, QString fourcc)
+void TaskUpdatePrivate::run(int width, int height, QString fourcc, QVariantMap options)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -113,13 +117,13 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 
         ++count;
 
-        updateBlobPosition(blob);
-        int result = updateBlobPosition(blob);
+        updateBlobPosition(blob, options);
+        int result = updateBlobPosition(blob, options);
         if (result > 0)
         {
-            result = updateBlobPosition(blob);
+            result = updateBlobPosition(blob, options);
             if (result > 0)
-                result = updateBlobPosition(blob);
+                result = updateBlobPosition(blob, options);
         }
 
         const double x = blob->scenePos().x();

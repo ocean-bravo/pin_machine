@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QApplication>
+#include <QSettings>
 
 #include <chrono>
 #include <cmath>
@@ -135,4 +136,27 @@ QString doubleToString(double value)
     if (num.endsWith('.')) num.chop(1);
 
     return num;
+}
+
+QVariantMap openIniFile(const QString& path)
+{
+    QSettings sett(appDir() + path, QSettings::IniFormat);
+
+    QStringList allKeys = sett.allKeys();
+
+    QVariantMap values;
+    for (const QString& key : allKeys)
+    {
+        values.insert(key, sett.value(key));
+    }
+
+    return values;
+}
+
+QByteArray openAndReadAll(const QString& path)
+{
+    QFile file(appDir() + path);
+    if (file.open(QFile::ReadOnly))
+        return file.readAll();
+    return QByteArray();
 }

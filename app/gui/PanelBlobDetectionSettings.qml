@@ -13,7 +13,7 @@ CollapsiblePanel {
 
     checked: false
 
-    text: qsTr("Blob detection settings")
+    text: qsTr("Preview blob detection settings")
 
     onCheckedChanged: {
         rect.visible = checked

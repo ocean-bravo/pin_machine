@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QVariantMap>
 
 #include "task_base.h"
 
@@ -16,7 +17,7 @@ public:
     TaskPunch(QObject* parent = nullptr);
     ~TaskPunch();
 
-    Q_INVOKABLE void run(QString punchProgram);
+    Q_INVOKABLE void run(QString punchProgram, QVariantMap options);
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -37,7 +38,7 @@ public:
     TaskPunchPrivate();
 
 public slots:
-    void run(QString punchProgram);
+    void run(QString punchProgram, QVariantMap options);
 
 private:
     friend class TaskPunch;

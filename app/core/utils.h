@@ -163,3 +163,7 @@ inline QByteArray v4l2_fourcc2s(quint32 fourcc)
 
     return buf;
 }
+
+QByteArray openAndReadAll(const QString& path);
+
+QVariantMap openIniFile(const QString& path);

@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QPointF>
+#include <QVariantMap>
 
 #include "task_base.h"
 
@@ -19,7 +20,7 @@ public:
     TaskFindBlob(QObject* parent = nullptr);
     ~TaskFindBlob();
 
-    Q_INVOKABLE void run(bool slow = false);
+    Q_INVOKABLE void run(QVariantMap options, bool slow = false);
 
     Q_INVOKABLE void stopProgram();
 
@@ -41,7 +42,7 @@ public:
     TaskFindBlobPrivate();
 
 public slots:
-    void run(bool slow);
+    void run(QVariantMap options, bool slow);
 
 private:
 

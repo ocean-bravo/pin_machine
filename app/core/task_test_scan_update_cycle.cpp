@@ -63,7 +63,7 @@ TaskTestScanUpdateCyclePrivate::TaskTestScanUpdateCyclePrivate(TaskScan *sb, Tas
     _ub = ub;
 }
 
-void TaskTestScanUpdateCyclePrivate::run(QString program)
+void TaskTestScanUpdateCyclePrivate::run(QString program, QVariantMap options)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -88,7 +88,7 @@ void TaskTestScanUpdateCyclePrivate::run(QString program)
             break;
         }
 
-        _ub->run(1280, 960, "YUYV");
+        _ub->run(1280, 960, "YUYV", options);
 
         waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 
