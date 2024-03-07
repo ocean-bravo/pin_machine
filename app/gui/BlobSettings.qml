@@ -12,6 +12,7 @@ Rectangle {
 
     property var blobLiveOptions: DataBus.blob_live_options
     onBlobLiveOptionsChanged: {
+        console.log("blob live settings updated")
         DataBus.blob_live_options = blobLiveOptions
     }
 
