@@ -8,6 +8,7 @@ DataBus::DataBus(QObject *parent)
 {
 
     QStringList resolutions;
+    qd() << "all keys " << settings().allKeys();
     for (const QString& key : settings().allKeys())
     {
         if (key.contains("pixel_size_"))
