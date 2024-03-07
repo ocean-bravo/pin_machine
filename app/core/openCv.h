@@ -34,7 +34,7 @@ public:
     static double corr(QImage cap1, QImage cap2);
 
     void searchCirclesLive(QImage img);
-    void blobDetectorLive(QImage img);
+    void blobDetectorLive(QImage img, QVariantMap options);
 
     void appendToBlobDetectorQueue(QVariantMap options, QImage img);
 

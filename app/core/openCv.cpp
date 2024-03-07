@@ -348,9 +348,9 @@ void OpenCv::searchCirclesLive(QImage img)
     QMetaObject::invokeMethod(_impl, "searchCirclesLive", Qt::QueuedConnection, Q_ARG(QImage, img));
 }
 
-void OpenCv::blobDetectorLive(QImage img)
+void OpenCv::blobDetectorLive(QImage img, QVariantMap options)
 {
-    QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img));
+    QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img), Q_ARG(QVariantMap, options));
 }
 
 void OpenCv::appendToBlobDetectorQueue(QVariantMap options, QImage img)
