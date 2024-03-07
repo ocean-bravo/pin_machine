@@ -174,7 +174,9 @@ void Engine::createQmlEngine()
             opencv().searchCirclesLive(img.copy());
 
         if (mode == "blob" || mode == "adapt_threshold_2")
-            opencv().blobDetectorLive(img.copy());
+        {
+            opencv().blobDetectorLive(img.copy(), db().value("blob_live_options").toMap());
+        }
     });
 
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
