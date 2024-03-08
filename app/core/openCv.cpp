@@ -198,6 +198,10 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
             double minDia = options.value("blob_minDia_mm").toDouble();
             double maxDia = options.value("blob_maxDia_mm").toDouble();
 
+            qd() << "min dia " << minDia;
+            qd() << "maz dia " << maxDia;
+            qd() << "pixInMm " << pixInMm;
+
             const double pixInMm = img.devicePixelRatioF();
             params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
             params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
