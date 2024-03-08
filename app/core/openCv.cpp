@@ -260,7 +260,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     catch (...)
     {
         qd() << "options " << options;
-        qd() << "blob crashed" << typeAdTr << typeTr;
+        qd() << "blob crashed";
     }
 
     return {img, QVector<OpenCv::Blob>()};
