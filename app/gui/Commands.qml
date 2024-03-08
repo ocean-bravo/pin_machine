@@ -302,7 +302,7 @@ Item {
                 ImageItem {
                     id: image
                     anchors.fill: parent
-                    image: DataBus["image_" + DataBus.mode]
+                    image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
                 }
 
                 Item {
@@ -363,9 +363,9 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold_2", "corr"]
-                            onActivated: DataBus.mode = currentText
-                            Component.onCompleted: DataBus.mode = "raw"
+                            model: ["raw", "circle", "blob", "raw_captured", "small_blob_captured", "adapt_threshold", "corr"]
+                            onActivated: DataBus.live_preview_mode = currentText
+                            Component.onCompleted: DataBus.live_preview_mode = "raw"
                             MouseArea {
                                 anchors.fill: parent
                                 onWheel: {
@@ -447,12 +447,6 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                     }
-                    // BlobSettings {
-                    //     visible: imgType.currentText === "blob" || imgType.currentText === "adapt_threshold_2"
-                    //     anchors.bottom: parent.bottom
-                    //     anchors.left: parent.left
-                    //     anchors.right: parent.right
-                    // }
                 }
             }
         }

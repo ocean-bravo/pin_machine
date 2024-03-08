@@ -246,7 +246,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         cv::Mat adTr = adaptiveThreshold(blur, options);
         //dbg(adTr);
 
-        db().insert("image_adapt_threshold_2", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
+        db().insert("image_adapt_threshold", mat_to_qimage_ref(adTr, QImage::Format_Grayscale8).copy());
 
         // cv::Mat blur;
         // cv::medianBlur(adtr, blur, 3);

@@ -165,15 +165,15 @@ void Engine::createQmlEngine()
 {
     connect(&video(), &Video4::rawImage, this, [](QImage img)
     {
-        const QString mode = db().value("mode").toString();
+        const QString livePreviewMode = db().value("live_preview_mode").toString();
 
-        if (mode == "raw")
-            db().insert("image_raw", img.copy());
+        if (livePreviewMode == "raw")
+            db().insert("live_preview_image_raw", img.copy());
 
-        if (mode == "circle")
+        if (livePreviewMode == "circle")
             opencv().searchCirclesLive(img.copy());
 
-        if (mode == "blob" || mode == "adapt_threshold_2")
+        if (livePreviewMode == "blob" || livePreviewMode == "adapt_threshold")
         {
             opencv().blobDetectorLive(img.copy(), db().value("blob_live_options").toMap());
         }
@@ -181,17 +181,17 @@ void Engine::createQmlEngine()
 
     connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img)
     {
-        db().insert("image_raw_captured", img.copy());
+        db().insert("live_preview_image_raw_captured", img.copy());
     });
 
     connect(&opencv(), &OpenCv::circleChanged, this, [](QImage img)
     {
-        db().insert("image_circle", img);
+        db().insert("live_preview_image_circle", img);
     });
 
     connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [](QImage img)
     {
-        db().insert("image_small_blob_captured", img);
+        db().insert("live_preview_image_small_blob_captured", img);
     });
 
     TaskScan* taskScan = new TaskScan(this);

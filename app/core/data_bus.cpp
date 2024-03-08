@@ -22,13 +22,13 @@ DataBus::DataBus(QObject *parent)
     insert("x_coord", QString("0.000"));
     insert("y_coord", QString("0.000"));
 
-    insert("image_raw", QImage());
-    insert("image_blob", QImage());
-    insert("image_circle", QImage());
-    insert("image_raw_captured", QImage());
-    insert("image_small_blob_captured", QImage());
-    //insert("image_adapt_threshold_1", QImage());
-    insert("image_adapt_threshold_2", QImage());
+    insert("live_preview_image_raw", QImage());
+    insert("live_preview_image_blob", QImage());
+    insert("live_preview_image_circle", QImage());
+    insert("live_preview_image_raw_captured", QImage());
+    insert("live_preview_image_small_blob_captured", QImage());
+    insert("live_preview_image_adapt_threshold", QImage());
+
     insert("pixel_size_test", 0);
 
     insert("next", "");
