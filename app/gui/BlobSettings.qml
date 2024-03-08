@@ -9,10 +9,7 @@ Rectangle {
     color: "transparent"
     height: lay.height
 
-    property var blob_live_options//: DataBus.blob_live_options
-
     property bool optionsChanged: {
-
         DataBus.blob_filter_area_enabled;
         DataBus.blob_minDia_mm;
         DataBus.blob_maxDia_mm;

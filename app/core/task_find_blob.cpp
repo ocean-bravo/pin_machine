@@ -58,28 +58,14 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    auto connection = connect(&video(), &Video4::captured, this, [options](QImage img)
-    {
-        scene().setImage(img); // копия не нужна. Внутри делается копия
-        db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(options, img.copy());
-    });
-
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-
-
     QList<QGraphicsPixmapItem*> pixs = scene().pixmaps();
-
-    // db("blob_filter_area_enabled") = true;
-    // db("blob_minDia_mm") = minDia;
-    // db("blob_maxDia_mm") = maxDia;
 
     // подать на обнаружение
     qd() << "images to find " << pixs.size();
 
     for (QGraphicsPixmapItem* pixmap : pixs)
     {
-        QImage img = std::move(pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly));
+        QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
 
         db().insert("image_raw_captured", img.copy());
         opencv().appendToBlobDetectorQueue(options, img.copy());
@@ -91,7 +77,6 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
             break;
         }
     }
-
 
     //scene().removeDuplicatedBlobs();
 
