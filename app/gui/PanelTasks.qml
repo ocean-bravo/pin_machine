@@ -205,6 +205,12 @@ CollapsiblePanel {
             onModelChanged: {
                 currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
             }
+
+            Component.onCompleted: {
+                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+                console.log(currentOptions)
+            }
+
             Layout.columnSpan: 2
         }
 

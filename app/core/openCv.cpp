@@ -181,6 +181,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     ++count;
 
     qd() << "detect blobs " << img.text("x") << img.text("y") << img.devicePixelRatioF();
+    qd() << "options " << options;
 
     auto dbg = [](const cv::Mat& mat)
     {
@@ -259,7 +260,6 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     }
     catch (...)
     {
-        qd() << "options " << options;
         qd() << "blob crashed";
     }
 
