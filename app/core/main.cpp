@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QApplication>
 #include <QScopedPointer>
+#include <QScreen>
 #include <QQmlApplicationEngine>
 
 #include <iostream>
@@ -75,7 +76,13 @@ int main(int argc, char* argv[])
     // w.show();
 
     ScanView scene;
+
+    QRect screenrect = app.primaryScreen()->geometry();
+    scene.resize(screenrect.width() /2, screenrect.height());
+    scene.move(screenrect.right(), screenrect.top());
     scene.show();
+
+    QTimer::singleShot(2000, [&app]() { qd() << app.screens(); });
 
     return app.exec();
 }
