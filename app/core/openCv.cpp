@@ -181,7 +181,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     ++count;
 
     qd() << "detect blobs " << img.text("x") << img.text("y") << img.devicePixelRatioF();
-    qd() << "options " << options;
+    //qd() << "options " << options;
 
     auto dbg = [](const cv::Mat& mat)
     {
@@ -257,10 +257,11 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         detector->detect(adTr, keypoints);
 
         drawKeyPoints(rgbimg, keypoints);
-        for (const cv::KeyPoint & kp : keypoints)
-        {
-            qd() << "kp size " << kp.size;
-        }
+
+        // for (const cv::KeyPoint & kp : keypoints)
+        // {
+        //     qd() << "kp size " << kp.size;
+        // }
 
         //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
