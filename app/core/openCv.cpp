@@ -192,7 +192,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         cv::SimpleBlobDetector::Params params;
 
         // Filter by Area.
-        params.filterByArea = options.value("blob_filter_area_enabled").toBool();
+        params.filterByArea = true;//options.value("blob_filter_area_enabled").toBool();
         if (params.filterByArea)
         {
             double minDia = options.value("blob_minDia_mm").toDouble();
