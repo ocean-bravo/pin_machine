@@ -91,7 +91,7 @@ Scene::~Scene()
 
 BlobItem* Scene::addBlob(double x, double y, double dia, bool sceneIsParent)
 {
-    qd() << "add blob " << x << y << dia;
+    //qd() << "add blob " << x << y << dia;
 
     if (x == 0)
         asm("nop");
