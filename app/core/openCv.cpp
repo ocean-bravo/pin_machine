@@ -313,7 +313,6 @@ OpenCv::OpenCv()
 
     connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
-        //qd() << "finished";
         QImage img = std::get<0>(_blobWatcherCaptured.result());
 
         db().insert("image_blob", img.copy());
@@ -331,15 +330,34 @@ OpenCv::OpenCv()
     {
         if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
         {
-            //qd() << "next image";
-            auto[options, img] = _detectBlobQueue.first();
+            auto [img, options] = _detectBlobQueue.first();
             _detectBlobQueue.pop_front();
             QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
             _blobWatcherCaptured.setFuture(future);
         }
     });
 
-    db().insert("img_fmt", 0);
+    connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
+    {
+        QImage img = std::get<0>(_blobWatcherLive.result());
+
+        db().insert("image_blob", img.copy());
+
+        const QVector<OpenCv::Blob> blobs = std::get<1>(_blobWatcherLive.result());
+
+        QString res;
+        res += "x_mm \t y_mm \t dia_mm \n";
+
+        for (const OpenCv::Blob& blob : blobs)
+        {
+            res.append(QString("%1 \t %2 \t %3 \n")
+                       .arg(toReal1(blob.xMm))
+                       .arg(toReal1(blob.yMm))
+                       .arg(toReal1(blob.diameterMm)));
+
+        }
+        db().insert("blob_info", res);
+    });
 }
 
 OpenCv::~OpenCv()
@@ -356,12 +374,16 @@ void OpenCv::searchCirclesLive(QImage img)
 
 void OpenCv::blobDetectorLive(QImage img, QVariantMap options)
 {
-    QMetaObject::invokeMethod(_impl, "blobDetectorLive", Qt::QueuedConnection, Q_ARG(QImage, img), Q_ARG(QVariantMap, options));
+    if (!_blobWatcherLive.isFinished())
+        return;
+
+    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
+    _blobWatcherLive.setFuture(future);
 }
 
-void OpenCv::appendToBlobDetectorQueue(QVariantMap options, QImage img)
+void OpenCv::appendToBlobDetectorQueue(QImage img, QVariantMap options)
 {
-    _detectBlobQueue.push_back(std::make_tuple(options, img));
+    _detectBlobQueue.push_back(std::make_tuple(img, options));
 }
 
 void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)
@@ -395,11 +417,6 @@ void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)
 
         _smallRegionBlob = {true, blob.xMm, blob.yMm, blob.diameterMm};
 
-        // const double xBlobError = pixToRealX(0.0, blob.xPix, im.width());
-        // const double yBlobError = pixToRealY(0.0, blob.yPix, im.height());
-
-        // qd() << "blob error " << xBlobError << yBlobError;
-
         emit smallRegionBlobDetectionFinished();
     });
 }
@@ -413,7 +430,6 @@ OpenCvPrivate::OpenCvPrivate()
 {
     db().insert("blob_info", "");
 
-
     db().insert("circle_dp", 1.2);
     db().insert("circle_minDist", 70);
     db().insert("circle_param1", 168);
@@ -425,38 +441,8 @@ OpenCvPrivate::OpenCvPrivate()
     {
         emit circleChanged(_circleWatcherLive.result());
     });
-
-    connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
-    {
-        QImage im = std::get<0>(_blobWatcherLive.result());
-
-        db().insert("image_blob", im.copy());
-
-        const QVector<OpenCv::Blob> blobs = std::get<1>(_blobWatcherLive.result());
-
-        QString res;
-        res += "x_mm \t y_mm \t dia_mm \n";
-
-        for (const OpenCv::Blob& blob : blobs)
-        {
-            res.append(QString("%1 \t %2 \t %3 \n")
-                       .arg(toReal1(blob.xMm))
-                       .arg(toReal1(blob.yMm))
-                       .arg(toReal1(blob.diameterMm)));
-
-        }
-        db().insert("blob_info", res);
-    });
 }
 
-void OpenCvPrivate::blobDetectorLive(QImage img, QVariantMap options)
-{
-    if (!_blobWatcherLive.isFinished())
-        return;
-
-    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
-    _blobWatcherLive.setFuture(future);
-}
 
 void OpenCvPrivate::searchCirclesLive(QImage img)
 {

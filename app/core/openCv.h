@@ -30,15 +30,14 @@ public:
     using BlobsOnImage = std::tuple<QImage, QVector<Blob>>; // 3 параметр - временно
     //using BlobsOnImage2 = std::tuple<QVector<Blob>, QString, QString, int, int>; // координаты центра, размеры изображения
 
-
     static double corr(QImage cap1, QImage cap2);
 
     void searchCirclesLive(QImage img);
     void blobDetectorLive(QImage img, QVariantMap options);
 
-    void appendToBlobDetectorQueue(QVariantMap options, QImage img);
+    void appendToBlobDetectorQueue(QImage img, QVariantMap options);
 
-    Q_INVOKABLE void blobDetectorUpdated(QImage img, QVariantMap options);
+    void blobDetectorUpdated(QImage img, QVariantMap options);
     std::tuple<bool, double, double, double> smallRegionBlob() const;
 
 signals:
@@ -55,10 +54,12 @@ private:
     OpenCvPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 
-    QQueue<std::tuple<QVariantMap, QImage>> _detectBlobQueue; // Опции обнаружения блобов, само изображение
-    //QVector<BlobInfo2> _detectBlobResult;
+    QQueue<std::tuple<QImage, QVariantMap>> _detectBlobQueue; // Опции обнаружения блобов, само изображение
+
     QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCaptured;
     QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCapturedSmallRegion;
+    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherLive;
+
     QMetaObject::Connection _smallRegConn;
     std::tuple<bool, double, double, double> _smallRegionBlob;
 
@@ -74,7 +75,6 @@ public:
 
 public slots:
     void searchCirclesLive(QImage img);
-    void blobDetectorLive(QImage img, QVariantMap options);
 
 signals:
     void circleChanged(QImage);
@@ -84,8 +84,6 @@ private:
     QImage searchCirclesWorker(QImage img);
 
     QFutureWatcher<QImage> _circleWatcherLive;
-    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherLive;
-    QMutex _blobQueueMutex;
 };
 
 inline OpenCv& opencv()
