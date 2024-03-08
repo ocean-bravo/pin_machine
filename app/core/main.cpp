@@ -78,11 +78,9 @@ int main(int argc, char* argv[])
     ScanView scene;
 
     QRect screenrect = app.primaryScreen()->geometry();
-    scene.resize(screenrect.width() /2, screenrect.height());
-    scene.move(screenrect.right(), screenrect.top());
+    scene.resize(1920 / 2, screenrect.height());
+    scene.move(1920/2, screenrect.top());
     scene.show();
-
-    QTimer::singleShot(2000, [&app]() { qd() << app.screens(); });
 
     return app.exec();
 }
