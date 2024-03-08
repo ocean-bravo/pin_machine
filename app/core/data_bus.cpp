@@ -91,6 +91,16 @@ void DataBus::setPixInMm(double size)
     emit pixelSizeChanged();
 }
 
+double DataBus::widthToPixInMm(int width)
+{
+    QVariant val = value(QString("pixel_size_%1").arg(width));
+
+    if (val.isNull())
+        return 1.0; // Индикатор того, что нет pixInMm для данного разрешения
+
+    return val.toDouble();
+}
+
 void DataBus::insert(const QString& key, const QVariant& value)
 {
     _lock.lockForWrite();

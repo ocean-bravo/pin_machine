@@ -20,6 +20,8 @@ public:
     Q_INVOKABLE double pixInMm() const;
     Q_INVOKABLE void setPixInMm(double);
 
+    double widthToPixInMm(int width);
+
     Q_INVOKABLE void remove(QString key)
     {
         qd() << "clear " << key;

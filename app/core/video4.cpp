@@ -238,10 +238,7 @@ void Video4Private::imageDispatch(QImage img)
 
     img.setText("x", x);
     img.setText("y", y);
-    //img.setDotsPerMeterX(db().pixInMm()*1000);
-    //int resolutionWidth = db().value("resolution_width");
-
-    img.setDevicePixelRatio(db().pixInMm());
+    img.setDevicePixelRatio(db().widthToPixInMm(img.width()));
 
     if (_capture || _captureSmallRegion)
     {
