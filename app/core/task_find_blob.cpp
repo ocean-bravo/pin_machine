@@ -68,7 +68,7 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
         QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
 
         db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.copy(), options);
+        opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
         wait(500); //(slow ? 2000 : 10);
 
         if (_stop)
