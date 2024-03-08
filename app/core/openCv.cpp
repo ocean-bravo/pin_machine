@@ -259,8 +259,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     }
     catch (...)
     {
-        const int typeAdTr = options.value("blob_ad_tr_type").toInt(); // 0, 1
-        const int typeTr = options.value("blob_tr_type").toInt(); // 0, 1, 2,3,4,7,8,16
+        qd() << "options " << options;
         qd() << "blob crashed" << typeAdTr << typeTr;
     }
 
