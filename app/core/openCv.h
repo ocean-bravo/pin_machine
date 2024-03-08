@@ -51,6 +51,8 @@ private:
     OpenCv();
     ~OpenCv();
 
+    void blobDetectorCaptured();
+
     OpenCvPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 

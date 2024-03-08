@@ -92,11 +92,6 @@ void Video4::capture(double widthMm)
 
 QImage Video4::smallRegion()
 {
-//    const double x = db().value("xPos").toDouble();
-//    const double y = db().value("yPos").toDouble();
-
-//    _smallRegion.setText("x", toReal3(x));
-//    _smallRegion.setText("y", toReal3(y));
     return _smallRegion.copy();
 }
 
@@ -109,7 +104,6 @@ void Video4::reloadDevices()
 {
     QMetaObject::invokeMethod(_impl, "reloadDevices", Qt::QueuedConnection);
 }
-
 
 void Video4Private::init()
 {
@@ -138,7 +132,6 @@ void Video4Private::capture(double widthMm)
     _rectToCopy = QRect((w/2) - (widthPix/2), (h/2) - (widthPix/2), widthPix, widthPix);
     _captureSmallRegion = true;
 }
-
 
 void Video4Private::reloadDevices()
 {

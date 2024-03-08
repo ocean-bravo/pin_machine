@@ -313,10 +313,6 @@ OpenCv::OpenCv()
 
     connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
-        QImage img = std::get<0>(_blobWatcherCaptured.result());
-
-        db().insert("image_blob", img.copy());
-
         const QVector<Blob> blobs = std::get<1>(_blobWatcherCaptured.result());
 
         for (const Blob& blob : blobs)
@@ -325,23 +321,13 @@ OpenCv::OpenCv()
 
     QTimer* timer = new QTimer;
     timer->start(50);
-
-    connect(timer, &QTimer::timeout, this, [this]()
-    {
-        if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
-        {
-            auto [img, options] = _detectBlobQueue.first();
-            _detectBlobQueue.pop_front();
-            QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
-            _blobWatcherCaptured.setFuture(future);
-        }
-    });
+    connect(timer, &QTimer::timeout, this, &OpenCv::blobDetectorCaptured);
 
     connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
         QImage img = std::get<0>(_blobWatcherLive.result());
 
-        db().insert("image_blob", img.copy());
+        db().insert("live_preview_image_blob", img.copy());
 
         const QVector<OpenCv::Blob> blobs = std::get<1>(_blobWatcherLive.result());
 
@@ -379,6 +365,17 @@ void OpenCv::blobDetectorLive(QImage img, QVariantMap options)
 
     QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
     _blobWatcherLive.setFuture(future);
+}
+
+void OpenCv::blobDetectorCaptured()
+{
+    if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
+    {
+        auto [img, options] = _detectBlobQueue.first();
+        _detectBlobQueue.pop_front();
+        QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
+        _blobWatcherCaptured.setFuture(future);
+    }
 }
 
 void OpenCv::appendToBlobDetectorQueue(QImage img, QVariantMap options)
