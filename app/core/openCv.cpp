@@ -253,6 +253,10 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         detector->detect(adTr, keypoints);
 
         drawKeyPoints(rgbimg, keypoints);
+        for (const cv::KeyPoint & kp : kps)
+        {
+            qd() << "kp size " << kp.size;
+        }
 
         //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
