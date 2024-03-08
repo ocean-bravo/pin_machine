@@ -189,11 +189,6 @@ void Engine::createQmlEngine()
         db().insert("image_circle", img);
     });
 
-    connect(&opencv(), &OpenCv::blobChanged, this, [](QImage img)
-    {
-        db().insert("image_blob", img);
-    });
-
     connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [](QImage img)
     {
         db().insert("image_small_blob_captured", img);

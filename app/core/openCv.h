@@ -43,7 +43,6 @@ public:
 
 signals:
     void circleChanged(QImage);
-    void blobChanged(QImage);
 
     void smallRegionBlobDetectionFinished();
 
@@ -79,7 +78,6 @@ public slots:
 
 signals:
     void circleChanged(QImage);
-    void blobChanged(QImage);
     void smallRegionBlobImage(QImage);
 
 private:
