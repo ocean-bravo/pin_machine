@@ -41,11 +41,19 @@ CollapsiblePanel {
         //     path: "/home/mint/devel/pin_machine/app/gui/BlobSettings.qml"
         // }
 
-        BlobSettings {
+        BlobSettings2 {
             id: blobSettings
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top:parent.top
+
+            onDataChanged: {
+                DataBus.blob_live_options = options
+            }
+
+            Component.onCompleted: {
+                options = DataBus.blob_live_options;
+            }
         }
     }
 }

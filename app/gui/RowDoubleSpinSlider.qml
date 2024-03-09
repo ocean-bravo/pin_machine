@@ -4,6 +4,10 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 
+//Косячный компонент. Работает хуже RowSpinSlider
+// Когда изменяется double spin box мышкой - тогда перестает
+// реагировать слайдер на изменения
+
 Rectangle {
     id: root
     Layout.preferredHeight: 25
@@ -64,6 +68,8 @@ Rectangle {
                 onMoved: {
                     root.value = value
                     root.value = Qt.binding(root.valueBind)
+
+                    spinbox.value = Qt.binding(root.valueBind)
                 }
             }
         }

@@ -176,6 +176,8 @@ void Engine::createQmlEngine()
         if (livePreviewMode == "blob" || livePreviewMode == "adapt_threshold")
         {
             opencv().blobDetectorLive(img.copy(), db().value("blob_live_options").toMap());
+
+            qd() << "blob live options "  << db().value("blob_live_options").toMap();
         }
     });
 

@@ -208,7 +208,6 @@ CollapsiblePanel {
 
             Component.onCompleted: {
                 currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
-                console.log(currentOptions)
             }
 
             Layout.columnSpan: 2
@@ -218,9 +217,7 @@ CollapsiblePanel {
             Layout.preferredHeight: 25
             Layout.preferredWidth: 25
             text: ("🖍")
-            onClicked: {
-                sceneEditor.show()
-            }
+            onClicked: sceneEditor.show()
 
             ToolTip.visible: hovered
             ToolTip.text: qsTr("Edit scene")
@@ -229,7 +226,6 @@ CollapsiblePanel {
                 id: sceneEditor
                 options: currentOptions
                 onClosed: {
-                    console.log(" closed changed")
                     Engine.saveFile("find_blob_scenes" + "/" + findBlobScenes.currentText, optionsModified)
                 }
             }

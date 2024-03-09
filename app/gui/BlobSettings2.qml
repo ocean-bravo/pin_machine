@@ -11,6 +11,12 @@ Rectangle {
 
     property var options
 
+    onOptionsChanged:  {
+        console.log("options changed")
+    }
+
+    signal dataChanged
+
     component SmallCollapsiblePanel : CollapsiblePanel {
         height: checked ? 30 + implicitContentHeight : 30
         anchors.left: lay.left
@@ -35,7 +41,10 @@ Rectangle {
             text: qsTr("adaptive threshold")
 
             checked: options.blob_ad_tr_enable
-            onCheckedChanged: options.blob_ad_tr_enable = checked
+            onCheckedChanged: {
+                options.blob_ad_tr_enable = checked
+                dataChanged()
+            }
 
             ColumnLayout {
                 id: column1
@@ -46,12 +55,18 @@ Rectangle {
 
                 RowSpinSlider { text: "block size"; from: 3; to: 2001; stepSize: 2; value: options.blob_ad_tr_blockSize
                     valueBind: function() { return options.blob_ad_tr_blockSize }
-                    onValueChanged: options.blob_ad_tr_blockSize = value
+                    onValueChanged: {
+                        options.blob_ad_tr_blockSize = value
+                        dataChanged()
+                    }
                 }
 
                 RowDoubleSpinSlider { text: "C"; from: -100.0; to: 100.0; stepSize: 0.1; value: options.blob_ad_tr_c
                     valueBind: function() { return options.blob_ad_tr_c }
-                    onValueChanged: options.blob_ad_tr_c = value
+                    onValueChanged: {
+                        options.blob_ad_tr_c = value
+                        dataChanged()
+                    }
                 }
 
                 ComboBox {
@@ -66,7 +81,10 @@ Rectangle {
                         ListElement { text: "ADAPTIVE_THRESH_MEAN_C";     value: 0 }
                         ListElement { text: "*ADAPTIVE_THRESH_GAUSSIAN_C"; value: 1 }
                     }
-                    onActivated: options.blob_ad_tr_type = currentValue
+                    onActivated: {
+                        options.blob_ad_tr_type = currentValue
+                        dataChanged()
+                    }
                 }
 
                 ComboBox {
@@ -87,8 +105,10 @@ Rectangle {
                         ListElement { text: "THRESH_TRIANGLE";   value: 16 }
                     }
 
-                    onActivated: options.blob_tr_type = currentValue
-                    //Component.onCompleted: DataBus.mode = "raw"
+                    onActivated: {
+                        options.blob_tr_type = currentValue
+                        dataChanged()
+                    }
                 }
             }
         }
@@ -99,7 +119,10 @@ Rectangle {
             text: qsTr("filter by area")
 
             checked: options.blob_filter_area_enabled
-            onCheckedChanged: options.blob_filter_area_enabled = checked
+            onCheckedChanged: {
+                options.blob_filter_area_enabled = checked
+                dataChanged()
+            }
 
             ColumnLayout {
                 id: column2fid
@@ -110,11 +133,17 @@ Rectangle {
 
                 RowDoubleSpinSlider { text: "minDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: options.blob_minDia_mm
                     valueBind: function() { return options.blob_minDia_mm }
-                    onValueChanged: options.blob_minDia_mm = value
+                    onValueChanged: {
+                        options.blob_minDia_mm = value
+                        dataChanged()
+                    }
                 }
                 RowDoubleSpinSlider { text: "maxDia_mm"; from: 0.3; to: 6.0; stepSize: 0.1; value: options.blob_maxDia_mm
                     valueBind: function() { return options.blob_maxDia_mm }
-                    onValueChanged: options.blob_maxDia_mm = value
+                    onValueChanged: {
+                        options.blob_maxDia_mm = value
+                        dataChanged()
+                    }
                 }
             }
         }
@@ -125,7 +154,10 @@ Rectangle {
             text: qsTr("filter by convexity")
 
             checked: options.blob_filter_convexity_enabled
-            onCheckedChanged: options.blob_filter_convexity_enabled = checked
+            onCheckedChanged: {
+                options.blob_filter_convexity_enabled = checked
+                dataChanged()
+            }
 
             ColumnLayout {
                 id: column3
@@ -136,11 +168,17 @@ Rectangle {
 
                 RowDoubleSpinSlider { text: "convexity_min"; from: 0.01; to: 1.0; stepSize: 0.01; value: options.blob_filter_convexity_min
                     valueBind: function() { return options.blob_filter_convexity_min }
-                    onValueChanged: options.blob_filter_convexity_min = value
+                    onValueChanged: {
+                        options.blob_filter_convexity_min = value
+                        dataChanged()
+                    }
                 }
                 RowDoubleSpinSlider { text: "convexity_max"; from: 0.01; to: 1.0; stepSize: 0.01; value: options.blob_filter_convexity_max
                     valueBind: function() { return options.blob_filter_convexity_max }
-                    onValueChanged: options.blob_filter_convexity_max = value
+                    onValueChanged: {
+                        options.blob_filter_convexity_max = value
+                        dataChanged()
+                    }
                 }
             }
         }
@@ -148,7 +186,10 @@ Rectangle {
 
         RowSpinSlider { text: "thresholdStep"; from: 0; to: 100; stepSize: 1; value: options.blob_thresholdStep
             valueBind: function() { return options.blob_thresholdStep }
-            onValueChanged: options.blob_thresholdStep = value
+            onValueChanged: {
+                options.blob_thresholdStep = value
+                dataChanged()
+            }
             height: 25
 
             anchors.left: parent.left
@@ -156,7 +197,10 @@ Rectangle {
         }
         RowSpinSlider { text: "minThreshold"; from: 0; to: 500; stepSize: 1; value: options.blob_minThreshold
             valueBind: function() { return options.blob_minThreshold }
-            onValueChanged: options.blob_minThreshold = value
+            onValueChanged: {
+                options.blob_minThreshold = value
+                dataChanged()
+            }
             height: 25
 
             anchors.left: parent.left
@@ -164,7 +208,10 @@ Rectangle {
         }
         RowSpinSlider { text: "maxThreshold"; from: 0; to: 500; stepSize: 1; value: options.blob_maxThreshold
             valueBind: function() { return options.blob_maxThreshold }
-            onValueChanged: options.blob_maxThreshold = value
+            onValueChanged: {
+                options.blob_maxThreshold = value
+                dataChanged()
+            }
             height: 25
 
             anchors.left: parent.left
