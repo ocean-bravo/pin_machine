@@ -214,6 +214,28 @@ CollapsiblePanel {
             Layout.columnSpan: 2
         }
 
+        Button {
+            Layout.preferredHeight: 25
+            Layout.preferredWidth: 25
+            text: ("🖍")
+            onClicked: {
+                sceneEditor.show()
+            }
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Edit scene")
+
+            SceneEditor {
+                id: sceneEditor
+                options: currentOptions
+                onClosed: {
+                    console.log(" closed changed")
+                    Engine.saveFile("find_blob_scenes" + "/" + findBlobScenes.currentText, optionsModified)
+                }
+            }
+        }
+
+
         // CheckBox {
         //     id: slowFindBlobs
         //     text: "find blobs slowly"

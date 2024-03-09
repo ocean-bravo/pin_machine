@@ -167,3 +167,4 @@ inline QByteArray v4l2_fourcc2s(quint32 fourcc)
 QByteArray openAndReadAll(const QString& path);
 
 QVariantMap openIniFile(const QString& path);
+bool saveIniFile(const QString& path, const QVariantMap& newData);

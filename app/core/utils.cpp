@@ -138,6 +138,14 @@ QString doubleToString(double value)
     return num;
 }
 
+QByteArray openAndReadAll(const QString& path)
+{
+    QFile file(appDir() + path);
+    if (file.open(QFile::ReadOnly))
+        return file.readAll();
+    return QByteArray();
+}
+
 QVariantMap openIniFile(const QString& path)
 {
     QSettings sett(appDir() + path, QSettings::IniFormat);
@@ -145,18 +153,17 @@ QVariantMap openIniFile(const QString& path)
     QStringList allKeys = sett.allKeys();
 
     QVariantMap values;
+
     for (const QString& key : allKeys)
-    {
         values.insert(key, sett.value(key));
-    }
 
     return values;
 }
 
-QByteArray openAndReadAll(const QString& path)
+void saveIniFile(const QString& path, const QVariantMap& newData)
 {
-    QFile file(appDir() + path);
-    if (file.open(QFile::ReadOnly))
-        return file.readAll();
-    return QByteArray();
+    QSettings sett(appDir() + path, QSettings::IniFormat);
+
+    for (const QString& key : newData.keys())
+        sett.setValue(key, newData.value(key));
 }

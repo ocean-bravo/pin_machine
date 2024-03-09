@@ -262,3 +262,8 @@ QVariantMap Engine::readFile(QString path)
 {
     return openIniFile(path);
 }
+
+void Engine::saveFile(QString path, QVariantMap options)
+{
+    saveIniFile(path, options);
+}
