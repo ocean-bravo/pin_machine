@@ -95,8 +95,8 @@ Rectangle {
                     Layout.preferredHeight: 25
                     //width: 300
                     model: ListModel {
-                        ListElement { text: "THRESH_BINARY";     value: 0 }
-                        ListElement { text: "*THRESH_BINARY_INV"; value: 1 }
+                        ListElement { text: "*THRESH_BINARY";    value: 0 }
+                        ListElement { text: "THRESH_BINARY_INV"; value: 1 }
                         ListElement { text: "THRESH_TRUNC";      value: 2 }
                         ListElement { text: "THRESH_TOZERO";     value: 3 }
                         ListElement { text: "THRESH_TOZERO_INV"; value: 4 }

@@ -60,8 +60,8 @@ DataBus::DataBus(QObject *parent)
     options.insert("blob_ad_tr_enable",true);
     options.insert("blob_ad_tr_blockSize",29);
     options.insert("blob_ad_tr_c",9.0);
-    options.insert("blob_ad_tr_type",0);
-    options.insert("blob_tr_type",1);
+    options.insert("blob_ad_tr_type",1);
+    options.insert("blob_tr_type",0);
 
     insert("blob_live_options", options);
 }
