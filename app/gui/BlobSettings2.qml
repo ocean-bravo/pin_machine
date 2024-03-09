@@ -12,7 +12,7 @@ Rectangle {
     property var options
 
     onOptionsChanged:  {
-        console.log("options changed")
+
     }
 
     signal dataChanged
@@ -85,6 +85,9 @@ Rectangle {
                         options.blob_ad_tr_type = currentValue
                         dataChanged()
                     }
+                    Component.onCompleted: {
+                        currentIndex = indexOfValue(options.blob_ad_tr_type)
+                    }
                 }
 
                 ComboBox {
@@ -109,6 +112,10 @@ Rectangle {
                         options.blob_tr_type = currentValue
                         dataChanged()
                     }
+                    Component.onCompleted: {
+                        currentIndex = indexOfValue(options.blob_tr_type)
+                    }
+
                 }
             }
         }
