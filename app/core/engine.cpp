@@ -177,7 +177,7 @@ void Engine::createQmlEngine()
         {
             opencv().blobDetectorLive(img.copy(), db().value("blob_live_options").toMap());
 
-            qd() << "blob live options "  << db().value("blob_live_options").toMap();
+            //qd() << "blob live options "  << db().value("blob_live_options").toMap();
         }
     });
 
