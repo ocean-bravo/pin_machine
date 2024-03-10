@@ -6,7 +6,6 @@
 DataBus::DataBus(QObject *parent)
     : QQmlPropertyMap(this, parent)
 {
-
     QStringList resolutions;
     for (const QString& key : settings().allKeys())
     {
@@ -29,8 +28,6 @@ DataBus::DataBus(QObject *parent)
     insert("live_preview_image_small_blob_captured", QImage());
     insert("live_preview_image_adapt_threshold", QImage());
 
-    insert("pixel_size_test", 0);
-
     insert("next", "");
 
     // Сколько кадров нужно выкинуть.
@@ -42,28 +39,6 @@ DataBus::DataBus(QObject *parent)
         if (key == "resolution_width")
             emit pixelSizeChanged();
     });
-
-
-    QVariantMap options;
-    options.insert("blob_filter_area_enabled",true);
-    options.insert("blob_minDia_mm",0.7);
-    options.insert("blob_maxDia_mm",1.4);
-
-    options.insert("blob_filter_convexity_enabled",false);
-    options.insert("blob_filter_convexity_min", 0.5);
-    options.insert("blob_filter_convexity_max", 0.9);
-
-    options.insert("blob_thresholdStep",10);
-    options.insert("blob_minThreshold",1);
-    options.insert("blob_maxThreshold",200);
-
-    options.insert("blob_ad_tr_enable",true);
-    options.insert("blob_ad_tr_blockSize",29);
-    options.insert("blob_ad_tr_c",9.0);
-    options.insert("blob_ad_tr_type",1);
-    options.insert("blob_tr_type",0);
-
-    insert("blob_live_options", options);
 }
 
 DataBus::~DataBus()
@@ -78,7 +53,10 @@ double DataBus::pixInMm() const
     QVariant val = value(QString("pixel_size_%1").arg(width));
 
     if (val.isNull())
+    {
+        qd() << "warning: no pixel size for resolution " << width;
         return 1.0; // Индикатор того, что нет pixInMm для данного разрешения
+    }
 
     return val.toDouble();
 }
