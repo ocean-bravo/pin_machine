@@ -287,10 +287,10 @@ double OpenCv::corr(QImage cap1, QImage cap2)
     gr1.convertTo(gr1, CV_32F);
     gr2.convertTo(gr2, CV_32F);
 
-    //    cv::Mat res = XCorrelation(gr1, gr2);
-    cv::Point2d res = cv::phaseCorrelate(gr1, gr2);
+    // cv::Mat res = XCorrelation(gr1, gr2);
+    //db().insert("live_preview_image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
 
-    db().insert("live_preview_image_corr", mat_to_qimage_ref(res, QImage::Format_Grayscale8).copy());
+    cv::Point2d res = cv::phaseCorrelate(gr1, gr2);
 
     qd() << " result " << res.x << res.y;
 

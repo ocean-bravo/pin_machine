@@ -363,7 +363,7 @@ Item {
                         ComboBox {
                             id: imgType
                             width: 200
-                            model: ["raw", "blob", "raw_captured", "small_blob_captured", "adapt_threshold", "corr"] //
+                            model: ["raw", "blob", "raw_captured", "small_blob_captured", "adapt_threshold"]
                             onActivated: DataBus.live_preview_mode = currentText
                             Component.onCompleted: DataBus.live_preview_mode = "raw"
                             MouseArea {
