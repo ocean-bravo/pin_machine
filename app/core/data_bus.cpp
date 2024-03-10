@@ -27,6 +27,7 @@ DataBus::DataBus(QObject *parent)
     insert("live_preview_image_raw_captured", QImage());
     insert("live_preview_image_small_blob_captured", QImage());
     insert("live_preview_image_adapt_threshold", QImage());
+    insert("live_preview_image_adapt_corr", QImage());
 
     insert("next", "");
 
