@@ -34,7 +34,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: col1.height + col2.height + col3.height + col4.height + 75
+        height: col1.height + col2.height + col3.height + col4.height + 150
 
         SmallCollapsiblePanel {
             id: col1
@@ -45,6 +45,7 @@ Rectangle {
                 options.blob_ad_tr_enable = checked
                 dataChanged()
             }
+            height: checked ? column1.height + 30 : 30
 
             ColumnLayout {
                 id: column1
@@ -131,8 +132,10 @@ Rectangle {
                 dataChanged()
             }
 
+            height: checked ? column2.height + 30 : 30
+
             ColumnLayout {
-                id: column2fid
+                id: column2
                 anchors.top:parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -165,6 +168,8 @@ Rectangle {
                 options.blob_filter_convexity_enabled = checked
                 dataChanged()
             }
+
+            height: checked ? column3.height + 30 : 30
 
             ColumnLayout {
                 id: column3
@@ -200,6 +205,8 @@ Rectangle {
                 options.blob_filter_circularity_enabled = checked
                 dataChanged()
             }
+
+            height: checked ? column4.height + 30 : 30
 
             ColumnLayout {
                 id: column4
