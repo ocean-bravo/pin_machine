@@ -4,6 +4,7 @@
 #include "data_bus.h"
 #include "scene.h"
 #include "settings.h"
+#include "blob_item.h"
 
 #include <QtConcurrent>
 
@@ -266,7 +267,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
 
         //QImage im = QImage(rgbimg.data, rgbimg.cols, rgbimg.rows, QImage::Format_RGB888);
 
-        return {img, keypointsToBlobs(keypoints, img)};
+        return {img, keypointsToBlobs(keypoints, img), options};
     }
     catch (...)
     {
@@ -274,7 +275,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         qd() << options;
     }
 
-    return {img, QVector<OpenCv::Blob>()};
+    return {img, QVector<OpenCv::Blob>(), QVariantMap()};
 }
 
 }
@@ -317,9 +318,13 @@ OpenCv::OpenCv()
     connect(&_blobWatcherCaptured, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
         const QVector<Blob> blobs = std::get<1>(_blobWatcherCaptured.result());
+        const QVariantMap options = std::get<2>(_blobWatcherCaptured.result());
 
         for (const Blob& blob : blobs)
-            scene().addBlob(blob.xMm, blob.yMm, blob.diameterMm);
+        {
+            BlobItem* blobItem = scene().addBlob(blob.xMm, blob.yMm, blob.diameterMm);
+            blobItem->setSceneFileName(options.value("filename").toString());
+        }
     });
 
     QTimer* timer = new QTimer;

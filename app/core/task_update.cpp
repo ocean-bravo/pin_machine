@@ -38,14 +38,13 @@ TaskUpdate::~TaskUpdate()
     _thread->wait(1000);
 }
 
-void TaskUpdate::run(int width, int height, QString fourcc, QVariantMap options)
+void TaskUpdate::run(int width, int height, QString fourcc)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
                               Q_ARG(int, width),
                               Q_ARG(int, height),
-                              Q_ARG(QString, fourcc),
-                              Q_ARG(QVariantMap, options));
+                              Q_ARG(QString, fourcc));
 }
 
 void TaskUpdate::stopProgram()
@@ -59,7 +58,7 @@ TaskUpdatePrivate::TaskUpdatePrivate()
 
 }
 
-void TaskUpdatePrivate::run(int width, int height, QString fourcc, QVariantMap options)
+void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -117,6 +116,7 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc, QVariantMap o
 
         ++count;
 
+        const QVariantMap options = openIniFile(blob->sceneFileName());
         updateBlobPosition(blob, options);
         int result = updateBlobPosition(blob, options);
         if (result > 0)

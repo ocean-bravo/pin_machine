@@ -88,7 +88,7 @@ void TaskTestScanUpdateCyclePrivate::run(QString program, QVariantMap options)
             break;
         }
 
-        _ub->run(1280, 960, "YUYV", options);
+        _ub->run(1280, 960, "YUYV");
 
         waitForSignal(_ub, &TaskUpdate::finished, 3600*1000);
 

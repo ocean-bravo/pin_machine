@@ -156,6 +156,16 @@ void BlobItem::setHighlight(bool state)
     _highlighted = state;
 }
 
+void BlobItem::setSceneFileName(QString sceneFile)
+{
+    _sceneFileName = sceneFile;
+}
+
+QString BlobItem::sceneFileName() const
+{
+    return _sceneFileName;
+}
+
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     {

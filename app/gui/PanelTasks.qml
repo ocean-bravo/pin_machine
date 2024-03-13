@@ -92,7 +92,7 @@ CollapsiblePanel {
             id: update
             text: qsTr("Update selected")
             checkable: true
-            onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc, currentOptions)
+            onCheckedChanged: checked ? TaskUpdate.run(selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
                                       : TaskUpdate.stopProgram()
             Connections { target: TaskUpdate; function onFinished() { update.checked = false } }
             function selectedResolution() {

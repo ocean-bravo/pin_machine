@@ -17,7 +17,7 @@ public:
     TaskUpdate(QObject* parent = nullptr);
     ~TaskUpdate();
 
-    Q_INVOKABLE void run(int width, int height, QString fourcc, QVariantMap options);
+    Q_INVOKABLE void run(int width, int height, QString fourcc);
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -38,7 +38,7 @@ public:
     TaskUpdatePrivate();
 
 public slots:
-    void run(int width, int height, QString fourcc, QVariantMap options);
+    void run(int width, int height, QString fourcc);
 
 private:
     friend class TaskUpdate;

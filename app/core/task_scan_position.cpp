@@ -71,7 +71,6 @@ void TaskScanPositionPrivate::run(QPointF pos, QString sceneFile)
     {
         scene().setImage(img.copy());
         db().insert("image_raw_captured", img.copy());
-        qd() << "scene file " << sceneFile;
         opencv().appendToBlobDetectorQueue(img.copy(), openIniFile(sceneFile));
     });
     auto guard = qScopeGuard([=]() { disconnect(connection); });

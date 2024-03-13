@@ -157,7 +157,6 @@ QVariantMap openIniFile(const QString& path)
 {
     QSettings sett(appDir() + path, QSettings::IniFormat);
 
-    qd () << " dir " << appDir() + path;
     QStringList allKeys = sett.allKeys();
 
     QVariantMap values;
@@ -165,6 +164,7 @@ QVariantMap openIniFile(const QString& path)
     for (const QString& key : allKeys)
         values.insert(key, sett.value(key));
 
+    values.insert("filename", path); // Имя файла сохраняю
     return values;
 }
 

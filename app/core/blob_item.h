@@ -22,6 +22,9 @@ public:
 
     void setHighlight(bool state);
 
+    void setSceneFileName(QString sceneFile);
+    QString sceneFileName() const;
+
 signals:
     void pressed();
 
@@ -46,5 +49,5 @@ private:
     double _highlightedThickness = 3.0;
     double _nonhighlightedThickness = 1.0;
     bool _highlighted = false;
-
+    QString _sceneFileName;
 };

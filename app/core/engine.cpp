@@ -258,10 +258,7 @@ QStringList Engine::filesInDirectory(QString dir)
 
 QVariantMap Engine::readFile(QString path)
 {
-
-    auto a = openIniFile(path);
-
-    return a;
+    return openIniFile(path);
 }
 
 void Engine::saveFile(QString path, QVariantMap options)
