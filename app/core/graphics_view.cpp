@@ -251,12 +251,14 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
         });
 
         QMenu* scanHere = menu.addMenu(tr("Scan here"));
-        const QStringList sceneFiles = filesInDirectory("find_blob_scenes", QStringList{"*.ini"});
+
+        const QString scenesDir = "find_blob_scenes";
+        const QStringList sceneFiles = filesInDirectory(scenesDir, QStringList{"*.ini"});
         for (const QString& sceneFile : sceneFiles)
         {
-            scanHere->addAction(sceneFile, this, [this, event, sceneFile]()
+            scanHere->addAction(sceneFile, this, [this, event, sceneFile, scenesDir]()
             {
-                emit scanPosition(mapToScene(event->pos()), sceneFile);
+                emit scanPosition(mapToScene(event->pos()), scenesDir + "/" + sceneFile);
             });
         }
 

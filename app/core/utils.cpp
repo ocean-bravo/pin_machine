@@ -157,6 +157,7 @@ QVariantMap openIniFile(const QString& path)
 {
     QSettings sett(appDir() + path, QSettings::IniFormat);
 
+    qd () << " dir " << appDir() + path;
     QStringList allKeys = sett.allKeys();
 
     QVariantMap values;
