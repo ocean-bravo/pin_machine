@@ -29,10 +29,10 @@ TaskScanPosition::~TaskScanPosition()
     _thread->wait(1000);
 }
 
-void TaskScanPosition::run(QPointF pos)
+void TaskScanPosition::run(QPointF pos, QString sceneFile)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QPointF, pos));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QPointF, pos), Q_ARG(QString, sceneFile));
 }
 
 void TaskScanPosition::stopProgram()
@@ -48,7 +48,7 @@ TaskScanPositionPrivate::TaskScanPositionPrivate()
 
 // Нужно, чтобы было установлено разрешение камере. Если нет, будут проблемы.
 
-void TaskScanPositionPrivate::run(QPointF pos)
+void TaskScanPositionPrivate::run(QPointF pos, QString sceneFile)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -67,11 +67,11 @@ void TaskScanPositionPrivate::run(QPointF pos)
 
     video().start();
 
-    auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
+    auto connection = connect(&video(), &Video4::captured, this, [sceneFile](QImage img)
     {
         scene().setImage(img.copy());
         db().insert("image_raw_captured", img.copy());
-        //opencv().appendToBlobDetectorQueue(img.copy());
+        opencv().appendToBlobDetectorQueue(img.copy(), openIniFile(sceneFile));
     });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
 

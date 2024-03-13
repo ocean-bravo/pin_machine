@@ -253,11 +253,7 @@ void Engine::reload()
 
 QStringList Engine::filesInDirectory(QString dir)
 {
-    const QString fullDirName = appDir() + dir + "/";
-    qd() << "dir " << fullDirName;
-    const QStringList filesInDir = QDir(fullDirName).entryList(QStringList{"*.ini"}, QDir::Files | QDir::NoDotAndDotDot);
-    //qd() << "entry list " <<
-    return filesInDir;
+    return ::filesInDirectory(dir, QStringList{"*.ini"});
 }
 
 QVariantMap Engine::readFile(QString path)

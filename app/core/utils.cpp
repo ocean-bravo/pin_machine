@@ -146,6 +146,13 @@ QByteArray openAndReadAll(const QString& path)
     return QByteArray();
 }
 
+QStringList filesInDirectory(QString dir, QStringList nameFilters)
+{
+    const QString fullDirName = appDir() + dir + "/";
+    const QStringList filesInDir = QDir(fullDirName).entryList(nameFilters, QDir::Files | QDir::NoDotAndDotDot);
+    return filesInDir;
+}
+
 QVariantMap openIniFile(const QString& path)
 {
     QSettings sett(appDir() + path, QSettings::IniFormat);

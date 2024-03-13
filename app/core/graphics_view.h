@@ -25,7 +25,7 @@ public:
 signals:
     void sizeChanged(QSize);
     void selectModeChanged(bool mode);
-    void scanPosition(QPointF pos);
+    void scanPosition(QPointF pos, QString scene);
     void addBlob(QPointF pos);
     void calcPath(QPointF pos);
     void setSelectedAsPunch(bool state);

@@ -19,7 +19,7 @@ public:
     TaskScanPosition(QObject* parent = nullptr);
     ~TaskScanPosition();
 
-    void run(QPointF pos);
+    void run(QPointF pos, QString sceneFile);
 
     void stopProgram();
 
@@ -41,7 +41,7 @@ public:
     TaskScanPositionPrivate();
 
 public slots:
-    void run(QPointF pos);
+    void run(QPointF pos, QString sceneFile);
 
 private:
 

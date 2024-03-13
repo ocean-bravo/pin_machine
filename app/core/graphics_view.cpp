@@ -250,11 +250,15 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
             emit setSelectedAsPunch(false);
         });
 
-
-        menu.addAction(tr("Scan here"), this, [this, event]()
+        QMenu* scanHere = menu.addMenu(tr("Scan here"));
+        const QStringList sceneFiles = filesInDirectory("find_blob_scenes", QStringList{"*.ini"});
+        for (const QString& sceneFile : sceneFiles)
         {
-            emit scanPosition(mapToScene(event->pos()));
-        });
+            scanHere->addAction(sceneFile, this, [this, event, sceneFile]()
+            {
+                emit scanPosition(mapToScene(event->pos()), sceneFile);
+            });
+        }
 
         const bool blobsHighlightState = db().value("blobs_highlight").toBool();
         QAction* toggleHighlight = menu.addAction(tr("Toggle blobs highlight"), this, [this, blobsHighlightState]()
