@@ -189,6 +189,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
         qd() << mat.cols <<  mat.rows << mat.step;
     };
 
+    qd() << "options filename " << options.value("filename").toString();
     try {
         cv::SimpleBlobDetector::Params params;
 
