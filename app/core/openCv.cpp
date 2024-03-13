@@ -202,6 +202,9 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
 
             params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
             params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
+
+            qd() << "min area" << params.minArea;
+            qd() << "max area" << params.maxArea;
         }
 
         // Filter by Circularity
