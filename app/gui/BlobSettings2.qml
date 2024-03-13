@@ -34,7 +34,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: col1.height + col2.height + col3.height + 75
+        height: col1.height + col2.height + col3.height + col4.height + 75
 
         SmallCollapsiblePanel {
             id: col1
@@ -184,6 +184,41 @@ Rectangle {
                     valueBind: function() { return options.blob_filter_convexity_max }
                     onValueChanged: {
                         options.blob_filter_convexity_max = value
+                        dataChanged()
+                    }
+                }
+            }
+        }
+
+        SmallCollapsiblePanel {
+            id: col4
+
+            text: qsTr("filter by circularity")
+
+            checked: options.blob_filter_circularity_enabled
+            onCheckedChanged: {
+                options.blob_filter_circularity_enabled = checked
+                dataChanged()
+            }
+
+            ColumnLayout {
+                id: column4
+                anchors.top:parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 0
+
+                RowDoubleSpinSlider { text: "circularity_min"; from: 0.01; to: 10.0; stepSize: 0.01; value: options.blob_filter_circularity_min
+                    valueBind: function() { return options.blob_filter_circularity_min }
+                    onValueChanged: {
+                        options.blob_filter_circularity_min = value
+                        dataChanged()
+                    }
+                }
+                RowDoubleSpinSlider { text: "circularity_max"; from: 0.01; to: 10.0; stepSize: 0.01; value: options.blob_filter_circularity_max
+                    valueBind: function() { return options.blob_filter_circularity_max }
+                    onValueChanged: {
+                        options.blob_filter_circularity_max = value
                         dataChanged()
                     }
                 }

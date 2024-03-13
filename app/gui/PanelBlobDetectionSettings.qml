@@ -58,6 +58,10 @@ CollapsiblePanel {
                 defaultOptions["blob_minDia_mm"] = 0.7
                 defaultOptions["blob_maxDia_mm"] = 1.4
 
+                defaultOptions["blob_filter_circularity_enabled"] = true
+                defaultOptions["blob_filter_circularity_min"] =  0.5
+                defaultOptions["blob_filter_circularity_max"] = 5.0
+
                 defaultOptions["blob_filter_convexity_enabled"] = false
                 defaultOptions["blob_filter_convexity_min"] =  0.5
                 defaultOptions["blob_filter_convexity_max"] = 0.9

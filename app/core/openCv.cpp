@@ -126,7 +126,6 @@ void drawKeyPoints(const cv::Mat& image, const std::vector<cv::KeyPoint>& kps)
     {
         cv::circle(image, kp.pt, 1, ColorRgb::Blue, 3, cv::LINE_AA);          // circle center
         cv::circle(image, kp.pt, kp.size/2, ColorRgb::Red, -1, cv::LINE_AA); // circle outline
-        qd() << "kp size " << kp.size;
     }
 }
 
@@ -200,19 +199,19 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
             double maxDia = options.value("blob_maxDia_mm").toDouble();
 
             const double pixInMm = img.devicePixelRatioF();
-            qd() << " devicePixelRatioF " << pixInMm;
+            // qd() << " devicePixelRatioF " << pixInMm;
 
             params.minArea = minDia * minDia * 3.14159 * pixInMm * pixInMm / 4;
             params.maxArea = maxDia * maxDia * 3.14159 * pixInMm * pixInMm / 4;
 
-            qd() << "min area" << params.minArea;
-            qd() << "max area" << params.maxArea;
+            // qd() << "min area" << params.minArea;
+            // qd() << "max area" << params.maxArea;
         }
 
         // Filter by Circularity
-        params.filterByCircularity = false;
-        //params.minCircularity = 0.01;
-        //params.maxCircularity = 5.0;
+        params.filterByCircularity = options.value("blob_filter_circularity_enabled").toBool();
+        params.minCircularity = options.value("blob_filter_circularity_min").toDouble();
+        params.maxCircularity = options.value("blob_filter_circularity_max").toDouble();
 
         // Filter by Convexity
         params.filterByConvexity = options.value("blob_filter_convexity_enabled").toBool();
