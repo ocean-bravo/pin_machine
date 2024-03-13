@@ -260,7 +260,7 @@ QVariantMap Engine::readFile(QString path)
 {
 
     auto a = openIniFile(path);
-    qd() << a;
+
     return a;
 }
 
