@@ -78,7 +78,7 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
         }
     }
 
-    //scene().removeDuplicatedBlobs();
+    scene().removeDuplicatedBlobs();
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 
