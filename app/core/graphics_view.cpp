@@ -240,15 +240,19 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
     {
         QMenu menu;
 
-        menu.addAction(tr("Set punch"), this, [this, event]()
+        auto setPunch = menu.addAction(tr("Set punch"), this, [this, event]()
         {
             emit setSelectedAsPunch(true);
         });
 
-        menu.addAction(tr("Reset punch"), this, [this, event]()
+        setPunch->setDisabled(scene()->selectedItems().isEmpty());
+
+        auto resetPunch = menu.addAction(tr("Reset punch"), this, [this, event]()
         {
             emit setSelectedAsPunch(false);
         });
+
+        resetPunch->setDisabled(scene()->selectedItems().isEmpty());
 
         QMenu* scanHere = menu.addMenu(tr("Scan here"));
 
@@ -286,10 +290,11 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event)
             emit calcPath(mapToScene(event->pos()));
         });
 
-        menu.addAction(tr("Delete selected blobs"), this, [this]()
+        auto delSelBlobs = menu.addAction(tr("Delete selected blobs"), this, [this]()
         {
             emit deleteSelectedBlobs();
         }, QKeySequence(Qt::Key_Delete)); // shortcut не работает, просто для отметки,что удаляет по Del. А на самом деле удаляет глобальный шорткат
+        delSelBlobs->setDisabled(scene()->selectedItems().isEmpty());
 
         menu.exec(event->globalPos());
     }

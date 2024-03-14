@@ -236,19 +236,19 @@ void BlobItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 
     QMenu menu;
 
-    if (sceneMode == "drag")
+    if (sceneMode == "drag" || sceneMode == "select")
     {
         QString menuText = isFiducial() ? tr("Reset fiducial") : tr("Set fiducial");
 
-        menu.addAction(menuText, this, [this]()
-        {
-            setFiducial(!isFiducial());
-        });
+        menu.addAction(menuText, this, [this]() { setFiducial(!isFiducial()); });
 
-        menu.addAction(tr("Delete blob"), this, [this]()
-        {
-            deleteLater();
-        });
+        menu.addAction(tr("Delete blob"), this, [this]() { deleteLater(); });
+
+        auto setPunchAction = menu.addAction(tr("Set punch"), this, [this]() { setPunch(true); });
+        setPunchAction->setEnabled(!isPunch());
+
+        auto resetPunchAction = menu.addAction(tr("Reset punch"), this, [this]() { setPunch(false); });
+        resetPunchAction->setEnabled(isPunch());
 
         menu.exec(event->screenPos());
 
