@@ -197,39 +197,44 @@ CollapsiblePanel {
 
         ComboBox {
             id: findBlobScenes
-            model: Engine.filesInDirectory("find_blob_scenes")
+            model: Engine.filesInSceneDirectory()
             Layout.preferredWidth: 180
             onActivated: {
-                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+                currentOptions = Engine.readSceneFile(currentText)
             }
             onModelChanged: {
-                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+                currentOptions = Engine.readSceneFile(currentText)
+            }
+            onDownChanged: {
+                let currText = currentText
+                model = Engine.filesInSceneDirectory()
+                currentIndex = model.indexOf(currText)
             }
 
             Component.onCompleted: {
-                currentOptions = Engine.readFile("find_blob_scenes" + "/" + currentText)
+                currentOptions = Engine.readSceneFile(currentText)
             }
 
             Layout.columnSpan: 2
         }
 
-        Button {
-            Layout.preferredHeight: 25
-            Layout.preferredWidth: 25
-            text: ("🖍")
-            onClicked: sceneEditor.show()
+        // Button {
+        //     Layout.preferredHeight: 25
+        //     Layout.preferredWidth: 25
+        //     text: ("🖍")
+        //     onClicked: sceneEditor.show()
 
-            ToolTip.visible: hovered
-            ToolTip.text: qsTr("Edit scene")
+        //     ToolTip.visible: hovered
+        //     ToolTip.text: qsTr("Edit scene")
 
-            SceneEditor {
-                id: sceneEditor
-                options: currentOptions
-                onClosed: {
-                    Engine.saveFile("find_blob_scenes" + "/" + findBlobScenes.currentText, optionsModified)
-                }
-            }
-        }
+        //     SceneEditor {
+        //         id: sceneEditor
+        //         options: currentOptions
+        //         onClosed: {
+        //             Engine.saveFile("find_blob_scenes" + "/" + findBlobScenes.currentText, optionsModified)
+        //         }
+        //     }
+        // }
 
 
         // CheckBox {

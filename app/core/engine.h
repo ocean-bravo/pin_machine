@@ -42,12 +42,13 @@ public:
 
     Q_INVOKABLE void reload();
 
-    Q_INVOKABLE QStringList filesInDirectory(QString dir);
+    Q_INVOKABLE QStringList filesInDirectory(QString dir) const;
     Q_INVOKABLE QVariantMap readFile(QString path);
-
     Q_INVOKABLE void saveFile(QString path, QVariantMap options);
-    Q_INVOKABLE void saveSceneFile(QString filename, QVariantMap options);
+
+    Q_INVOKABLE QStringList filesInSceneDirectory() const;
     Q_INVOKABLE QVariantMap readSceneFile(QString filename) const;
+    Q_INVOKABLE void saveSceneFile(QString filename, QVariantMap options);
 
 signals:
     void imageChanged(QString id);

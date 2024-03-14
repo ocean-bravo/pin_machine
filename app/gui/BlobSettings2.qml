@@ -10,6 +10,7 @@ Rectangle {
     //color: "#4000FF00"
     color: "transparent"
     height: lay.height
+
     property var options
 
     signal dataChanged
@@ -37,11 +38,12 @@ Rectangle {
             id: scene
             ComboBox {
                 id: findBlobScenes
-                model: Engine.filesInDirectory("find_blob_scenes")
+                model: Engine.filesInSceneDirectory()
                 Layout.preferredWidth: 180
+
                 onDownChanged: {
                     let currText = currentText
-                    model = Engine.filesInDirectory("find_blob_scenes")
+                    model = Engine.filesInSceneDirectory()
                     currentIndex = model.indexOf(currText)
                 }
 
