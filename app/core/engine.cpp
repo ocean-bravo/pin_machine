@@ -265,3 +265,13 @@ void Engine::saveFile(QString path, QVariantMap options)
 {
     saveIniFile(path, options);
 }
+
+void Engine::saveSceneFile(QString filename, QVariantMap options)
+{
+    saveIniFile(QString("find_blob_scenes/") + filename, options);
+}
+
+QVariantMap Engine::readSceneFile(QString filename) const
+{
+    return openIniFile(QString("find_blob_scenes/") + filename);
+}

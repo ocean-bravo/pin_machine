@@ -46,6 +46,8 @@ public:
     Q_INVOKABLE QVariantMap readFile(QString path);
 
     Q_INVOKABLE void saveFile(QString path, QVariantMap options);
+    Q_INVOKABLE void saveSceneFile(QString filename, QVariantMap options);
+    Q_INVOKABLE QVariantMap readSceneFile(QString filename) const;
 
 signals:
     void imageChanged(QString id);

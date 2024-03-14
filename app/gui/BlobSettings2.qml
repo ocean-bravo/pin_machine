@@ -3,8 +3,10 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.platform 1.1
 
 Rectangle {
+    id: root
     //color: "#4000FF00"
     color: "transparent"
     height: lay.height
@@ -35,6 +37,51 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         height: col1.height + col2.height + col3.height + col4.height + 150
+
+        RowLayout {
+            ComboBox {
+                id: findBlobScenes
+                model: Engine.filesInDirectory("find_blob_scenes")
+                Layout.preferredWidth: 180
+                onDownChanged: {
+                    let currText = currentText
+                    model = Engine.filesInDirectory("find_blob_scenes")
+                    currentIndex = model.indexOf(currText)
+                }
+            }
+
+            Button {
+                Layout.preferredHeight: 25
+                Layout.preferredWidth: 50
+                text: ("Load")
+                onClicked: options = Engine.readSceneFile(findBlobScenes.currentText)
+            }
+
+            SaveButton {
+                Layout.preferredHeight: 25
+                Layout.preferredWidth: 50
+                text: ("Save")
+                acceptFunc: function() { Engine.saveSceneFile(findBlobScenes.currentText, root.options) }
+            }
+
+            SmButton {
+                id: saveAs
+                text: qsTr("Save As")
+                onClicked: saveDialog.open()
+
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 25
+
+                FileDialog {
+                    id: saveDialog
+                    folder: applicationDirPath + "/" + "find_blob_scenes"
+                    fileMode: FileDialog.SaveFile
+                    onAccepted: Engine.saveSceneFile(file.toString().split('/').pop(), root.options) // имя файла взять, после последнего /
+                    modality: Qt.ApplicationModal
+                    nameFilters: ["INI files (*.ini)"]
+                }
+            }
+        }
 
         SmallCollapsiblePanel {
             id: col1
