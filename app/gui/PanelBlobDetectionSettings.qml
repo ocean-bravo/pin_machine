@@ -38,7 +38,34 @@ CollapsiblePanel {
         //     anchors.left: parent.left
         //     anchors.right: parent.right
         //     anchors.top:parent.top
-        //     path: "/home/mint/devel/pin_machine/app/gui/BlobSettings.qml"
+        //     path: "/home/mint/devel/pin_machine/app/gui/BlobSettings2.qml"
+        //     onLoaded: {
+        //         var defaultOptions = {}
+
+        //         defaultOptions["blob_filter_area_enabled"] = true
+        //         defaultOptions["blob_minDia_mm"] = 0.7
+        //         defaultOptions["blob_maxDia_mm"] = 1.4
+
+        //         defaultOptions["blob_filter_circularity_enabled"] = true
+        //         defaultOptions["blob_filter_circularity_min"] =  0.5
+        //         defaultOptions["blob_filter_circularity_max"] = 5.0
+
+        //         defaultOptions["blob_filter_convexity_enabled"] = false
+        //         defaultOptions["blob_filter_convexity_min"] =  0.5
+        //         defaultOptions["blob_filter_convexity_max"] = 0.9
+
+        //         defaultOptions["blob_thresholdStep"] = 10
+        //         defaultOptions["blob_minThreshold"] = 1
+        //         defaultOptions["blob_maxThreshold"] = 200
+
+        //         defaultOptions["blob_ad_tr_enable"] = true
+        //         defaultOptions["blob_ad_tr_blockSize"] = 29
+        //         defaultOptions["blob_ad_tr_c"] = 9.0
+        //         defaultOptions["blob_ad_tr_type"] = 1
+        //         defaultOptions["blob_tr_type"] = 0
+
+        //         item.options = defaultOptions
+        //     }
         // }
 
         BlobSettings2 {

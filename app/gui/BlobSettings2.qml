@@ -10,12 +10,7 @@ Rectangle {
     //color: "#4000FF00"
     color: "transparent"
     height: lay.height
-
     property var options
-
-    onOptionsChanged:  {
-
-    }
 
     signal dataChanged
 
@@ -36,9 +31,10 @@ Rectangle {
         anchors.top:parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: col1.height + col2.height + col3.height + col4.height + 150
+        height: col1.height + col2.height + col3.height + col4.height + scene.height + 150
 
         RowLayout {
+            id: scene
             ComboBox {
                 id: findBlobScenes
                 model: Engine.filesInDirectory("find_blob_scenes")
@@ -47,6 +43,10 @@ Rectangle {
                     let currText = currentText
                     model = Engine.filesInDirectory("find_blob_scenes")
                     currentIndex = model.indexOf(currText)
+                }
+
+                Component.onCompleted: {
+                    options = Engine.readSceneFile(currentText)
                 }
             }
 

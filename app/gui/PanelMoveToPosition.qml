@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.15
 
 CollapsiblePanel {
     id: root
-    //width: parent.width
+
     width: parent.width
     height: checked ? 300 : 25
 
