@@ -137,7 +137,10 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     // realFiducialBlob  не привязана никуда.
 
     if (fiducialBlobs.size() != 2)
+    {
+        db().insert("messagebox", "fiducial точек должно быть 2");
         return;
+    }
 
     QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
     QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
