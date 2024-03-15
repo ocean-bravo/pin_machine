@@ -5,6 +5,8 @@
 #include "scene.h"
 #include "data_bus.h"
 #include "openCv.h"
+#include "find_blob_view_item.h"
+#include "common.h"
 
 #include <QScopeGuard>
 #include <QDateTime>
@@ -63,9 +65,22 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
     // подать на обнаружение
     qd() << "images to find " << pixs.size();
 
+    every<FindBlobViewItem>(scene().items(), [](FindBlobViewItem* item) { delete item; });
+    FindBlobViewItem* viewItem = new FindBlobViewItem;
+    scene().addItem(viewItem);
+
     for (QGraphicsPixmapItem* pixmap : pixs)
     {
         QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
+
+        auto w = img.width();
+        auto h = img.height();
+        auto ps = img.devicePixelRatioF();
+        auto x = img.text("x").toDouble();
+        auto y = img.text("y").toDouble();
+
+        viewItem->setPos(x, y);
+        viewItem->setRect(-w/(ps*2), -h/(ps*2), w/ps, h/ps);
 
         db().insert("image_raw_captured", img.copy());
         opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
@@ -79,6 +94,8 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
     }
 
     scene().removeDuplicatedBlobs();
+
+    every<FindBlobViewItem>(scene().items(), [](FindBlobViewItem* item) { delete item; });
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 
