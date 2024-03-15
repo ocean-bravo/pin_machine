@@ -161,6 +161,13 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     if (blobs.isEmpty())
         blobs = scene().punchBlobs();
 
+    qd() << "blobs to punch";
+
+    for (BlobItem* blob : qAsConst(blobs))
+    {
+        qd() << blob->scenePos();
+    }
+
     for (BlobItem* blob : qAsConst(blobs))
     {
         moveToAndWaitPosition(blob->scenePos() + QPointF(dx, dy)); // Приехали на позицию
