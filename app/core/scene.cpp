@@ -141,6 +141,7 @@ BlobItem* Scene::addBlobCopy(const BlobItem* blob, bool sceneIsParent)
     QString sceneFilename = blob->sceneFileName();
     auto newBlob = addBlob(x, y, dia, sceneIsParent);
     newBlob->setSceneFileName(sceneFilename);
+    return newBlob;
 }
 
 void Scene::addBoard()
