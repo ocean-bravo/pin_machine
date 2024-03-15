@@ -84,7 +84,7 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 
         db().insert("image_raw_captured", img.copy());
         opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
-        wait(500); //(slow ? 2000 : 10);
+        wait(10); //(slow ? 2000 : 10);
 
         if (_stop)
         {
