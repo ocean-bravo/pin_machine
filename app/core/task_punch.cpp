@@ -152,8 +152,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
     // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
     int count  = 0;
-    const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
-    const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
+
     const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
 
     QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
@@ -168,9 +167,11 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         qd() << blob->scenePos();
     }
 
+    const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
+    const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
     for (BlobItem* blob : qAsConst(blobs))
     {
-        moveToAndWaitPosition(blob->scenePos() + QPointF(dx, dy)); // Приехали на позицию
+        moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
         if (_stop) { emit message("program interrupted"); return; }
         for (const QString& gCode : punchCode)
         {
