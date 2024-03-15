@@ -107,7 +107,7 @@ CollapsiblePanel {
 
                 DoubleSpinBox {
                     id: deltaZeroX
-                    value: xPos + zeroPoint.x
+                    value: xPos - zeroPoint.x
                 }
 
                 Text {
@@ -120,7 +120,7 @@ CollapsiblePanel {
                 }
                 DoubleSpinBox {
                     id: deltaZeroY
-                    value: yPos + zeroPoint.y
+                    value: yPos - zeroPoint.y
                 }
 
                 Item {Layout.preferredWidth: 30}
