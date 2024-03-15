@@ -103,7 +103,7 @@ CollapsiblePanel {
         sequence: "F8"
         context: Qt.ApplicationShortcut
         onActivated: {
-
+            DataBus.punch_next = "ok"
         }
     }
 }
