@@ -9,7 +9,7 @@ CollapsiblePanel {
     // height: 30 + column.childrenRect.height
 
     Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 26 + column.childrenRect.height : 26
+    Layout.preferredHeight: checked ? 26 + column.height : 26
 
     text: qsTr("Punch")
 
