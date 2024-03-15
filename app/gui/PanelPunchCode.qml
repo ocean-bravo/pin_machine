@@ -20,8 +20,6 @@ CollapsiblePanel {
         column.visible = checked
     }
 
-    property var currentOptions
-
     ColumnLayout {
         id: column
         width: parent.width
@@ -63,7 +61,7 @@ CollapsiblePanel {
                 text: qsTr("Punch")
                 checkable: true
                 Layout.preferredWidth: 70
-                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc, root.currentOptions)
+                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
                                           : TaskPunch.stopProgram()
                 function selectedResolution() {
                     return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
@@ -88,27 +86,24 @@ CollapsiblePanel {
                     }
                 }
             }
+        }
 
-            ComboBox {
-                id: findBlobScenes
-                model: Engine.filesInSceneDirectory()
-                Layout.preferredWidth: 120
-                onActivated: {
-                    root.currentOptions = Engine.readSceneFile(currentText)
-                }
-                onModelChanged: {
-                    root.currentOptions = Engine.readSceneFile(currentText)
-                }
-                onDownChanged: {
-                    let currText = currentText
-                    model = Engine.filesInSceneDirectory()
-                    currentIndex = model.indexOf(currText)
-                }
+        CheckBox {
+            id: slowFindBlobs
+            text: "step by step (F8)"
+            onCheckedChanged: DataBus.punch_step_by_step = checked
+            checked: false
 
-                Component.onCompleted: {
-                    root.currentOptions = Engine.readSceneFile(currentText)
-                }
-            }
+            //Layout.preferredHeight: 30
+            //Layout.preferredWidth: 20
+        }
+    }
+
+    Shortcut {
+        sequence: "F8"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+
         }
     }
 }

@@ -38,15 +38,14 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run(QString punchProgram, int width, int height, QString fourcc, QVariantMap options)
+void TaskPunch::run(QString punchProgram, int width, int height, QString fourcc)
 {
     _impl->_stop = false;
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
                               Q_ARG(QString, punchProgram),
                               Q_ARG(int, width),
                               Q_ARG(int, height),
-                              Q_ARG(QString, fourcc),
-                              Q_ARG(QVariantMap, options));
+                              Q_ARG(QString, fourcc));
 }
 
 void TaskPunch::stopProgram()
@@ -60,7 +59,19 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc, QVariantMap options)
+void TaskPunchPrivate::waitForNextStep()
+{
+    const bool stepByStep = db().value("punch_step_by_step").toBool();
+
+    if (!stepByStep)
+        return;
+
+    db().insert("punch_next", "wait"); // Показать в GUI окно предложение продолжения
+    waitDataBus("punch_next", "ok");
+    db().insert("punch_next", QString());
+}
+
+void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -112,12 +123,15 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
     for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
+        waitForNextStep();
+
         if (_stop) { emit message("program interrupted"); break; }
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         //realFiducialBlob->setRealFiducial(true);
         runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
+        const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
         updateBlobPosition(realFiducialBlob, options);
         updateBlobPosition(realFiducialBlob, options);
         updateBlobPosition(realFiducialBlob, options);
@@ -172,6 +186,9 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     for (BlobItem* blob : qAsConst(blobs))
     {
         moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
+
+        waitForNextStep();
+
         if (_stop) { emit message("program interrupted"); return; }
         for (const QString& gCode : punchCode)
         {

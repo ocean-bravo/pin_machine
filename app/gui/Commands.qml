@@ -452,12 +452,6 @@ Item {
         }
     }
 
-    Shortcut {
-        sequence: "F5"
-        context: Qt.ApplicationShortcut
-        onActivated: write("?")
-    }
-
     property variant modes: ["Idle", "Alarm", "Check", "Home", "Run", "Jog", "Hold:0", "Hold:1",
         "Door", "Door:0", "Door:1", "Door:2", "Door:3", "Sleep" ]
 
