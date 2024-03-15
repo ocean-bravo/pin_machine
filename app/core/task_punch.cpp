@@ -38,10 +38,15 @@ TaskPunch::~TaskPunch()
     _thread->wait(1000);
 }
 
-void TaskPunch::run(QString punchProgram, QVariantMap options)
+void TaskPunch::run(QString punchProgram, int width, int height, QString fourcc, QVariantMap options)
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QString, punchProgram), Q_ARG(QVariantMap, options));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
+                              Q_ARG(QString, punchProgram),
+                              Q_ARG(int, width),
+                              Q_ARG(int, height),
+                              Q_ARG(QString, fourcc),
+                              Q_ARG(QVariantMap, options));
 }
 
 void TaskPunch::stopProgram()
@@ -55,7 +60,7 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::run(QString punchProgram, QVariantMap options)
+void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc, QVariantMap options)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
@@ -73,10 +78,10 @@ void TaskPunchPrivate::run(QString punchProgram, QVariantMap options)
     wait(500);
     video().stop();
 
-    db().insert("resolution_width", 1280);
-    db().insert("resolution_height", 960);
+    db().insert("resolution_width", width);
+    db().insert("resolution_height", height);
 
-    video().changeCamera(cameraId(), 1280, 960, "YUYV");
+    video().changeCamera(cameraId(), width, height, fourcc);
     video().start();
 
     auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });

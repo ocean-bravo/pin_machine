@@ -62,13 +62,37 @@ CollapsiblePanel {
                 id: punch
                 text: qsTr("Punch")
                 checkable: true
-                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, root.currentOptions) : TaskPunch.stopProgram()
+                Layout.preferredWidth: 70
+                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc, root.currentOptions)
+                                          : TaskPunch.stopProgram()
+                function selectedResolution() {
+                    return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
+                }
                 Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
             }
+
+            ComboBox {
+                id: resolutionListForPunch
+                //width: 200
+                Layout.preferredWidth: 180
+                Layout.columnSpan: 2
+                textRole: "display"
+                model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                onModelChanged: {
+                    let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
+
+                    for (let i = 0; i < res.length; i++) {
+                        let r = res[i]
+                        if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
+                            currentIndex = i
+                    }
+                }
+            }
+
             ComboBox {
                 id: findBlobScenes
                 model: Engine.filesInSceneDirectory()
-                Layout.preferredWidth: 180
+                Layout.preferredWidth: 120
                 onActivated: {
                     root.currentOptions = Engine.readSceneFile(currentText)
                 }
