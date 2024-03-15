@@ -20,6 +20,8 @@ CollapsiblePanel {
         column.visible = checked
     }
 
+    property var currentOptions
+
     ColumnLayout {
         id: column
         width: parent.width
@@ -54,12 +56,35 @@ CollapsiblePanel {
             }
         }
 
-        SmButton {
-            id: punch
-            text: qsTr("Punch")
-            checkable: true
-            onCheckedChanged: checked ? TaskPunch.run(punchCode.text) : TaskPunch.stopProgram()
-            Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+        RowLayout {
+
+            SmButton {
+                id: punch
+                text: qsTr("Punch")
+                checkable: true
+                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, root.currentOptions) : TaskPunch.stopProgram()
+                Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+            }
+            ComboBox {
+                id: findBlobScenes
+                model: Engine.filesInSceneDirectory()
+                Layout.preferredWidth: 180
+                onActivated: {
+                    root.currentOptions = Engine.readSceneFile(currentText)
+                }
+                onModelChanged: {
+                    root.currentOptions = Engine.readSceneFile(currentText)
+                }
+                onDownChanged: {
+                    let currText = currentText
+                    model = Engine.filesInSceneDirectory()
+                    currentIndex = model.indexOf(currText)
+                }
+
+                Component.onCompleted: {
+                    root.currentOptions = Engine.readSceneFile(currentText)
+                }
+            }
         }
     }
 }
