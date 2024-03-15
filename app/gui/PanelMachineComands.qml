@@ -55,6 +55,7 @@ CollapsiblePanel {
                 text: qsTr("Status(?)")
                 tooltipText: "F5";
                 checkable: true
+                checked: true
                 onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
 
                 Timer {
@@ -62,7 +63,7 @@ CollapsiblePanel {
                     interval: 500
                     repeat: true
                     triggeredOnStart: true
-                    running: false
+                    running: true
                     onTriggered: Serial.write("?\n")
                 }
             }
