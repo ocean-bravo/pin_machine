@@ -326,11 +326,9 @@ OpenCv::OpenCv()
             BlobItem* blobItem = scene().addBlob(blob.xMm, blob.yMm, blob.diameterMm);
             blobItem->setSceneFileName(options.value("filename").toString());
         }
-    });
 
-    QTimer* timer = new QTimer;
-    timer->start(50);
-    connect(timer, &QTimer::timeout, this, &OpenCv::blobDetectorCaptured);
+        blobDetectorCaptured();
+    });
 
     connect(&_blobWatcherLive, &QFutureWatcher<OpenCv::BlobsOnImage>::finished, this, [this]()
     {
@@ -378,18 +376,25 @@ void OpenCv::blobDetectorLive(QImage img, QVariantMap options)
 
 void OpenCv::blobDetectorCaptured()
 {
+    if (_detectBlobQueue.isEmpty())
+    {
+        emit queueIsEmpty();
+        return;
+    }
+
     if (!_detectBlobQueue.isEmpty() && _blobWatcherCaptured.isFinished())
     {
-        auto [img, options] = _detectBlobQueue.first();
-        _detectBlobQueue.pop_front();
+        auto [img, options] = _detectBlobQueue.takeFirst();
         QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
         _blobWatcherCaptured.setFuture(future);
+        return;
     }
 }
 
 void OpenCv::appendToBlobDetectorQueue(QImage img, QVariantMap options)
 {
     _detectBlobQueue.push_back(std::make_tuple(img, options));
+    blobDetectorCaptured();
 }
 
 void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)

@@ -42,10 +42,9 @@ public:
 
 signals:
     void circleChanged(QImage);
-
     void smallRegionBlobDetectionFinished();
-
     void smallRegionBlobImage(QImage);
+    void queueIsEmpty();
 
 private:
     OpenCv();

@@ -84,7 +84,7 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 
         db().insert("image_raw_captured", img.copy());
         opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
-        wait(10); //(slow ? 2000 : 10);
+        //wait(10); //(slow ? 2000 : 10);
 
         if (_stop)
         {
@@ -93,9 +93,13 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
         }
     }
 
-    scene().removeDuplicatedBlobs();
+    waitForSignal(&opencv(), &OpenCv::queueIsEmpty, 10000);
 
-    //every<FindBlobViewItem>(scene().items(), [](FindBlobViewItem* item) { delete item; });
+    {
+        qd() << "start remove blobs";
+        ScopedMeasure m("remove blobs", ScopedMeasure::Milli);
+        scene().removeDuplicatedBlobs();
+    }
 
     auto finish = QDateTime::currentMSecsSinceEpoch();
 

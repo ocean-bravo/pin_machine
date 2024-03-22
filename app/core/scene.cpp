@@ -479,10 +479,11 @@ void Scene::removeDuplicatedBlobs()
 
     auto foo = [this]()
     {
-        every<BlobItem>(QGraphicsScene::items(), [this](BlobItem* blob)
+        every<BlobItem>(QGraphicsScene::items(Qt::AscendingOrder), [this](BlobItem* blob)
         {
             // если есть пересечение с кем то, то удалить его
-            const auto collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
+            const QList<QGraphicsItem*> collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
+
             for (QGraphicsItem* collidingItem : collidingItems)
             {
                 if (is<BlobItem>(collidingItem))
