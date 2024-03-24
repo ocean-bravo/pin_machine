@@ -20,6 +20,14 @@ ListView {
 
     boundsBehavior: Flickable.StopAtBounds
 
+    Connections {
+        target: listModel
+        function onCountChanged() {
+            if (snap)
+                scrollBar.position = 1.0
+        }
+    }
+
     delegate: Text {
         padding: 0
         font.family: "Consolas"
