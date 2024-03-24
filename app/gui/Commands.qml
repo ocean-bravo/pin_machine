@@ -274,21 +274,21 @@ Item {
                     Item {
                         SplitView.minimumHeight: 50
                         SplitView.preferredHeight: parent.height / 2
-                        Log {
+                        Log2 {
                             id: logViewer
                             anchors.fill:parent
                         }
-                        Button {
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            width: 25
-                            height:25
-                            text: ("🗑")
-                            onClicked: { logViewer.clear() }
+                        // Button {
+                        //     anchors.top: parent.top
+                        //     anchors.left: parent.left
+                        //     width: 25
+                        //     height:25
+                        //     text: ("🗑")
+                        //     onClicked: { logViewer.clear() }
 
-                            ToolTip.visible: hovered
-                            ToolTip.text: qsTr("Clear log")
-                        }
+                        //     ToolTip.visible: hovered
+                        //     ToolTip.text: qsTr("Clear log")
+                        // }
                     }
                     CodeEditor2 {
                         id: codeEditor
