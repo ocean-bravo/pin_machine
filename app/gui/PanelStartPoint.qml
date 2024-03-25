@@ -2,23 +2,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-CollapsiblePanel {
+CollapsiblePanel2 {
     id: root
 
     width: parent.width
-    height: checked ? 70 : 25
-
-    Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 70 : 25
 
     text: qsTr("Start Point")
 
-    onCheckedChanged: {
-        column.visible = checked
-    }
     Component.onCompleted: {
-        column.visible = checked
-
         let startPoint = Qt.point(0,0)
         startPoint.x = Settings.value("punchpath_start_point_x", 10.0)
         startPoint.y = Settings.value("punchpath_start_point_y", 10.0)
@@ -27,12 +18,10 @@ CollapsiblePanel {
 
     ColumnLayout {
         id: column
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: parent.width
 
         Rectangle {
-            color: "lightgrey"
+            color: "transparent"
             Layout.fillWidth: true
             Layout.preferredHeight: 30
 

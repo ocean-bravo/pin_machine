@@ -2,23 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-CollapsiblePanel {
+CollapsiblePanel2 {
     id: root
 
-    // width: parent.width
-    // height: 30 + column.childrenRect.height
-
-    Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 26 + column.height : 26
+    width: parent.width
 
     text: qsTr("Punch")
-
-    onCheckedChanged: {
-        column.visible = checked
-    }
-    Component.onCompleted: {
-        column.visible = checked
-    }
 
     ColumnLayout {
         id: column

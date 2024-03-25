@@ -182,14 +182,17 @@ Item {
             // contentHeight: edit.paintedHeight + 5
             clip: true
 
-            ColumnLayout {
+            Column {
                 Layout.preferredWidth: 400
                 Layout.fillHeight: true
                 spacing: 0
 
                 RowLayout {
-                    Layout.preferredWidth: 400
-                    Layout.preferredHeight: 30
+                    //Layout.preferredWidth: 400
+                    //Layout.preferredHeight: 30
+                    width: 400
+                    height: 30
+
 
                     SmTextEdit {
                         id: serialPortName
@@ -225,33 +228,51 @@ Item {
                     text: fullStatus + status
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
-                    Layout.preferredWidth: 400
-                    Layout.preferredHeight: 25
+                    // Layout.preferredWidth: 400
+                    // Layout.preferredHeight: 25
+                    width: 400
+                    height: 25
                 }
 
-                PanelMachineComands {}
-
-                //PanelTasks {}
-                DebugLoader {
-                    Layout.preferredWidth: 400
-                    Layout.preferredHeight: item.height
-                    path: "/home/mint/devel/pin_machine/app/gui/PanelTasks.qml"
+                PanelMachineComands {
+                     //Layout.preferredWidth: 400
+                    // Layout.preferredHeight: item.height
                 }
+
+                PanelTasks {}
+                // DebugLoader {
+                //     Layout.preferredWidth: 400
+                //     Layout.preferredHeight: item.height
+                //     path: "/home/mint/devel/pin_machine/app/gui/PanelTasks.qml"
+                // }
 
                 PanelMoveToPosition {}
                 PanelJogControl {}
-                PanelPunchCode {}
-                PanelStartPoint {}
+
+                PanelPunchCode {
+                    width: parent.width //simplicitWidth
+                }
+                // DebugLoader {
+                //     Layout.preferredWidth: 400
+                //     Layout.preferredHeight: item.height
+                //     path: "/home/mint/devel/pin_machine/app/gui/PanelPunchCode.qml"
+                // }
+
+                PanelStartPoint {
+                    width: parent.width
+                }
                 PanelToolShift {}
-                PanelDebug {}
+                PanelDebug {
+                width: parent.width
+                }
                 PanelCameraSettings {}
 
-                //PanelBlobDetectionSettings {}
-                DebugLoader {
-                    Layout.preferredWidth: 400
-                    Layout.preferredHeight: item.height
-                    path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
-                }
+                PanelBlobDetectionSettings {}
+                // DebugLoader {
+                //     Layout.preferredWidth: 400
+                //     //Layout.preferredHeight: item.height
+                //     path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
+                // }
 
                 Item {
                     Layout.fillHeight: true

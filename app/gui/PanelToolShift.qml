@@ -2,34 +2,23 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-CollapsiblePanel {
+CollapsiblePanel2 {
     id: root
 
     width: parent.width
-    height: checked ? 200 : 25
-
-    Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 200 : 25
 
     text: qsTr("Tool Shift")
 
     property point zeroPoint: Qt.point(0,0)
 
-    onCheckedChanged: {
-        column.visible = checked
-    }
     Component.onCompleted: {
-        column.visible = checked
-
         DataBus.punch_tool_shift_dx = Settings.value("punch_tool_shift_dx", 85.0);
         DataBus.punch_tool_shift_dy = Settings.value("punch_tool_shift_dy", -90.0);
     }
 
     ColumnLayout {
         id: column
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: parent.width
 
         Rectangle {
             color: "lightgrey"

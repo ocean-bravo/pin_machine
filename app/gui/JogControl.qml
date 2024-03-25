@@ -4,18 +4,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-Item {
-    //color: "azure"
+Rectangle {
+    color: "transparent"
 
-    // Layout.fillWidth: true
-    // Layout.fillHeight: true
-
-    //width: 300
-
-    //width: parent.width
-    height: contentItem.childrenRect.height
-    //implicitHeight: grid.implicitHeight
-    //implicitWidth: grid.implicitWidth
+    width: parent.width
+    height: 400
 
     component MyButton: Button {
         // width: {
@@ -55,27 +48,36 @@ Item {
     }
 
     ColumnLayout {
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.fill: parent
+        spacing: 0
 
-        Slider { id: xyFeedRate; from: 10; to: 5000; value: 5000; stepSize: 10;
+        Rectangle {
+            color: 'transparent'
             Layout.fillWidth: true;
             Layout.preferredHeight: 30;
-            Text {
-                anchors.centerIn: parent
-                text: "XY feed rate: " + parent.value
-                bottomPadding: 20
+
+            Slider { id: xyFeedRate; from: 10; to: 5000; value: 5000; stepSize: 10;
+                anchors.fill: parent
+                Text {
+                    anchors.centerIn: parent
+                    text: "XY feed rate: " + parent.value
+                    bottomPadding: 20
+                }
             }
         }
 
-        Slider { id: zFeedRate; from: 10; to: 5000; value: 5000; stepSize: 10;
+        Rectangle {
+            color: 'transparent'
             Layout.fillWidth: true;
             Layout.preferredHeight: 30;
-            Text {
-                anchors.centerIn: parent
-                text: "Z feed rate: " + parent.value
-                bottomPadding: 20
+
+            Slider { id: zFeedRate; from: 10; to: 5000; value: 5000; stepSize: 10;
+                anchors.fill: parent
+                Text {
+                    anchors.centerIn: parent
+                    text: "Z feed rate: " + parent.value
+                    bottomPadding: 20
+                }
             }
         }
 

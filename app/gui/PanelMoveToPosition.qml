@@ -2,29 +2,17 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-CollapsiblePanel {
+CollapsiblePanel2 {
     id: root
 
     width: parent.width
-    height: checked ? 300 : 25
-
-    Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 300 : 25
 
     text: qsTr("Move to position")
 
-    onCheckedChanged: {
-        grid.visible = checked
-    }
-    Component.onCompleted: {
-        grid.visible = checked
-    }
-
     GridLayout {
         id: grid
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: parent.width
+
         columns: 4
         columnSpacing: 5
         rowSpacing: 5

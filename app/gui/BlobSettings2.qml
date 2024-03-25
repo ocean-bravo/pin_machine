@@ -7,8 +7,10 @@ import Qt.labs.platform 1.1
 
 Rectangle {
     id: root
-    //color: "#4000FF00"
     color: "transparent"
+
+    width: 200
+
     height: lay.height
 
     property var options
@@ -32,7 +34,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: col1.height + col2.height + col3.height + col4.height + scene.height + 150
+        height: col1.height + col2.height + col3.height + col4.height + scene.height + 50
 
         RowLayout {
             id: scene

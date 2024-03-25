@@ -4,33 +4,20 @@ import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
 import "utils.js" as Utils
 
-CollapsiblePanel {
+CollapsiblePanel2 {
     id: root
 
     width: parent.width
-    height: checked ? 270 : 25
-
-    Layout.preferredWidth: 400
-    Layout.preferredHeight: checked ? 270 : 25
 
     checked: true
 
     text: qsTr("Task")
 
-    onCheckedChanged: {
-        grid.visible = checked
-    }
-    Component.onCompleted: {
-        grid.visible = checked
-    }
-
     property var currentOptions
 
     GridLayout {
         id: grid
-        anchors.top:parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: parent.width
         columns: 4
 
         // 1.
