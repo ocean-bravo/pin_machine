@@ -171,26 +171,29 @@ Item {
         }
     }
 
-    RowLayout {
+    SplitView {
         anchors.fill: parent
+        orientation: Qt.Horizontal
 
         ScrollView {
             id: flick
-            Layout.preferredWidth: 400
-            Layout.fillHeight: true
-            // contentWidth: edit.paintedWidth
-            // contentHeight: edit.paintedHeight + 5
+            // Layout.preferredWidth: 400
+            // Layout.fillHeight: true
+
+            SplitView.minimumWidth: 50
+            SplitView.maximumWidth: 400
             clip: true
 
             Column {
-                Layout.preferredWidth: 400
-                Layout.fillHeight: true
+                // Layout.preferredWidth: 400
+                // Layout.fillHeight: true
+                width: 400
                 spacing: 0
 
                 RowLayout {
                     //Layout.preferredWidth: 400
                     //Layout.preferredHeight: 30
-                    width: 400
+                    width: parent.width
                     height: 30
 
 
@@ -230,49 +233,26 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     // Layout.preferredWidth: 400
                     // Layout.preferredHeight: 25
-                    width: 400
+                    width: parent.width
                     height: 25
                 }
 
-                PanelMachineComands {
-                     //Layout.preferredWidth: 400
-                    // Layout.preferredHeight: item.height
-                }
-
+                PanelMachineComands { }
                 PanelTasks {}
-                // DebugLoader {
-                //     Layout.preferredWidth: 400
-                //     Layout.preferredHeight: item.height
-                //     path: "/home/mint/devel/pin_machine/app/gui/PanelTasks.qml"
-                // }
-
                 PanelMoveToPosition {}
                 PanelJogControl {}
-
-                PanelPunchCode {
-                    width: parent.width //simplicitWidth
-                }
+                PanelPunchCode {}
                 // DebugLoader {
                 //     Layout.preferredWidth: 400
                 //     Layout.preferredHeight: item.height
                 //     path: "/home/mint/devel/pin_machine/app/gui/PanelPunchCode.qml"
                 // }
 
-                PanelStartPoint {
-                    width: parent.width
-                }
+                PanelStartPoint { }
                 PanelToolShift {}
-                PanelDebug {
-                width: parent.width
-                }
+                PanelDebug {}
                 PanelCameraSettings {}
-
                 PanelBlobDetectionSettings {}
-                // DebugLoader {
-                //     Layout.preferredWidth: 400
-                //     //Layout.preferredHeight: item.height
-                //     path: "/home/mint/devel/pin_machine/app/gui/PanelBlobDetectionSettings.qml"
-                // }
 
                 Item {
                     Layout.fillHeight: true
@@ -280,8 +260,8 @@ Item {
             }
         }
         SplitView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            // Layout.fillWidth: true
+            // Layout.fillHeight: true
 
             Item {
                 SplitView.minimumWidth: 50

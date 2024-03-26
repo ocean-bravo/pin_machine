@@ -26,8 +26,8 @@ Rectangle {
         //color: "lightgrey"
 
         gradient: Gradient {
-                  GradientStop { position: 0.0; color:  Qt.lighter(Qt.lighter("#98A3B4")) }
-                  GradientStop { position: 1.0; color:  Qt.lighter(Qt.lighter("#5A6B83")) }
+                  GradientStop { position: 0.0; color:  (("#AA98A3B4")) }
+                  GradientStop { position: 1.0; color:  (("#AA5A6B83")) }
         }
 
         CheckBox {
