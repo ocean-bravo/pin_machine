@@ -12,5 +12,6 @@ CollapsiblePanel2 {
 
     JogControl {
         id: jogControl
+        width: parent.width
     }
 }

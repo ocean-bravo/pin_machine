@@ -1,3 +1,4 @@
+import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
@@ -9,9 +10,9 @@ CollapsiblePanel2 {
 
     width: parent.width
 
-    checked: true
-
     text: qsTr("Task")
+
+    checked: true
 
     property var currentOptions
 

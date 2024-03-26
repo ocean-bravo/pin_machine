@@ -68,6 +68,7 @@ Rectangle {
         id: cont
         width: parent.width
         height: checkBox.checked ? childrenRect.height : 0
+        contentHeight: childrenRect.height // Не знаю, зачем надо, но от binding loop избавляет
         anchors.top: head.bottom
         clip: true
 

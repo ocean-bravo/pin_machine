@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     color: "transparent"
 
-    width: parent.width
+    width: 200 //parent.width
     height: 400
 
     component MyButton: Button {

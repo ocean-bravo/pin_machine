@@ -56,31 +56,6 @@ Item {
         Component.onCompleted: {
             contentItem.selectByMouse = true
         }
-
-        background: Rectangle {
-            // implicitWidth: 140
-            color: Qt.lighter("grey")
-            border.color: "transparent"
-
-            radius: 10
-        }
-
-        // contentItem: TextInput {
-        //          z: 2
-        //          text: control.textFromValue(control.value, control.locale)
-
-        //          font: control.font
-        //          color: "#21be2b"
-        //          selectionColor: "#21be2b"
-        //          selectedTextColor: "#ffffff"
-        //          horizontalAlignment: Qt.AlignHCenter
-        //          verticalAlignment: Qt.AlignVCenter
-
-        //          readOnly: !control.editable
-        //          validator: control.validator
-        //          inputMethodHints: Qt.ImhFormattedNumbersOnly
-        //      }
-
     }
     QtObject {
         id: self

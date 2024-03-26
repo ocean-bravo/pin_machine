@@ -25,11 +25,6 @@
 
 #include "mjpeghelper.h"
 
-namespace {
-
-}
-
-
 Video4::Video4()
 {
     _impl = new Video4Private;
@@ -135,11 +130,14 @@ void Video4Private::capture(double widthMm)
 
 void Video4Private::reloadDevices()
 {
-    _videoCapture->reloadDevices();
+    MyVideoDriver::reloadDevices();
 }
 
 void Video4Private::setProperty(const QString &property, qint32 value)
 {
+    if (_videoCapture.isNull())
+        return;
+
     _videoCapture->setProperty(property, value);
 }
 
