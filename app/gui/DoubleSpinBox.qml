@@ -62,7 +62,7 @@ Item {
             color: Qt.lighter("grey")
             border.color: "transparent"
 
-            radius: 10
+            radius: 5
         }
 
         // contentItem: TextInput {

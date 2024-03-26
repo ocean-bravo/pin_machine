@@ -23,6 +23,14 @@ Button {
 
 //    Layout.maximumWidth: 200
 
+    // background: Rectangle {
+    //     // implicitWidth: 140
+    //     color: root.down ? "lightblue" : "transparent"
+    //     border.color: "darkblue"
+
+    //     radius: 10
+    // }
+
     width: {
         if (parent.hasOwnProperty("columns")) {
             let w = parent.width

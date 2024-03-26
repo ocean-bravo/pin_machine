@@ -37,6 +37,14 @@ Rectangle {
                 root.value = value
                 root.value = Qt.binding(root.valueBind)
             }
+
+            background: Rectangle {
+                // implicitWidth: 140
+                color: Qt.lighter("grey")
+                border.color: "transparent"
+
+                radius: 5
+            }
         }
 
         ColumnLayout {
