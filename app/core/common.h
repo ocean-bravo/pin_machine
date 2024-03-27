@@ -81,6 +81,15 @@ bool atLeastOne(const QGraphicsItem* parent)
     return false;
 }
 
+template<typename T>
+QList<T*> convertTo(const QList<QGraphicsItem*>& items)
+{
+    QList<T*> otherItems;
+    every<T>(items, [&otherItems](T* t) { otherItems.append(t); });
+    return otherItems;
+}
+
+
 // Десятичный разделитель - точка
 //inline QString toReal(double value)
 //{

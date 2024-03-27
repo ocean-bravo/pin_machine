@@ -483,15 +483,19 @@ void Scene::removeDuplicatedBlobs()
         {
             // если есть пересечение с кем то, то удалить его
             const QList<QGraphicsItem*> collidingItems = QGraphicsScene::collidingItems(blob, Qt::IntersectsItemShape);
+            const QList<BlobItem*> collidingBlobs = convertTo<BlobItem>(collidingItems);
 
-            for (QGraphicsItem* collidingItem : collidingItems)
+            if (collidingBlobs.isEmpty())
+                return;
+
+            // Перенос признаков от удаляемого блоба к новым блобам. Если старый был punch, надо чтобы этот признак не потерялся.
+            for (BlobItem* collidingBlob : collidingBlobs)
             {
-                if (is<BlobItem>(collidingItem))
-                {
-                    delete blob;
-                    break;
-                }
+                collidingBlob->setFiducial(blob->isFiducial());
+                collidingBlob->setPunch(blob->isPunch());
             }
+
+            delete blob;
         });
     };
 
