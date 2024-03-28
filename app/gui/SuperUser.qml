@@ -4,55 +4,35 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 
-Item {
-    id: root
+ApplicationWindow {
+    id: appWin
+    visible: true
+    width: Screen.width/2
+    height: Screen.height
+    x: 0
+    y: 0
+    flags: Qt.Window
 
-    property var appWin: superUser
-
-    SuperUser {
-        id: superUser
-        objectName: "superuser"
-        visible: true
+    Commands {
+        id: commands
+        anchors.fill: parent
     }
 
-    OperatorUser {
-        id: operatorUser
-        objectName: "operatoruser"
-        visible: false
-    }
+    // Loader {
+    //     id: loader
 
-    Shortcut {
-        sequence: "F1"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            operatorUser.visible = true
-            appWin = operatorUser
-            superUser.visible = false
-        }
-    }
+    //     function reload() {
+    //         loader.source = ""
+    //         QmlEngine.clearCache()
 
-    Shortcut {
-        sequence: "F2"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            superUser.visible = true
-            appWin = superUser
-            operatorUser.visible = false
-        }
-    }
+    //         loader.source = "Commands.qml"
 
-    Component.onCompleted: {
-        superUser.visible = true
-    }
+    //     }
 
-    Shortcut {
-        sequence: "F5"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            console.log("reload")
-            loader.reload()
-        }
-    }
+    //     source: "Commands.qml"
+
+    //     Timer { interval: 5000; repeat: true; triggeredOnStart: true; running: true; onTriggered: loader.reload(); }
+    // }
 
     FlashMessageBox {
         id: message
@@ -67,16 +47,16 @@ Item {
         Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
 
-    MessageBoxLoader {
+    MessageBox {
         id: splash
         text: DataBus.splash
         backgroundColor: "green"
         noButtons: true
         onTextChanged: {
             if (text.length > 0)
-                show()
+                open()
             else
-                hide()
+                close()
         }
         Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
@@ -110,14 +90,15 @@ Item {
         backgroundColor: "green"
     }
 
-    Shortcut {
-        sequence: "F9"
-        context: Qt.WindowShortcut
-        onActivated: {
-            QmlEngine.clearCache()
-            appWin.close()
-            Engine.reload()
-        }
+    Button {
+        id: stepNext
+        text: "Next"
+        width: 50
+        height: 30
+        visible: DataBus.next === "wait"
+        onClicked: DataBus.next = "ok"
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
     }
 
     // Выполняет заданную функцию через интервал времени
