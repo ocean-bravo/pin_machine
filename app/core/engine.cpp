@@ -40,7 +40,7 @@
 #include "settings.h"
 
 #include "ImageItem.h"
-
+#include "scene_item.h"
 
 #include "file_system_watcher.h"
 
@@ -217,6 +217,7 @@ void Engine::createQmlEngine()
     _qmlEngine->addImportPath(appDir() + "libs");
 
     qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
+    qmlRegisterType<SceneItem>("SceneItem", 1, 0, "SceneItem");
 
     _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());

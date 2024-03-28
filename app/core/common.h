@@ -51,10 +51,10 @@ void everyChild(const QGraphicsItem* parent, const Action<T>& action)
     }
 }
 
-template<typename T>
-void every(const QList<QGraphicsItem*>& items, const Action<T>& action)
+template<typename T, typename ItemType>
+void every(const QList<ItemType*>& items, const Action<T>& action)
 {
-    for (QGraphicsItem* item : items)
+    for (ItemType* item : items)
     {
         T* t = dynamic_cast<T*>(item);
 
@@ -64,6 +64,20 @@ void every(const QList<QGraphicsItem*>& items, const Action<T>& action)
         action(t);
     }
 }
+
+// template<typename T>
+// void every(const QList<QGraphicsItem*>& items, const Action<T>& action)
+// {
+//     for (QGraphicsItem* item : items)
+//     {
+//         T* t = dynamic_cast<T*>(item);
+
+//         if (!t)
+//             continue;
+
+//         action(t);
+//     }
+// }
 
 template<typename Parent, typename Child>
 bool atLeastOne(const QGraphicsItem* parent)

@@ -5,7 +5,7 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import Process 1.0
 import ImageItem 1.0
-import QmlGraphicsView 1.0
+import SceneItem 1.0
 
 import "utils.js" as Utils
 
@@ -178,15 +178,132 @@ ApplicationWindow {
         }
     }
 
-    SplitView {
-        anchors.fill: parent
-        orientation: Qt.Horizontal
+    color: "lightblue"
 
-        Column {
-            // Layout.preferredWidth: 400
-            // Layout.fillHeight: true
-            width: 400
-            spacing: 0
+    menuBar: MenuBar {
+        Menu {
+            id: fileMenu
+            title: qsTr("File")
+            // ...
+        }
+
+        Menu {
+            id: editMenu
+            title: qsTr("&Edit")
+            // ...
+        }
+
+        Menu {
+            id: viewMenu
+            title: qsTr("&View")
+            // ...
+        }
+
+        Menu {
+            id: helpMenu
+            title: qsTr("&Help")
+            // ...
+        }
+    }
+
+    footer: ToolBar {
+        // ...
+    }
+
+
+
+    component SmRadioButton: CustomSwitch {
+
+
+    }
+
+
+    Control {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+
+        width: 400
+        leftPadding: 8
+        rightPadding: 8
+        topPadding: 8
+        bottomPadding: 8
+
+
+        contentItem: ColumnLayout {
+            id: tools
+
+            spacing: 6
+
+            WhitePanel {
+                id: panel1
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+
+                Row {
+                    Text {
+                        text: "product name"
+                    }
+                }
+            }
+
+            WhitePanel {
+                id: panel2
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+
+                Row {
+                    Text {
+                        text: "product name"
+                    }
+                }
+            }
+
+            WhitePanel {
+                id: panel3
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+
+                Column {
+                    Text {
+                        text: "product name"
+                    }
+                    SmRadioButton {
+                        text: "Без установки"
+                    }
+
+                    SmRadioButton {
+                        text: "Пошагово"
+                    }
+                }
+            }
+
+            WhitePanel {
+                id: panel4
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+
+                Row {
+                    spacing: 30
+                    Button {
+                        width: 100
+                        height: 90
+                        text: "product name"
+                    }
+
+                    Button {
+                        width: 100
+                        height: 90
+                        text: "product name"
+                    }
+
+                    Button {
+                        width: 100
+                        height: 90
+                        text: "product name"
+                    }
+                }
+            }
 
             RowLayout {
                 //Layout.preferredWidth: 400
@@ -235,13 +352,21 @@ ApplicationWindow {
                 height: 25
             }
 
-
-
-
             Item {
                 Layout.fillHeight: true
             }
         }
+    }
+
+
+
+    SplitView {
+        anchors.left: tools.right
+        anchors.top: parent
+        anchors.bottom: parent
+        anchors.right: parent
+
+        orientation: Qt.Horizontal
 
 
 
@@ -250,33 +375,40 @@ ApplicationWindow {
             SplitView.preferredWidth: 400
             SplitView.maximumWidth: 800
 
-
-            QmlGraphicsView {
-                id: graphicsView
+            //color: "green"
+            Rectangle {
+                color: "#AAFFAAAA"
                 anchors.fill: parent
 
-                scene: Scene
+                SceneItem {
+                    id: scene
+                    anchors.fill: parent
 
-                Component.onCompleted: {
-                    execAfterDelay(function() { graphicsView.fit() }, 50)
-                }
+                    //scene: Scene
+
+                    // Component.onCompleted: {
+                    //     execAfterDelay(function() { graphicsView.fit() }, 50)
+                    // }
                     //QTimer::singleShot(50, this, [this]() { ui->graphicsView->fit();}); // Костылик. Вызов сразу почему то не работает.
-
+                }
             }
-
         }
 
         Item {
-            ImageItem {
-                id: image
-                anchors.fill: parent
-                image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+            Rectangle {
+                color: "yellow"
+                width: 100
+                height: 100
+
+                ImageItem {
+                    id: image
+                    anchors.fill: parent
+                    image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+                }
             }
 
             Item {
                 anchors.fill: parent
-
-
             }
         }
 
