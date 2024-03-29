@@ -363,6 +363,7 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 400
+        clip: true
 
         SceneItem {
             id: scene

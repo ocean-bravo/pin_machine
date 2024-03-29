@@ -65,28 +65,19 @@ QImage SceneItem::image() const
 
 void SceneItem::addBoard()
 {
+    qd() << "add board";
 
-       qd() << "add board";
-
-       // qd() << "window width" << width();
-       // qd() << "window height" << height();
-       // qd() << "window x" << x();
-       // qd() << "window y" << y();
     //runOnThreadWait(this, [this]()
     //{
     every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
 
     _board = new BoardQuickItem(this);
     _board->setVisible(true);
-    //_board->update();
     _board->setParentItem(this);
     _board->setEnabled(true);
-    // // _board->setVisible(true);
-    // _board->setWidth(_board->implicitWidth());
-    // _board->setHeight(_board->implicitHeight());
 
-     _board->setWidth(100);
-     _board->setHeight(100);
+    _board->setWidth(100);
+    _board->setHeight(100);
 
      _board->setPosition(QPointF(100, 100));
 
@@ -95,6 +86,11 @@ void SceneItem::addBoard()
     // every<CameraViewItem>(QGraphicsScene::items(), [](CameraViewItem* camera) { delete camera; });
     // addItem(new CameraViewItem);
      //});
+}
+
+void SceneItem::addImage(QImage img)
+{
+
 }
 
 QQuickItem* SceneItem::root() const
@@ -121,6 +117,14 @@ void SceneItem::wheelEvent(QWheelEvent *event)
     {
         QPointF pos = event->position();
         m_scale = 1 + (float(angleDelta.y())/1200);
+        every<QQuickItem>(childItems(), [angleDelta](QQuickItem* b) {
+
+            b->setScale(b->scale() + (float(angleDelta.y())/1200) * b->scale());
+
+
+        });
+
+        every<QQuickItem>(childItems(), [this](QQuickItem* board) { qd() << board->scale(); });
         auto tm = QTransform()
                 .translate(pos.x(), pos.y())
                 .scale(m_scale, m_scale)

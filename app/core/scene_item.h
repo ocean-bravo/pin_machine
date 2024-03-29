@@ -19,6 +19,7 @@ public:
     //void paint(QPainter *painter) override;
 
     Q_INVOKABLE void addBoard();
+    Q_INVOKABLE void addImage(QImage img);
 
     QQuickItem* root() const;
     void setRoot(QQuickItem*);
