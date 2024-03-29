@@ -178,7 +178,7 @@ ApplicationWindow {
         }
     }
 
-    color: "lightblue"
+    //color: "transparent"
 
     menuBar: MenuBar {
         Menu {
@@ -217,6 +217,7 @@ ApplicationWindow {
 
 
     Control {
+        visible: false
         id: tools
         anchors.left: parent.left
         anchors.top: parent.top
@@ -356,61 +357,75 @@ ApplicationWindow {
         }
     }
 
+    // Item {
+    //     //color: "#AAAAFFAA"
+    //     anchors.fill: parent
 
+    SceneItem {
+        id: scene
+        //anchors.fill: parent
+        // width: 400
+        // height: 400
+        // x: 15
+        // y: 25
+        visible: true
+        root: appWin.contentItem
+        enabled: true
 
-    SplitView {
-        anchors.left: tools.right
-        anchors.top: parent
-        anchors.bottom: parent
-        anchors.right: parent
+        //enabled: true
 
-        orientation: Qt.Horizontal
+        //scene: Scene
 
-
-
-        Item {
-            SplitView.minimumWidth: 50
-            SplitView.preferredWidth: 400
-            SplitView.maximumWidth: 800
-
-            //color: "green"
-            Rectangle {
-                color: "#AAFFAAAA"
-                anchors.fill: parent
-
-                SceneItem {
-                    id: scene
-                    anchors.fill: parent
-
-                    //scene: Scene
-
-                    // Component.onCompleted: {
-                    //     execAfterDelay(function() { graphicsView.fit() }, 50)
-                    // }
-                    //QTimer::singleShot(50, this, [this]() { ui->graphicsView->fit();}); // Костылик. Вызов сразу почему то не работает.
-                }
-            }
-        }
-
-        Item {
-            Rectangle {
-                color: "yellow"
-                width: 100
-                height: 100
-
-                ImageItem {
-                    id: image
-                    anchors.fill: parent
-                    image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
-                }
-            }
-
-            Item {
-                anchors.fill: parent
-            }
-        }
-
+        // Component.onCompleted: {
+        //     execAfterDelay(function() { graphicsView.fit() }, 50)
+        // }
+        //QTimer::singleShot(50, this, [this]() { ui->graphicsView->fit();}); // Костылик. Вызов сразу почему то не работает.
     }
+    //}
+
+    // SplitView {
+    //     //anchors.left: tools.right
+    //     // anchors.top: parent
+    //     // anchors.bottom: parent
+    //     // anchors.right: parent
+
+    //     orientation: Qt.Horizontal
+
+
+
+    //     Item {
+    //         SplitView.minimumWidth: 50
+    //         SplitView.preferredWidth: 400
+    //         SplitView.maximumWidth: 800
+
+    //         //color: "green"
+    //         Rectangle {
+    //             color: "#AAFFAAAA"
+    //             anchors.fill: parent
+
+
+    //         }
+    //     }
+
+    //     Item {
+    //         Rectangle {
+    //             color: "yellow"
+    //             width: 100
+    //             height: 100
+
+    //             ImageItem {
+    //                 id: image
+    //                 anchors.fill: parent
+    //                 image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+    //             }
+    //         }
+
+    //         Item {
+    //             anchors.fill: parent
+    //         }
+    //     }
+
+    // }
 
     property variant modes: ["Idle", "Alarm", "Check", "Home", "Run", "Jog", "Hold:0", "Hold:1",
         "Door", "Door:0", "Door:1", "Door:2", "Door:3", "Sleep" ]

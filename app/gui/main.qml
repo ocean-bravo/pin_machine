@@ -12,13 +12,13 @@ Item {
     SuperUser {
         id: superUser
         objectName: "superuser"
-        visible: true
+        visible: false
     }
 
     OperatorUser {
         id: operatorUser
         objectName: "operatoruser"
-        visible: false
+        visible: true
     }
 
     TestUser {
@@ -58,7 +58,7 @@ Item {
     }
 
     Component.onCompleted: {
-        superUser.visible = true
+        operatorUser.visible = true
     }
 
     Shortcut {

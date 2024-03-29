@@ -1,21 +1,27 @@
 #pragma once
 
 #include <QImage>
-#include <QQuickPaintedItem>
+#include <QQuickItem>
 
-class SceneItem : public QQuickPaintedItem
+class SceneItem : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QImage image READ image WRITE setImage)
+
+    Q_PROPERTY(QQuickItem* root READ root WRITE setRoot)
+
 
 public:
     explicit SceneItem(QQuickItem *parent = nullptr);
     QImage image() const;
     /*Q_INVOKABLE */void setImage(const QImage& image);
 
-    void paint(QPainter *painter) override;
+    //void paint(QPainter *painter) override;
 
     void addBoard();
+
+    QQuickItem* root() const;
+    void setRoot(QQuickItem*);
 
 
 protected:
@@ -33,4 +39,5 @@ private:
     qreal m_scale = 1.0;
 
     QQuickItem* _board;
+    QQuickItem* _root = nullptr;
 };

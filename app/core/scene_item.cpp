@@ -10,11 +10,11 @@
 
 #include <QTimer>
 
-SceneItem::SceneItem(QQuickItem *parent)
-    : QQuickPaintedItem(parent)
+SceneItem::SceneItem(QQuickItem* parent)
+    : QQuickItem(parent)
 {
     //setAcceptHoverEvents(true);
-    setAcceptedMouseButtons(Qt::AllButtons);
+    //setAcceptedMouseButtons(Qt::AllButtons);
     m_prevPoint = QPoint(-1, -1);
 
     addBoard();
@@ -24,6 +24,11 @@ SceneItem::SceneItem(QQuickItem *parent)
     QTimer::singleShot(100, this, [this] () { addBoard(); }) ;
     QTimer::singleShot(300, this, [this] () { addBoard(); }) ;
     QTimer::singleShot(600, this, [this] () { addBoard(); }) ;
+
+    setWidth(200);
+    setHeight(200);
+
+
 }
 
 QImage SceneItem::image() const
@@ -31,56 +36,73 @@ QImage SceneItem::image() const
     return QImage();
 }
 
-void SceneItem::paint(QPainter *painter)
-{
+// void SceneItem::paint(QPainter *painter)
+// {
 
 
-    //     // painter->setTransform(m_transform);
+//     //     // painter->setTransform(m_transform);
 
-    //     // if (_image.isNull())
-    //     //     return;
+//     //     // if (_image.isNull())
+//     //     //     return;
 
-    //     // int w = width();
-    //     // int h = w * _image.height() / _image.width();
+//     //     // int w = width();
+//     //     // int h = w * _image.height() / _image.width();
 
-    //     // //painter->drawImage(QRect(-w/2, -h/2, w, h), _image);
-    //     // painter->drawImage(QRect(0, 0, w, h), _image);
+//     //     // //painter->drawImage(QRect(-w/2, -h/2, w, h), _image);
+//     //     // painter->drawImage(QRect(0, 0, w, h), _image);
 
-    //     // // Перекрестие по центру картинки
-    //     // painter->setPen(QPen(Qt::white, 0));
-    //     // painter->drawLine(w/2, 0, w/2, h);
-    //     // painter->drawLine(0, h/2, w, h/2);
+//     //     // // Перекрестие по центру картинки
+//     //     // painter->setPen(QPen(Qt::white, 0));
+//     //     // painter->drawLine(w/2, 0, w/2, h);
+//     //     // painter->drawLine(0, h/2, w, h/2);
 
-    //painter->save();
-    painter->setPen(QPen(Qt::yellow, 5, Qt::SolidLine));
-    painter->drawRect(QRectF(10, 10, 50, 50));
-    //painter->restore();
+//     //painter->save();
+//     painter->setPen(QPen(Qt::yellow, 5, Qt::SolidLine));
+//     painter->drawRect(QRectF(10, 10, 50, 50));
+//     //painter->restore();
 
-}
+// }
 
 void SceneItem::addBoard()
 {
 
        qd() << "add board";
 
+       qd() << "window width" << width();
+       qd() << "window height" << height();
+       qd() << "window x" << x();
+       qd() << "window y" << y();
     //runOnThreadWait(this, [this]()
     //{
     //every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
     _board = new BoardQuickItem(this);
-    //_board->setVisible(true);
-    //_board->update();
-    _board->setParentItem(this);
-    // _board->setEnabled(true);
-    // _board->setVisible(true);
-    _board->setWidth(_board->implicitWidth());
-    _board->setHeight(_board->implicitHeight());
 
-    _board->setWidth(1);
-    _board->setHeight(1);
+    _board->setVisible(true);
+    _board->update();
+    _board->setParentItem(_root);
+    _board->setEnabled(true);
+    // // _board->setVisible(true);
+    // _board->setWidth(_board->implicitWidth());
+    // _board->setHeight(_board->implicitHeight());
+
+     _board->setWidth(100);
+     _board->setHeight(100);
+
+     _board->setPosition(QPointF(100, 100));
     //addItem(_board);
     // every<CameraViewItem>(QGraphicsScene::items(), [](CameraViewItem* camera) { delete camera; });
     // addItem(new CameraViewItem);
-    //});
+     //});
+}
+
+QQuickItem* SceneItem::root() const
+{
+    return _root;
+}
+
+void SceneItem::setRoot(QQuickItem* root)
+{
+    _root = root;
 }
 
 void SceneItem::wheelEvent(QWheelEvent *event)
@@ -130,5 +152,5 @@ void SceneItem::mouseReleaseEvent(QMouseEvent */*event*/)
 
 void SceneItem::hoverMoveEvent(QHoverEvent *event)
 {
-    QQuickPaintedItem::hoverMoveEvent(event);
+    //QQuickWindow::hoverMoveEvent(event);
 }

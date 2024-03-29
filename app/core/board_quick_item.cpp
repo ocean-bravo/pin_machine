@@ -15,7 +15,7 @@ void BoardQuickItem::paint(QPainter* painter)
 {
     qd() << "board paint";
     //painter->save();
-    painter->setPen(QPen(Qt::red, 1, Qt::SolidLine));
+    painter->setPen(QPen(Qt::red, 5, Qt::SolidLine));
     painter->drawRect(QRectF(0, 0, 40, 40));
     //painter->restore();
 }
