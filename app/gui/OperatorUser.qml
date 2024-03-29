@@ -210,8 +210,6 @@ ApplicationWindow {
         // ...
     }
 
-
-
     component SmRadioButton: CustomSwitch {
 
 
@@ -219,6 +217,7 @@ ApplicationWindow {
 
 
     Control {
+        id: tools
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -231,7 +230,6 @@ ApplicationWindow {
 
 
         contentItem: ColumnLayout {
-            id: tools
 
             spacing: 6
 

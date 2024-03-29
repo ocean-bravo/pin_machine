@@ -67,13 +67,16 @@ void SceneItem::addBoard()
     //{
     //every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
     _board = new BoardQuickItem(this);
-    _board->setVisible(true);
-    _board->update();
+    //_board->setVisible(true);
+    //_board->update();
     _board->setParentItem(this);
-    _board->setEnabled(true);
-    _board->setVisible(true);
-    _board->setWidth(150);
-    _board->setHeight(150);
+    // _board->setEnabled(true);
+    // _board->setVisible(true);
+    _board->setWidth(_board->implicitWidth());
+    _board->setHeight(_board->implicitHeight());
+
+    _board->setWidth(1);
+    _board->setHeight(1);
     //addItem(_board);
     // every<CameraViewItem>(QGraphicsScene::items(), [](CameraViewItem* camera) { delete camera; });
     // addItem(new CameraViewItem);

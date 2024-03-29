@@ -21,6 +21,11 @@ Item {
         visible: false
     }
 
+    TestUser {
+        id: testUser
+        visible: false
+    }
+
     Shortcut {
         sequence: "F1"
         context: Qt.ApplicationShortcut
@@ -38,6 +43,17 @@ Item {
             superUser.visible = true
             appWin = superUser
             operatorUser.visible = false
+        }
+    }
+
+    Shortcut {
+        sequence: "F3"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            superUser.visible = false
+            operatorUser.visible = false
+            appWin = testUser
+            testUser.visible = true
         }
     }
 
