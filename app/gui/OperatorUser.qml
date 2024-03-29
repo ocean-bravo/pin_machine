@@ -367,14 +367,28 @@ ApplicationWindow {
         SceneItem {
             id: scene
             anchors.fill: blackBack
-            // width: 400
-            // height: 400
-            // x: 15
-            // y: 25
+
             visible: true
-            root: blackBack
+            //root: blackBack
             enabled: true
 
+        }
+
+        Button {
+            width: 20
+            height: 20
+            onClicked: {
+                scene.deleteBoards()
+            }
+        }
+
+        Button {
+            x: 30
+            width: 20
+            height: 20
+            onClicked: {
+                scene.addBoard()
+            }
         }
     }
 

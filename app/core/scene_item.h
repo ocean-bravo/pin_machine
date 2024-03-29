@@ -18,10 +18,12 @@ public:
 
     //void paint(QPainter *painter) override;
 
-    void addBoard();
+    Q_INVOKABLE void addBoard();
 
     QQuickItem* root() const;
     void setRoot(QQuickItem*);
+
+    Q_INVOKABLE void deleteBoards();
 
 
 protected:

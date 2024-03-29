@@ -68,18 +68,18 @@ void SceneItem::addBoard()
 
        qd() << "add board";
 
-       qd() << "window width" << width();
-       qd() << "window height" << height();
-       qd() << "window x" << x();
-       qd() << "window y" << y();
+       // qd() << "window width" << width();
+       // qd() << "window height" << height();
+       // qd() << "window x" << x();
+       // qd() << "window y" << y();
     //runOnThreadWait(this, [this]()
     //{
-    //every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
-    _board = new BoardQuickItem(this);
+    every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
 
+    _board = new BoardQuickItem(this);
     _board->setVisible(true);
-    _board->update();
-    _board->setParentItem(_root);
+    //_board->update();
+    _board->setParentItem(this);
     _board->setEnabled(true);
     // // _board->setVisible(true);
     // _board->setWidth(_board->implicitWidth());
@@ -89,6 +89,8 @@ void SceneItem::addBoard()
      _board->setHeight(100);
 
      _board->setPosition(QPointF(100, 100));
+
+
     //addItem(_board);
     // every<CameraViewItem>(QGraphicsScene::items(), [](CameraViewItem* camera) { delete camera; });
     // addItem(new CameraViewItem);
@@ -103,6 +105,11 @@ QQuickItem* SceneItem::root() const
 void SceneItem::setRoot(QQuickItem* root)
 {
     _root = root;
+}
+
+void SceneItem::deleteBoards()
+{
+    every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
 }
 
 void SceneItem::wheelEvent(QWheelEvent *event)
