@@ -217,7 +217,7 @@ ApplicationWindow {
 
 
     Control {
-        visible: false
+        visible: true
         id: tools
         anchors.left: parent.left
         anchors.top: parent.top
@@ -228,7 +228,6 @@ ApplicationWindow {
         rightPadding: 8
         topPadding: 8
         bottomPadding: 8
-
 
         contentItem: ColumnLayout {
 
@@ -357,31 +356,27 @@ ApplicationWindow {
         }
     }
 
-    // Item {
-    //     //color: "#AAAAFFAA"
-    //     anchors.fill: parent
+    Rectangle {
+        color: "black"
+        id: blackBack
+        anchors.left: tools.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: 400
 
-    SceneItem {
-        id: scene
-        //anchors.fill: parent
-        // width: 400
-        // height: 400
-        // x: 15
-        // y: 25
-        visible: true
-        root: appWin.contentItem
-        enabled: true
+        SceneItem {
+            id: scene
+            anchors.fill: blackBack
+            // width: 400
+            // height: 400
+            // x: 15
+            // y: 25
+            visible: true
+            root: blackBack
+            enabled: true
 
-        //enabled: true
-
-        //scene: Scene
-
-        // Component.onCompleted: {
-        //     execAfterDelay(function() { graphicsView.fit() }, 50)
-        // }
-        //QTimer::singleShot(50, this, [this]() { ui->graphicsView->fit();}); // Костылик. Вызов сразу почему то не работает.
+        }
     }
-    //}
 
     // SplitView {
     //     //anchors.left: tools.right
