@@ -5,7 +5,7 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import Process 1.0
 import ImageItem 1.0
-import SceneItem 1.0
+import QuickScene 1.0
 
 import "utils.js" as Utils
 
@@ -356,54 +356,122 @@ ApplicationWindow {
         }
     }
 
-    Flickable {
-        //color: "black"
-        id: blackBack
+
+
+
+    Rectangle {
         anchors.left: tools.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 500
-        clip: true
 
-        SceneItem {
-            id: scene
-            //anchors.fill: blackBack
+        ScrollView {
+            id: scrollView
+            objectName: "scrollView"
 
-            visible: true
-            //root: blackBack
-            enabled: true
+            anchors.fill: parent
 
-            //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+            // anchors {
+            //     top: topDock.bottom
+            //     left: parent.left
+            //     right: parent.right
+            //     bottom: parent.bottom
+            // }
 
-        }
+            Flickable {
+                id: stateMachineViewport
+                objectName: "stateMachineViewport"
 
-        Button {
-            width: 20
-            height: 20
-            onClicked: {
-                scene.deleteBoards()
+                anchors.fill: parent
+
+                contentWidth: stateMachineScene.width * stateMachineScene.scale
+                contentHeight: stateMachineScene.height * stateMachineScene.scale
+                boundsBehavior: Flickable.StopAtBounds
+                focus: true
+                interactive: !editController.editModeEnabled
+
+                onMovementStarted: {
+                    followActiveRegion = false;
+                }
+
+                Scene {
+                    id: stateMachineScene
+                    objectName: "stateMachineScene"
+
+                    Component.onCompleted: {
+                        _quickView.scene = stateMachineScene
+                    }
+                }
+
+                Connections {
+                    target: (root.followActiveRegion ? root.configurationController : null)
+                    function onActiveRegionChanged() {
+                        centerOnActiveRegion();
+                    }
+                }
+
+                Behavior on contentX {
+                    enabled: root.followActiveRegion
+                    SmoothedAnimation { duration: 200 }
+                }
+                Behavior on contentY {
+                    enabled: root.followActiveRegion
+                    SmoothedAnimation { duration: 200 }
+                }
+
+                // TODO: Add PinchArea?
             }
         }
 
-        Button {
-            x: 30
-            width: 20
-            height: 20
-            onClicked: {
-                scene.addBoard()
-            }
-        }
 
-        Button {
-            x: 60
-            width: 20
-            height: 20
-            onClicked: {
-                scene.addTriangle()
-            }
-        }
+
+    //     Flickable {
+    //         //color: "black"
+    //         id: blackBack
+    //         anchors.fill: parent
+    //         clip: true
+
+    //         SceneItem {
+    //             id: scene
+    //             //anchors.fill: blackBack
+
+    //             visible: true
+    //             //root: blackBack
+    //             enabled: true
+
+    //             //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+
+    //         }
+
+    //         Button {
+    //             width: 20
+    //             height: 20
+    //             onClicked: {
+    //                 scene.deleteBoards()
+    //             }
+    //         }
+
+    //         Button {
+    //             x: 30
+    //             width: 20
+    //             height: 20
+    //             onClicked: {
+    //                 scene.addBoard()
+    //             }
+    //         }
+
+    //         Button {
+    //             x: 60
+    //             width: 20
+    //             height: 20
+    //             onClicked: {
+    //                 scene.addTriangle()
+    //             }
+    //         }
+    //     }
+
+
     }
-
     // SplitView {
     //     //anchors.left: tools.right
     //     // anchors.top: parent

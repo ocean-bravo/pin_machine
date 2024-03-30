@@ -7,19 +7,22 @@
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
+using Node = QSGNode;
+using Geo = QSGGeometry;
+using GeoNode = QSGGeometryNode;
+using FlatColorMaterial = QSGFlatColorMaterial;
+
+
 QuickItemTriangle::QuickItemTriangle(QQuickItem *parent)
     : QQuickItem(parent)
     , _color(Qt::red)
-    , m_needUpdate(true)
+    , _needUpdate(true)
 {
     setFlag(QQuickItem::ItemHasContents);
     setAcceptHoverEvents(true);
 }
 
-using Node = QSGNode;
-using Geo = QSGGeometry;
-using GeoNode = QSGGeometryNode;
-using FlatColorMaterial = QSGFlatColorMaterial;
+
 
 QSGNode* QuickItemTriangle::updatePaintNode(Node *oldNode, QQuickItem::UpdatePaintNodeData *updatePaintNodeData)
 {
@@ -44,12 +47,12 @@ QSGNode* QuickItemTriangle::updatePaintNode(Node *oldNode, QQuickItem::UpdatePai
         root->setFlags(Node::OwnsGeometry | Node::OwnsMaterial); // нода теперь владеет этими объектами и при самоуничтожении неплохо было бы уничтожить и эти объекты.
     }
 
-    if(m_needUpdate)
+    if(_needUpdate)
     {
         FlatColorMaterial *material = new FlatColorMaterial;
         material->setColor(_color);
         root->setMaterial(material);
-        m_needUpdate = false;
+        _needUpdate = false;
     }
 
     return root;
@@ -65,9 +68,9 @@ void QuickItemTriangle::setColor(const QColor &color)
     if(_color != color)
     {
         _color = color;
-        m_needUpdate = true;
+        _needUpdate = true;
         update();
-        colorChanged();
+        emit colorChanged();
     }
 }
 
@@ -78,10 +81,10 @@ bool QuickItemTriangle::contains(const QPointF& point) const
 
 void QuickItemTriangle::hoverEnterEvent(QHoverEvent* event)
 {
-    qd() << "triangle  event enter " << _color;
+    qd() << "triangle  event enter " << position();
 }
 
 void QuickItemTriangle::hoverLeaveEvent(QHoverEvent* event)
 {
-    qd() << "triangle event leave" << _color;
+    qd() << "triangle event leave" << position();
 }

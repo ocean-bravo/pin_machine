@@ -3,7 +3,7 @@
 #include <QImage>
 #include <QQuickItem>
 
-class SceneItem : public QQuickItem
+class QuickScene : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QImage image READ image WRITE setImage)
@@ -13,7 +13,15 @@ class SceneItem : public QQuickItem
     Q_PROPERTY(QImage image READ image WRITE setImage)
 
 public:
-    explicit SceneItem(QQuickItem *parent = nullptr);
+    explicit QuickScene(QQuickItem *parent = nullptr);
+
+
+    qreal zoom() const;
+    void setZoom(qreal zoom);
+
+    void zoomBy(qreal scale);
+    void zoomByInternal(qreal scale);
+
 
     QImage image() const;
     void setImage(const QImage& image);
@@ -29,15 +37,21 @@ public:
 
     Q_INVOKABLE void deleteBoards();
 
+signals:
+    void zoomChanged(qreal zoom);
+
 
 protected:
     void wheelEvent(QWheelEvent* event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event);
     void hoverMoveEvent(QHoverEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
 private:
+
+    qreal m_zoom;
+
     QImage _image;
     QPoint m_transOrigin;
     QTransform m_transform;

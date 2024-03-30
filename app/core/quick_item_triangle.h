@@ -25,7 +25,7 @@ protected:
 
 private:
     QColor _color;
-    bool m_needUpdate;
+    bool _needUpdate;
 
 
 };

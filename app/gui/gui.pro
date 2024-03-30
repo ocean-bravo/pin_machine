@@ -3,6 +3,7 @@ TEMPLATE = aux
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
 
+
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \
                 gui_language_fr.ts \

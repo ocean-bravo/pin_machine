@@ -1,4 +1,4 @@
-QT += quick serialport widgets network gui printsupport concurrent quickcontrols2
+QT += quick serialport widgets network gui printsupport concurrent quickcontrols2 quickwidgets
 
 CONFIG += console qtquickcompiler qml_debug
 
@@ -44,7 +44,9 @@ OTHER_FILES +=
 HEADERS += *.h \
 
 
+
 SOURCES += *.cpp \
+
 
 
 FORMS += *.ui

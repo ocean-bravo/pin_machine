@@ -7,6 +7,11 @@
 
 #include <QSGSimpleRectNode>
 
+using Node = QSGNode;
+using Geo = QSGGeometry;
+using GeoNode = QSGGeometryNode;
+using FlatColorMaterial = QSGFlatColorMaterial;
+
 BoardQuickItem::BoardQuickItem(QQuickItem* parent)
     : QQuickItem(parent)
 {
