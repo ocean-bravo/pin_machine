@@ -10,16 +10,19 @@ class SceneItem : public QQuickItem
 
     Q_PROPERTY(QQuickItem* root READ root WRITE setRoot)
 
+    Q_PROPERTY(QImage image READ image WRITE setImage)
 
 public:
     explicit SceneItem(QQuickItem *parent = nullptr);
+
     QImage image() const;
-    /*Q_INVOKABLE */void setImage(const QImage& image);
+    void setImage(const QImage& image);
 
     //void paint(QPainter *painter) override;
 
     Q_INVOKABLE void addBoard();
-    Q_INVOKABLE void addImage(QImage img);
+
+    Q_INVOKABLE void addTriangle();
 
     QQuickItem* root() const;
     void setRoot(QQuickItem*);

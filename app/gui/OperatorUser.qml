@@ -356,22 +356,24 @@ ApplicationWindow {
         }
     }
 
-    Rectangle {
-        color: "black"
+    Flickable {
+        //color: "black"
         id: blackBack
         anchors.left: tools.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: 400
+        width: 500
         clip: true
 
         SceneItem {
             id: scene
-            anchors.fill: blackBack
+            //anchors.fill: blackBack
 
             visible: true
             //root: blackBack
             enabled: true
+
+            //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
 
         }
 
@@ -389,6 +391,15 @@ ApplicationWindow {
             height: 20
             onClicked: {
                 scene.addBoard()
+            }
+        }
+
+        Button {
+            x: 60
+            width: 20
+            height: 20
+            onClicked: {
+                scene.addTriangle()
             }
         }
     }

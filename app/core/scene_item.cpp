@@ -7,8 +7,20 @@
 #include "common.h"
 
 #include "board_quick_item.h"
+#include "image_quick_item.h"
+#include "quick_item_triangle.h"
 
 #include <QTimer>
+#include <QRandomGenerator>
+
+namespace {
+
+double myrand()
+{
+    return QRandomGenerator::global()->generateDouble();
+}
+
+}
 
 SceneItem::SceneItem(QQuickItem* parent)
     : QQuickItem(parent)
@@ -69,7 +81,7 @@ void SceneItem::addBoard()
 
     //runOnThreadWait(this, [this]()
     //{
-    every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
+    //every<BoardQuickItem>(childItems(), [](BoardQuickItem* board) { delete board; });
 
     _board = new BoardQuickItem(this);
     _board->setVisible(true);
@@ -88,9 +100,21 @@ void SceneItem::addBoard()
      //});
 }
 
-void SceneItem::addImage(QImage img)
+void SceneItem::addTriangle()
 {
+    auto tri = new QuickItemTriangle(this);
+    tri->setVisible(true);
+    tri->setParentItem(this);
+    tri->setEnabled(true);
 
+    tri->setWidth(100);
+    tri->setHeight(100);
+
+
+    tri->setPosition(QPointF(400*myrand(), 400*myrand()));
+
+
+    tri->setColor(QColor(myrand()*255, myrand()*255, myrand()*255, 127));
 }
 
 QQuickItem* SceneItem::root() const
@@ -111,32 +135,40 @@ void SceneItem::deleteBoards()
 void SceneItem::wheelEvent(QWheelEvent *event)
 {
     qd() << "wheel event";
+
     const QPoint angleDelta = event->angleDelta();
 
     if (angleDelta.x() == 0 && angleDelta.y() != 0) // Вертикальный скролл
     {
         QPointF pos = event->position();
         m_scale = 1 + (float(angleDelta.y())/1200);
-        every<QQuickItem>(childItems(), [angleDelta](QQuickItem* b) {
 
-            b->setScale(b->scale() + (float(angleDelta.y())/1200) * b->scale());
+        setScale(scale() + (float(angleDelta.y())/1200) * scale());
+        setTransformOriginPoint(pos);
 
-
-        });
-
-        every<QQuickItem>(childItems(), [this](QQuickItem* board) { qd() << board->scale(); });
-        auto tm = QTransform()
-                .translate(pos.x(), pos.y())
-                .scale(m_scale, m_scale)
-                .translate(-pos.x(), -pos.y());
-        m_transform *= tm;
+        // auto tm = QTransform()
+        //         .translate(pos.x(), pos.y())
+        //         .scale(m_scale, m_scale)
+        //         .translate(-pos.x(), -pos.y());
+        // m_transform *= tm;
         update();
     }
 }
 
-void SceneItem::setImage(const QImage &image)
+void SceneItem::setImage(const QImage & img)
 {
-    _image = image;
+    auto image = new ImageQuickItem(this);
+
+    image->setVisible(true);
+    image->setParentItem(this);
+    image->setEnabled(true);
+
+    image->setWidth(100);
+    image->setHeight(100);
+    image->setImage(img);
+
+    image->setPosition(QPointF(200, 200));
+
     update();
 }
 
