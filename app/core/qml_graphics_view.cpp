@@ -3,6 +3,8 @@
 
 #include "utils.h"
 
+
+#include <QTimer>
 #include <QDebug>
 #include <QWheelEvent>
 
@@ -18,19 +20,86 @@ QmlGraphicsView::QmlGraphicsView(QQuickItem* parent)
     // connect(this, &QQuickPaintedItem::widthChanged, this, &QmlGraphicsView::updateCustomPlotSize);
     // connect(this, &QQuickPaintedItem::heightChanged, this, &QmlGraphicsView::updateCustomPlotSize);
 
-    qd() << "qml constructor";
+    //qd() << "qml constructor";
     //setRenderTarget(QQuickPaintedItem::FramebufferObject);
+
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]()
+    {
+        //qd() << "timer render";
+        auto scRect = scene()->itemsBoundingRect().toRect();
+        const double max = std::max(scRect.width(), scRect.height());
+        const int margin = max * 0.05;
+
+        auto re = _view->viewport()->rect();
+        //qd() << "viewport rect" << re;
+
+
+        //_pixmap = QPixmap(scRect.adjusted(-margin,-margin, margin, margin).size());
+        // if (!_render)
+        // {
+        //     _okToRead= false;
+            _pixmap = QPixmap(re.size());
+            QPainter painter(&_pixmap);
+            _view->render(&painter);//, boundingRect(), scRect.adjusted(-margin,-margin, margin, margin), Qt::KeepAspectRatio);
+            //_okToRead = true;
+       // }
+        update();
+
+         // qd () << "width : " <<  _view->viewport()->width();
+         // qd () << "height : " << _view->viewport()->height();
+
+
+    });
+
+    timer->start(50);
+
+    connect(this, &QmlGraphicsView::widthChanged,  this, [this]() { _view->viewport()->setFixedWidth(width());   });
+    connect(this, &QmlGraphicsView::heightChanged, this, [this]() { _view->viewport()->setFixedHeight(height()); });
+    //_view->setAttribute(Qt::WA_DontShowOnScreen);
+    _view->setVisible(true);
+
 }
 
 QmlGraphicsView::~QmlGraphicsView()
 {
 }
 
+// void QmlGraphicsView::update(const QRect &rect)
+// {
+
+
+//     QQuickPaintedItem::update(rect);
+// }
+
+
 void QmlGraphicsView::paint(QPainter* painter)
 {
-    qd() << "qml render";
+    //qd() << "qml render";
 
-    _view->render(painter);
+
+    //_view->render(painter);
+
+    //scene()->render(painter);
+       //view_->render(painter, boundingRect(), view_->viewport()->rect(), Qt::KeepAspectRatio);
+
+    // _render = true;
+    // if (_okToRead)
+    // {
+
+        painter->drawPixmap(0,0, _pixmap);
+    // }
+
+    // _render = false;
+
+
+   // QPixmap picture(boundingRect().size().toSize());
+    //QCPPainter qcpPainter(&picture);
+
+    // _vi->toPainter(&qcpPainter);
+    // setRenderTarget(QQuickPaintedItem::FramebufferObject);
+
+    // painter->drawPixmap(QPoint(), picture);
 }
 
 QGraphicsScene *QmlGraphicsView::scene() const
@@ -58,29 +127,41 @@ void QmlGraphicsView::routeMouseEvents(QMouseEvent* event)
     QCoreApplication::postEvent(_view.data(), newEvent);
 }
 
-void QmlGraphicsView::mousePressEvent(QMouseEvent* event)
+void QmlGraphicsView::mousePressEvent(QMouseEvent* e)
 {
-    routeMouseEvents(event);
+    qd() << "mouse press event " << e->pos();
+    QMouseEvent event(e->type(), e->localPos(),
+                      e->windowPos(), e->screenPos(),
+                      e->button(), e->buttons(), e->modifiers(), e->source());
+    QCoreApplication::sendEvent(_view.data(), &event);
+    //routeMouseEvents(event);
 }
 
 void QmlGraphicsView::mouseReleaseEvent(QMouseEvent* event)
 {
-    routeMouseEvents(event);
+    QCoreApplication::sendEvent(_view.data(), event);
+
+    //routeMouseEvents(event);
 }
 
 void QmlGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
-    routeMouseEvents(event);
+    QCoreApplication::sendEvent(_view.data(), event);
+
+    //routeMouseEvents(event);
 }
 
 void QmlGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    routeMouseEvents(event);
+    QCoreApplication::sendEvent(_view.data(), event);
+    //routeMouseEvents(event);
 }
 
 void QmlGraphicsView::wheelEvent(QWheelEvent* event)
 {
-    routeWheelEvents(event);
+    qd() << "wheel event";
+    //routeWheelEvents(event);
+    QCoreApplication::sendEvent(_view.data(), event);
 }
 
 void QmlGraphicsView::timerEvent(QTimerEvent* /*event*/)
@@ -91,7 +172,7 @@ void QmlGraphicsView::timerEvent(QTimerEvent* /*event*/)
 
 void QmlGraphicsView::contextMenuEvent(QContextMenuEvent *event)
 {
-    QCoreApplication::postEvent(_view.data(), event);
+    QCoreApplication::sendEvent(_view.data(), event);
 }
 
 void QmlGraphicsView::routeWheelEvents(QWheelEvent* event)
@@ -105,5 +186,5 @@ void QmlGraphicsView::routeWheelEvents(QWheelEvent* event)
     QWheelEvent* newEvent = new QWheelEvent(event->position(), event->globalPosition(), event->pixelDelta(), event->angleDelta(), event->buttons(), event->modifiers(), event->phase(), event->inverted(), event->source());
 #endif
 
-    QCoreApplication::postEvent(_view.data(), newEvent);
+    QCoreApplication::postEvent(_view.data(), event);
 }

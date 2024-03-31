@@ -1,5 +1,5 @@
 #include "quick_view.h"
-#include "ui_scan_view.h"
+#include "ui_mainwindow.h"
 
 #include "wait.h"
 #include "utils2.h"

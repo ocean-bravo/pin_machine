@@ -23,7 +23,7 @@
 #include <QJsonObject>
 
 Scene::Scene(QObject* parent)
-    : QGraphicsScene(-1000, -1000, 2000, 2000, parent) // Чтобы плату можно было двигать за пределы видимости
+    : QGraphicsScene(-500, -500, 1000, 1000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
     //    connect(&db(), &DataBus::pixelSizeChanged, this, [this]()
     //    {

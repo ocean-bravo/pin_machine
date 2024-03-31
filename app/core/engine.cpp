@@ -34,6 +34,8 @@
 
 #include "openCv.h"
 
+
+#include "qml_graphics_view.h"
 #include "my_image_provider.h"
 
 #include "scene.h"
@@ -219,6 +221,8 @@ void Engine::createQmlEngine()
     qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
     qmlRegisterType<QuickScene>("QuickScene", 1, 0, "QuickScene");
 
+    qmlRegisterType<QmlGraphicsView>("QmlGraphicsView", 1, 0, "QmlGraphicsView");
+
 
 
     _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
@@ -243,6 +247,9 @@ void Engine::createQmlEngine()
 
 
     _qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
+
+    _qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
+
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }

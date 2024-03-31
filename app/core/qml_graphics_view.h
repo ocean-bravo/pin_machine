@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE void fit();
 
+    //void update(const QRect& rect);
 signals:
     void sceneChanged();
 
@@ -43,6 +44,12 @@ protected:
 
 private:
     QScopedPointer<GraphicsView> _view;
+    QPixmap _pixmap;
+
+    // QAtomicInteger<bool> _okToRead = false;
+    // QAtomicInteger<bool> _render = false;
+
+
 
 private slots:
 

@@ -65,6 +65,8 @@ void GraphicsView::setSizeToFit(QSizeF size)
 ////https://stackoverflow.com/questions/19113532/qgraphicsview-zooming-in-and-out-under-mouse-position-using-mouse-wheel
 void GraphicsView::wheelEvent(QWheelEvent* event)
 {
+    qd() << "graphics view wheel event";
+
     QPointF pos = event->position();
 
     int numDegrees = event->angleDelta().y() / 8;
@@ -85,6 +87,8 @@ void GraphicsView::wheelEvent(QWheelEvent* event)
 
 void GraphicsView::mousePressEvent(QMouseEvent* event)
 {
+    qd() << "graphics view mouse press event";
+
     if (event->button() == Qt::MiddleButton)
     {
         fit();

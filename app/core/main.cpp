@@ -14,10 +14,10 @@
 #include <exception>      // std::set_terminate
 
 
-#include "mainwindow.h"
+//#include "mainwindow2.h"
 #include <QApplication>
 
-#include "scan_view.h"
+#include "mainwindow.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
     // MainWindow w;
     // w.show();
 
-    ScanView scene;
+    //MainWindow scene;
 
-    QRect screenrect = app.primaryScreen()->geometry();
-    scene.resize(1920 / 2, screenrect.height());
-    scene.move(1920/2, screenrect.top());
-    scene.show();
+    // QRect screenrect = app.primaryScreen()->geometry();
+    // scene.resize(1920 / 2, screenrect.height());
+    // scene.move(1920/2, screenrect.top());
+    // scene.show();
 
     return app.exec();
 }

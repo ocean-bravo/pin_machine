@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.15
 import Process 1.0
 import ImageItem 1.0
 import QuickScene 1.0
+import QmlGraphicsView 1.0
 
 import "utils.js" as Utils
 
@@ -363,115 +364,126 @@ ApplicationWindow {
         anchors.left: tools.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: 500
+        // width: 500
+        anchors.right: parent.right
 
-        ScrollView {
-            id: scrollView
-            objectName: "scrollView"
+        // 1.
+        // ScrollView {
+        //     id: scrollView
+        //     objectName: "scrollView"
 
+        //     anchors.fill: parent
+
+        //     // anchors {
+        //     //     top: topDock.bottom
+        //     //     left: parent.left
+        //     //     right: parent.right
+        //     //     bottom: parent.bottom
+        //     // }
+
+        //     Flickable {
+        //         id: stateMachineViewport
+        //         objectName: "stateMachineViewport"
+
+        //         anchors.fill: parent
+
+        //         contentWidth: stateMachineScene.width * stateMachineScene.scale
+        //         contentHeight: stateMachineScene.height * stateMachineScene.scale
+        //         boundsBehavior: Flickable.StopAtBounds
+        //         focus: true
+        //         interactive: !editController.editModeEnabled
+
+        //         onMovementStarted: {
+        //             followActiveRegion = false;
+        //         }
+
+        //         Scene {
+        //             id: stateMachineScene
+        //             objectName: "stateMachineScene"
+
+        //             Component.onCompleted: {
+        //                 _quickView.scene = stateMachineScene
+        //             }
+        //         }
+
+        //         Connections {
+        //             target: (root.followActiveRegion ? root.configurationController : null)
+        //             function onActiveRegionChanged() {
+        //                 centerOnActiveRegion();
+        //             }
+        //         }
+
+        //         Behavior on contentX {
+        //             enabled: root.followActiveRegion
+        //             SmoothedAnimation { duration: 200 }
+        //         }
+        //         Behavior on contentY {
+        //             enabled: root.followActiveRegion
+        //             SmoothedAnimation { duration: 200 }
+        //         }
+
+        //         // TODO: Add PinchArea?
+        //     }
+        // }
+
+
+        // 2.
+        // Flickable {
+        //     //color: "black"
+        //     id: blackBack
+        //     anchors.fill: parent
+        //     clip: true
+
+        //     SceneItem {
+        //         id: scene
+        //         //anchors.fill: blackBack
+
+        //         visible: true
+        //         //root: blackBack
+        //         enabled: true
+
+        //         //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+
+        //     }
+
+        //     Button {
+        //         width: 20
+        //         height: 20
+        //         onClicked: {
+        //             scene.deleteBoards()
+        //         }
+        //     }
+
+        //     Button {
+        //         x: 30
+        //         width: 20
+        //         height: 20
+        //         onClicked: {
+        //             scene.addBoard()
+        //         }
+        //     }
+
+        //     Button {
+        //         x: 60
+        //         width: 20
+        //         height: 20
+        //         onClicked: {
+        //             scene.addTriangle()
+        //         }
+        //     }
+        // }
+
+        QmlGraphicsView {
             anchors.fill: parent
+            scene: GraphicsScene
 
-            // anchors {
-            //     top: topDock.bottom
-            //     left: parent.left
-            //     right: parent.right
-            //     bottom: parent.bottom
-            // }
 
-            Flickable {
-                id: stateMachineViewport
-                objectName: "stateMachineViewport"
-
-                anchors.fill: parent
-
-                contentWidth: stateMachineScene.width * stateMachineScene.scale
-                contentHeight: stateMachineScene.height * stateMachineScene.scale
-                boundsBehavior: Flickable.StopAtBounds
-                focus: true
-                interactive: !editController.editModeEnabled
-
-                onMovementStarted: {
-                    followActiveRegion = false;
-                }
-
-                Scene {
-                    id: stateMachineScene
-                    objectName: "stateMachineScene"
-
-                    Component.onCompleted: {
-                        _quickView.scene = stateMachineScene
-                    }
-                }
-
-                Connections {
-                    target: (root.followActiveRegion ? root.configurationController : null)
-                    function onActiveRegionChanged() {
-                        centerOnActiveRegion();
-                    }
-                }
-
-                Behavior on contentX {
-                    enabled: root.followActiveRegion
-                    SmoothedAnimation { duration: 200 }
-                }
-                Behavior on contentY {
-                    enabled: root.followActiveRegion
-                    SmoothedAnimation { duration: 200 }
-                }
-
-                // TODO: Add PinchArea?
-            }
         }
 
 
-
-    //     Flickable {
-    //         //color: "black"
-    //         id: blackBack
-    //         anchors.fill: parent
-    //         clip: true
-
-    //         SceneItem {
-    //             id: scene
-    //             //anchors.fill: blackBack
-
-    //             visible: true
-    //             //root: blackBack
-    //             enabled: true
-
-    //             //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
-
-    //         }
-
-    //         Button {
-    //             width: 20
-    //             height: 20
-    //             onClicked: {
-    //                 scene.deleteBoards()
-    //             }
-    //         }
-
-    //         Button {
-    //             x: 30
-    //             width: 20
-    //             height: 20
-    //             onClicked: {
-    //                 scene.addBoard()
-    //             }
-    //         }
-
-    //         Button {
-    //             x: 60
-    //             width: 20
-    //             height: 20
-    //             onClicked: {
-    //                 scene.addTriangle()
-    //             }
-    //         }
-    //     }
-
-
     }
+
+
     // SplitView {
     //     //anchors.left: tools.right
     //     // anchors.top: parent
