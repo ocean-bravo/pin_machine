@@ -3,8 +3,10 @@
 #include <QGraphicsScene>
 #include <QScopedPointer>
 #include <QQuickPaintedItem>
+#include <QWidget>
 
 class GraphicsView;
+class MyViewPort;
 
 class QmlGraphicsView : public QQuickPaintedItem
 {
@@ -29,18 +31,18 @@ signals:
     void sceneChanged();
 
 protected:
-    void routeMouseEvents( QMouseEvent* event );
-    void routeWheelEvents( QWheelEvent* event );
+    void mousePressEvent( QMouseEvent* event );
+    void mouseReleaseEvent( QMouseEvent* event );
+    void mouseMoveEvent( QMouseEvent* event );
 
-    virtual void mousePressEvent( QMouseEvent* event );
-    virtual void mouseReleaseEvent( QMouseEvent* event );
-    virtual void mouseMoveEvent( QMouseEvent* event );
-    virtual void mouseDoubleClickEvent( QMouseEvent* event );
-    virtual void wheelEvent( QWheelEvent *event );
+    void mouseDoubleClickEvent( QMouseEvent* event );
+    void wheelEvent( QWheelEvent *event );
 
-    virtual void timerEvent(QTimerEvent *event);
+    void contextMenuEvent(QContextMenuEvent* event);
 
-    virtual void contextMenuEvent(QContextMenuEvent* event);
+    //bool event(QEvent* ev);
+
+    void hoverMoveEvent(QHoverEvent* event);
 
 private:
     QScopedPointer<GraphicsView> _view;
@@ -48,9 +50,20 @@ private:
 
     // QAtomicInteger<bool> _okToRead = false;
     // QAtomicInteger<bool> _render = false;
+    MyViewPort* _viewport = nullptr;
+
+};
 
 
+class  MyViewPort : public QWidget
+{
+    Q_OBJECT
 
-private slots:
+    friend class QmlGraphicsView;
+public:
+    MyViewPort(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    ~MyViewPort();
+
+        void mouseMoveEvent( QMouseEvent* event );
 
 };

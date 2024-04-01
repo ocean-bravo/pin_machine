@@ -1,9 +1,8 @@
-QT += quick serialport widgets network gui printsupport concurrent quickcontrols2 quickwidgets
+QT += quick serialport widgets network gui printsupport concurrent quickcontrols2 quickwidgets core-private
 
 CONFIG += console qtquickcompiler qml_debug
 
 TRANSLATIONS += core_language_de.ts core_language_pl.ts core_language_fr.ts
-
 
 
 DEFINES += CURRENT_BRANCH=$${CURRENT_BRANCH}
@@ -41,13 +40,9 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 
 OTHER_FILES +=
 
-HEADERS += *.h \
+HEADERS += *.h
 
-
-
-SOURCES += *.cpp \
-
-
+SOURCES += *.cpp
 
 FORMS += *.ui
 

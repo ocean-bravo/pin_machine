@@ -217,6 +217,13 @@ ApplicationWindow {
     }
 
 
+    QtObject {
+        id: colors
+        readonly property color blue: "#1E40AF"
+        readonly property color fontColor: "#808080"
+    }
+
+
     Control {
         visible: true
         id: tools
@@ -234,7 +241,15 @@ ApplicationWindow {
 
             spacing: 6
 
-            WhitePanel {
+            OpCameraView {
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 400
+
+            }
+
+
+            OpWhitePanel {
                 id: panel1
                 Layout.fillWidth: true
                 Layout.preferredHeight: 100
@@ -246,7 +261,7 @@ ApplicationWindow {
                 }
             }
 
-            WhitePanel {
+            OpWhitePanel {
                 id: panel2
                 Layout.fillWidth: true
                 Layout.preferredHeight: 100
@@ -258,7 +273,7 @@ ApplicationWindow {
                 }
             }
 
-            WhitePanel {
+            OpWhitePanel {
                 id: panel3
                 Layout.fillWidth: true
                 Layout.preferredHeight: 100
@@ -277,7 +292,7 @@ ApplicationWindow {
                 }
             }
 
-            WhitePanel {
+            OpWhitePanel {
                 id: panel4
                 Layout.fillWidth: true
                 Layout.preferredHeight: 100
@@ -476,8 +491,6 @@ ApplicationWindow {
         QmlGraphicsView {
             anchors.fill: parent
             scene: GraphicsScene
-
-
         }
 
 

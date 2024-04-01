@@ -60,4 +60,6 @@ private:
     QMouseEvent _lastMouseEvent = {QEvent::None, QPointF(), QPointF(), QPointF(), Qt::NoButton, { }, { } };
     //bool _selectMode = false;
     QPainterPath _selArea;
+
+    friend class QmlGraphicsView;
 };

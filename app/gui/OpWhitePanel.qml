@@ -6,8 +6,5 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     border.color: "transparent"
-    radius: 5
-
-
-
+    radius: 8
 }

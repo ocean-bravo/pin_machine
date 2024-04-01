@@ -52,8 +52,14 @@ public:
 public slots:
     void drawPath(const QList<QPointF>& path);
 
+
 signals:
     void imageSaved(int);
+
+protected:
+    bool event(QEvent *event) override;
+
+
 
 private slots:
     void setImagePrivate(QImage img);

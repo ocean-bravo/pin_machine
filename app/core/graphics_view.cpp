@@ -224,6 +224,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event)
         return;
     }
 
+    ///qd() << "view mouse move event " << event;
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -325,7 +326,7 @@ void GraphicsView::resizeEvent(QResizeEvent* event)
 
 bool GraphicsView::event(QEvent* event)
 {
-    //qd() << "view event type " << event->type();
+    ///qd() << "view event type " << event->type();
     return QGraphicsView::event(event);
 }
 

@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <QDebug>
 #include <QWheelEvent>
+#include <QGuiApplication>
+#include <QApplication>
 
 #include <utility>
 
@@ -15,7 +17,15 @@ QmlGraphicsView::QmlGraphicsView(QQuickItem* parent)
     , _view(new GraphicsView)
 {
     setFlag(QQuickItem::ItemHasContents, true);
+    setFlag(ItemAcceptsInputMethod, true);
+    setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::AllButtons);
+
+    _viewport = new MyViewPort;
+    _view->setViewport(_viewport);
+
+    //_viewport->setMouseTracking(true);
+
 
     // connect(this, &QQuickPaintedItem::widthChanged, this, &QmlGraphicsView::updateCustomPlotSize);
     // connect(this, &QQuickPaintedItem::heightChanged, this, &QmlGraphicsView::updateCustomPlotSize);
@@ -57,7 +67,13 @@ QmlGraphicsView::QmlGraphicsView(QQuickItem* parent)
     connect(this, &QmlGraphicsView::widthChanged,  this, [this]() { _view->viewport()->setFixedWidth(width());   });
     connect(this, &QmlGraphicsView::heightChanged, this, [this]() { _view->viewport()->setFixedHeight(height()); });
     //_view->setAttribute(Qt::WA_DontShowOnScreen);
-    _view->setVisible(true);
+    _view->setVisible(false);
+
+    // QTimer::singleShot(5000, [this]()
+    // {
+    //     _view->setParent(QApplication::topLevelAt(0,0));
+    // });
+
 
 }
 
@@ -121,70 +137,87 @@ void QmlGraphicsView::fit()
     _view->fit();
 }
 
-void QmlGraphicsView::routeMouseEvents(QMouseEvent* event)
+//This is function to override:
+void QmlGraphicsView::hoverMoveEvent(QHoverEvent* event)
 {
-    QMouseEvent* newEvent = new QMouseEvent(event->type(), event->localPos(), event->button(), event->buttons(), event->modifiers());
-    QCoreApplication::postEvent(_view.data(), newEvent);
+    if (event->pos() == event->oldPos())
+        return;
+
+    QMouseEvent* e1 = new QMouseEvent(QEvent::MouseMove, event->pos(),
+                                         Qt::NoButton, Qt::NoButton,
+                                         Qt::NoModifier);
+    QMouseEvent* e2 = new QMouseEvent(QEvent::MouseMove, event->pos(),
+                                         Qt::NoButton, Qt::NoButton,
+                                         Qt::NoModifier);
+    QMouseEvent* e3 = new QMouseEvent(QEvent::MouseMove, event->pos(),
+                                         Qt::NoButton, Qt::NoButton,
+                                         Qt::NoModifier);
+    //e->accept();
+    _viewport->mouseMoveEvent(e1);
+    _view->mouseMoveEvent(e2);
+    QCoreApplication::postEvent(_view.data(), e3);
+
+    ///qd() << "qml view hover event " << event->pos();
+
+    QQuickItem::hoverMoveEvent(event);
 }
 
-void QmlGraphicsView::mousePressEvent(QMouseEvent* e)
+void QmlGraphicsView::mousePressEvent(QMouseEvent* event)
 {
-    qd() << "mouse press event " << e->pos();
-    QMouseEvent event(e->type(), e->localPos(),
-                      e->windowPos(), e->screenPos(),
-                      e->button(), e->buttons(), e->modifiers(), e->source());
-    QCoreApplication::sendEvent(_view.data(), &event);
-    //routeMouseEvents(event);
+    ///qd() << "mouse press event " << event->pos();
+    _view->mousePressEvent(event);
 }
 
 void QmlGraphicsView::mouseReleaseEvent(QMouseEvent* event)
 {
-    QCoreApplication::sendEvent(_view.data(), event);
-
-    //routeMouseEvents(event);
+    _view->mouseReleaseEvent(event);
 }
 
 void QmlGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
-    QCoreApplication::sendEvent(_view.data(), event);
+//    _view->mouseMoveEvent(event);
 
-    //routeMouseEvents(event);
+    ///qd() << "qml view move event " << event;
+    _view->mouseMoveEvent(event);
+
 }
 
 void QmlGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    QCoreApplication::sendEvent(_view.data(), event);
-    //routeMouseEvents(event);
+    _view->mouseDoubleClickEvent(event);
 }
 
 void QmlGraphicsView::wheelEvent(QWheelEvent* event)
 {
-    qd() << "wheel event";
-    //routeWheelEvents(event);
-    QCoreApplication::sendEvent(_view.data(), event);
-}
-
-void QmlGraphicsView::timerEvent(QTimerEvent* /*event*/)
-{
-    //    _plot->graph(0)->addData(t, U);
-    //    _plot->replot();
+    ///qd() << "wheel event";
+    _view->wheelEvent(event);
 }
 
 void QmlGraphicsView::contextMenuEvent(QContextMenuEvent *event)
 {
-    QCoreApplication::sendEvent(_view.data(), event);
+    _view->contextMenuEvent(event);
 }
 
-void QmlGraphicsView::routeWheelEvents(QWheelEvent* event)
+// bool QmlGraphicsView::event(QEvent* ev)
+// {
+//     return _view->event(ev);
+// }
+
+MyViewPort::MyViewPort(QWidget* parent, Qt::WindowFlags f)
+    : QWidget (parent, f)
 {
-    // Без понятия зачем копируется событие
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QWheelEvent* newEvent = new QWheelEvent( event->pos(), event->delta(), event->buttons(), event->modifiers(), event->orientation() );
-#endif
+    qd() << "constructed viewport";
+    setMouseTracking(true);
+}
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    QWheelEvent* newEvent = new QWheelEvent(event->position(), event->globalPosition(), event->pixelDelta(), event->angleDelta(), event->buttons(), event->modifiers(), event->phase(), event->inverted(), event->source());
-#endif
+MyViewPort::~MyViewPort()
+{
+    qd() << "destructed viewport";
+}
 
-    QCoreApplication::postEvent(_view.data(), event);
+void MyViewPort::mouseMoveEvent(QMouseEvent* event)
+{
+    ///qd() << "viewport event " << event->localPos();
+
+    QWidget::mouseMoveEvent(event);
 }

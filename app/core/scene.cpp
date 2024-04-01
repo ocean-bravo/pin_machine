@@ -22,6 +22,11 @@
 #include <QTimer>
 #include <QJsonObject>
 
+#include <QEvent>
+#include <QMetaMethod>
+
+#include <QtCore/private/qobject_p.h>
+
 Scene::Scene(QObject* parent)
     : QGraphicsScene(-500, -500, 1000, 1000, parent) // Чтобы плату можно было двигать за пределы видимости
 {
@@ -471,6 +476,34 @@ void Scene::drawPath(const QList<QPointF>& path)
         _pathQueue.append(path);
         _drawPathTimer->start();
     });
+}
+
+bool Scene::event(QEvent* event)
+{
+    // if (event->type() != QEvent::GraphicsSceneMouseMove)
+    //     qd() << "scene event " << event->type();
+
+    ///qd() << "scene event " << event->type();
+    if (event->type() == QEvent::GraphicsSceneMouseMove)
+    {
+        // QGraphicsSceneEvent* ev = static_cast<QGraphicsSceneEvent* >(event);
+        // qd() << ev;
+        asm("nop");
+    }
+
+    if (event->type() == QEvent::MetaCall)
+    {
+        ///qd() << "scene event " << event;
+
+        QMetaCallEvent * mev = static_cast<QMetaCallEvent*>(event);
+
+         QMetaMethod slot = this->metaObject()->method(mev->id());
+        /// qd() << "Metacall:" << slot.methodSignature();
+    }
+
+
+    QGraphicsScene::event(event);
+
 }
 
 void Scene::removeDuplicatedBlobs()
