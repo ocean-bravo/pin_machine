@@ -221,6 +221,7 @@ ApplicationWindow {
         id: colors
         readonly property color blue: "#1E40AF"
         readonly property color fontColor: "#808080"
+        readonly property color yellow: "#FFC800"
     }
 
 

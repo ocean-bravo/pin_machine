@@ -32,9 +32,25 @@ void ImageItem::paint(QPainter *painter)
     painter->drawImage(QRect(0, 0, w, h), _image);
 
     // Перекрестие по центру картинки
-    painter->setPen(QPen(Qt::white, 0));
+    painter->setPen(QPen(_crossColor, 0));
     painter->drawLine(w/2, 0, w/2, h);
     painter->drawLine(0, h/2, w, h/2);
+}
+
+void ImageItem::setCrossColor(QColor color)
+{
+    _crossColor = color;
+}
+
+QColor ImageItem::crossColor() const
+{
+    return _crossColor;
+}
+
+void ImageItem::clear()
+{
+    _image = QImage();
+    update();
 }
 
 void ImageItem::wheelEvent(QWheelEvent *event)

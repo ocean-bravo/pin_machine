@@ -2,6 +2,7 @@ import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtGraphicalEffects 1.15
 
 import ImageItem 1.0
 
@@ -28,7 +29,7 @@ Control {
         }
 
         Rectangle {
-            border.color: "#FFC800"
+            border.color: colors.yellow
             border.width: 2
             radius: 8
 
@@ -37,30 +38,71 @@ Control {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
+            clip: true
             ImageItem {
                 id: image
                 image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
                 anchors.fill: parent
+                anchors.margins: parent.border.width // Чтобы была видна желтая граница
+                crossColor: colors.yellow
+
+                property bool rounded: true
+                property bool adapt: true
+
+                layer.enabled: rounded
+                layer.effect: OpacityMask {
+                    maskSource: Item {
+                        width: image.width
+                        height: image.height
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: image.adapt ? image.width : Math.min(image.width, image.height)
+                            height: image.adapt ? image.height : width
+                            radius: 8
+                        }
+                    }
+                }
+            }
+
+            // Перехватываю мышь над картинкой, чтобы картинка не зумилась и не двигалась оператором
+            MouseArea {
+                anchors.fill: image
+                onWheel: {
+                    wheel.accepted = true
+                }
             }
         }
 
         OpFrameButton {
-            icon.source: "images/videocam.png"
+            icon.source: checked ? "images/videocam_off.png" : "images/videocam_on.png"
             checkable: true
             text: checked ? qsTr("Выключить камеру") : qsTr("Включить камеру")
 
             Layout.preferredHeight: 56
 
-            onPressed: {
 
-            }
-
-            onReleased: {
-
+            onCheckedChanged: {
+                if (checked) {
+                    //resolutionList.setCurrentFormat()
+                    Video4.start()
+                }
+                else {
+                    Video4.stop()
+                    image.clear()
+                }
             }
         }
 
-
+        Timer {
+            id: findCameraTimer
+            interval: 1000
+            repeat: false
+            triggeredOnStart: false
+            running: true
+            onTriggered: {
+                //Video4.reloadDevices()
+            }
+        }
     }
 
 
