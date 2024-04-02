@@ -1,4 +1,4 @@
-QT += quick serialport widgets network gui printsupport concurrent quickcontrols2 quickwidgets core-private
+QT += quick serialport widgets network gui printsupport concurrent quickcontrols2 quickwidgets core-private svg
 
 CONFIG += console qtquickcompiler qml_debug
 

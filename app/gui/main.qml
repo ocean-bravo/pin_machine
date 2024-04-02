@@ -7,32 +7,68 @@ import QtQuick.Layouts 1.12
 Item {
     id: root
 
-    property var appWin: superUser
+    property var appWin: operatorUser
 
-    SuperUser {
-        id: superUser
-        objectName: "superuser"
-        visible: true
-    }
 
-    OperatorUser {
-        id: operatorUser
-        objectName: "operatoruser"
-        visible: false
-    }
+    // Component {
+    //     id: operatorComponent
 
-    TestUser {
-        id: testUser
-        visible: false
-    }
+
+        OperatorUser {
+            id: operatorUser
+            objectName: "operatoruser"
+            visible: true
+        }
+    // }
+
+    // Component {
+    //     id: superComponent
+
+        SuperUser {
+            id: superUser
+            objectName: "superuser"
+            visible: false
+        }
+    // }
+
+
+    // Timer {
+    //     interval: 5000
+
+    //     repeat: false
+
+    //     running: true
+
+    //     onTriggered: {
+    //         loader.sourceComponent = operatorComponent
+    //     }
+    // }
+
+
+    // Loader {
+    //     id: loader
+    //     visible: true
+    //     sourceComponent: superComponent
+    //     onLoaded: {
+    //         appWin = item
+    //     }
+    // }
+
+    // TestUser {
+    //     id: testUser
+    //     visible: false
+    // }
 
     Shortcut {
         sequence: "F1"
         context: Qt.ApplicationShortcut
         onActivated: {
-            operatorUser.visible = true
-            appWin = operatorUser
-            superUser.visible = false
+            //operatorUser.visible = true
+            //appWin = operatorUser
+            //superUser.visible = false
+
+            //loader.sourceComponent = operatorComponent
+            //appWin = operatorUser
         }
     }
 
@@ -40,25 +76,31 @@ Item {
         sequence: "F2"
         context: Qt.ApplicationShortcut
         onActivated: {
-            superUser.visible = true
-            appWin = superUser
-            operatorUser.visible = false
+            //superUser.visible = true
+            //appWin = superUser
+            //operatorUser.visible = false
+            //loader.sourceComponent = superComponent
+            //appWin = loader.item
         }
     }
 
-    Shortcut {
-        sequence: "F3"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            superUser.visible = false
-            operatorUser.visible = false
-            appWin = testUser
-            testUser.visible = true
-        }
-    }
+    // Shortcut {
+    //     sequence: "F3"
+    //     context: Qt.ApplicationShortcut
+    //     onActivated: {
+    //         superUser.visible = false
+    //         operatorUser.visible = false
+    //         appWin = testUser
+    //         testUser.visible = true
+    //     }
+    // }
 
     Component.onCompleted: {
-        superUser.visible = true
+        operatorUser.visible = true
+        //loader.sourceComponent = operatorComponent
+
+        DataBus.live_preview_mode = "raw"
+
     }
 
     Shortcut {

@@ -13,7 +13,7 @@ import "utils.js" as Utils
 ApplicationWindow {
     id: appWin
     visible: true
-    width: Screen.width/2
+    width: Screen.width
     height: Screen.height
     x: 0
     y: 0
@@ -207,9 +207,9 @@ ApplicationWindow {
         }
     }
 
-    footer: ToolBar {
-        // ...
-    }
+    // footer: ToolBar {
+    //     // ...
+    // }
 
     component SmRadioButton: CustomSwitch {
 
@@ -222,280 +222,378 @@ ApplicationWindow {
         readonly property color blue: "#1E40AF"
         readonly property color fontColor: "#808080"
         readonly property color yellow: "#FFC800"
+
+        readonly property color switchOn: "#2563EB"
+        readonly property color switchOff: "#DBEAFE"
+
+        readonly property color playButton: "#14B8A6"
+        readonly property color pauseButton: "#60A5FA"
+        readonly property color stopButton: "#FF5E5C"
+        readonly property color disabledButton: "#E5E5E5"
     }
 
 
     Control {
         visible: true
         id: tools
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
 
-        width: 400
+        anchors.fill: parent
+
+
         leftPadding: 8
         rightPadding: 8
         topPadding: 8
         bottomPadding: 8
 
+
+
         contentItem: ColumnLayout {
 
             spacing: 6
 
-            OpCameraView {
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: 400
-
-            }
-
-
-            OpWhitePanel {
-                id: panel1
-                Layout.fillWidth: true
-                Layout.preferredHeight: 100
-
-                Row {
-                    Text {
-                        text: "product name"
-                    }
-                }
-            }
-
-            OpWhitePanel {
-                id: panel2
-                Layout.fillWidth: true
-                Layout.preferredHeight: 100
-
-                Row {
-                    Text {
-                        text: "product name"
-                    }
-                }
-            }
-
-            OpWhitePanel {
-                id: panel3
-                Layout.fillWidth: true
-                Layout.preferredHeight: 100
-
-                Column {
-                    Text {
-                        text: "product name"
-                    }
-                    SmRadioButton {
-                        text: "Без установки"
-                    }
-
-                    SmRadioButton {
-                        text: "Пошагово"
-                    }
-                }
-            }
-
-            OpWhitePanel {
-                id: panel4
-                Layout.fillWidth: true
-                Layout.preferredHeight: 100
-
-                Row {
-                    spacing: 30
-                    Button {
-                        width: 100
-                        height: 90
-                        text: "product name"
-                    }
-
-                    Button {
-                        width: 100
-                        height: 90
-                        text: "product name"
-                    }
-
-                    Button {
-                        width: 100
-                        height: 90
-                        text: "product name"
-                    }
-                }
-            }
-
             RowLayout {
-                //Layout.preferredWidth: 400
-                //Layout.preferredHeight: 30
-                width: parent.width
-                height: 30
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                ColumnLayout {
+                    id: tools12
 
 
-                SmTextEdit {
-                    id: serialPortName
+                    Layout.preferredWidth: 800
+                    Layout.fillHeight: true
 
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    RowLayout {
+                        id: row1
 
-                    FindUsb { onUsbFound: serialPortName.text = device }
-                }
+                        ColumnLayout  {
 
-                SmButton {
-                    id: openPort
-                    text: qsTr("Open")
-                    onClicked: {
-                        Serial.close()
-                        let serPort = serialPortName.text
-                        console.log(serPort)
-                        Serial.setPortName(serPort)
-                        Serial.setBaudRate("115200")
-                        Serial.setDataBits("8")
-                        Serial.setParity("N")
-                        Serial.setStopBits("1")
-                        Serial.open()
+                            Image {
+                                id: logo
+                            }
+
+                            OpPanelCameraView {
+
+                                Layout.preferredWidth: 400
+                                Layout.preferredHeight: 400
+                            }
+                        }
+
+                        ColumnLayout {
+
+                            OpWhitePanel {
+
+                            }
+
+                            OpWhitePanel {
+
+                            }
+
+                            OpWhitePanel {
+
+                            }
+
+
+
+                        }
+
+
+
+
+                    }
+
+                    RowLayout {
+                        id: row2
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 186
+                        spacing: 16
+
+
+                        OpPanelCameraOptions {
+
+                            //Layout.preferredWidth: row2.width / 2 - 16
+                            Layout.preferredHeight: 186
+
+                        }
+
+                        OpPanelWorkModes {
+                            //Layout.preferredWidth: row2.width / 2 - 16
+                            //                    Layout.fillWidth: true
+                            Layout.preferredHeight: 186
+
+                        }
+                    }
+
+                    OpWhitePanel {
+                        id: buttons
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 124
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 16
+
+                            spacing: 32
+
+                            component ToolButton : Button {
+                                id: root
+                                // spacing: 4
+                                // padding: 16
+
+                                icon.height: 45
+                                icon.width: 45
+                                checkable: true
+                                display: AbstractButton.IconOnly
+
+
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                property color color
+
+                                background: Rectangle {
+                                    id: bg
+                                    color: enabled ? root.color : colors.disabledButton
+                                    border.width: 0
+                                    radius: 8
+                                }
+                            }
+
+                            ToolButton {
+                                icon.source: "images/play.svg"
+                                color: colors.playButton
+                            }
+
+                            ToolButton {
+                                icon.source: "images/pause.svg"
+                                color: colors.pauseButton
+                            }
+
+                            ToolButton {
+                                icon.source: "images/stop.svg"
+                                color: colors.stopButton
+                            }
+                        }
                     }
                 }
 
-                SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
+
+
+                Rectangle {
+                    id: scene
+
+                    color: "yellow"
+
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 800
+                }
+
+
+
+
+
             }
+
+
+
+            Rectangle {
+                id: statusBar
+                color: "blue"
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 30
+            }
+
+
+
+
+
+
+
+
+            // RowLayout {
+            //     //Layout.preferredWidth: 400
+            //     //Layout.preferredHeight: 30
+            //     width: parent.width
+            //     height: 30
+
+
+            //     SmTextEdit {
+            //         id: serialPortName
+
+            //         Layout.fillWidth: true
+            //         Layout.preferredHeight: 30
+
+            //         FindUsb { onUsbFound: serialPortName.text = device }
+            //     }
+
+            //     SmButton {
+            //         id: openPort
+            //         text: qsTr("Open")
+            //         onClicked: {
+            //             Serial.close()
+            //             let serPort = serialPortName.text
+            //             console.log(serPort)
+            //             Serial.setPortName(serPort)
+            //             Serial.setBaudRate("115200")
+            //             Serial.setDataBits("8")
+            //             Serial.setParity("N")
+            //             Serial.setStopBits("1")
+            //             Serial.open()
+            //         }
+            //     }
+
+            //     SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
+            // }
 
             //Item { height: 30; width: 10}
 
-            Text {
-                text: fullStatus + status
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                // Layout.preferredWidth: 400
-                // Layout.preferredHeight: 25
-                width: parent.width
-                height: 25
-            }
+            // Text {
+            //     text: fullStatus + status
+            //     horizontalAlignment: Text.AlignLeft
+            //     verticalAlignment: Text.AlignVCenter
+            //     // Layout.preferredWidth: 400
+            //     // Layout.preferredHeight: 25
+            //     width: parent.width
+            //     height: 25
+            // }
 
-            Item {
-                Layout.fillHeight: true
-            }
+            // Item {
+            //     Layout.fillHeight: true
+            // }
         }
     }
 
 
 
 
-    Rectangle {
-        anchors.left: tools.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        // width: 500
-        anchors.right: parent.right
+    // Rectangle {
+    //     anchors.left: tools.right
+    //     anchors.top: parent.top
+    //     anchors.bottom: parent.bottom
+    //     // width: 500
+    //     anchors.right: parent.right
 
-        // 1.
-        // ScrollView {
-        //     id: scrollView
-        //     objectName: "scrollView"
+    // 1.
+    // ScrollView {
+    //     id: scrollView
+    //     objectName: "scrollView"
 
-        //     anchors.fill: parent
+    //     anchors.fill: parent
 
-        //     // anchors {
-        //     //     top: topDock.bottom
-        //     //     left: parent.left
-        //     //     right: parent.right
-        //     //     bottom: parent.bottom
-        //     // }
+    //     // anchors {
+    //     //     top: topDock.bottom
+    //     //     left: parent.left
+    //     //     right: parent.right
+    //     //     bottom: parent.bottom
+    //     // }
 
-        //     Flickable {
-        //         id: stateMachineViewport
-        //         objectName: "stateMachineViewport"
+    //     Flickable {
+    //         id: stateMachineViewport
+    //         objectName: "stateMachineViewport"
 
-        //         anchors.fill: parent
+    //         anchors.fill: parent
 
-        //         contentWidth: stateMachineScene.width * stateMachineScene.scale
-        //         contentHeight: stateMachineScene.height * stateMachineScene.scale
-        //         boundsBehavior: Flickable.StopAtBounds
-        //         focus: true
-        //         interactive: !editController.editModeEnabled
+    //         contentWidth: stateMachineScene.width * stateMachineScene.scale
+    //         contentHeight: stateMachineScene.height * stateMachineScene.scale
+    //         boundsBehavior: Flickable.StopAtBounds
+    //         focus: true
+    //         interactive: !editController.editModeEnabled
 
-        //         onMovementStarted: {
-        //             followActiveRegion = false;
-        //         }
+    //         onMovementStarted: {
+    //             followActiveRegion = false;
+    //         }
 
-        //         Scene {
-        //             id: stateMachineScene
-        //             objectName: "stateMachineScene"
+    //         Scene {
+    //             id: stateMachineScene
+    //             objectName: "stateMachineScene"
 
-        //             Component.onCompleted: {
-        //                 _quickView.scene = stateMachineScene
-        //             }
-        //         }
+    //             Component.onCompleted: {
+    //                 _quickView.scene = stateMachineScene
+    //             }
+    //         }
 
-        //         Connections {
-        //             target: (root.followActiveRegion ? root.configurationController : null)
-        //             function onActiveRegionChanged() {
-        //                 centerOnActiveRegion();
-        //             }
-        //         }
+    //         Connections {
+    //             target: (root.followActiveRegion ? root.configurationController : null)
+    //             function onActiveRegionChanged() {
+    //                 centerOnActiveRegion();
+    //             }
+    //         }
 
-        //         Behavior on contentX {
-        //             enabled: root.followActiveRegion
-        //             SmoothedAnimation { duration: 200 }
-        //         }
-        //         Behavior on contentY {
-        //             enabled: root.followActiveRegion
-        //             SmoothedAnimation { duration: 200 }
-        //         }
+    //         Behavior on contentX {
+    //             enabled: root.followActiveRegion
+    //             SmoothedAnimation { duration: 200 }
+    //         }
+    //         Behavior on contentY {
+    //             enabled: root.followActiveRegion
+    //             SmoothedAnimation { duration: 200 }
+    //         }
 
-        //         // TODO: Add PinchArea?
-        //     }
-        // }
-
-
-        // 2.
-        // Flickable {
-        //     //color: "black"
-        //     id: blackBack
-        //     anchors.fill: parent
-        //     clip: true
-
-        //     SceneItem {
-        //         id: scene
-        //         //anchors.fill: blackBack
-
-        //         visible: true
-        //         //root: blackBack
-        //         enabled: true
-
-        //         //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
-
-        //     }
-
-        //     Button {
-        //         width: 20
-        //         height: 20
-        //         onClicked: {
-        //             scene.deleteBoards()
-        //         }
-        //     }
-
-        //     Button {
-        //         x: 30
-        //         width: 20
-        //         height: 20
-        //         onClicked: {
-        //             scene.addBoard()
-        //         }
-        //     }
-
-        //     Button {
-        //         x: 60
-        //         width: 20
-        //         height: 20
-        //         onClicked: {
-        //             scene.addTriangle()
-        //         }
-        //     }
-        // }
-
-        QmlGraphicsView {
-            anchors.fill: parent
-            scene: GraphicsScene
-        }
+    //         // TODO: Add PinchArea?
+    //     }
+    // }
 
 
-    }
+    // 2.
+    // Flickable {
+    //     //color: "black"
+    //     id: blackBack
+    //     anchors.fill: parent
+    //     clip: true
+
+    //     SceneItem {
+    //         id: scene
+    //         //anchors.fill: blackBack
+
+    //         visible: true
+    //         //root: blackBack
+    //         enabled: true
+
+    //         //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
+
+    //     }
+
+    //     Button {
+    //         width: 20
+    //         height: 20
+    //         onClicked: {
+    //             scene.deleteBoards()
+    //         }
+    //     }
+
+    //     Button {
+    //         x: 30
+    //         width: 20
+    //         height: 20
+    //         onClicked: {
+    //             scene.addBoard()
+    //         }
+    //     }
+
+    //     Button {
+    //         x: 60
+    //         width: 20
+    //         height: 20
+    //         onClicked: {
+    //             scene.addTriangle()
+    //         }
+    //     }
+    // }
+
+
+    // 3. ПОка отложу
+    // QmlGraphicsView {
+    //     anchors.fill: parent
+    //     scene: GraphicsScene
+    // }
+
+    // Rectangle {
+    //     anchors.fill: parent
+    // }
+
+
+    //}
 
 
     // SplitView {

@@ -6,6 +6,8 @@ Switch {
     id: control
     text: qsTr("Switch")
 
+    //property alias font: text.font
+
     indicator: Rectangle {
         implicitWidth: 48
         implicitHeight: 26
@@ -14,7 +16,7 @@ Switch {
         y: parent.height / 2 - height / 2
 
         radius: 13
-        color: control.checked ? "#17a81a" : "#220000FF"
+        color: control.checked ? colors.switchOn : colors.switchOff
         border.color: "transparent"
         border.width: 0
 
@@ -31,10 +33,11 @@ Switch {
     }
 
     contentItem: SmText {
+        id: text
         text: control.text
-        font.pixelSize: 25
+        font.pixelSize: root.font.pixelSize
         opacity: enabled ? 1.0 : 0.3
-        color: "black"
+        color: "#1A1A1A"
         verticalAlignment: Text.AlignVCenter
         leftPadding: control.indicator.width + control.spacing
     }

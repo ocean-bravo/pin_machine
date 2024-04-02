@@ -10,10 +10,6 @@ Control {
     id: root
 
     padding: 16
-    // leftInset: 0
-    // rightInset: 0
-    // topInset: 0
-    // bottomInset: 0
 
     background: OpWhitePanel {}
 
@@ -46,10 +42,9 @@ Control {
                 anchors.margins: parent.border.width // Чтобы была видна желтая граница
                 crossColor: colors.yellow
 
-                property bool rounded: true
                 property bool adapt: true
 
-                layer.enabled: rounded
+                layer.enabled: true
                 layer.effect: OpacityMask {
                     maskSource: Item {
                         width: image.width
@@ -88,8 +83,8 @@ Control {
                 }
                 else {
                     Video4.stop()
-                    image.clear()
-                }
+                    execAfterDelay(function() { image.clear(); }, 100)
+                 }
             }
         }
 
@@ -103,7 +98,8 @@ Control {
                 //Video4.reloadDevices()
             }
         }
+
+
+
     }
-
-
 }
