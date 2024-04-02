@@ -346,7 +346,6 @@ ApplicationWindow {
                                 checkable: true
                                 display: AbstractButton.IconOnly
 
-
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
 

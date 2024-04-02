@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.12
 Item {
     id: root
 
-    property var appWin: operatorUser
+    property var appWin: superUser
 
 
     // Component {
@@ -17,7 +17,7 @@ Item {
         OperatorUser {
             id: operatorUser
             objectName: "operatoruser"
-            visible: true
+            visible: false
         }
     // }
 
@@ -27,7 +27,7 @@ Item {
         SuperUser {
             id: superUser
             objectName: "superuser"
-            visible: false
+            visible: true
         }
     // }
 
@@ -63,9 +63,9 @@ Item {
         sequence: "F1"
         context: Qt.ApplicationShortcut
         onActivated: {
-            //operatorUser.visible = true
-            //appWin = operatorUser
-            //superUser.visible = false
+            operatorUser.visible = true
+            appWin = operatorUser
+            superUser.visible = false
 
             //loader.sourceComponent = operatorComponent
             //appWin = operatorUser
@@ -76,9 +76,9 @@ Item {
         sequence: "F2"
         context: Qt.ApplicationShortcut
         onActivated: {
-            //superUser.visible = true
-            //appWin = superUser
-            //operatorUser.visible = false
+            superUser.visible = true
+            appWin = superUser
+            operatorUser.visible = false
             //loader.sourceComponent = superComponent
             //appWin = loader.item
         }
@@ -96,7 +96,7 @@ Item {
     // }
 
     Component.onCompleted: {
-        operatorUser.visible = true
+        superUser.visible = true
         //loader.sourceComponent = operatorComponent
 
         DataBus.live_preview_mode = "raw"

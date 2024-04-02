@@ -122,7 +122,7 @@ CollapsiblePanel2 {
             Layout.preferredWidth: 200
 
             onClicked: {
-                jog("X", -DataBus.punch_tool_shift_dx)
+                jog("X", DataBus.punch_tool_shift_dx)
                 jog("Y", -DataBus.punch_tool_shift_dy)
             }
         }
