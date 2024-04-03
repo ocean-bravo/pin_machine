@@ -1,20 +1,26 @@
 import QtQml 2.15
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 Button {
     id: root
     text: qsTr("Button")
     spacing: 4
-    padding: 16
+    //padding: 16
+    leftPadding: 16
+    rightPadding: 16
+
+    property color color: "blue"
+
+    property bool solid: false
 
     display: AbstractButton.TextBesideIcon
 
     background: Rectangle {
-        color: "transparent" // checked ? "lightgrey" : "transparent"
+        color: root.solid ? root.color : "transparent"
         opacity: enabled ? 1 : 0.3
-        border.color: colors.blue
+        border.color: root.color
         border.width: 1
         radius: 8
     }
@@ -22,6 +28,6 @@ Button {
     Component.onCompleted: {
         // Не хотел переопределять свойство contentItem, а добраться до нужного свойства у существуюущего
         // Всего лишь нужно было поменять цвет текста
-        contentItem.color = colors.blue
+        contentItem.color = solid ? "white" : root.color
     }
 }

@@ -7,6 +7,7 @@ Switch {
     text: qsTr("Switch")
 
     //property alias font: text.font
+    leftPadding: 0
 
     indicator: Rectangle {
         implicitWidth: 48

@@ -6,6 +6,6 @@ import QtQuick.Layouts 1.12
 Text {
     font.family: "DINPro"
     font.pixelSize: 13
-    color: colors.fontColor
+    color: colors.black_50
     verticalAlignment: Text.AlignVCenter
 }

@@ -258,8 +258,15 @@ ApplicationWindow {
         id: colors
         readonly property color background: "#F6FAFF"
 
-        readonly property color blue: "#1E40AF"
-        readonly property color fontColor: "#808080"
+        readonly property color black_80: "#333333"
+        readonly property color black_50: "#808080"
+
+        readonly property color primary_70: "#2563EB"
+        readonly property color primary_90: "#1E40AF"
+
+        readonly property color error_80: "#FF5E5C"
+
+
         readonly property color yellow: "#FFC800"
 
         readonly property color switchOn: "#2563EB"
@@ -309,6 +316,9 @@ ApplicationWindow {
 
                         spacing: 8
 
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 124
+
                         ColumnLayout  {
                             id: column1
 
@@ -353,27 +363,27 @@ ApplicationWindow {
                             Layout.fillHeight: true
                             Layout.preferredWidth: 404
 
-                            OpWhitePanel {
+                            OpPanelProduct {
                                 id: product
+
                                 Layout.preferredHeight: 172
                                 Layout.fillWidth: true
-
                             }
 
-                            OpWhitePanel {
-                                id: homing
+                            OpPanelAxesHoming {
+                                id: axesHoming
                                 Layout.preferredHeight: 124
                                 Layout.fillWidth: true
-
                             }
 
-                            OpWhitePanel {
+                            OpPanelAxesCoordinates {
                                 id: axes
                                 Layout.preferredHeight: 228
                                 Layout.fillWidth: true
                             }
 
                             OpPanelWorkModes {
+                                id: workModes
                                 Layout.preferredHeight: 186
                                 Layout.fillWidth: true
                             }
@@ -397,13 +407,14 @@ ApplicationWindow {
                                 // spacing: 4
                                 // padding: 16
 
+
                                 icon.height: 45
                                 icon.width: 45
                                 checkable: true
                                 display: AbstractButton.IconOnly
 
                                 Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Layout.preferredHeight: 100
 
                                 property color color
 
@@ -450,7 +461,7 @@ ApplicationWindow {
 
             Rectangle {
                 id: statusBar
-                color: colors.blue
+                color: colors.primary_70
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: 56

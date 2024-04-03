@@ -72,6 +72,7 @@ Control {
             icon.source: checked ? "images/videocam_off.png" : "images/videocam_on.png"
             checkable: true
             text: checked ? qsTr("Выключить камеру") : qsTr("Включить камеру")
+            color: colors.primary_90
 
             Layout.preferredHeight: 56
 
