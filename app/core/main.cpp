@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
     //MainWindow w;
     //w.show();
 
-    MainWindow scene;
+    // MainWindow scene;
 
-    QRect screenrect = app.primaryScreen()->geometry();
-    scene.resize(1920 / 2, screenrect.height());
-    scene.move(1920/2, screenrect.top());
-    scene.show();
+    // QRect screenrect = app.primaryScreen()->geometry();
+    // scene.resize(1920 / 2, screenrect.height());
+    // scene.move(1920/2, screenrect.top());
+    // scene.show();
 
     return app.exec();
 }

@@ -8,6 +8,8 @@
 #include "video4.h"
 
 class Serial;
+class QQuickWidget;
+class MainWindow3;
 
 #include <QQmlApplicationEngine>
 
@@ -57,6 +59,9 @@ private:
     void createQmlEngine();
 
     QScopedPointer<EnhancedQmlApplicationEngine> _qmlEngine;
+    //QQmlEngine* _qmlEngine;
+    // QQuickWidget* _quickWidget;
+    // QScopedPointer<MainWindow3> _mw;
 
     //V4L2 _videoDriver;
 //    Video3* _videoDriver3;

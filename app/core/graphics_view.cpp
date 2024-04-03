@@ -32,6 +32,13 @@ GraphicsView::GraphicsView(QWidget* parent)
     //setAttribute(Qt::WA_Hover);
 
     setMouseTracking(true); // Для отображения координат курсора мыши
+
+    qd() << "graphics view constructed";
+}
+
+GraphicsView::~GraphicsView()
+{
+    qd() << "graphics view destructed";
 }
 
 void GraphicsView::fit()

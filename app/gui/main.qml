@@ -7,7 +7,11 @@ import QtQuick.Layouts 1.12
 Item {
     id: root
 
-    property var appWin: superUser
+    //color: "yellow"
+    //visible: true
+    property var appWin: operatorUser
+
+    //anchors.fill: parent
 
 
     // Component {
@@ -17,7 +21,7 @@ Item {
         OperatorUser {
             id: operatorUser
             objectName: "operatoruser"
-            visible: false
+            visible: true
         }
     // }
 
@@ -27,7 +31,7 @@ Item {
         SuperUser {
             id: superUser
             objectName: "superuser"
-            visible: true
+            visible: false
         }
     // }
 
@@ -96,7 +100,7 @@ Item {
     // }
 
     Component.onCompleted: {
-        superUser.visible = true
+        operatorUser.visible = true
         //loader.sourceComponent = operatorComponent
 
         DataBus.live_preview_mode = "raw"
@@ -107,8 +111,10 @@ Item {
         sequence: "F5"
         context: Qt.ApplicationShortcut
         onActivated: {
-            console.log("reload")
-            loader.reload()
+            // console.log("reload")
+            // loader.reload()
+
+            DataBus.messagebox = "dsafasdf"
         }
     }
 

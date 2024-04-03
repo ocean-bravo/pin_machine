@@ -6,12 +6,24 @@ import QtQuick.Layouts 1.15
 import Process 1.0
 import ImageItem 1.0
 import QuickScene 1.0
-import QmlGraphicsView 1.0
+
+
+import QtGraphicalEffects 1.15
+
+
+//import PlaceholderQuickItem 1.0
 
 import "utils.js" as Utils
 
 ApplicationWindow {
     id: appWin
+
+    //objectName: qsTr("win1")
+
+    color: colors.background
+    //color: "red"
+
+    //anchors.fill: parent
     visible: true
     width: Screen.width
     height: Screen.height
@@ -179,33 +191,33 @@ ApplicationWindow {
         }
     }
 
-    //color: "transparent"
 
-    menuBar: MenuBar {
-        Menu {
-            id: fileMenu
-            title: qsTr("File")
-            // ...
-        }
 
-        Menu {
-            id: editMenu
-            title: qsTr("&Edit")
-            // ...
-        }
+    // menuBar: MenuBar {
+    //     Menu {
+    //         id: fileMenu
+    //         title: qsTr("File")
+    //         // ...
+    //     }
 
-        Menu {
-            id: viewMenu
-            title: qsTr("&View")
-            // ...
-        }
+    //     Menu {
+    //         id: editMenu
+    //         title: qsTr("&Edit")
+    //         // ...
+    //     }
 
-        Menu {
-            id: helpMenu
-            title: qsTr("&Help")
-            // ...
-        }
-    }
+    //     Menu {
+    //         id: viewMenu
+    //         title: qsTr("&View")
+    //         // ...
+    //     }
+
+    //     Menu {
+    //         id: helpMenu
+    //         title: qsTr("&Help")
+    //         // ...
+    //     }
+    // }
 
     // footer: ToolBar {
     //     // ...
@@ -217,8 +229,35 @@ ApplicationWindow {
     }
 
 
+    // Popup {
+    //         id: popup
+    //         x: 100
+    //         y: 100
+    //         width: 200
+    //         height: 300
+    //         modal: true
+    //         focus: true
+    //         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    //         z: 2
+    //     }
+
+    // Shortcut {
+    //     sequence: "F5"
+    //     context: Qt.ApplicationShortcut
+    //     onActivated: {
+    //         // console.log("reload")
+    //         // loader.reload()
+
+    //         DataBus.messagebox = "dsafasdf"
+    //         popup.open()
+    //     }
+
+    // }
+
     QtObject {
         id: colors
+        readonly property color background: "#F6FAFF"
+
         readonly property color blue: "#1E40AF"
         readonly property color fontColor: "#808080"
         readonly property color yellow: "#FFC800"
@@ -231,7 +270,6 @@ ApplicationWindow {
         readonly property color stopButton: "#FF5E5C"
         readonly property color disabledButton: "#E5E5E5"
     }
-
 
     Control {
         visible: true
@@ -249,78 +287,96 @@ ApplicationWindow {
 
         contentItem: ColumnLayout {
 
-            spacing: 6
+            spacing: 8
 
             RowLayout {
+
+                spacing: 8
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 ColumnLayout {
-                    id: tools12
+                    id: tools1
 
+                    spacing: 8
 
-                    Layout.preferredWidth: 800
+                    Layout.preferredWidth: 816
                     Layout.fillHeight: true
 
                     RowLayout {
                         id: row1
 
-                        ColumnLayout  {
+                        spacing: 8
 
-                            Image {
+                        ColumnLayout  {
+                            id: column1
+
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: 404
+
+                            spacing: 8
+
+                            Item {
                                 id: logo
+
+                                Image {
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    source: "images/logo.png"
+                                }
+
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
                             }
 
                             OpPanelCameraView {
+                                id: camera
 
-                                Layout.preferredWidth: 400
                                 Layout.preferredHeight: 400
+                                Layout.fillWidth: true
+                            }
+
+                            OpPanelCameraOptions {
+                                id: cameraOption
+
+                                Layout.preferredHeight: 186
+                                Layout.fillWidth: true
                             }
                         }
 
                         ColumnLayout {
+                            id: column2
+
+                            spacing: 8
+
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: 404
 
                             OpWhitePanel {
+                                id: product
+                                Layout.preferredHeight: 172
+                                Layout.fillWidth: true
 
                             }
 
                             OpWhitePanel {
+                                id: homing
+                                Layout.preferredHeight: 124
+                                Layout.fillWidth: true
 
                             }
 
                             OpWhitePanel {
-
+                                id: axes
+                                Layout.preferredHeight: 228
+                                Layout.fillWidth: true
                             }
 
-
-
-                        }
-
-
-
-
-                    }
-
-                    RowLayout {
-                        id: row2
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 186
-                        spacing: 16
-
-
-                        OpPanelCameraOptions {
-
-                            //Layout.preferredWidth: row2.width / 2 - 16
-                            Layout.preferredHeight: 186
-
-                        }
-
-                        OpPanelWorkModes {
-                            //Layout.preferredWidth: row2.width / 2 - 16
-                            //                    Layout.fillWidth: true
-                            Layout.preferredHeight: 186
-
+                            OpPanelWorkModes {
+                                Layout.preferredHeight: 186
+                                Layout.fillWidth: true
+                            }
                         }
                     }
 
@@ -377,31 +433,28 @@ ApplicationWindow {
                     }
                 }
 
-
-
-                Rectangle {
-                    id: scene
-
-                    color: "yellow"
-
+                OpPanelProductView {
+                    id: productVisualisation
                     Layout.fillHeight: true
                     Layout.preferredWidth: 800
                 }
 
-
-
-
-
+                // 3. ПОка отложу
+                // QmlGraphicsView {
+                //     anchors.fill: parent
+                //     scene: GraphicsScene
+                // }
             }
 
 
 
             Rectangle {
                 id: statusBar
-                color: "blue"
+                color: colors.blue
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 30
+                Layout.preferredHeight: 56
+                radius: 8
             }
 
 
@@ -581,11 +634,7 @@ ApplicationWindow {
     // }
 
 
-    // 3. ПОка отложу
-    // QmlGraphicsView {
-    //     anchors.fill: parent
-    //     scene: GraphicsScene
-    // }
+
 
     // Rectangle {
     //     anchors.fill: parent

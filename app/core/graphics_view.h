@@ -16,6 +16,7 @@ class GraphicsView : public QGraphicsView
     //void zoom(double factor);
 public:
     GraphicsView(QWidget* parent = nullptr);
+    ~GraphicsView();
 
     // Заполнить платой вид
     void fit();

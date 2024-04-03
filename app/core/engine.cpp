@@ -35,6 +35,7 @@
 #include "openCv.h"
 
 
+#include "placeholder_quick_item.h"
 #include "qml_graphics_view.h"
 #include "my_image_provider.h"
 
@@ -43,8 +44,14 @@
 
 #include "ImageItem.h"
 #include "quick_scene.h"
+#include "graphics_view.h"
 
 #include "file_system_watcher.h"
+#include "widget_anchor.h"
+#include "mainwindow3.h"
+
+#include <QQuickWidget>
+#include <QMainWindow>
 
 
 EnhancedQmlApplicationEngine::EnhancedQmlApplicationEngine(QObject *parent)
@@ -137,7 +144,7 @@ void Engine::load(const QString& url)
 //     auto connection = connect(&video(), &Video4::captured, [](QImage img)
 //     {
 //         db().insert("capture2", img.copy());
-//     });
+//     });engin
 //     auto guard = qScopeGuard([=]() { disconnect(connection); });
 //     video().start();
 //     video().capture();
@@ -160,11 +167,16 @@ void Engine::load(const QString& url)
 
 Engine::~Engine()
 {
-    _qmlEngine.reset();
+    //_qmlEngine.reset();
 }
+
+#include <QVBoxLayout>
 
 void Engine::createQmlEngine()
 {
+
+
+
     connect(&video(), &Video4::rawImage, this, [](QImage img)
     {
         const QString livePreviewMode = db().value("live_preview_mode").toString();
@@ -211,6 +223,7 @@ void Engine::createQmlEngine()
 
     FileSystemWatcher* filesystemwatcher = new FileSystemWatcher(this);
 
+
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
@@ -223,7 +236,8 @@ void Engine::createQmlEngine()
 
     qmlRegisterType<QmlGraphicsView>("QmlGraphicsView", 1, 0, "QmlGraphicsView");
 
-
+    // Неудачный эксперимент
+    //qmlRegisterType<PlaceholderQuickItem>("PlaceholderQuickItem", 1, 0, "PlaceholderQuickItem");
 
     _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
@@ -237,7 +251,7 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
     _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
-    _qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCycle", tp);
+    _qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCyoverlayItemcle", tp);
     _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
     _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
     _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
@@ -246,7 +260,7 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
 
 
-    _qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
+    //_qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
 
     _qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
 
@@ -259,6 +273,7 @@ void Engine::reload()
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+//    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
 
 QStringList Engine::filesInDirectory(QString dir) const
