@@ -1,10 +1,8 @@
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtGraphicalEffects 1.15
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
-import ImageItem 1.0
 
 Control {
     id: root
@@ -20,12 +18,65 @@ Control {
         OpText {
             text: qsTr("КООРДИНАТЫ ОСЕЙ")
 
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+
+            OpText {
+                text: "X"
+            }
+
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
+        }
+
+        OpText {
+            text: qsTr("СКОРОСТЬ ОСЕЙ")
+
+            Layout.preferredHeight: 18
             Layout.fillWidth: true
         }
 
 
+        RowLayout {
 
+            Layout.preferredHeight: 36
+            Layout.fillWidth: true
 
+            OpText {
+                text: "0"
+                color: colors.black_80
+                font.pixelSize: 16
+
+                Layout.preferredHeight: 18
+                //Layout.fillWidth: true
+            }
+
+            OpSlider {
+                from: 1
+                value: 25
+                to: 100
+
+                Layout.preferredHeight: 18
+                Layout.fillWidth: true
+            }
+
+            OpText {
+                text: "100%"
+                color: colors.black_80
+                font.pixelSize: 16
+
+                Layout.preferredHeight: 18
+                //Layout.fillWidth: true
+            }
+
+        }
     }
 }

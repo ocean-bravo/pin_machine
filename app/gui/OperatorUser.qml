@@ -290,8 +290,6 @@ ApplicationWindow {
         topPadding: 8
         bottomPadding: 8
 
-
-
         contentItem: ColumnLayout {
 
             spacing: 8
@@ -303,151 +301,163 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                ColumnLayout {
-                    id: tools1
-
-                    spacing: 8
-
+                Item {
                     Layout.preferredWidth: 816
                     Layout.fillHeight: true
 
-                    RowLayout {
-                        id: row1
+
+                    ColumnLayout {
+                        id: tools1
+                        anchors.fill: parent
 
                         spacing: 8
 
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 124
-
-                        ColumnLayout  {
-                            id: column1
-
+                        Item {
+                            Layout.preferredWidth: 816
                             Layout.fillHeight: true
-                            Layout.preferredWidth: 404
 
-                            spacing: 8
+                            RowLayout {
+                                id: row1
+                                anchors.fill: parent
+                                spacing: 8
 
-                            Item {
-                                id: logo
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 404
 
-                                Image {
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    source: "images/logo.png"
+                                    ColumnLayout  {
+                                        id: column1
+                                        anchors.fill: parent
+
+                                        spacing: 8
+
+                                        Item {
+                                            id: logo
+
+                                            Layout.preferredHeight: 112
+                                            Layout.fillWidth: true
+
+                                            Image {
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                source: "images/logo.png"
+                                            }
+                                        }
+
+                                        OpPanelCameraView {
+                                            id: camera
+
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                        }
+
+                                        OpPanelCameraOptions {
+                                            id: cameraOption
+
+                                            Layout.preferredHeight: 186
+                                            Layout.fillWidth: true
+                                        }
+                                    }
                                 }
 
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                            }
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 404
+                                    ColumnLayout {
+                                        id: column2
 
-                            OpPanelCameraView {
-                                id: camera
+                                        spacing: 8
 
-                                Layout.preferredHeight: 400
-                                Layout.fillWidth: true
-                            }
+                                        anchors.fill: parent
 
-                            OpPanelCameraOptions {
-                                id: cameraOption
+                                        OpPanelProduct {
+                                            id: product
 
-                                Layout.preferredHeight: 186
-                                Layout.fillWidth: true
+                                            Layout.preferredHeight: 172
+                                            Layout.fillWidth: true
+                                        }
+
+                                        OpPanelAxesHoming {
+                                            id: axesHoming
+                                            Layout.preferredHeight: 124
+                                            Layout.fillWidth: true
+                                        }
+
+                                        OpPanelAxesCoordinates {
+                                            id: axes
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                        }
+
+                                        OpPanelWorkModes {
+                                            id: workModes
+                                            Layout.preferredHeight: 186
+                                            Layout.fillWidth: true
+                                        }
+                                    }
+                                }
                             }
                         }
 
-                        ColumnLayout {
-                            id: column2
+                        OpWhitePanel {
+                            id: buttons
 
-                            spacing: 8
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 124
 
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: 404
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
 
-                            OpPanelProduct {
-                                id: product
+                                spacing: 32
 
-                                Layout.preferredHeight: 172
-                                Layout.fillWidth: true
-                            }
-
-                            OpPanelAxesHoming {
-                                id: axesHoming
-                                Layout.preferredHeight: 124
-                                Layout.fillWidth: true
-                            }
-
-                            OpPanelAxesCoordinates {
-                                id: axes
-                                Layout.preferredHeight: 228
-                                Layout.fillWidth: true
-                            }
-
-                            OpPanelWorkModes {
-                                id: workModes
-                                Layout.preferredHeight: 186
-                                Layout.fillWidth: true
-                            }
-                        }
-                    }
-
-                    OpWhitePanel {
-                        id: buttons
-
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 124
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 16
-
-                            spacing: 32
-
-                            component ToolButton : Button {
-                                id: root
-                                // spacing: 4
-                                // padding: 16
+                                component ToolButton : Button {
+                                    id: root
+                                    // spacing: 4
+                                    // padding: 16
 
 
-                                icon.height: 45
-                                icon.width: 45
-                                checkable: true
-                                display: AbstractButton.IconOnly
+                                    icon.height: 45
+                                    icon.width: 45
+                                    checkable: true
+                                    display: AbstractButton.IconOnly
 
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 100
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 100
 
-                                property color color
+                                    property color color
 
-                                background: Rectangle {
-                                    id: bg
-                                    color: enabled ? root.color : colors.disabledButton
-                                    border.width: 0
-                                    radius: 8
+                                    background: Rectangle {
+                                        id: bg
+                                        color: enabled ? root.color : colors.disabledButton
+                                        border.width: 0
+                                        radius: 8
+                                    }
                                 }
-                            }
 
-                            ToolButton {
-                                icon.source: "images/play.svg"
-                                color: colors.playButton
-                            }
+                                ToolButton {
+                                    icon.source: "images/play.svg"
+                                    color: colors.playButton
+                                }
 
-                            ToolButton {
-                                icon.source: "images/pause.svg"
-                                color: colors.pauseButton
-                            }
+                                ToolButton {
+                                    icon.source: "images/pause.svg"
+                                    color: colors.pauseButton
+                                }
 
-                            ToolButton {
-                                icon.source: "images/stop.svg"
-                                color: colors.stopButton
+                                ToolButton {
+                                    icon.source: "images/stop.svg"
+                                    color: colors.stopButton
+                                }
                             }
                         }
                     }
                 }
-
                 OpPanelProductView {
                     id: productVisualisation
+
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 800
                 }
 
                 // 3. ПОка отложу
@@ -457,14 +467,13 @@ ApplicationWindow {
                 // }
             }
 
-
-
             Rectangle {
                 id: statusBar
-                color: colors.primary_70
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: 56
+
+                color: colors.primary_70
                 radius: 8
             }
 

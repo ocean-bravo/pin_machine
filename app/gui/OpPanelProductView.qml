@@ -20,7 +20,7 @@ Control {
         OpText {
             text: qsTr("ВИЗУАЛИЗАЦИЯ ПРОДУКТА")
 
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 18
             Layout.fillWidth: true
         }
 

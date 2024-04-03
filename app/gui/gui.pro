@@ -3,7 +3,8 @@ TEMPLATE = aux
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
     OpPanelAxesHoming.qml \
-    OpPanelProduct.qml
+    OpPanelProduct.qml \
+    OpSlider.qml
 
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \
