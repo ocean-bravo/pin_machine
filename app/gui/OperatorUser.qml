@@ -413,9 +413,6 @@ ApplicationWindow {
 
                                 component ToolButton : Button {
                                     id: root
-                                    // spacing: 4
-                                    // padding: 16
-
 
                                     icon.height: 45
                                     icon.width: 45
@@ -429,7 +426,7 @@ ApplicationWindow {
 
                                     background: Rectangle {
                                         id: bg
-                                        color: enabled ? root.color : colors.disabledButton
+                                        color: enabled ? down ? "lightgrey" : root.color : colors.disabledButton
                                         border.width: 0
                                         radius: 8
                                     }

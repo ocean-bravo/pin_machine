@@ -42,5 +42,6 @@ Switch {
         color: colors.black_90
         verticalAlignment: Text.AlignVCenter
         leftPadding: root.indicator.width + root.spacing
+        wrapMode: Text.WordWrap
     }
 }
