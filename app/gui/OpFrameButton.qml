@@ -18,7 +18,7 @@ Button {
     display: AbstractButton.TextBesideIcon
 
     background: Rectangle {
-        color: root.solid ? root.color : "transparent"
+        color: down ? "lightgrey" : root.solid ? root.color : "transparent"
         opacity: enabled ? 1 : 0.3
         border.color: root.color
         border.width: 1

@@ -1,8 +1,8 @@
 import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 import Process 1.0
 import ImageItem 1.0
 import QuickScene 1.0
@@ -258,9 +258,12 @@ ApplicationWindow {
         id: colors
         readonly property color background: "#F6FAFF"
 
+        readonly property color black_90: "#1A1A1A"
         readonly property color black_80: "#333333"
         readonly property color black_50: "#808080"
 
+
+        readonly property color primary_20: "#DBEAFE"
         readonly property color primary_70: "#2563EB"
         readonly property color primary_90: "#1E40AF"
 
@@ -268,9 +271,6 @@ ApplicationWindow {
 
 
         readonly property color yellow: "#FFC800"
-
-        readonly property color switchOn: "#2563EB"
-        readonly property color switchOff: "#DBEAFE"
 
         readonly property color playButton: "#14B8A6"
         readonly property color pauseButton: "#60A5FA"

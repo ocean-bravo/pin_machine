@@ -3,26 +3,27 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Switch {
-    id: control
+    id: root
     text: qsTr("Switch")
 
-    //property alias font: text.font
     leftPadding: 0
+
+    font.pixelSize: 16
 
     indicator: Rectangle {
         implicitWidth: 48
         implicitHeight: 26
 
-        x: control.leftPadding
+        x: root.leftPadding
         y: parent.height / 2 - height / 2
 
         radius: 13
-        color: control.checked ? colors.switchOn : colors.switchOff
+        color: down ? "lightgrey" : checked ? colors.primary_70 : colors.primary_20
         border.color: "transparent"
         border.width: 0
 
         Rectangle {
-            x: control.checked ? parent.width - width - 3 : 3
+            x: checked ? parent.width - width - 3 : 3
             y: 3
             width: 20
             height: 20
@@ -35,11 +36,11 @@ Switch {
 
     contentItem: SmText {
         id: text
-        text: control.text
+        text: root.text
         font.pixelSize: root.font.pixelSize
         opacity: enabled ? 1.0 : 0.3
-        color: "#1A1A1A"
+        color: colors.black_90
         verticalAlignment: Text.AlignVCenter
-        leftPadding: control.indicator.width + control.spacing
+        leftPadding: root.indicator.width + root.spacing
     }
 }
