@@ -30,11 +30,19 @@ Control {
                 }
 
                 OpFrameButton {
-                    text: DataBus.is_homed ? qsTr("Готов") : qsTr("Не готов")
+                    text: {
+                        if (DataBus.homing_status === "Not ready")   return qsTr("Не готов")
+                        if (DataBus.homing_status === "In progress") return qsTr("В процессе")
+                        if (DataBus.homing_status === "Ready")       return qsTr("Готов")
+                    }
+
+                    color: {
+                        if (DataBus.homing_status === "Not ready")   return colors.error_80
+                        if (DataBus.homing_status === "In progress") return colors.accent_90
+                        if (DataBus.homing_status === "Ready")       return colors.green
+                    }
 
                     font.pixelSize: 16
-
-                    color: DataBus.is_homed ? colors.green : colors.error_80
 
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
@@ -60,17 +68,7 @@ Control {
                 write("$H")
             }
 
-            enabled: {
-                let status = DataBus.status
-
-                if (status === "Idle")
-                    return true
-
-                if (status === "Alarm")
-                    return true
-
-                return false
-            }
+            enabled: DataBus.homing_status === "Not ready"
         }
     }
 }

@@ -7,23 +7,11 @@ import Process 1.0
 import ImageItem 1.0
 import QuickScene 1.0
 
-
-import QtGraphicalEffects 1.15
-
-
-//import PlaceholderQuickItem 1.0
-
 import "utils.js" as Utils
 
 ApplicationWindow {
     id: appWin
 
-    //objectName: qsTr("win1")
-
-    color: colors.background
-    //color: "red"
-
-    //anchors.fill: parent
     visible: true
     width: Screen.width
     height: Screen.height
@@ -31,11 +19,11 @@ ApplicationWindow {
     y: 0
     flags: Qt.Window
 
+    color: colors.primary_10
+
     function write(msg) {
         Serial.write(msg+"\n")
     }
-
-
 
 
     function sortResolutions(resolutions) {
@@ -218,19 +206,18 @@ ApplicationWindow {
 
     QtObject {
         id: colors
-        readonly property color background: "#F6FAFF"
 
-        readonly property color black_90: "#1A1A1A"
-        readonly property color black_80: "#333333"
-        readonly property color black_50: "#808080"
-        readonly property color black_30: "#B3B3B3"
-        readonly property color black_20: "#CCCCCC"
-
-
+        readonly property color primary_10: "#F6FAFF"
         readonly property color primary_20: "#DBEAFE"
         readonly property color primary_50: "#60A5FA"
         readonly property color primary_70: "#2563EB"
         readonly property color primary_90: "#1E40AF"
+
+        readonly property color black_20: "#CCCCCC"
+        readonly property color black_30: "#B3B3B3"
+        readonly property color black_50: "#808080"
+        readonly property color black_80: "#333333"
+        readonly property color black_90: "#1A1A1A"
 
         readonly property color error_80: "#FF5E5C"
 

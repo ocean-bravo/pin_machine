@@ -6,6 +6,8 @@
 DataBus::DataBus(QObject *parent)
     : QQmlPropertyMap(this, parent)
 {
+    insert("homing_status", QString("Not ready"));
+
     QStringList resolutions;
     for (const QString& key : settings().allKeys())
     {
