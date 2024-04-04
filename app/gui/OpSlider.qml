@@ -3,12 +3,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import QtGraphicalEffects 1.15
 
 Slider {
     id: root
     value: 0.5
 
     background: Rectangle {
+        id: rightOfKnob
         x: root.leftPadding
         y: root.topPadding + root.availableHeight / 2 - height / 2
         implicitWidth: 200
@@ -20,6 +22,7 @@ Slider {
 
 
         Rectangle {
+            id: leftOfKnob
             width: root.visualPosition * parent.width
             height: parent.height
             color: colors.primary_70
@@ -28,13 +31,16 @@ Slider {
     }
 
     handle: Rectangle {
+        id: knob
         x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
         y: root.topPadding + root.availableHeight / 2 - height / 2
         implicitWidth: 28
         implicitHeight: 28
         radius: 24
-        color: root.pressed ? "#f0f0f0" : "#f6f6f6"
-        border.color: "#bdbebf"
+        color: root.pressed ? "lightgrey" : "white"
+        border.color: colors.primary_20
+        border.width: 2
     }
+
 }
 

@@ -25,11 +25,11 @@ Control {
         }
 
         Rectangle {
-            border.color: colors.yellow
+            border.color: colors.accent_90
             border.width: 2
             radius: 8
 
-            color: "#B3B3B3"
+            color: colors.black_30
 
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -40,7 +40,7 @@ Control {
                 image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
                 anchors.fill: parent
                 anchors.margins: parent.border.width // Чтобы была видна желтая граница
-                crossColor: colors.yellow
+                crossColor: colors.accent_90
 
                 property bool adapt: true
 

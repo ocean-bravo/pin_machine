@@ -15,27 +15,30 @@ Control {
 
         spacing: 16
 
-        RowLayout {
-
+        Item {
             Layout.preferredHeight: 30
             Layout.fillWidth: true
 
-            OpText {
-                text: qsTr("ИМЯ ПРОДУКТА:")
+            RowLayout {
+                anchors.fill: parent
 
-                Layout.preferredHeight: 30
-                Layout.fillWidth: true
-            }
+                OpText {
+                    text: qsTr("ИМЯ ПРОДУКТА:")
 
-            OpText {
-                text: "1B268-1B268-1B268"
+                    Layout.preferredHeight: 30
+                    Layout.fillWidth: true
+                }
 
-                font.bold: true
-                font.pixelSize: 24
-                color: colors.black_80
+                OpText {
+                    text: "1B268-1B268-1B268"
 
-                Layout.preferredHeight: 30
-                Layout.fillWidth: true
+                    //font.bold: true
+                    font.pixelSize: 24
+                    color: colors.black_80
+
+                    Layout.preferredHeight: 30
+                    Layout.fillWidth: true
+                }
             }
         }
 
@@ -50,50 +53,43 @@ Control {
             Layout.fillWidth: true
         }
 
-        RowLayout {
-
+        Item {
             Layout.preferredHeight: 32
             Layout.fillWidth: true
 
+            RowLayout {
+                anchors.fill: parent
 
-            OpText {
-                text: qsTr("СЧЕТЧИК ГОТОВЫХ ПРОДУКТОВ:")
+                OpText {
+                    text: qsTr("СЧЕТЧИК ГОТОВЫХ ПРОДУКТОВ:")
 
-                Layout.preferredHeight: 32
-                //Layout.fillWidth: true
+                    Layout.preferredHeight: 32
+                }
+
+                OpText {
+                    text: "10000"
+
+                    font.pixelSize: 16
+                    color: colors.black_80
+
+                    Layout.preferredHeight: 32
+                }
+
+                Item {
+                    Layout.preferredHeight: 32
+                    Layout.fillWidth: true
+                }
+
+                OpFrameButton {
+                    text: qsTr("Сбросить")
+                    color: colors.primary_90
+                    font.pixelSize: 14
+
+                    display: AbstractButton.TextOnly
+
+                    Layout.preferredHeight: 32
+                }
             }
-
-            OpText {
-                text: "10000"
-
-                font.pixelSize: 16
-                color: colors.black_80
-
-                Layout.preferredHeight: 32
-                //Layout.fillWidth: true
-            }
-
-            Item {
-                Layout.preferredHeight: 32
-                Layout.fillWidth: true
-            }
-
-            OpFrameButton {
-                text: qsTr("Сбросить")
-                color: colors.primary_90
-                font.pixelSize: 14
-
-
-                display: AbstractButton.TextOnly
-
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 100
-            }
-
         }
-
-
-
-
     }
 }

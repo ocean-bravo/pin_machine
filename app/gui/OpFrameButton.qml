@@ -7,9 +7,11 @@ Button {
     id: root
     text: qsTr("Button")
     spacing: 4
-    //padding: 16
+
     leftPadding: 16
     rightPadding: 16
+
+    font.family: mainFont
 
     property color color: "blue"
 

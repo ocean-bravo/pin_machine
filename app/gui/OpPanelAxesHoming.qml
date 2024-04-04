@@ -15,27 +15,30 @@ Control {
 
         spacing: 16
 
-        RowLayout {
-
+        Item {
             Layout.preferredHeight: 32
             Layout.fillWidth: true
 
-            OpText {
-                text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
+            RowLayout {
+                anchors.fill: parent
 
-                Layout.preferredHeight: 32
-                Layout.fillWidth: true
-            }
+                OpText {
+                    text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
 
-            OpFrameButton {
-                text: qsTr("Готов")
+                    Layout.preferredHeight: 32
+                    Layout.fillWidth: true
+                }
 
-                font.pixelSize: 16
+                OpFrameButton {
+                    text: qsTr("Готов")
 
-                color: colors.primary_70
+                    font.pixelSize: 16
 
-                Layout.preferredHeight: 32
-                Layout.fillWidth: true
+                    color: colors.primary_70
+
+                    Layout.preferredHeight: 32
+                    Layout.fillWidth: true
+                }
             }
         }
 
@@ -49,6 +52,5 @@ Control {
             Layout.preferredHeight: 44
             Layout.fillWidth: true
         }
-
     }
 }

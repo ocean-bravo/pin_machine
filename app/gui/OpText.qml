@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Text {
-    font.family: "DINPro"
+    font.family: mainFont
     font.pixelSize: 13
     color: colors.black_50
     verticalAlignment: Text.AlignVCenter

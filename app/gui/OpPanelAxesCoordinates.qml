@@ -22,19 +22,27 @@ Control {
             Layout.fillWidth: true
         }
 
-        RowLayout {
 
-            OpText {
-                text: "X"
-            }
-
+        Item {
             Layout.preferredHeight: 18
             Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                OpText {
+                    text: "X"
+                }
+
+
+            }
         }
 
-        RowLayout {
+        Item {
             Layout.preferredHeight: 18
             Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+
+            }
         }
 
         OpText {
