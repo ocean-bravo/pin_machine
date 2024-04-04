@@ -30,11 +30,11 @@ Control {
                 }
 
                 OpFrameButton {
-                    text: qsTr("Готов")
+                    text: DataBus.is_homed ? qsTr("Готов") : qsTr("Не готов")
 
                     font.pixelSize: 16
 
-                    color: colors.primary_70
+                    color: DataBus.is_homed ? colors.green : colors.error_80
 
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
@@ -55,6 +55,22 @@ Control {
 
             Layout.preferredHeight: 44
             Layout.fillWidth: true
+
+            onClicked: {
+                write("$H")
+            }
+
+            enabled: {
+                let status = DataBus.status
+
+                if (status === "Idle")
+                    return true
+
+                if (status === "Alarm")
+                    return true
+
+                return false
+            }
         }
     }
 }

@@ -31,6 +31,9 @@ ApplicationWindow {
     y: 0
     flags: Qt.Window
 
+    function write(msg) {
+        Serial.write(msg+"\n")
+    }
 
 
 
@@ -187,11 +190,6 @@ ApplicationWindow {
     //     // ...
     // }
 
-    component SmRadioButton: CustomSwitch {
-
-
-    }
-
 
     // Popup {
     //         id: popup
@@ -238,12 +236,10 @@ ApplicationWindow {
 
         readonly property color accent_90: "#FFC800"
 
-
         readonly property color success_90: "#14B8A6"
 
-        readonly property color playButton: "#14B8A6"
-        readonly property color pauseButton: "#60A5FA"
-        readonly property color stopButton: "#FF5E5C"
+        readonly property color green: "#14B842"
+
         readonly property color disabledButton: "#E5E5E5"
     }
 
