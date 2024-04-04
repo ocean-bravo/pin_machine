@@ -36,7 +36,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: DataBus.xPos
+                    text: DataBus.x_coord
                 }
 
                 Item {
@@ -49,7 +49,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: DataBus.yPos
+                    text: DataBus.y_coord
                 }
 
                 Item {
@@ -72,7 +72,7 @@ Control {
                     text: "Z"
                 }
                 MyLabel {
-                    text: DataBus.zPos
+                    text: DataBus.z_coord
                 }
 
                 Item {
