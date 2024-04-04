@@ -59,9 +59,18 @@ ApplicationWindow {
 
     Connections {
         target: DataBus
+        property string prevValue: ""
         function onValueChanged (key, value) {
-            if (key === "status" && value === "Home")
+            if (key !== "status")
+                return
+
+            if (value === "Home")
                 DataBus.homing_status = "In progress"
+
+            if (value === "Idle" && prevValue === "Home" && DataBus.x_coord === "0.000" && DataBus.y_coord === "0.000" && DataBus.z_coord === "0.000")
+                DataBus.homing_status = "Ready"
+
+            prevValue = value
         }
     }
 

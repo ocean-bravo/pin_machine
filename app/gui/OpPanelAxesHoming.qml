@@ -21,15 +21,15 @@ Control {
 
             RowLayout {
                 anchors.fill: parent
+                spacing: 4
 
                 OpText {
                     text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
 
                     Layout.preferredHeight: 32
-                    Layout.fillWidth: true
                 }
 
-                OpFrameButton {
+                OpText {
                     text: {
                         if (DataBus.homing_status === "Not ready")   return qsTr("Не готов")
                         if (DataBus.homing_status === "In progress") return qsTr("В процессе")
@@ -43,6 +43,7 @@ Control {
                     }
 
                     font.pixelSize: 16
+                    font.weight: Font.DemiBold
 
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
