@@ -36,7 +36,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: "900.00"
+                    text: DataBus.xPos
                 }
 
                 Item {
@@ -49,7 +49,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: "20.00"
+                    text: DataBus.yPos
                 }
 
                 Item {
@@ -72,7 +72,7 @@ Control {
                     text: "Z"
                 }
                 MyLabel {
-                    text: "1.01"
+                    text: DataBus.zPos
                 }
 
                 Item {
@@ -83,7 +83,7 @@ Control {
                     text: "W"
                 }
                 MyLabel {
-                    text: "5.05"
+                    text: "0.000"
                 }
                 Item {
                     Layout.fillWidth: true
