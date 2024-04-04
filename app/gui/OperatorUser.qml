@@ -835,6 +835,10 @@ ApplicationWindow {
 
     FindUsb {
         onUsbFound: {
+            if (device === "")
+                return
+
+            stop()
             Serial.close()
 
             Serial.setPortName(device)

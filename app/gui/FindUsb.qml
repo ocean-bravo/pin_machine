@@ -8,11 +8,23 @@ Item {
 
     signal usbFound (string device)
 
+    property string device: ""
+
+    function stop() {
+        findUsbTimer.stop()
+    }
+
+    function start() {
+        findUsbTimer.start()
+    }
+
     Process {
         id: findUsbProcess
         onReadyRead: {
             const result = readAll()
-            root.usbFound(("/dev/" + result).replace(/\s/g, ""))
+            let device = ("/dev/" + result).replace(/\s/g, "")
+            root.device = device
+            root.usbFound(device)
         }
         onFinished: {
             findUsbTimer.start()
@@ -25,8 +37,10 @@ Item {
         triggeredOnStart: false
         running: true
         onTriggered: {
-            findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
             root.usbFound("")
+            root.device = ""
+            findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+
         }
     }
 }
