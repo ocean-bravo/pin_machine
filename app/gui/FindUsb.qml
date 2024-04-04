@@ -27,20 +27,19 @@ Item {
             root.usbFound(device)
         }
         onFinished: {
-            findUsbTimer.start()
+            //findUsbTimer.start()
         }
     }
     Timer {
         id: findUsbTimer
         interval: 1000
-        repeat: false
+        repeat: true
         triggeredOnStart: false
         running: true
         onTriggered: {
             root.usbFound("")
             root.device = ""
             findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
-
         }
     }
 }
