@@ -48,14 +48,14 @@ ApplicationWindow {
         return resMjpg.concat(resYuyv)
     }
 
-    Connections { target: Serial;            function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
-    Connections { target: TaskScan;          function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskUpdate;        function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskCheckCamera;   function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskPunch;         function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskFindPixelSize; function onMessage(msg) { appendLog(msg + '<br>') } }
-    // Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskFindBlob;      function onMessage(msg) { appendLog(msg + '<br>') } }
+//    Connections { target: Serial;            function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
+    // Connections { target: TaskScan;          function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskUpdate;        function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskCheckCamera;   function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskPunch;         function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskFindPixelSize; function onMessage(msg) { appendLog(msg + '<br>') } }
+    // // Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
+    // Connections { target: TaskFindBlob;      function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
         target: DataBus
@@ -419,6 +419,21 @@ ApplicationWindow {
             }
             Rectangle {
                 id: statusBar
+
+                OpText {
+                    id: statusText
+
+                    anchors.fill: parent
+
+                    anchors.margins: 16
+
+
+                    text: "Порт не открыт"
+                    font.pixelSize: 16
+                    font.weight: Font.Medium
+
+                    color: "white"
+                }
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: 56
@@ -816,6 +831,21 @@ ApplicationWindow {
         133:	"Axis 4 (A) Max travel, unit",
         134:	"Axis 5 (B) Max travel, unit",
         135:	"Axis 6 (C) Max travel, unit"
+    }
+
+    FindUsb {
+        onUsbFound: {
+            Serial.close()
+
+            Serial.setPortName(device)
+            Serial.setBaudRate("115200")
+            Serial.setDataBits("8")
+            Serial.setParity("N")
+            Serial.setStopBits("1")
+            Serial.open()
+
+            statusText.text = "Порт открыт"
+        }
     }
 
     Component.onCompleted: {
