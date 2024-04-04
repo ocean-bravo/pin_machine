@@ -58,6 +58,14 @@ ApplicationWindow {
     Connections { target: TaskFindBlob;      function onMessage(msg) { appendLog(msg + '<br>') } }
 
     Connections {
+        target: DataBus
+        function onValueChanged (key, value) {
+            if (key === "status" && value === "Home")
+                DataBus.homing_status = "In progress"
+        }
+    }
+
+    Connections {
         target: Serial
 
         property string prevMsg: ""
