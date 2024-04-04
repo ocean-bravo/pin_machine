@@ -34,13 +34,18 @@ Slider {
         id: knob
         x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
         y: root.topPadding + root.availableHeight / 2 - height / 2
-        implicitWidth: 28
-        implicitHeight: 28
-        radius: 24
+        implicitWidth: root.height
+        implicitHeight: root.height
+        radius: root.height / 2
         color: root.pressed ? "lightgrey" : "white"
         border.color: colors.primary_20
         border.width: 2
     }
 
+    Rectangle {
+        visible: guiDebug
+        anchors.fill: parent
+        color: "#4000FF00"
+    }
 }
 

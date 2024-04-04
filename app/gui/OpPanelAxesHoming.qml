@@ -44,8 +44,12 @@ Control {
 
         OpFrameButton {
             text: qsTr("Выполнить инициализацию осей")
+            icon.source: "images/home.png"
+            icon.width: 20
+            icon.height: 20
             solid: true
             font.pixelSize: 16
+            font.weight: Font.Medium
 
             color: colors.primary_70
 

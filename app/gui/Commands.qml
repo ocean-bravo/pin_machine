@@ -11,13 +11,6 @@ import "utils.js" as Utils
 Item {
     id: root
 
-    property string status: "Idle"
-    property string fullStatus
-
-    property real xPos
-    property real yPos
-    property real zPos
-
     function write(msg) {
         Serial.write(msg+"\n")
         appendLog(msg+"\n")
@@ -170,6 +163,7 @@ Item {
             }
         }
     }
+
 
     SplitView {
         anchors.fill: parent

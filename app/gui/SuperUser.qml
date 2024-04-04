@@ -1,8 +1,8 @@
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.12
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 
 ApplicationWindow {
     id: appWin
@@ -18,21 +18,7 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    // Loader {
-    //     id: loader
 
-    //     function reload() {
-    //         loader.source = ""
-    //         QmlEngine.clearCache()
-
-    //         loader.source = "Commands.qml"
-
-    //     }
-
-    //     source: "Commands.qml"
-
-    //     Timer { interval: 5000; repeat: true; triggeredOnStart: true; running: true; onTriggered: loader.reload(); }
-    // }
 
     FlashMessageBox {
         id: message

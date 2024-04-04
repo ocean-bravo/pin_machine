@@ -73,6 +73,8 @@ Control {
             checkable: true
             text: checked ? qsTr("Выключить камеру") : qsTr("Включить камеру")
             color: colors.primary_90
+            font.weight: Font.Medium
+            font.pixelSize: 16
 
             Layout.preferredHeight: 56
 

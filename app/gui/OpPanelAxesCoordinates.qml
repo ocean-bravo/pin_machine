@@ -12,8 +12,7 @@ Control {
     background: OpWhitePanel {}
 
     contentItem: ColumnLayout {
-
-        spacing: 16
+        spacing: 0
 
         OpText {
             text: qsTr("КООРДИНАТЫ ОСЕЙ")
@@ -22,69 +21,165 @@ Control {
             Layout.fillWidth: true
         }
 
+        VSpacer {}
 
         Item {
-            Layout.preferredHeight: 18
+            Layout.preferredHeight: 32
             Layout.fillWidth: true
             RowLayout {
                 anchors.fill: parent
-                OpText {
+
+                spacing: 8
+
+                MyText {
                     text: "X"
                 }
 
+                MyLabel {
+                    text: "900.00"
+                }
 
+                Item {
+                    Layout.preferredWidth: 8
+                }
+
+
+                MyText {
+                    text: "Y"
+                }
+
+                MyLabel {
+                    text: "20.00"
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
             }
         }
 
+        VSpacer {}
+
         Item {
-            Layout.preferredHeight: 18
+            Layout.preferredHeight: 32
             Layout.fillWidth: true
             RowLayout {
                 anchors.fill: parent
 
+                spacing: 8
+
+                MyText {
+                    text: "Z"
+                }
+                MyLabel {
+                    text: "1.01"
+                }
+
+                Item {
+                    Layout.preferredWidth: 8
+                }
+
+                MyText {
+                    text: "W"
+                }
+                MyLabel {
+                    text: "5.05"
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
             }
         }
 
-        OpText {
-            text: qsTr("СКОРОСТЬ ОСЕЙ")
+        VSpacer {}
 
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
-
-
-        RowLayout {
-
-            Layout.preferredHeight: 36
+        Item {
+            Layout.preferredHeight: 58
             Layout.fillWidth: true
 
-            OpText {
-                text: "0"
-                color: colors.black_80
-                font.pixelSize: 16
+            ColumnLayout {
+                anchors.fill: parent
 
-                Layout.preferredHeight: 18
-                //Layout.fillWidth: true
+                spacing: 4
+
+                OpText {
+                    text: qsTr("СКОРОСТЬ ОСЕЙ")
+
+                    Layout.preferredHeight: 18
+                    Layout.fillWidth: true
+                }
+
+                Item {
+                    Layout.preferredHeight: 36
+                    Layout.fillWidth: true
+
+                    RowLayout {
+                        anchors.fill: parent
+
+                        OpText {
+                            text: "0"
+                            color: colors.black_80
+                            font.pixelSize: 16
+                            font.weight: Font.Medium
+                        }
+
+                        OpSlider {
+                            from: 1
+                            value: 25
+                            to: 100
+
+                            Layout.preferredHeight: 28
+                            Layout.fillWidth: true
+                        }
+
+                        OpText {
+                            text: "100%"
+                            color: colors.black_80
+                            font.pixelSize: 16
+                            font.weight: Font.Medium
+                        }
+                    }
+                }
             }
-
-            OpSlider {
-                from: 1
-                value: 25
-                to: 100
-
-                Layout.preferredHeight: 18
-                Layout.fillWidth: true
-            }
-
-            OpText {
-                text: "100%"
-                color: colors.black_80
-                font.pixelSize: 16
-
-                Layout.preferredHeight: 18
-                //Layout.fillWidth: true
-            }
-
         }
     }
+
+
+    component VSpacer: Item {
+        Layout.fillHeight: true
+        width: 20
+
+        Rectangle {
+            anchors.fill: parent
+            visible: guiDebug
+            color: "#400000FF"
+        }
+    }
+
+    component MyText: OpText {
+        Layout.preferredWidth: 24
+        Layout.preferredHeight: 32
+
+        font.weight: Font.Medium
+        font.pixelSize: 24
+        color: colors.black_90
+    }
+
+    component MyLabel: Label {
+        Layout.preferredWidth: 80
+        Layout.preferredHeight: 32
+
+        font.pixelSize: 16
+        font.family: mainFont
+        font.weight: Font.Medium
+        leftPadding: 12
+
+        verticalAlignment: Text.AlignVCenter
+        background: Rectangle {
+            radius: 8
+            border.width: 1
+            border.color: colors.black_20
+        }
+    }
+
 }

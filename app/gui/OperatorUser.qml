@@ -31,45 +31,9 @@ ApplicationWindow {
     y: 0
     flags: Qt.Window
 
-    property string status: "Idle"
-    property string fullStatus
 
-    property real xPos
-    property real yPos
-    property real zPos
 
-    function write(msg) {
-        Serial.write(msg+"\n")
-        appendLog(msg+"\n")
-    }
 
-    function jog(axis, mm, feed) {
-        if (feed === undefined)
-            feed = 1000
-        write("$J=G91 " + axis + mm + " F" + feed)
-    }
-
-    function appendLog(message, color) {
-        if (color === undefined)
-            color = 'red'
-
-        let msg = message.split('').join('') // Копирую строку фактически
-        msg = msg.replace(/\r?\n/g, '<br>')
-
-        msg = String(Date.now()).slice(-4) + ": " + msg
-        logViewer.append("<font color=" + color + ">" + msg + "</font>")
-    }
-
-    function moveTo(x, y) {
-        if (typeof x === "string" && typeof y === "string")
-            write("G1 G90 F5000 X" + x + " Y" + y)
-        else if (typeof x === "number" && typeof y === "number") {
-            write("G1 G90 F5000 X" + x.toFixed(3) + " Y" + y.toFixed(3))
-        }
-        else {
-            appendLog("error move to point " + x + " " + y + " wrong arguments")
-        }
-    }
 
     function sortResolutions(resolutions) {
         if (resolutions === undefined)
@@ -262,6 +226,7 @@ ApplicationWindow {
         readonly property color black_80: "#333333"
         readonly property color black_50: "#808080"
         readonly property color black_30: "#B3B3B3"
+        readonly property color black_20: "#CCCCCC"
 
 
         readonly property color primary_20: "#DBEAFE"
@@ -419,27 +384,6 @@ ApplicationWindow {
                                     anchors.margins: 16
 
                                     spacing: 32
-
-                                    component ToolButton : Button {
-                                        id: root
-
-                                        icon.height: 45
-                                        icon.width: 45
-                                        checkable: true
-                                        display: AbstractButton.IconOnly
-
-                                        Layout.fillWidth: true
-                                        Layout.preferredHeight: 100
-
-                                        property color color
-
-                                        background: Rectangle {
-                                            id: bg
-                                            color: enabled ? down ? "lightgrey" : root.color : colors.disabledButton
-                                            border.width: 0
-                                            radius: 8
-                                        }
-                                    }
 
                                     ToolButton {
                                         icon.source: "images/play.svg"
@@ -713,6 +657,28 @@ ApplicationWindow {
     //     }
 
     // }
+
+    component ToolButton : Button {
+        id: root
+
+        icon.height: 45
+        icon.width: 45
+        checkable: true
+        display: AbstractButton.IconOnly
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: 100
+
+        property color color
+
+        background: Rectangle {
+            id: bg
+            color: enabled ? down ? "lightgrey" : root.color : colors.disabledButton
+            border.width: 0
+            radius: 8
+        }
+    }
+
 
     property variant modes: ["Idle", "Alarm", "Check", "Home", "Run", "Jog", "Hold:0", "Hold:1",
         "Door", "Door:0", "Door:1", "Door:2", "Door:3", "Sleep" ]

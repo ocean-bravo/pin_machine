@@ -1,15 +1,21 @@
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.12
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 
 Item {
     id: root
+    property bool guiDebug: false
 
-    //color: "yellow"
-    //visible: true
     property var appWin: operatorUser
+
+    property string status: "Idle"
+    property string fullStatus
+
+    property real xPos
+    property real yPos
+    property real zPos
 
     //anchors.fill: parent
 
@@ -18,22 +24,24 @@ Item {
     //     id: operatorComponent
 
 
-        OperatorUser {
-            id: operatorUser
-            objectName: "operatoruser"
-            visible: true
-        }
+    OperatorUser {
+        id: operatorUser
+        objectName: "operatoruser"
+        visible: true
+    }
     // }
 
     // Component {
     //     id: superComponent
 
-        SuperUser {
-            id: superUser
-            objectName: "superuser"
-            visible: false
-        }
+    SuperUser {
+        id: superUser
+        objectName: "superuser"
+        visible: false
+    }
     // }
+
+
 
 
     // Timer {

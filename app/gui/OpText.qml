@@ -6,6 +6,13 @@ import QtQuick.Layouts 1.15
 Text {
     font.family: mainFont
     font.pixelSize: 13
+    font.weight: Font.Normal
     color: colors.black_50
     verticalAlignment: Text.AlignVCenter
+
+    Rectangle {
+        visible: guiDebug
+        anchors.fill: parent
+        color: "#4000FF00"
+    }
 }

@@ -32,7 +32,7 @@ Control {
                 OpText {
                     text: "1B268-1B268-1B268"
 
-                    //font.bold: true
+                    font.weight: Font.Medium
                     font.pixelSize: 24
                     color: colors.black_80
 
@@ -46,6 +46,7 @@ Control {
             text: qsTr("Открыть продукт")
             solid: true
             font.pixelSize: 16
+            font.weight: Font.Medium
 
             color: colors.primary_70
 
@@ -69,6 +70,7 @@ Control {
                 OpText {
                     text: "10000"
 
+                    font.weight: Font.Medium
                     font.pixelSize: 16
                     color: colors.black_80
 

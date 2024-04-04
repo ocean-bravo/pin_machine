@@ -11,37 +11,47 @@ Switch {
     font.pixelSize: 16
 
     indicator: Rectangle {
-        implicitWidth: 48
-        implicitHeight: 26
+        implicitWidth: 56
+        implicitHeight: 32
 
         x: root.leftPadding
         y: parent.height / 2 - height / 2
 
-        radius: 13
+        radius: height / 2
         color: down ? "lightgrey" : checked ? colors.primary_70 : colors.primary_20
         border.color: "transparent"
         border.width: 0
 
         Rectangle {
-            x: checked ? parent.width - width - 3 : 3
-            y: 3
-            width: 20
-            height: 20
-            radius: 10
+
+            property int brdWidth: parent.height / 2 - height / 2
+
+            x: checked ? parent.width - width - brdWidth : brdWidth
+            y: brdWidth
+            width: 22
+            height: width
+            radius: height / 2
             color: "white"
             border.color: "transparent"
             border.width: 0
         }
     }
 
-    contentItem: SmText {
+    contentItem: OpText {
         id: text
         text: root.text
         font.pixelSize: root.font.pixelSize
+        font.weight: Font.Medium
         opacity: enabled ? 1.0 : 0.3
         color: colors.black_90
         verticalAlignment: Text.AlignVCenter
         leftPadding: root.indicator.width + root.spacing
         wrapMode: Text.WordWrap
+    }
+
+    Rectangle {
+        visible: guiDebug
+        anchors.fill: parent
+        color: "#4000FF00"
     }
 }
