@@ -28,9 +28,8 @@ ListView {
         }
     }
 
-    delegate: Text {
+    delegate: SmText {
         padding: 0
-        font.family: "Consolas"
         height: 18
         textFormat: TextEdit.RichText
         text: val
@@ -59,6 +58,6 @@ ListView {
     }
 
     function clear() {
-        listModel = []
+        listModel.clear()
     }
 }
