@@ -44,12 +44,12 @@ QMLPromises {
                     yield sleep(100)
 
                     if (process.device === "") {
-                        console.log("devicse not found!")
+                        console.log("device not found!")
                         yield sleep(1000)
                         continue
                     }
 
-                    console.log("devicse name ", process.device)
+                    console.log("device name: ", process.device)
                     console.log("Serial opening ...")
 
                     Serial.setPortName(process.device)
