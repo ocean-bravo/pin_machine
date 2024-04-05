@@ -197,7 +197,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
 
-                        FindUsb { onUsbFound: serialPortName.text = device }
+
                     }
 
                     SmButton {
@@ -585,7 +585,29 @@ Item {
         135:	"Axis 6 (C) Max travel, unit"
     }
 
+    FindUsb {
+        id: findUsb
+        onUsbFound: {
+            if (device === "")
+                return
+
+            serialPortName.text = device
+
+            stop()
+
+            Serial.close()
+
+            Serial.setPortName(device)
+            Serial.setBaudRate("115200")
+            Serial.setDataBits("8")
+            Serial.setParity("N")
+            Serial.setStopBits("1")
+            Serial.open()
+        }
+    }
+
     Component.onCompleted: {
         Video4.reloadDevices()
+        findUsb.start()
     }
 }

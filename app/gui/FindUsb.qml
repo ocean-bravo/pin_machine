@@ -35,7 +35,7 @@ Item {
         interval: 1000
         repeat: true
         triggeredOnStart: false
-        running: true
+        running: false
         onTriggered: {
             root.usbFound("")
             root.device = ""

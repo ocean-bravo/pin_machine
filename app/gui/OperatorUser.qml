@@ -834,6 +834,7 @@ ApplicationWindow {
     }
 
     FindUsb {
+        id: findUsb
         onUsbFound: {
             if (device === "")
                 return
@@ -854,5 +855,6 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Video4.reloadDevices()
+        findUsb.start()
     }
 }
