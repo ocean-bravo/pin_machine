@@ -31,26 +31,18 @@ Item {
     }
 
 
+    OpenSerialPromise {id: openSerialPromise }
 
-    FindUsb {
-        id: findUsb
-        onUsbFound: {
-            if (device === "")
-                return
 
-            serialPortName.text = device
 
-            stop()
 
-            Serial.close()
+    Component.onCompleted: {
+        operatorUser.visible = true
+        //loader.sourceComponent = operatorComponent
 
-            Serial.setPortName(device)
-            Serial.setBaudRate("115200")
-            Serial.setDataBits("8")
-            Serial.setParity("N")
-            Serial.setStopBits("1")
-            Serial.open()
-        }
+        DataBus.live_preview_mode = "raw"
+
+        openSerialPromise.runAsync()
     }
 
 
@@ -118,13 +110,7 @@ Item {
     //     }
     // }
 
-    Component.onCompleted: {
-        operatorUser.visible = true
-        //loader.sourceComponent = operatorComponent
 
-        DataBus.live_preview_mode = "raw"
-
-    }
 
     Shortcut {
         sequence: "F5"

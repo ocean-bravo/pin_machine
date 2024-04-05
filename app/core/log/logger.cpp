@@ -141,6 +141,13 @@ void Logger::setLogToFile(bool value)
     QMetaObject::invokeMethod(_impl, "setLogToFile", Qt::QueuedConnection, Q_ARG(bool, value));
 }
 
+void Logger::appendToLog(const QString& msg)
+{
+    const Qt::HANDLE currentTheadId = QThread::currentThreadId();
+    qint32 tid = syscall(SYS_gettid);
+    emit common(msg, QDateTime::currentMSecsSinceEpoch(), currentTheadId, tid);
+}
+
 Logger::Logger()
     : _impl(new LoggerPrivate)
     , _thread(new QThread)

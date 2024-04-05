@@ -20,6 +20,8 @@ class Logger : public QObject, public Singleton<Logger>
     Q_OBJECT
     Q_PROPERTY(bool logToFile READ logToFile WRITE setLogToFile NOTIFY logToFileChanged) // Логгировать ли в файл
 
+    Q_PROPERTY(QString log WRITE appendToLog)
+
 public:
     // Пока предварительно - По какому пути пишутся общие логи. Могут писаться на sd карту, могут на RAM диск.
     QString commonLogPath() const;
@@ -27,6 +29,8 @@ public:
     // Логгирование в файл. При устрановке значения перезагрузка не нужна. Изменения принимаются немедленно
     bool logToFile() const;
     void setLogToFile(bool value);
+
+    void appendToLog(const QString& msg);
 
 signals:
     Q_INVOKABLE void user(const QString& message);

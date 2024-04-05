@@ -833,28 +833,27 @@ ApplicationWindow {
         135:	"Axis 6 (C) Max travel, unit"
     }
 
-    FindUsb {
-        id: findUsb
-        onUsbFound: {
-            if (device === "")
-                return
+    // FindUsb {
+    //     id: findUsb
+    //     onUsbFound: {
+    //         if (device === "")
+    //             return
 
-            stop()
-            Serial.close()
+    //         stop()
+    //         Serial.close()
 
-            Serial.setPortName(device)
-            Serial.setBaudRate("115200")
-            Serial.setDataBits("8")
-            Serial.setParity("N")
-            Serial.setStopBits("1")
-            Serial.open()
+    //         Serial.setPortName(device)
+    //         Serial.setBaudRate("115200")
+    //         Serial.setDataBits("8")
+    //         Serial.setParity("N")
+    //         Serial.setStopBits("1")
+    //         Serial.open()
 
-            statusText.text = "Порт открыт"
-        }
-    }
+    //         statusText.text = "Порт открыт"
+    //     }
+    // }
 
     Component.onCompleted: {
         Video4.reloadDevices()
-        findUsb.start()
     }
 }

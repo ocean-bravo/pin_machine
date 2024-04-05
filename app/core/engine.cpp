@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QDir>
 
+#include "log/logger.h"
 #include "data_bus.h"
 #include "task_scan.h"
 #include "task_update.h"
@@ -248,6 +249,7 @@ void Engine::createQmlEngine()
     //_qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
     _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
     _qmlEngine->rootContext()->setContextProperty("Settings", &Settings::instance());
+    _qmlEngine->rootContext()->setContextProperty("Logger", &Logger::instance());
 
     _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
     _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);

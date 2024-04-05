@@ -8,6 +8,8 @@ Item {
 
     signal usbFound (string device)
 
+    property bool running: false
+
     property string device: ""
 
     function stop() {
@@ -33,12 +35,12 @@ Item {
     Timer {
         id: findUsbTimer
         interval: 1000
-        repeat: true
+        repeat: false
         triggeredOnStart: false
-        running: false
+        running: root.running
         onTriggered: {
-            root.usbFound("")
-            root.device = ""
+            // root.usbFound("")
+            // root.device = ""
             findUsbProcess.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
         }
     }

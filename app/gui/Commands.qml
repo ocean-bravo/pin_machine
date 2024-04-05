@@ -589,6 +589,5 @@ Item {
 
     Component.onCompleted: {
         Video4.reloadDevices()
-        findUsb.start()
     }
 }
