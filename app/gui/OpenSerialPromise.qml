@@ -7,55 +7,52 @@ QMLPromises {
     id: openSerialPromise
 
     Process {
-        id: fup
+        id: process
+
         property string device: ""
+
+        function findUsb() {
+            start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+        }
 
         onReadyRead: {
             const result = readAll()
-            fup.device= ("/dev/" + result).replace(/\s/g, "")
-        }
-        onFinished: {
-            //findUsbTimer.start()
+            process.device = ("/dev/" + result).replace(/\s/g, "")
         }
     }
 
     function runAsync() {
         asyncToGenerator( function* () {
-            console.log("started!")
-
             while (true) {
-                Logger.log = "while true"
-
-                checkSerial: while (true) {
-                    console.log ("check serial started...")
+                while (true) {
+                    console.log("check serial started...")
 
                     if (Serial.isOpen) {
-                        Logger.log = "Serial is open"
+                        console.log("Serial is open")
                         yield sleep(1000)
-                        continue checkSerial
+                        continue
                     }
-                    Logger.log = "Serial is not open"
+                    console.log("Serial is not open")
                     break
                 }
 
-                findUsbProcess: while (true) {
-                    Logger.log = "find usb process started..."
+                while (true) {
+                    console.log("find usb process started...")
 
-                    fup.start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+                    process.findUsb()
 
-                    yield sleep(1000)
+                    yield sleep(100)
 
-                    if (fup.device === "") {
-                        Logger.log = "devicse not found!"
+                    if (process.device === "") {
+                        console.log("devicse not found!")
                         yield sleep(1000)
-
-                        continue findUsbProcess
+                        continue
                     }
 
-                    Logger.log = "devicse name " + fup.device
-                    Logger.log = "Serial opening ..."
+                    console.log("devicse name ", process.device)
+                    console.log("Serial opening ...")
 
-                    Serial.setPortName(fup.device)
+                    Serial.setPortName(process.device)
                     Serial.setBaudRate("115200")
                     Serial.setDataBits("8")
                     Serial.setParity("N")
@@ -67,8 +64,6 @@ QMLPromises {
                     break
                 }
             }
-
-            Logger.log = "finished!"
         } )();
     }
 }
