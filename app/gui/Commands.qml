@@ -231,7 +231,6 @@ Item {
 
                 SmText {
                     text: fullStatus + " " + status
-//                    horizontalAlignment: Text.AlignLeft
 
                     // Layout.preferredWidth: 400
                     // Layout.preferredHeight: 25

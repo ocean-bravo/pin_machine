@@ -22,6 +22,7 @@ Rectangle {
     TextInput {
         id: sendText
         text: ""
+        font.family: "DINPro"
         anchors.fill: parent
         anchors.margins: 4
         selectByMouse: true
