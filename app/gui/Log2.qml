@@ -31,6 +31,7 @@ ListView {
     delegate: SmText {
         padding: 0
         height: 18
+        font.pixelSize: 14
         textFormat: TextEdit.RichText
         text: val
     }
