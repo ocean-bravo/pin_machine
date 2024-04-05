@@ -7,10 +7,7 @@ class QuickScene : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QImage image READ image WRITE setImage)
-
     Q_PROPERTY(QQuickItem* root READ root WRITE setRoot)
-
-    Q_PROPERTY(QImage image READ image WRITE setImage)
 
 public:
     explicit QuickScene(QQuickItem *parent = nullptr);

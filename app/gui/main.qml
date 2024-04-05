@@ -17,30 +17,41 @@ Item {
     property real yPos
     property real zPos
 
-    //anchors.fill: parent
-
-
-    // Component {
-    //     id: operatorComponent
-
-
     OperatorUser {
         id: operatorUser
         objectName: "operatoruser"
         visible: true
     }
-    // }
 
-    // Component {
-    //     id: superComponent
 
     SuperUser {
         id: superUser
         objectName: "superuser"
         visible: false
     }
-    // }
 
+
+
+    FindUsb {
+        id: findUsb
+        onUsbFound: {
+            if (device === "")
+                return
+
+            serialPortName.text = device
+
+            stop()
+
+            Serial.close()
+
+            Serial.setPortName(device)
+            Serial.setBaudRate("115200")
+            Serial.setDataBits("8")
+            Serial.setParity("N")
+            Serial.setStopBits("1")
+            Serial.open()
+        }
+    }
 
 
 

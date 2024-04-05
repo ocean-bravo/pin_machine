@@ -2,23 +2,21 @@
 
 #include <QThread>
 #include <QObject>
-#include <QList>
-#include <QSerialPortInfo>
 #include <QSerialPort>
-#include <QTime>
+#include <QAtomicInteger>
 #include <QScopedPointer>
 
 #include "singleton.h"
 
-class QThread;
 class SerialPrivate;
 
 class Serial : public QObject , public Singleton<Serial>
 {
     Q_OBJECT
+    Q_PROPERTY(bool isOpen READ isOpen NOTIFY isOpenChanged)
 
 public:
-    bool isOpen();
+    bool isOpen() const;
 
 public slots:
     void open();
@@ -36,6 +34,7 @@ signals:
     void message(const QString& msg);
     void connected();
     void disconnected();
+    void isOpenChanged();
 
 protected:
     explicit Serial(QObject* parent = nullptr);
@@ -55,8 +54,6 @@ public:
     explicit SerialPrivate(QObject* parent = nullptr);
     virtual ~SerialPrivate();
 
-    bool isOpen() const;
-
 public slots:
     void open();
     void close();
@@ -73,16 +70,19 @@ signals:
     void message(const QString& msg);
     void connected();
     void disconnected();
+    void isOpenChanged();
 
 private:
     void read();
 
+    QAtomicInteger<bool> _isOpen = false;
     QSerialPort* _port = nullptr;
     QByteArray _buffer;
+
+    friend class Serial;
 };
 
 inline Serial& serial()
 {
     return Serial::instance();
 }
-

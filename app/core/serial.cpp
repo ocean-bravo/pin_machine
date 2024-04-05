@@ -10,6 +10,20 @@ SerialPrivate::SerialPrivate(QObject* parent)
     , _port(new QSerialPort(this))
 {
     connect(_port, &QSerialPort::readyRead, this, &SerialPrivate::read, Qt::QueuedConnection);
+    connect(_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error)
+    {
+        qd() << "serial port error: " << error;
+        const bool wasOpen = _isOpen;
+        _isOpen = _port->isOpen();
+
+        if (wasOpen == _isOpen)
+            return;
+
+        emit isOpenChanged();
+
+        _isOpen ? emit connected() : emit disconnected();
+
+    });
 }
 
 SerialPrivate::~SerialPrivate()
@@ -29,76 +43,33 @@ void SerialPrivate::read()
 void SerialPrivate::setPortName(const QString& pn)
 {
     _port->setPortName(pn);
-//    const QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    //    const QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
 
-//    qd() << "set port Name:  " << portName;
+    //    qd() << "set port Name:  " << portName;
 
-//    for (const QSerialPortInfo& item : ports)
-//    {
-//        qd() << item.portName();
-//    }
+    //    for (const QSerialPortInfo& item : ports)
+    //    {
+    //        qd() << item.portName();
+    //    }
 
-//    for (const QSerialPortInfo& item : ports)
-//    {
-//        if (portName.contains(item.portName()))
-//        {
-//            _port->setPortName(item.portName());
-//            break;
-//        }
-//    }
+    //    for (const QSerialPortInfo& item : ports)
+    //    {
+    //        if (portName.contains(item.portName()))
+    //        {
+    //            _port->setPortName(item.portName());
+    //            break;
+    //        }
+    //    }
 }
 
 void SerialPrivate::setBaudRate(const QString& br)
 {
-    // QSerialPort::BaudRate baudRate = QSerialPort::Baud115200;
-    // if (br == "1200")
-    // {
-    //     baudRate = QSerialPort::Baud1200;
-    // }
-    // else if (br == "2400")
-    // {
-    //     baudRate = QSerialPort::Baud2400;
-    // }
-    // else if (br == "4800")
-    // {
-    //     baudRate = QSerialPort::Baud4800;
-    // }
-    // else if (br == "9600")
-    // {
-    //     baudRate = QSerialPort::Baud9600;
-    // }
-    // else if (br == "19200")
-    // {
-    //     baudRate = QSerialPort::Baud19200;
-    // }
-    // else if (br == "38400")
-    // {
-    //     baudRate = QSerialPort::Baud38400;
-    // }
-    // else if (br == "57600")
-    // {
-    //     baudRate = QSerialPort::Baud57600;
-    // }
-
-    _port->setBaudRate(br.toUInt());
+    _port->setBaudRate(br.toInt());
 }
 
 void SerialPrivate::setDataBits(const QString& db)
 {
-    QSerialPort::DataBits dataBits = QSerialPort::Data8;
-    if (db == "5")
-    {
-        dataBits = QSerialPort::Data5;
-    }
-    else if (db == "6")
-    {
-        dataBits = QSerialPort::Data6;
-    }
-    else if (db == "7")
-    {
-        dataBits = QSerialPort::Data7;
-    }
-    _port->setDataBits(dataBits);
+    _port->setDataBits(QSerialPort::DataBits(db.toInt()));
 }
 
 void SerialPrivate::setParity(const QString& p)
@@ -153,14 +124,16 @@ void SerialPrivate::setFlowControl(const QString& fc)
 
 void SerialPrivate::open()
 {
-    if (!_port->open(QSerialPort::ReadWrite))
+    if (_port->open(QSerialPort::ReadWrite))
     {
-        emit message(_port->portName() + " port is not opened");
+        _isOpen = true;
+        emit isOpenChanged();
+        emit connected();
+        emit message(_port->portName() + " port is opened");
     }
     else
     {
-        emit message(_port->portName() + " port is opened");
-        emit connected();
+        emit message(_port->portName() + " port is not opened");
     }
 }
 
@@ -168,14 +141,12 @@ void SerialPrivate::close()
 {
     if (!_port->isOpen())
         return;
-    _port->close();
-    emit message(_port->portName() + " port is closed");
-    emit disconnected();
-}
 
-bool SerialPrivate::isOpen() const
-{
-    return _port->isOpen();
+    _port->close();
+    _isOpen = false;
+    emit isOpenChanged();
+    emit disconnected();
+    emit message(_port->portName() + " port is closed");
 }
 
 void SerialPrivate::write(const QByteArray& msg)
@@ -189,10 +160,11 @@ Serial::Serial(QObject* parent)
     , _impl(new SerialPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &SerialPrivate::data,         this, &Serial::data, Qt::QueuedConnection);
-    connect(_impl, &SerialPrivate::message,      this, &Serial::message, Qt::QueuedConnection);
-    connect(_impl, &SerialPrivate::connected,    this, &Serial::connected, Qt::QueuedConnection);
-    connect(_impl, &SerialPrivate::disconnected, this, &Serial::disconnected, Qt::QueuedConnection);
+    connect(_impl, &SerialPrivate::data,          this, &Serial::data, Qt::QueuedConnection);
+    connect(_impl, &SerialPrivate::message,       this, &Serial::message, Qt::QueuedConnection);
+    connect(_impl, &SerialPrivate::connected,     this, &Serial::connected, Qt::QueuedConnection);
+    connect(_impl, &SerialPrivate::disconnected,  this, &Serial::disconnected, Qt::QueuedConnection);
+    connect(_impl, &SerialPrivate::isOpenChanged, this, &Serial::isOpenChanged, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -205,6 +177,11 @@ Serial::~Serial()
     close();
     _thread->quit();
     _thread->wait(1000);
+}
+
+bool Serial::isOpen() const
+{
+    return _impl->_isOpen;
 }
 
 void Serial::setBaudRate(const QString& br)
