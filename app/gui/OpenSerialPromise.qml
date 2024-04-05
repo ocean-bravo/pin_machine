@@ -25,10 +25,9 @@ QMLPromises {
         asyncToGenerator( function* () {
             while (true) {
                 while (true) {
-                    console.log("check serial started...")
 
                     if (Serial.isOpen) {
-                        console.log("Serial is open")
+                        //console.log("Serial is open")
                         yield sleep(1000)
                         continue
                     }
@@ -37,19 +36,19 @@ QMLPromises {
                 }
 
                 while (true) {
-                    console.log("find usb process started...")
+                    //console.log("find usb process started...")
 
                     process.findUsb()
 
                     yield sleep(100)
 
                     if (process.device === "") {
-                        console.log("device not found!")
+                        console.log("USB device not found!")
                         yield sleep(1000)
                         continue
                     }
 
-                    console.log("device name: ", process.device)
+                    console.log("USB device name: ", process.device)
                     console.log("Serial opening ...")
 
                     Serial.setPortName(process.device)
