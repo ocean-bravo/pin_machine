@@ -157,8 +157,8 @@ ApplicationWindow {
                 //                }
 
 
-                msg = currentTime + ": " + msg
-                logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
+                // msg = currentTime + ": " + msg
+                // logViewer.append("<font color='darkblue'>" + msg + "</font><br>")
             }
         }
     }
@@ -831,6 +831,17 @@ ApplicationWindow {
         133:	"Axis 4 (A) Max travel, unit",
         134:	"Axis 5 (B) Max travel, unit",
         135:	"Axis 6 (C) Max travel, unit"
+    }
+
+
+    Connections {
+        target: Serial
+        function onConnected() {
+            statusText.text = "Порт открыт"
+        }
+        function onDisconnected() {
+            statusText.text = "Порт закрыт"
+        }
     }
 
     // FindUsb {
