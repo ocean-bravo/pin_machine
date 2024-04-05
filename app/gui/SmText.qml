@@ -4,4 +4,6 @@ import QtQuick.Controls 2.15
 
 Text {
     font.family: "DINPro"
+    font.pixelSize: 16
+    verticalAlignment: Text.AlignVCenter
 }

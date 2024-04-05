@@ -203,8 +203,6 @@ Item {
                     SmText {
                         text: Serial.isOpen ? "Открыт" : "Закрыт"
                         color: Serial.isOpen ? "green" : "red"
-                        font.pixelSize: 16
-                        verticalAlignment: Text.AlignVCenter
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
@@ -231,10 +229,10 @@ Item {
 
                 //Item { height: 30; width: 10}
 
-                Text {
-                    text: fullStatus + status
-                    horizontalAlignment: Text.AlignLeft
-                    verticalAlignment: Text.AlignVCenter
+                SmText {
+                    text: fullStatus + " " + status
+//                    horizontalAlignment: Text.AlignLeft
+
                     // Layout.preferredWidth: 400
                     // Layout.preferredHeight: 25
                     width: parent.width
