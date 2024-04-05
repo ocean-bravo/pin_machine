@@ -118,12 +118,12 @@ ApplicationWindow {
                 if (msg.match(/^[|].+[|]$/)) {
                     let statusValues = msg.split("|")
                     status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
-                    DataBus.status = status
                     let position = statusValues[2] // третий элемент - позиция
                     let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
                     DataBus.x_coord = pos[0]
                     DataBus.y_coord = pos[1]
                     DataBus.z_coord = pos[2]
+                    DataBus.status = status // Позиция этого присваивания влияет на другой код, хреново
                     fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
 
                     xPos = parseFloat(pos[0])
