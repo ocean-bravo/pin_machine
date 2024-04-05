@@ -23,18 +23,13 @@ Item {
         visible: true
     }
 
-
     SuperUser {
         id: superUser
         objectName: "superuser"
         visible: false
     }
 
-
-    OpenSerialPromise {id: openSerialPromise }
-
-
-
+    OpenSerialPromise { id: openSerialPromise }
 
     Component.onCompleted: {
         operatorUser.visible = true

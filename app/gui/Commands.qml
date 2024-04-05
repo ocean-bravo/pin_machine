@@ -194,29 +194,39 @@ Item {
                     SmTextEdit {
                         id: serialPortName
 
+                        text: openSerialPromise.device
+
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 30
+                    }
+
+                    SmText {
+                        text: Serial.isOpen ? "Открыт" : "Закрыт"
+                        color: Serial.isOpen ? "green" : "red"
+                        font.pixelSize: 16
+                        verticalAlignment: Text.AlignVCenter
+
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
-
-
                     }
 
-                    SmButton {
-                        id: openPort
-                        text: qsTr("Open")
-                        onClicked: {
-                            Serial.close()
-                            let serPort = serialPortName.text
-                            console.log(serPort)
-                            Serial.setPortName(serPort)
-                            Serial.setBaudRate("115200")
-                            Serial.setDataBits("8")
-                            Serial.setParity("N")
-                            Serial.setStopBits("1")
-                            Serial.open()
-                        }
-                    }
+                    // SmButton {
+                    //     id: openPort
+                    //     text: qsTr("Open")
+                    //     onClicked: {
+                    //         Serial.close()
+                    //         let serPort = serialPortName.text
+                    //         console.log(serPort)
+                    //         Serial.setPortName(serPort)
+                    //         Serial.setBaudRate("115200")
+                    //         Serial.setDataBits("8")
+                    //         Serial.setParity("N")
+                    //         Serial.setStopBits("1")
+                    //         Serial.open()
+                    //     }
+                    // }
 
-                    SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
+                    //SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
                 }
 
                 //Item { height: 30; width: 10}

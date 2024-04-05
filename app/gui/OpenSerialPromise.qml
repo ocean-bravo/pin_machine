@@ -4,20 +4,20 @@ import QtQuick 2.15
 import Process 1.0
 
 QMLPromises {
-    id: openSerialPromise
+    id: root
+
+    property string device: ""
 
     Process {
         id: process
 
-        property string device: ""
-
         function findUsb() {
-            start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"]);
+            start("/bin/sh", ["-c", "ls /dev | grep ttyUSB"])
         }
 
         onReadyRead: {
             const result = readAll()
-            process.device = ("/dev/" + result).replace(/\s/g, "")
+            device = ("/dev/" + result).replace(/\s/g, "")
         }
     }
 
@@ -42,16 +42,16 @@ QMLPromises {
 
                     yield sleep(100)
 
-                    if (process.device === "") {
+                    if (device === "") {
                         console.log("USB device not found!")
                         yield sleep(1000)
                         continue
                     }
 
-                    console.log("USB device name: ", process.device)
+                    console.log("USB device name: ", device)
                     console.log("Serial opening ...")
 
-                    Serial.setPortName(process.device)
+                    Serial.setPortName(device)
                     Serial.setBaudRate("115200")
                     Serial.setDataBits("8")
                     Serial.setParity("N")
@@ -59,7 +59,6 @@ QMLPromises {
                     Serial.open()
 
                     yield sleep(1000)
-
                     break
                 }
             }
