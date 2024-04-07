@@ -19,19 +19,20 @@ Item {
 
     OperatorUser {
         id: operatorUser
-        objectName: "operatoruser"
-        visible: true
+        // objectName: "operatoruser"
+        // visible: true
     }
 
-    SuperUser {
-        id: superUser
-        objectName: "superuser"
-        visible: false
-    }
+    // SuperUser {
+    //     id: superUser
+    //     objectName: "superuser"
+    //     visible: false
+    // }
 
     OpenSerialPromise { id: openSerialPromise }
 
     Component.onCompleted: {
+        console.log("root item completed")
         operatorUser.visible = true
         //loader.sourceComponent = operatorComponent
 

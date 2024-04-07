@@ -9,15 +9,16 @@ import QuickScene 1.0
 
 import "utils.js" as Utils
 
-ApplicationWindow {
+Rectangle {
     id: appWin
 
-    visible: true
-    width: Screen.width
-    height: Screen.height
-    x: 0
-    y: 0
-    flags: Qt.Window
+        property bool guiDebug: false
+    // visible: true
+    // width: Screen.width
+    // height: Screen.height
+    // x: 0
+    // y: 0
+    // flags: Qt.Window
 
     color: colors.primary_10
 

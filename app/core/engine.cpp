@@ -233,6 +233,7 @@ void Engine::createQmlEngine()
 
     /// 2. Виджеты в таком порядке
     _quickWidget = new QQuickWidget(_mw->centralWidget());
+
     GraphicsView* gw = new GraphicsView(_mw->centralWidget());
 
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
@@ -278,7 +279,8 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
     //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
-    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/OperatorUser.qml")));
+
 
 
     /// 3. Важные настройки
@@ -293,15 +295,20 @@ void Engine::createQmlEngine()
     //_quickWidget2->show();
     //_quickWidget2->move(60,60);
 
-    //QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
-    //WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
-    gw->resize(300, 300);
+    // QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
+    // //WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
+     gw->resize(300, 300);
     gw->setEnabled(true);
     gw->setVisible(true);
     gw->move(50,50);
-    gw->setScene(&scene());
-    gw->show();
+     gw->setScene(&scene());
+    // //gw->show();
+     _mw->show();
 
+     _quickWidget->resize(_mw->size());
+     // _quickWidget->setEnabled(true);
+     // _quickWidget->setVisible(true);
+     // _quickWidget->show();
 
 }
 
