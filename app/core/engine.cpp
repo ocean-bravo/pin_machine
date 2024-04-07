@@ -224,11 +224,21 @@ void Engine::createQmlEngine()
 
     FileSystemWatcher* filesystemwatcher = new FileSystemWatcher(this);
 
-
+    qd() << "";
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
-    _qmlEngine.reset(new EnhancedQmlApplicationEngine());
+    /// 1. Окно
+    _mw.reset(new MainWindow3);
+
+    /// 2. Виджеты в таком порядке
+    _quickWidget = new QQuickWidget(_mw->centralWidget());
+    GraphicsView* gw = new GraphicsView(_mw->centralWidget());
+
+    _quickWidget2 = new QQuickWidget(_mw->centralWidget());
+
+    //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
+    _qmlEngine = _quickWidget->engine();
 
     _qmlEngine->addImportPath(appDir() + "libs");
 
@@ -267,15 +277,40 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
 
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
-    _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+
+
+    /// 3. Важные настройки
+    //QQuickWindow::setDefaultAlphaBuffer(true); // Вроде бы должна быть полезна, но толку от нее не нашел.
+    //_quickWidget2->setWindowFlags(Qt::SplashScreen);
+    _quickWidget2->setAttribute(Qt::WA_AlwaysStackOnTop); // Ключевой параметр
+    _quickWidget2->setAttribute(Qt::WA_TranslucentBackground);
+    _quickWidget2->setClearColor(Qt::transparent);
+    _quickWidget2->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    //_quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents); // Работает, но обошелся без этого
+    //_quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/overlay.qml")));
+    //_quickWidget2->show();
+    //_quickWidget2->move(60,60);
+
+    //QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
+    //WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
+    gw->resize(300, 300);
+    gw->setEnabled(true);
+    gw->setVisible(true);
+    gw->move(50,50);
+    gw->setScene(&scene());
+    gw->show();
+
+
 }
 
 void Engine::reload()
 {
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
-    _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
-//    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
 
 QStringList Engine::filesInDirectory(QString dir) const

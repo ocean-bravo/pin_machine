@@ -24,12 +24,12 @@ Control {
             Layout.fillWidth: true
         }
 
-        QmlGraphicsView {
+        Rectangle {
             id: scene
             objectName: "overlayItem"
 
-            //color: "yellow"
-            scene: GraphicsScene
+            color: "yellow"
+            //scene: GraphicsScene
 
             Layout.fillHeight: true
             Layout.fillWidth: true
