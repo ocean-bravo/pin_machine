@@ -52,7 +52,7 @@
 
 #include <QQuickWidget>
 #include <QMainWindow>
-
+#include <QOpenGLFunctions>
 
 EnhancedQmlApplicationEngine::EnhancedQmlApplicationEngine(QObject *parent)
     : QQmlApplicationEngine(parent)
@@ -227,7 +227,18 @@ void Engine::createQmlEngine()
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
-    _qmlEngine.reset(new EnhancedQmlApplicationEngine());
+    //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
+
+    /// 1. Окно
+    _mw.reset(new MainWindow3);
+
+    /// 2. Виджеты в таком порядке
+    _quickWidget = new QQuickWidget(_mw->centralWidget());
+    GraphicsView* gw = new GraphicsView(_mw->centralWidget());
+    _quickWidget2 = new QQuickWidget(_mw->centralWidget());
+
+
+    _qmlEngine = _quickWidget->engine();
 
     _qmlEngine->addImportPath(appDir() + "libs");
 
@@ -258,22 +269,138 @@ void Engine::createQmlEngine()
     _qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
     _qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
-
-
     //_qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
-
     _qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
 
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
-    _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+
+
+    //QQuickWindow::setDefaultAlphaBuffer(true); // Вроде бы должна быть полезна, но толку от нее не нашел.
+    //_quickWidget2->setWindowFlags(Qt::SplashScreen);
+    _quickWidget2->setAttribute(Qt::WA_AlwaysStackOnTop); // Ключевой параметр
+    _quickWidget2->setAttribute(Qt::WA_TranslucentBackground);
+    _quickWidget2->setClearColor(Qt::transparent);
+    _quickWidget2->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    _quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents); // Работает, но обошелся без этого
+    _quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/overlay.qml")));
+    //_quickWidget2->show();
+    _quickWidget2->move(60,60);
+
+
+
+    /// 4. Тест
+    QTimer* timer = new QTimer(this);
+    timer->start(1000);
+    connect(timer, &QTimer::timeout, this, [this]() { _quickWidget2->setVisible(!_quickWidget2->isVisible()); });
+
+
+
+
+    // // _quickWidget2->setAttribute(Qt::WA_NoSystemBackground);
+    // // _quickWidget2->setAttribute(Qt::WA_OpaquePaintEvent);
+
+    //  _quickWidget2->setAttribute(Qt::WA_AlwaysStackOnTop);
+
+    // QSurfaceFormat fmt;
+
+    //     fmt.setAlphaBufferSize(1920*1080);
+    // qd() << "has alpha " << fmt.hasAlpha();
+
+    // _quickWidget2->setFormat(fmt);
+
+    // _quickWidget2->setAttribute(Qt::WA_TranslucentBackground);
+
+    // _quickWidget2->resize(100,100);
+
+    // _quickWidget2->setEnabled(true);
+    // _quickWidget2->setVisible(true);
+    // _quickWidget2->setClearColor(QColor(Qt::transparent));
+
+
+
+
+
+
+    _mw->resize(1920, 1000);
+    _mw->move(0, 0);
+    _mw->show();
+
+    _quickWidget->resize(_quickWidget->parentWidget()->size());
+    _quickWidget->setEnabled(true);
+    _quickWidget->setVisible(true);
+
+    gw->resize(300, 300);
+    gw->setEnabled(true);
+    gw->setVisible(true);
+    gw->move(50,50);
+    gw->setScene(&scene());
+
+    // QTimer::singleShot(1000, [this]()
+    // {
+    //     QOpenGLContext* ctxt =  _quickWidget2->quickWindow()->openglContext();
+
+    //     if (ctxt)
+    //     {
+    //         qd() << "opengl ready ready";
+
+    //         qd() << "is valid " << ctxt->isValid();
+
+
+    //         QOpenGLFunctions* opglfunc = ctxt->functions();
+
+    //         // opglfunc->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //         // opglfunc->glEnable( GL_BLEND );
+    //         // opglfunc->glClearColor(0.5,0.5,0.5,0.5);
+    //         // opglfunc->glClear(0x00FF00);
+    //         // glPixelStore
+    //         //         glPixelTransfer
+    //         //         glPixelMap
+
+
+    //         opglfunc->glEnable(GL_ALPHA_TEST);
+    //         opglfunc->glEnable(GL_DEPTH_TEST);
+    //         opglfunc->glEnable(GL_COLOR_MATERIAL);
+
+    //         opglfunc->glEnable(GL_LIGHTING);
+    //         opglfunc->glEnable(GL_LIGHT0);
+
+    //         opglfunc->glEnable(GL_BLEND);
+    //         opglfunc->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //         opglfunc->glClearColor(0, 0, 0, 0);
+
+
+    //         //opglfunc->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    //         opglfunc->glClear(GL_COLOR_BUFFER_BIT);
+    //         // opglfunc->glPushMatrix();
+
+    //         // opglfunc->glColor3f(0, 1, 1);
+    //         // opglfunc->glBegin(GL_TRIANGLES);                              // Drawing Using Triangles
+    //         //     opglfunc->glColor3f(1.0f,0.0f,0.0f);                      // Set The Color To Red
+    //         //     opglfunc->glVertex3f( 0.0f, 1.0f, 0.0f);                  // Top
+    //         //     opglfunc->glColor3f(0.0f,1.0f,0.0f);                      // Set The Color To Green
+    //         //     opglfunc->glVertex3f(-1.0f,-1.0f, 0.0f);                  // Bottom Left
+    //         //     opglfunc->glColor3f(0.0f,0.0f,1.0f);                      // Set The Color To Blue
+    //         //     opglfunc->glVertex3f( 1.0f,-1.0f, 0.0f);                  // Bottom Right
+    //         // opglfunc->glEnd();
+
+    //         // opglfunc->glPopMatrix();
+    //         opglfunc->glFlush();
+
+    //     }
+    // });
+
+
+
 }
 
 void Engine::reload()
 {
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
-    _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
-//    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    // _qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 }
 
 QStringList Engine::filesInDirectory(QString dir) const

@@ -58,10 +58,11 @@ signals:
 private:
     void createQmlEngine();
 
-    QScopedPointer<EnhancedQmlApplicationEngine> _qmlEngine;
-    //QQmlEngine* _qmlEngine;
-    // QQuickWidget* _quickWidget;
-    // QScopedPointer<MainWindow3> _mw;
+    //QScopedPointer<EnhancedQmlApplicationEngine> _qmlEngine;
+    QQmlEngine* _qmlEngine;
+    QQuickWidget* _quickWidget;
+    QQuickWidget* _quickWidget2;
+    QScopedPointer<MainWindow3> _mw;
 
     //V4L2 _videoDriver;
 //    Video3* _videoDriver3;

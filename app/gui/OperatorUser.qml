@@ -15,7 +15,7 @@ import QtGraphicalEffects 1.15
 
 import "utils.js" as Utils
 
-ApplicationWindow {
+Rectangle {
     id: appWin
 
     //objectName: qsTr("win1")
@@ -24,12 +24,12 @@ ApplicationWindow {
     //color: "red"
 
     //anchors.fill: parent
-    visible: true
-    width: Screen.width
-    height: Screen.height
-    x: 0
-    y: 0
-    flags: Qt.Window
+    // visible: true
+    // width: Screen.width
+    // height: Screen.height
+    // x: 0
+    // y: 0
+    // flags: Qt.Window
 
     property string status: "Idle"
     property string fullStatus
@@ -37,6 +37,38 @@ ApplicationWindow {
     property real xPos
     property real yPos
     property real zPos
+
+
+
+    // Shortcut {
+    //     sequence: "F5"
+    //     context: Qt.ApplicationShortcut
+    //     onActivated: {
+    //          console.log("reload")
+    //         // loader.reload()
+
+    //         DataBus.messagebox = "dsafasdf"
+
+
+    //     }
+    // }
+
+    FlashMessageBox {
+        id: message
+        text: DataBus.messagebox
+        backgroundColor: "maroon"
+        interval: 2000
+        onTextChanged: {
+            if (text.length > 0)
+                open()
+        }
+        onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+        Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+    }
+
+
+
+
 
     function write(msg) {
         Serial.write(msg+"\n")
@@ -229,30 +261,30 @@ ApplicationWindow {
     }
 
 
-    // Popup {
-    //         id: popup
-    //         x: 100
-    //         y: 100
-    //         width: 200
-    //         height: 300
-    //         modal: true
-    //         focus: true
-    //         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-    //         z: 2
-    //     }
+    Popup {
+            id: popup
+            x: 200
+            y: 200
+            width: 500
+            height: 300
+            modal: true
+            focus: true
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+            z: 2
+        }
 
-    // Shortcut {
-    //     sequence: "F5"
-    //     context: Qt.ApplicationShortcut
-    //     onActivated: {
-    //         // console.log("reload")
-    //         // loader.reload()
+    Shortcut {
+        sequence: "F5"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            // console.log("reload")
+            // loader.reload()
 
-    //         DataBus.messagebox = "dsafasdf"
-    //         popup.open()
-    //     }
+            //DataBus.messagebox = "dsafasdf"
+            popup.open()
+        }
 
-    // }
+    }
 
     QtObject {
         id: colors

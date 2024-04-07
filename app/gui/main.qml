@@ -107,16 +107,16 @@ Item {
 
     }
 
-    Shortcut {
-        sequence: "F5"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            // console.log("reload")
-            // loader.reload()
+    // Shortcut {
+    //     sequence: "F5"
+    //     context: Qt.ApplicationShortcut
+    //     onActivated: {
+    //         // console.log("reload")
+    //         // loader.reload()
 
-            DataBus.messagebox = "dsafasdf"
-        }
-    }
+    //         DataBus.messagebox = "dsafasdf"
+    //     }
+    // }
 
     FlashMessageBox {
         id: message

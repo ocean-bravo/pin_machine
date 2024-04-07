@@ -51,6 +51,7 @@ void myterminate()
 }
 
 #include <QSplashScreen>
+#include <QQuickWindow>
 // TODO: если блоб фидушифл, не давать быть реал фидушиал и наоборот
 int main(int argc, char* argv[])
 {
