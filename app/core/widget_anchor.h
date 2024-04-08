@@ -2,15 +2,14 @@
 
 #include <QObject>
 
-
 class QWidget;
 class QQuickItem;
 
 class WidgetAnchor: public QObject
 {
-
 public:
-    WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem);
+    //WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem);
+    WidgetAnchor(QWidget* widget, QQuickItem* quickitem);
 
 private:
     void updateGeometry();

@@ -1,13 +1,13 @@
 #include "widget_anchor.h"
 
 #include <QQuickItem>
-#include <QPointer>
 #include <QWidget>
 
-#include "utils.h"
+//#include "utils.h"
 
-WidgetAnchor::WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem)
-    : QObject(parent)
+//WidgetAnchor::WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem)
+WidgetAnchor::WidgetAnchor(QWidget* widget, QQuickItem* quickitem)
+    : QObject(widget)
     , _widget(widget)
     , _quickItem(quickitem)
 {

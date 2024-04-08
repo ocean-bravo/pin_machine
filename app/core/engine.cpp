@@ -175,9 +175,6 @@ Engine::~Engine()
 
 void Engine::createQmlEngine()
 {
-
-
-
     connect(&video(), &Video4::rawImage, this, [](QImage img)
     {
         const QString livePreviewMode = db().value("live_preview_mode").toString();
@@ -303,8 +300,8 @@ void Engine::createQmlEngine()
     //_quickWidget2->show();
     //_quickWidget2->move(60,60);
 
-     QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
-    WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
+    QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
+    new WidgetAnchor(gw, graphicsViewPlaceholder);
     //gw->resize(300, 300);
     // gw->setEnabled(true);
     // gw->setVisible(true);
