@@ -20,6 +20,7 @@
 #include <QScopeGuard>
 #include <QTimer>
 #include <QDir>
+#include <QScreen>
 
 #include "log/logger.h"
 #include "data_bus.h"
@@ -48,11 +49,12 @@
 #include "graphics_view.h"
 
 #include "file_system_watcher.h"
+
 #include "widget_anchor.h"
+#include "mainwindow.h"
 #include "mainwindow3.h"
 
 #include <QQuickWidget>
-#include <QMainWindow>
 
 
 EnhancedQmlApplicationEngine::EnhancedQmlApplicationEngine(QObject *parent)
@@ -225,25 +227,27 @@ void Engine::createQmlEngine()
     qd() << "styles" << QQuickStyle::availableStyles();
     QQuickStyle::setStyle("Fusion");
 
+
+    _sceneView.reset(new MainWindow);
+
+    QRect screenrect = QGuiApplication::primaryScreen()->geometry();
+    _sceneView->resize(1920 / 2, screenrect.height());
+    _sceneView->move(1920/2, screenrect.top());
+    _sceneView->show();
+
     /// 1. Окно
     _mw.reset(new MainWindow3);
     // _mw->setAttribute(Qt::WA_OpaquePaintEvent);
     // _mw->setAttribute(Qt::WA_NoSystemBackground);
     // _mw->setAttribute(Qt::WA_TranslucentBackground);
 
-
-
-    /// 2. Виджеты в таком порядке
+    /// 2. Виджеты в таком порядке добавляются на центральный виджет
     _quickWidget = new QQuickWidget(_mw->centralWidget());
     GraphicsView* gw = new GraphicsView(_mw->centralWidget());
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
 
-
-    // QVBoxLayout* verticalLayout = new QVBoxLayout(_mw->centralWidget());
-    // verticalLayout->addWidget(_quickWidget);
-
+    /// 3. Чтобы растянуло виджет
     _mw->centralWidget()->layout()->addWidget(_quickWidget);
-
 
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     _qmlEngine = _quickWidget->engine();
@@ -290,7 +294,7 @@ void Engine::createQmlEngine()
     _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 
-    /// 3. Важные настройки
+    /// 4. Важные настройки
     //QQuickWindow::setDefaultAlphaBuffer(true); // Вроде бы должна быть полезна, но толку от нее не нашел.
     //_quickWidget2->setWindowFlags(Qt::SplashScreen);
     _quickWidget2->setAttribute(Qt::WA_AlwaysStackOnTop); // Ключевой параметр
@@ -302,20 +306,22 @@ void Engine::createQmlEngine()
     //_quickWidget2->show();
     //_quickWidget2->move(60,60);
 
-    QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
+    /// 5. Важно
+    QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
     new WidgetAnchor(gw, graphicsViewPlaceholder);
     //gw->resize(300, 300);
     // gw->setEnabled(true);
     // gw->setVisible(true);
     //gw->move(50,50);
-     gw->setScene(&scene());
+    gw->setScene(&scene());
     // //gw->show();
-     _mw->show();
+    //_mw->showFullScreen();
+    _mw->showMaximized();
 
     // _quickWidget->resize(_mw->size());
-     // _quickWidget->setEnabled(true);
-     // _quickWidget->setVisible(true);
-     // _quickWidget->show();
+    // _quickWidget->setEnabled(true);
+    // _quickWidget->setVisible(true);
+    // _quickWidget->show();
 
 }
 

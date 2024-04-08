@@ -7,7 +7,6 @@
 #include <QDateTime>
 #include <QApplication>
 #include <QScopedPointer>
-#include <QScreen>
 #include <QQmlApplicationEngine>
 
 #include <iostream>
@@ -16,8 +15,6 @@
 
 //#include "mainwindow2.h"
 #include <QApplication>
-
-#include "mainwindow.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
@@ -75,12 +72,7 @@ int main(int argc, char* argv[])
     //MainWindow w;
     //w.show();
 
-    MainWindow scene;
 
-    QRect screenrect = app.primaryScreen()->geometry();
-    scene.resize(1920 / 2, screenrect.height());
-    scene.move(1920/2, screenrect.top());
-    scene.show();
 
     return app.exec();
 }

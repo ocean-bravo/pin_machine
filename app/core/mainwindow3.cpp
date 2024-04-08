@@ -6,6 +6,27 @@ MainWindow3::MainWindow3(QWidget *parent)
     , ui(new Ui::MainWindow3)
 {
     ui->setupUi(this);
+
+QString style = R"(
+
+    QMainWindow {
+        background-color: rgb(80, 90, 10);
+    }
+
+    centralWidget {
+    background: yellow;
+    width: 10px; /* when vertical /
+    height: 10px; / when horizontal */
+    }
+
+    centralWidget:hover {
+    background: red;
+    }
+    )";
+
+
+
+    setStyleSheet(style);
 }
 
 MainWindow3::~MainWindow3()

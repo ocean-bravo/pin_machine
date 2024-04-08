@@ -26,10 +26,7 @@ ColumnLayout {
 
         Layout.fillHeight: true
         Layout.fillWidth: true
-
         //    anchors.fill: parent
-
-
         // objectName: "operatoruser"
         visible: true
     }
@@ -53,8 +50,6 @@ ColumnLayout {
 
         openSerialPromise.runAsync()
     }
-
-
 
     // Timer {
     //     interval: 5000

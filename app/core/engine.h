@@ -9,6 +9,7 @@
 
 class Serial;
 class QQuickWidget;
+class MainWindow;
 class MainWindow3;
 
 #include <QQmlApplicationEngine>
@@ -64,6 +65,8 @@ private:
     QQuickWidget* _quickWidget;
     QQuickWidget* _quickWidget2;
     QScopedPointer<MainWindow3> _mw;
+    QScopedPointer<MainWindow> _sceneView;
+
 
     //V4L2 _videoDriver;
 //    Video3* _videoDriver3;

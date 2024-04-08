@@ -3,9 +3,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import QmlGraphicsView 1.0
-import QuickScene 1.0
-
 Control {
     id: root
 
@@ -26,10 +23,7 @@ Control {
 
         Item {
             id: scene
-            objectName: "overlayItem"
-
-            //color: "yellow"
-            //scene: GraphicsScene
+            objectName: "placeholderForGraphicsView"
 
             Layout.fillHeight: true
             Layout.fillWidth: true
