@@ -2,7 +2,7 @@ import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
+import Qt.labs.platform 1.1
 
 Control {
     id: root
@@ -52,6 +52,16 @@ Control {
 
             Layout.preferredHeight: 44
             Layout.fillWidth: true
+
+            onClicked: loadDialog.open()
+
+            FileDialog {
+                id: loadDialog
+                folder: applicationDirPath
+                fileMode: FileDialog.OpenFile
+                onAccepted: Engine.load(currentFile)
+                modality: Qt.ApplicationModal
+            }
         }
 
         Item {

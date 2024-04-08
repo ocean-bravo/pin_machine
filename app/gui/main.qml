@@ -4,9 +4,10 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-Item {
+ColumnLayout {
     id: root
-    property bool guiDebug: false
+
+    property bool guiDebug: true
 
     property var appWin: operatorUser
 
@@ -17,17 +18,29 @@ Item {
     property real yPos
     property real zPos
 
+    width: MainWindow.width
+    height: MainWindow.height
+
     OperatorUser {
         id: operatorUser
+
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        //    anchors.fill: parent
+
+
         // objectName: "operatoruser"
-        // visible: true
+        visible: true
     }
 
-    // SuperUser {
-    //     id: superUser
-    //     objectName: "superuser"
-    //     visible: false
-    // }
+    SuperUser {
+        id: superUser
+        objectName: "superuser"
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        visible: false
+    }
 
     OpenSerialPromise { id: openSerialPromise }
 

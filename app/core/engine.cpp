@@ -227,13 +227,15 @@ void Engine::createQmlEngine()
 
     /// 1. Окно
     _mw.reset(new MainWindow3);
+    // _mw->setAttribute(Qt::WA_OpaquePaintEvent);
+    // _mw->setAttribute(Qt::WA_NoSystemBackground);
+    // _mw->setAttribute(Qt::WA_TranslucentBackground);
+
 
 
     /// 2. Виджеты в таком порядке
     _quickWidget = new QQuickWidget(_mw->centralWidget());
-
     GraphicsView* gw = new GraphicsView(_mw->centralWidget());
-
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
 
 
@@ -277,6 +279,7 @@ void Engine::createQmlEngine()
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
     _qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
 
+    _qmlEngine->rootContext()->setContextProperty("MainWindow", _mw.data());
 
     //_qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
 
@@ -284,8 +287,7 @@ void Engine::createQmlEngine()
 
     _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
     //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
-    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/OperatorUser.qml")));
-
+    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 
     /// 3. Важные настройки

@@ -24,11 +24,11 @@ Control {
             Layout.fillWidth: true
         }
 
-        Rectangle {
+        Item {
             id: scene
             objectName: "overlayItem"
 
-            color: "yellow"
+            //color: "yellow"
             //scene: GraphicsScene
 
             Layout.fillHeight: true

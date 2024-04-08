@@ -11,10 +11,11 @@ WidgetAnchor::WidgetAnchor(QWidget* widget, QQuickItem* quickitem)
     , _widget(widget)
     , _quickItem(quickitem)
 {
-    connect(_quickItem, &QQuickItem::xChanged,      this, &WidgetAnchor::updateGeometry);
-    connect(_quickItem, &QQuickItem::yChanged,      this, &WidgetAnchor::updateGeometry);
-    connect(_quickItem, &QQuickItem::widthChanged,  this, &WidgetAnchor::updateGeometry);
-    connect(_quickItem, &QQuickItem::heightChanged, this, &WidgetAnchor::updateGeometry);
+    connect(_quickItem, &QQuickItem::xChanged,       this, &WidgetAnchor::updateGeometry);
+    connect(_quickItem, &QQuickItem::yChanged,       this, &WidgetAnchor::updateGeometry);
+    connect(_quickItem, &QQuickItem::widthChanged,   this, &WidgetAnchor::updateGeometry);
+    connect(_quickItem, &QQuickItem::heightChanged,  this, &WidgetAnchor::updateGeometry);
+    connect(_quickItem, &QQuickItem::visibleChanged, this, &WidgetAnchor::updateGeometry);
 
     updateGeometry();
 }
@@ -25,6 +26,8 @@ void WidgetAnchor::updateGeometry()
 
     if (_quickItem)
     {
+        _widget->setVisible(_quickItem->isVisible());
+
         // 1. Не канает
         //QRectF r = _quickItem->mapRectToItem(_quickItem, QRectF(_quickItem->x(), _quickItem->y(), _quickItem->width(), _quickItem->height()));
 

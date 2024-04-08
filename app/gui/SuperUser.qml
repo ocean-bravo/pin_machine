@@ -4,14 +4,14 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-ApplicationWindow {
+Control {
     id: appWin
-    visible: true
-    width: Screen.width/2
-    height: Screen.height
-    x: 0
-    y: 0
-    flags: Qt.Window
+    // visible: true
+    // width: Screen.width/2
+    // height: Screen.height
+    // x: 0
+    // y: 0
+    // flags: Qt.Desktop//Qt.Window
 
     Commands {
         id: commands

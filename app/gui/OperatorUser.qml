@@ -9,20 +9,21 @@ import QuickScene 1.0
 
 import "utils.js" as Utils
 
-Item {
+Control {
     id: appWin
-    anchors.fill: parent
 
-        property bool guiDebug: false
+    background: Rectangle {
+        color: colors.primary_10
+    }
+
+    property bool guiDebug: false
     // visible: true
     // width: Screen.width
     // height: Screen.height
     // x: 0
     // y: 0
-    // flags: Qt.Window
+    // flags: Qt.Popup//Qt.Window
 
-    width: 1900
-    height: 1000
 
     //color: "transparent" //colors.primary_10
 
