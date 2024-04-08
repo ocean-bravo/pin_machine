@@ -1,17 +1,17 @@
 #pragma once
 
 #include <QObject>
-#include <QQuickItem>
-#include <QPointer>
-#include <QWidget>
+
+
+class QWidget;
+class QQuickItem;
 
 class WidgetAnchor: public QObject
 {
-    Q_OBJECT
 
 public:
-    WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* item);
-    //WidgetAnchor(QWidget* widget, QQuickItem* item);
+    WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem);
+
 private:
     void updateGeometry();
 

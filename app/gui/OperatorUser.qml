@@ -9,8 +9,9 @@ import QuickScene 1.0
 
 import "utils.js" as Utils
 
-Rectangle {
+Item {
     id: appWin
+    anchors.fill: parent
 
         property bool guiDebug: false
     // visible: true
@@ -20,7 +21,10 @@ Rectangle {
     // y: 0
     // flags: Qt.Window
 
-    color: colors.primary_10
+    width: 1900
+    height: 1000
+
+    //color: "transparent" //colors.primary_10
 
     function write(msg) {
         Serial.write(msg+"\n")

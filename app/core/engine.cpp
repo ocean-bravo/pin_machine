@@ -231,12 +231,20 @@ void Engine::createQmlEngine()
     /// 1. Окно
     _mw.reset(new MainWindow3);
 
+
     /// 2. Виджеты в таком порядке
     _quickWidget = new QQuickWidget(_mw->centralWidget());
 
     GraphicsView* gw = new GraphicsView(_mw->centralWidget());
 
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
+
+
+    // QVBoxLayout* verticalLayout = new QVBoxLayout(_mw->centralWidget());
+    // verticalLayout->addWidget(_quickWidget);
+
+    _mw->centralWidget()->layout()->addWidget(_quickWidget);
+
 
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     _qmlEngine = _quickWidget->engine();
@@ -295,17 +303,17 @@ void Engine::createQmlEngine()
     //_quickWidget2->show();
     //_quickWidget2->move(60,60);
 
-    // QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
-    // //WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
-     gw->resize(300, 300);
-    gw->setEnabled(true);
-    gw->setVisible(true);
-    gw->move(50,50);
+     QQuickItem* pOverlayItem = _quickWidget->rootObject()->findChild<QQuickItem*>("overlayItem");
+    WidgetAnchor* wa = new WidgetAnchor(_mw->centralWidget(), gw, pOverlayItem);
+    //gw->resize(300, 300);
+    // gw->setEnabled(true);
+    // gw->setVisible(true);
+    //gw->move(50,50);
      gw->setScene(&scene());
     // //gw->show();
      _mw->show();
 
-     _quickWidget->resize(_mw->size());
+    // _quickWidget->resize(_mw->size());
      // _quickWidget->setEnabled(true);
      // _quickWidget->setVisible(true);
      // _quickWidget->show();
