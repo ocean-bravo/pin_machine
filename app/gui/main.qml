@@ -61,7 +61,13 @@ ColumnLayout {
 
     property string prevMsg: ""
 
+    property bool messageFinished: false
+
     function parseSerialMessage(msg) {
+        console.log("-----")
+        console.log(msg)
+        console.log("-----")
+
         let currentTime = String(Date.now()).slice(-4)
 
         msg = prevMsg + msg
@@ -89,8 +95,12 @@ ColumnLayout {
             msg = messages.shift()
 
             // Не выводим ответ ok
-            if (msg === 'ok')
+            if (msg === 'ok') {
+                messageFinished = true
                 continue
+            }
+
+            messageFinished = false
 
             // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
             msg = msg.replace(/</g, '|')
@@ -115,7 +125,6 @@ ColumnLayout {
                 DataBus.xPos = xPos
                 DataBus.yPos = yPos
                 DataBus.zPos = zPos
-
             }
 
             //                for (let k = 0; k < modes.length; ++k) {
