@@ -50,6 +50,16 @@ Window {
                 text: "Clear"
                 onTriggered: debugLog.clear()
             }
+
+            MenuItem {
+                text: "Stay on top"
+                onTriggered: root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+            }
+
+            MenuItem {
+                text: "Not stay on top"
+                onTriggered: root.flags = Qt.FramelessWindowHint
+            }
         }
     }
 }
