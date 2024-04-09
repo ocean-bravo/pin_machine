@@ -13,6 +13,10 @@ Control {
     // y: 0
     // flags: Qt.Desktop//Qt.Window
 
+    function appendToLog(msg) {
+        commands.appendLog(msg)
+    }
+
     Commands {
         id: commands
         anchors.fill: parent

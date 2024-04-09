@@ -31,18 +31,12 @@ ColumnLayout {
     SuperUser {
         id: superUser
 
+
         Layout.fillHeight: true
         Layout.fillWidth: true
     }
 
-    function write(msg) {
-        Serial.write(msg + "\n")
-        appendLog(msg + "\n")
-    }
 
-    function appendLog(message, color) {
-        machineLog.append(coloredMessage(message, color))
-    }
 
     function coloredMessage(message, color) {
         if (color === undefined)
@@ -55,36 +49,103 @@ ColumnLayout {
         return msg
     }
 
+    Connections {
+        target: Serial
 
-    Window {
-        id: machineLogWindow
-        title: "Machine log"
-        flags: Qt.FramelessWindowHint
-
-        width: MainWindow.width / 3
-        height: MainWindow.height / 2
-
-        x: Screen.width - width
-        y: 0
-
-        Log2 {
-            id: machineLog
-            anchors.fill: parent
-            loadOnCompleted: true
-        }
-
-        Shortcut {
-            sequence: "F11"
-            context: Qt.ApplicationShortcut
-            onActivated: {
-                machineLogWindow.visible = !machineLogWindow.visible
-                if (machineLogWindow.visible)
-                    machineLogWindow.raise()
-            }
+        function onData(msg) {
+            msg = parseSerialMessage(msg)
+            superUser.appendToLog(msg, 'darkblue')
+            operatorUser.appendLog(msg, 'darkblue')
         }
     }
 
-    OpLogDebug { }
+    property string prevMsg: ""
+
+    function parseSerialMessage(msg) {
+        let currentTime = String(Date.now()).slice(-4)
+
+        msg = prevMsg + msg
+
+        // Нет перевода строки - копим сообщения дальше
+        if (!msg.match(/\r?\n/)) {
+            prevMsg = msg
+            return
+        }
+
+        // Перевод строки есть, разбираем сообщение
+        prevMsg = ""
+
+        var messages = msg.split(/\r?\n/)
+
+        // Если последняя стрка пустая - значит сообщение закончилось переводом строки.
+        // pop() модифицирует массив
+        var last = messages.pop()
+        // Если последняя стрка непустая - значит сообщение не закончилось (перевода строки не было). Сохраняем его.
+        if (last !== '') {
+            prevMsg = last
+        }
+
+        nextMessage: while (messages.length > 0) {
+            msg = messages.shift()
+
+            // Не выводим ответ ok
+            if (msg === 'ok')
+                continue
+
+            // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
+            msg = msg.replace(/</g, '|')
+            msg = msg.replace(/>/g, '|')
+
+            // Если это статус - разделить его на части
+            if (msg.match(/^[|].+[|]$/)) {
+                let statusValues = msg.split("|")
+                status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
+                let position = statusValues[2] // третий элемент - позиция
+                let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
+                DataBus.x_coord = pos[0]
+                DataBus.y_coord = pos[1]
+                DataBus.z_coord = pos[2]
+                DataBus.status = status // Позиция этого присваивания влияет на другой код, хреново
+                fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
+
+                xPos = parseFloat(pos[0])
+                yPos = parseFloat(pos[1])
+                zPos = parseFloat(pos[2])
+
+                DataBus.xPos = xPos
+                DataBus.yPos = yPos
+                DataBus.zPos = zPos
+
+            }
+
+            //                for (let k = 0; k < modes.length; ++k) {
+            //                    let stat = modes[k]
+            //                    if (msg.includes(stat)) {
+            //                        status = stat
+            //                        fullStatus = msg
+            //                        //continue nextMessage
+            //                    }
+            //                }
+
+            //            for (let i = 1; i < 11; ++i) {
+            //                let alrm = "ALARM:" + i
+            //                if (msg.includes(alrm))
+            //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
+            //            }
+            //                for (let j = 1; j < 100; ++j) {
+            //                    let err = "error:" + j
+            //                    if (msg.includes(err))
+            //                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+            //                }
+
+
+            msg = currentTime + ": " + msg
+            return msg
+        }
+    }
+
+
+    DebugLog { }
 
     OpenSerialPromise { id: openSerialPromise }
 
