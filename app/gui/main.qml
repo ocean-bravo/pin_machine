@@ -64,6 +64,9 @@ ColumnLayout {
     property bool messageFinished: false
 
     function parseSerialMessage(msg) {
+        msg = msg.replace(/</g, '|')
+        msg = msg.replace(/>/g, '|')
+
         console.log("-----", msg.length)
         console.log(msg)
         console.log("^^^^^")
