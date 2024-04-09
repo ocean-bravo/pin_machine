@@ -15,9 +15,6 @@ Loader {
         loader.sourceComponent = undefined
     }
 
-    //property bool visible: status === Loader.Ready
-
-
     property bool loadOnCompleted: false
 
     function append(text) {
@@ -56,9 +53,13 @@ Loader {
 
             delegate: SmText {
                 padding: 0
-                height: 18
+                width: ListView.view.width
+                //height: 18
+                //width: parent.width
+                font.family: "Consolas"
                 font.pixelSize: 14
                 textFormat: TextEdit.RichText
+                wrapMode: Text.WordWrap
                 text: val
             }
 

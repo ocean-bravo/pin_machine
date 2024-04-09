@@ -115,6 +115,8 @@ void LoggerPrivate::common(const QString& message, qint64 time, Qt::HANDLE threa
 
     if (_logToFile)
         _commonFileAppender->append(message);
+
+    emit newMessage(message);
 }
 
 int LoggerPrivate::threadIdToAlias(Qt::HANDLE threadId)
@@ -157,6 +159,7 @@ Logger::Logger()
 
     connect(_impl, &LoggerPrivate::logToFileChanged, this, &Logger::logToFileChanged, Qt::QueuedConnection);
     connect(_impl, &LoggerPrivate::inited,           this, &Logger::inited, Qt::QueuedConnection);
+    connect(_impl, &LoggerPrivate::newMessage,       this, &Logger::newMessage, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
     connect(_thread.data(), &QThread::started,  _impl, &LoggerPrivate::init, Qt::QueuedConnection);

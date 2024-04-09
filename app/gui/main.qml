@@ -26,17 +26,14 @@ ColumnLayout {
 
         Layout.fillHeight: true
         Layout.fillWidth: true
-        //    anchors.fill: parent
-        // objectName: "operatoruser"
-        visible: true
     }
 
     SuperUser {
         id: superUser
-        objectName: "superuser"
+
+
         Layout.fillHeight: true
         Layout.fillWidth: true
-        visible: false
     }
 
     Window {
@@ -66,33 +63,7 @@ ColumnLayout {
         }
     }
 
-
-    Window {
-        id: debugLog
-        title: "Debug log"
-        flags: Qt.FramelessWindowHint
-
-        width: MainWindow.width / 3
-        height: MainWindow.height / 2
-
-        x: Screen.width - width
-        y: Screen.height - height
-
-        Log2 {
-            anchors.fill: parent
-            loadOnCompleted: true
-        }
-
-        Shortcut {
-            sequence: "F12"
-            context: Qt.ApplicationShortcut
-            onActivated: {
-                debugLog.visible = !debugLog.visible
-                if (debugLog.visible)
-                    debugLog.raise()
-            }
-        }
-    }
+    OpLogDebug { }
 
 
     OpenSerialPromise { id: openSerialPromise }
@@ -101,9 +72,7 @@ ColumnLayout {
 
 
     Component.onCompleted: {
-        console.log("root item completed")
         operatorUser.visible = true
-        //loader.sourceComponent = operatorComponent
 
         DataBus.live_preview_mode = "raw"
 

@@ -6,12 +6,14 @@ import QtQuick.Layouts 1.15
 
 Control {
     id: appWin
-    // visible: true
+    visible: false
     // width: Screen.width/2
     // height: Screen.height
     // x: 0
     // y: 0
     // flags: Qt.Desktop//Qt.Window
+
+
 
     Commands {
         id: commands

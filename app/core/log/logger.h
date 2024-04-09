@@ -37,6 +37,7 @@ signals:
     void common(const QString& message, qint64 time, Qt::HANDLE threadId, qint32 tid = 0);
     void logToFileChanged();
     void inited();
+    void newMessage(QString message); // Для QML
 
 private:
     Logger();
@@ -65,6 +66,7 @@ public slots:
 signals:
     void logToFileChanged(); // для информирования GUI
     void inited();
+    void newMessage(QString message); // Для QML
 
 private:
     int threadIdToAlias(Qt::HANDLE threadId);
