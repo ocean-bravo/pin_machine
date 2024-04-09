@@ -64,9 +64,9 @@ ColumnLayout {
     property bool messageFinished: false
 
     function parseSerialMessage(msg) {
-        console.log("-----")
+        console.log("-----", msg.length)
         console.log(msg)
-        console.log("-----")
+        console.log("^^^^^")
 
         let currentTime = String(Date.now()).slice(-4)
 
