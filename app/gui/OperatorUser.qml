@@ -31,9 +31,9 @@ Control {
 
     //color: "transparent" //colors.primary_10
 
-    function write(msg) {
-        Serial.write(msg+"\n")
-    }
+    // function write(msg) {
+    //     Serial.write(msg+"\n")
+    // }
 
 
     function sortResolutions(resolutions) {

@@ -13,14 +13,10 @@ Control {
     // y: 0
     // flags: Qt.Desktop//Qt.Window
 
-
-
     Commands {
         id: commands
         anchors.fill: parent
     }
-
-
 
     FlashMessageBox {
         id: message

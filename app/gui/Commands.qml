@@ -12,8 +12,8 @@ Item {
     id: root
 
     function write(msg) {
-        Serial.write(msg+"\n")
-        appendLog(msg+"\n")
+        Serial.write(msg + "\n")
+        appendLog(msg)
     }
 
     function jog(axis, mm, feed) {
@@ -23,14 +23,7 @@ Item {
     }
 
     function appendLog(message, color) {
-        if (color === undefined)
-            color = 'red'
-
-        let msg = message.split('').join('') // Копирую строку фактически
-        msg = msg.replace(/\r?\n/g, '<br>')
-
-        msg = String(Date.now()).slice(-4) + ": " + msg
-        logViewer.append("<font color=" + color + ">" + msg + "</font>")
+        logViewer.append(coloredMessage(message, color))
     }
 
     function moveTo(x, y) {

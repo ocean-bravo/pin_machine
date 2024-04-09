@@ -31,13 +31,33 @@ ColumnLayout {
     SuperUser {
         id: superUser
 
-
         Layout.fillHeight: true
         Layout.fillWidth: true
     }
 
+    function write(msg) {
+        Serial.write(msg + "\n")
+        appendLog(msg + "\n")
+    }
+
+    function appendLog(message, color) {
+        machineLog.append(coloredMessage(message, color))
+    }
+
+    function coloredMessage(message, color) {
+        if (color === undefined)
+            color = 'red'
+
+        let msg = message.split('').join('') // Копирую строку фактически
+        msg = msg.replace(/\r?\n/g, '<br>')
+        msg = String(Date.now()).slice(-4) + ": " + msg
+        msg = "<font color=" + color + ">" + msg + "</font>"
+        return msg
+    }
+
+
     Window {
-        id: machineLog
+        id: machineLogWindow
         title: "Machine log"
         flags: Qt.FramelessWindowHint
 
@@ -48,6 +68,7 @@ ColumnLayout {
         y: 0
 
         Log2 {
+            id: machineLog
             anchors.fill: parent
             loadOnCompleted: true
         }
@@ -56,26 +77,20 @@ ColumnLayout {
             sequence: "F11"
             context: Qt.ApplicationShortcut
             onActivated: {
-                machineLog.visible = !machineLog.visible
-                if (machineLog.visible)
-                    machineLog.raise()
+                machineLogWindow.visible = !machineLogWindow.visible
+                if (machineLogWindow.visible)
+                    machineLogWindow.raise()
             }
         }
     }
 
     OpLogDebug { }
 
-
     OpenSerialPromise { id: openSerialPromise }
-
-
-
 
     Component.onCompleted: {
         operatorUser.visible = true
-
         DataBus.live_preview_mode = "raw"
-
         openSerialPromise.runAsync()
     }
 
