@@ -279,6 +279,7 @@ Item {
                         Log2 {
                             id: logViewer
                             anchors.fill:parent
+                            loadOnCompleted: true
                         }
                         Button {
                             anchors.top: parent.top

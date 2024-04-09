@@ -12,6 +12,8 @@ import "utils.js" as Utils
 Control {
     id: appWin
 
+
+
     background: Rectangle {
         color: colors.primary_10
     }
@@ -23,6 +25,8 @@ Control {
     // x: 0
     // y: 0
     // flags: Qt.Popup//Qt.Window
+
+
 
 
     //color: "transparent" //colors.primary_10
@@ -171,35 +175,7 @@ Control {
 
 
 
-    // menuBar: MenuBar {
-    //     Menu {
-    //         id: fileMenu
-    //         title: qsTr("File")
-    //         // ...
-    //     }
 
-    //     Menu {
-    //         id: editMenu
-    //         title: qsTr("&Edit")
-    //         // ...
-    //     }
-
-    //     Menu {
-    //         id: viewMenu
-    //         title: qsTr("&View")
-    //         // ...
-    //     }
-
-    //     Menu {
-    //         id: helpMenu
-    //         title: qsTr("&Help")
-    //         // ...
-    //     }
-    // }
-
-    // footer: ToolBar {
-    //     // ...
-    // }
 
 
     // Popup {
@@ -270,6 +246,10 @@ Control {
         contentItem: ColumnLayout {
 
             spacing: 8
+
+            // OpTitleBar {
+
+            // }
 
             Item {
                 Layout.fillWidth: true
@@ -415,12 +395,6 @@ Control {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }
-
-                    // 3. ПОка отложу
-                    // QmlGraphicsView {
-                    //     anchors.fill: parent
-                    //     scene: GraphicsScene
-                    // }
                 }
             }
             Rectangle {
@@ -448,236 +422,37 @@ Control {
                 radius: 8
             }
 
-
-
-
-
-
-
-
-            // RowLayout {
-            //     //Layout.preferredWidth: 400
-            //     //Layout.preferredHeight: 30
-            //     width: parent.width
-            //     height: 30
-
-
-            //     SmTextEdit {
-            //         id: serialPortName
-
-            //         Layout.fillWidth: true
-            //         Layout.preferredHeight: 30
-
-            //         FindUsb { onUsbFound: serialPortName.text = device }
-            //     }
-
-            //     SmButton {
-            //         id: openPort
-            //         text: qsTr("Open")
-            //         onClicked: {
-            //             Serial.close()
-            //             let serPort = serialPortName.text
-            //             console.log(serPort)
-            //             Serial.setPortName(serPort)
-            //             Serial.setBaudRate("115200")
-            //             Serial.setDataBits("8")
-            //             Serial.setParity("N")
-            //             Serial.setStopBits("1")
-            //             Serial.open()
-            //         }
-            //     }
-
-            //     SmButton { text: qsTr("Close"); onClicked: { Serial.close() } }
-            // }
-
-            //Item { height: 30; width: 10}
-
-            // Text {
-            //     text: fullStatus + status
-            //     horizontalAlignment: Text.AlignLeft
-            //     verticalAlignment: Text.AlignVCenter
-            //     // Layout.preferredWidth: 400
-            //     // Layout.preferredHeight: 25
-            //     width: parent.width
-            //     height: 25
-            // }
-
-            // Item {
-            //     Layout.fillHeight: true
-            // }
         }
     }
 
 
+    // menuBar: MenuBar {
+    //     Menu {
+    //         id: fileMenu
+    //         title: qsTr("File")
+    //         // ...
+    //     }
 
+    //     Menu {
+    //         id: editMenu
+    //         title: qsTr("&Edit")
+    //         // ...
+    //     }
 
-    // Rectangle {
-    //     anchors.left: tools.right
-    //     anchors.top: parent.top
-    //     anchors.bottom: parent.bottom
-    //     // width: 500
-    //     anchors.right: parent.right
+    //     Menu {
+    //         id: viewMenu
+    //         title: qsTr("&View")
+    //         // ...
+    //     }
 
-    // 1.
-    // ScrollView {
-    //     id: scrollView
-    //     objectName: "scrollView"
-
-    //     anchors.fill: parent
-
-    //     // anchors {
-    //     //     top: topDock.bottom
-    //     //     left: parent.left
-    //     //     right: parent.right
-    //     //     bottom: parent.bottom
-    //     // }
-
-    //     Flickable {
-    //         id: stateMachineViewport
-    //         objectName: "stateMachineViewport"
-
-    //         anchors.fill: parent
-
-    //         contentWidth: stateMachineScene.width * stateMachineScene.scale
-    //         contentHeight: stateMachineScene.height * stateMachineScene.scale
-    //         boundsBehavior: Flickable.StopAtBounds
-    //         focus: true
-    //         interactive: !editController.editModeEnabled
-
-    //         onMovementStarted: {
-    //             followActiveRegion = false;
-    //         }
-
-    //         Scene {
-    //             id: stateMachineScene
-    //             objectName: "stateMachineScene"
-
-    //             Component.onCompleted: {
-    //                 _quickView.scene = stateMachineScene
-    //             }
-    //         }
-
-    //         Connections {
-    //             target: (root.followActiveRegion ? root.configurationController : null)
-    //             function onActiveRegionChanged() {
-    //                 centerOnActiveRegion();
-    //             }
-    //         }
-
-    //         Behavior on contentX {
-    //             enabled: root.followActiveRegion
-    //             SmoothedAnimation { duration: 200 }
-    //         }
-    //         Behavior on contentY {
-    //             enabled: root.followActiveRegion
-    //             SmoothedAnimation { duration: 200 }
-    //         }
-
-    //         // TODO: Add PinchArea?
+    //     Menu {
+    //         id: helpMenu
+    //         title: qsTr("&Help")
+    //         // ...
     //     }
     // }
 
 
-    // 2.
-    // Flickable {
-    //     //color: "black"
-    //     id: blackBack
-    //     anchors.fill: parent
-    //     clip: true
-
-    //     SceneItem {
-    //         id: scene
-    //         //anchors.fill: blackBack
-
-    //         visible: true
-    //         //root: blackBack
-    //         enabled: true
-
-    //         //image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
-
-    //     }
-
-    //     Button {
-    //         width: 20
-    //         height: 20
-    //         onClicked: {
-    //             scene.deleteBoards()
-    //         }
-    //     }
-
-    //     Button {
-    //         x: 30
-    //         width: 20
-    //         height: 20
-    //         onClicked: {
-    //             scene.addBoard()
-    //         }
-    //     }
-
-    //     Button {
-    //         x: 60
-    //         width: 20
-    //         height: 20
-    //         onClicked: {
-    //             scene.addTriangle()
-    //         }
-    //     }
-    // }
-
-
-
-
-    // Rectangle {
-    //     anchors.fill: parent
-    // }
-
-
-    //}
-
-
-    // SplitView {
-    //     //anchors.left: tools.right
-    //     // anchors.top: parent
-    //     // anchors.bottom: parent
-    //     // anchors.right: parent
-
-    //     orientation: Qt.Horizontal
-
-
-
-    //     Item {
-    //         SplitView.minimumWidth: 50
-    //         SplitView.preferredWidth: 400
-    //         SplitView.maximumWidth: 800
-
-    //         //color: "green"
-    //         Rectangle {
-    //             color: "#AAFFAAAA"
-    //             anchors.fill: parent
-
-
-    //         }
-    //     }
-
-    //     Item {
-    //         Rectangle {
-    //             color: "yellow"
-    //             width: 100
-    //             height: 100
-
-    //             ImageItem {
-    //                 id: image
-    //                 anchors.fill: parent
-    //                 image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
-    //             }
-    //         }
-
-    //         Item {
-    //             anchors.fill: parent
-    //         }
-    //     }
-
-    // }
 
     component ToolButton : Button {
         id: root
