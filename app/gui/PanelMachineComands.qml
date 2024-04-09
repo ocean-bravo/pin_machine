@@ -58,7 +58,7 @@ CollapsiblePanel2 {
 
             ComboBox {
                 height: 30
-                model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Errors/List ",
+                model: ["$Alarm/Disable", "$Alarms/List", "$Build/Info", "$Bye", "$Commands/List", "$Limits/Show", "$Errors/List ",
                     "$Firmware/Info", "$GCode/Modes", "$Heap/Show", "$Help", "$Settings/List", "$Startup/Show"]
                 onActivated: write(currentText)
             }
