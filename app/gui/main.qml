@@ -39,7 +39,66 @@ ColumnLayout {
         visible: false
     }
 
+    Window {
+        id: machineLog
+        title: "Machine log"
+        flags: Qt.FramelessWindowHint
+
+        width: MainWindow.width / 3
+        height: MainWindow.height / 2
+
+        x: Screen.width - width
+        y: 0
+
+        Log2 {
+            anchors.fill: parent
+            loadOnCompleted: true
+        }
+
+        Shortcut {
+            sequence: "F11"
+            context: Qt.ApplicationShortcut
+            onActivated: {
+                machineLog.visible = !machineLog.visible
+                if (machineLog.visible)
+                    machineLog.raise()
+            }
+        }
+    }
+
+
+    Window {
+        id: debugLog
+        title: "Debug log"
+        flags: Qt.FramelessWindowHint
+
+        width: MainWindow.width / 3
+        height: MainWindow.height / 2
+
+        x: Screen.width - width
+        y: Screen.height - height
+
+        Log2 {
+            anchors.fill: parent
+            loadOnCompleted: true
+        }
+
+        Shortcut {
+            sequence: "F12"
+            context: Qt.ApplicationShortcut
+            onActivated: {
+                debugLog.visible = !debugLog.visible
+                if (debugLog.visible)
+                    debugLog.raise()
+            }
+        }
+    }
+
+
     OpenSerialPromise { id: openSerialPromise }
+
+
+
 
     Component.onCompleted: {
         console.log("root item completed")

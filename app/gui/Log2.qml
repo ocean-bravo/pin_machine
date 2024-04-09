@@ -15,6 +15,9 @@ Loader {
         loader.sourceComponent = undefined
     }
 
+    //property bool visible: status === Loader.Ready
+
+
     property bool loadOnCompleted: false
 
     function append(text) {
