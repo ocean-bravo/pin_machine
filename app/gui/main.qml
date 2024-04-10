@@ -65,7 +65,7 @@ ColumnLayout {
 
     function parseSerialMessage(msg) {
 
-        if (0) {
+        if (1) {
             let m1 = String(msg)
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
@@ -87,8 +87,8 @@ ColumnLayout {
         // console.log("^^^^^")
 
         // Ищу текст "ok" окруженный переводами строк
-        let match = /\nok\n/.exec(msg)
-        if (!match) {
+        let found = msg.match(/\nok\n/g)
+        if (!found) {
             prevMsg = String(msg)
             return
         }
