@@ -155,6 +155,12 @@ ColumnLayout {
     }
 
     function parseStatus(msg) {
+
+
+
+        msg = msg.replace('/</g', '')
+        msg = msg.replace('/>/g', '')
+
         if (1) {
             let m3 = String(msg)
             m3 = m3.replace(/</g, '|')
@@ -164,8 +170,6 @@ ColumnLayout {
         }
 
 
-        msg = msg.replace('/</g', '')
-        msg = msg.replace('/>/g', '')
         let statusValues = msg.split("|")
 
         console.log(" satu s ", statusValues[0], statusValues[1], statusValues[2])
