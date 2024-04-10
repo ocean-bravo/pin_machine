@@ -158,8 +158,8 @@ ColumnLayout {
 
 
 
-        msg = msg.replace('/</g', '')
-        msg = msg.replace('/>/g', '')
+        msg = msg.replace(/</g, '')
+        msg = msg.replace(/>/g, '')
 
         if (1) {
             let m3 = String(msg)
