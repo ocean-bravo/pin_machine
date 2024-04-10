@@ -70,8 +70,11 @@ ColumnLayout {
         console.log(msg)
         console.log("^^^^^")
 
-        if (!msg.includes("\nok\n"))
+        if (!msg.match(/\nok\n/))
             return
+
+        // if (!msg.includes("\nok\n"))
+        //     return
 
         prevMsg = ""
 
