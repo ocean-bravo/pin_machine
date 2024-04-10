@@ -66,6 +66,10 @@ ColumnLayout {
     function parseSerialMessage(msg) {
         msg = prevMsg + msg
 
+        console.log("-----", msg.length)
+        console.log(msg)
+        console.log("^^^^^")
+
         if (!msg.includes("\nok\n"))
             return
 
