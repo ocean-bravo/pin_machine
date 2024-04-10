@@ -35,6 +35,12 @@ Loader {
 
             ListModel {
                 id: listModel
+
+                // После очистки примагничиваемся
+                onCountChanged: {
+                    if (count === 0)
+                        snap = true
+                }
             }
 
             model: listModel
