@@ -65,6 +65,8 @@ ColumnLayout {
     property string prevMsg: ""
 
     // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
+    // При хоуминге статус отвечает. Сообщение имеет вид: статус\r\n Но в конце нет ok\r\n. Потом, вдогонку, наваливает кучу ok\r\n
+    // Статус всегда помещается в одно сообщение (пока).
     function parseSerialMessage(msg) {
 
         if (1) {
@@ -77,6 +79,14 @@ ColumnLayout {
             console.log("m1: ", m1)
         }
 
+        // Буду считать, что статус ограничен символами < и >. И эти символы только в статусе.
+        if (msg.match(/[<].+[>]/)) {
+            parseStatus(msg)
+            prevMsg = ""
+            return msg
+        }
+
+        // Дальше всё, что не статус
         msg = String(prevMsg + msg)
 
         // Ищу текст "ok" окруженный переводами строк
@@ -116,10 +126,6 @@ ColumnLayout {
             console.log("m3: ", m3)
         }
 
-        if (msg.match(/^[<].+[>]$/)) {
-            parseStatus(msg)
-        }
-
         if (msg.match(/Input Matrix/g)) {
             parseGpio(msg)
         }
@@ -132,7 +138,6 @@ ColumnLayout {
     }
 
     function parseStatus(msg) {
-
         msg = msg.replace(/</g, '')
         msg = msg.replace(/>/g, '')
 
