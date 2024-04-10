@@ -71,9 +71,9 @@ ColumnLayout {
             let m1 = String(msg)
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
-            m1 = m1.replace(/\r?\n/g, '<br>')
-            //m1 = m1.replace(/\r/g, 'RRRRRR<br>')
-            //m1 = m1.replace(/\n/g, 'NNNNNN<br>')
+            //m1 = m1.replace(/\r?\n/g, '<br>')
+            m1 = m1.replace(/\r/g, 'RRRRRR<br>')
+            m1 = m1.replace(/\n/g, 'NNNNNN<br>')
             console.log("m1: ", m1)
         }
 
