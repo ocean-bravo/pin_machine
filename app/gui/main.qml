@@ -54,36 +54,30 @@ ColumnLayout {
 
         function onData(msg) {
             msg = parseSerialMessage(msg)
-            superUser.appendToLog(msg, 'darkblue')
-            operatorUser.appendLog(msg, 'darkblue')
+            // superUser.appendToLog(msg, 'darkblue')
+            // operatorUser.appendLog(msg, 'darkblue')
         }
     }
 
-    property string prevMsg: ""
-
     property bool messageFinished: false
 
+    property string prevMsg: ""
+
     function parseSerialMessage(msg) {
-        msg = msg.replace(/</g, '|')
-        msg = msg.replace(/>/g, '|')
-        msg = msg.replace(/\r?\n/g, '<br>')
+        msg = prevMsg + msg
+
+        if (!msg.includes("\nok\n"))
+            return
+
+        prevMsg = ""
+
+        console.log("message ok")
 
         console.log("-----", msg.length)
         console.log(msg)
         console.log("^^^^^")
 
-        let currentTime = String(Date.now()).slice(-4)
-
-        msg = prevMsg + msg
-
-        // Нет перевода строки - копим сообщения дальше
-        if (!msg.match(/\r?\n/)) {
-            prevMsg = msg
-            return
-        }
-
-        // Перевод строки есть, разбираем сообщение
-        prevMsg = ""
+        return
 
         var messages = msg.split(/\r?\n/)
 
@@ -94,6 +88,31 @@ ColumnLayout {
         if (last !== '') {
             prevMsg = last
         }
+
+
+
+
+
+        msg = msg.replace(/</g, '|')
+        msg = msg.replace(/>/g, '|')
+
+
+
+        //msg = msg.replace(/\r?\n/g, '<br>')
+
+
+
+        let currentTime = String(Date.now()).slice(-4)
+
+        // Нет перевода строки - копим сообщения дальше
+        // if (!msg.match(/\r?\n/)) {
+        //     prevMsg = msg
+        //     return
+        // }
+
+
+
+
 
         nextMessage: while (messages.length > 0) {
             msg = messages.shift()
