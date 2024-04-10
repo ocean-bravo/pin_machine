@@ -8,7 +8,7 @@ import QtQuick.Window 2.15
 Window {
     id: root
     title: "Debug log"
-    flags: Qt.FramelessWindowHint
+    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
     width: MainWindow.width / 3
     height: MainWindow.height / 2
@@ -52,15 +52,15 @@ Window {
                 onTriggered: debugLog.clear()
             }
 
-            MenuItem {
-                text: "Stay on top"
-                onTriggered: root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-            }
+            // MenuItem {
+            //     text: "Stay on top"
+            //     onTriggered: root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+            // }
 
-            MenuItem {
-                text: "Not stay on top"
-                onTriggered: root.flags = Qt.FramelessWindowHint
-            }
+            // MenuItem {
+            //     text: "Not stay on top"
+            //     onTriggered: root.flags = Qt.FramelessWindowHint
+            // }
         }
     }
 }
