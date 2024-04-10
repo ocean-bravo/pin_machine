@@ -31,6 +31,13 @@ Control {
     }
 
     function appendLog(message, color) {
+        // Подготовил к показу
+        message = String(message) // так, на всякий скопировал
+
+        message = message.replace(/</g, '|')
+        message = message.replace(/>/g, '|')
+        message = message.replace(/\r?\n/g, '<br>')
+
         machineLog.append(coloredMessage(message, color))
     }
 

@@ -51,16 +51,11 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-            let message = parseSerialMessage(msg)
+            let completeMessage = parseSerialMessage(msg)
 
-            if (message.length > 0) {
-                // Подготовил к показу
-                message = message.replace(/</g, '|')
-                message = message.replace(/>/g, '|')
-                message = message.replace(/\r?\n/g, '<br>')
-
-                superUser.appendToLog(message, 'darkblue')
-                operatorUser.appendLog(message, 'darkblue')
+            if (completeMessage.length > 0) {
+                superUser.appendToLog(completeMessage, 'darkblue')
+                operatorUser.appendLog(completeMessage, 'darkblue')
             }
         }
     }
