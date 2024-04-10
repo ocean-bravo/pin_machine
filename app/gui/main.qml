@@ -66,9 +66,9 @@ ColumnLayout {
     function parseSerialMessage(msg) {
 
         let m1 = String(msg)
-        m1 = m1.replace(/\r?\n/g, '<br>')
         m1 = m1.replace(/</g, '|')
         m1 = m1.replace(/>/g, '|')
+        m1 = m1.replace(/\r?\n/g, '<br>')
         console.log("m1: ", m1)
 
 
