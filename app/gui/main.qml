@@ -90,6 +90,12 @@ ColumnLayout {
             return msg
         }
 
+        // Сообщение из одного ok\r\n выбрасываю
+        if (msg === "ok\r\n") {
+            prevMsg = ""
+            return ""
+        }
+
         // Дальше всё, что не статус
         msg = String(prevMsg + msg)
 
