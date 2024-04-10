@@ -64,6 +64,25 @@ ColumnLayout {
     property string prevMsg: ""
 
     function parseSerialMessage(msg) {
+
+        let m1 = String(msg)
+        m1 = m1.replace(/\r?\n/g, '<br>')
+        m1 = m1.replace(/</g, '|')
+        m1 = m1.replace(/>/g, '|')
+        console.log("m1: ", m1)
+
+
+        return
+
+
+        // console.log("message ok")
+
+        // console.log("-----", msg.length)
+        // console.log(msg)
+        // console.log("^^^^^")
+
+
+
         msg = prevMsg + msg
 
         // console.log("-----", msg.length)
