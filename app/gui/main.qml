@@ -109,6 +109,15 @@ ColumnLayout {
 
         msg = lines.join('\n')
 
+        if (1) {
+            let m3 = String(msg)
+            m3 = m3.replace(/</g, '|')
+            m3 = m3.replace(/>/g, '|')
+            m3 = m3.replace(/\r?\n/g, '<br>')
+            console.log("m3: ", m3)
+        }
+
+
         if (msg.match(/^[<].+[>]$/)) {
             parseStatus(msg)
         }
