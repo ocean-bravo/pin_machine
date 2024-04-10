@@ -182,6 +182,8 @@ ColumnLayout {
     function parseGpio(msg) {
         let lines = msg.split(/\r?\n/)
 
+        let pins = []
+
         while (lines.length > 0) {
             let line = lines.shift()
 
@@ -189,12 +191,14 @@ ColumnLayout {
 
             let number = pinInfo[0]
 
+            // Дальше идет раздел Input Matrix. Он не нужен
             if (number === "Input")
                 break
 
             let name = pinInfo[1]
             let dirVal = pinInfo[2]
 
+            // Для пина нет информации о выходе или выходе
             if (dirVal === undefined)
                 continue
 
@@ -203,12 +207,12 @@ ColumnLayout {
             if (dirVal === 'O0') { dir = 'output'; value = '0' }
             if (dirVal === 'O1') { dir = 'output'; value = '1' }
 
-            console.log(number, name, dir, value)
+            let pin = [number, name, dir, value].join(' ')
+
+            pins.push(pin)
         }
 
-
-
-        //console.log(lines)
+        console.log(pins)
     }
 
     DebugLog { }
