@@ -66,37 +66,39 @@ ColumnLayout {
     function parseSerialMessage(msg) {
         msg = prevMsg + msg
 
-        console.log("-----", msg.length)
-        console.log(msg)
-        console.log("^^^^^")
+        // console.log("-----", msg.length)
+        // console.log(msg)
+        // console.log("^^^^^")
 
+        // Ищу текст "ok" окруженный переводами строк
         if (/\nok\n/.exec(msg)) {
             prevMsg = msg
             return
         }
 
-        // if (!msg.includes("\nok\n"))
-        //     return
-
         prevMsg = ""
 
-        console.log("message ok")
+        // console.log("message ok")
 
-        console.log("-----", msg.length)
-        console.log(msg)
-        console.log("^^^^^")
+        // console.log("-----", msg.length)
+        // console.log(msg)
+        // console.log("^^^^^")
 
-        return
+
 
         var messages = msg.split(/\r?\n/)
 
-        // Если последняя стрка пустая - значит сообщение закончилось переводом строки.
+        // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
         // pop() модифицирует массив
-        var last = messages.pop()
-        // Если последняя стрка непустая - значит сообщение не закончилось (перевода строки не было). Сохраняем его.
-        if (last !== '') {
-            prevMsg = last
-        }
+        while (messages.pop() !== "ok");
+
+
+
+        // var last = messages.pop()
+        // // Если последняя стрка непустая - значит сообщение не закончилось (перевода строки не было). Сохраняем его.
+        // if (last !== '') {
+        //     prevMsg = last
+        // }
 
 
 
@@ -111,7 +113,7 @@ ColumnLayout {
 
 
 
-        let currentTime = String(Date.now()).slice(-4)
+        //let currentTime = String(Date.now()).slice(-4)
 
         // Нет перевода строки - копим сообщения дальше
         // if (!msg.match(/\r?\n/)) {
@@ -126,13 +128,14 @@ ColumnLayout {
         nextMessage: while (messages.length > 0) {
             msg = messages.shift()
 
-            // Не выводим ответ ok
-            if (msg === 'ok') {
-                messageFinished = true
-                continue
-            }
+            msg = msg.replace(/</g, '|')
+            msg = msg.replace(/>/g, '|')
 
-            messageFinished = false
+
+            console.log("line: ", msg )
+            continue
+
+
 
             // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
             msg = msg.replace(/</g, '|')
@@ -180,7 +183,7 @@ ColumnLayout {
             //                }
 
 
-            msg = currentTime + ": " + msg
+            //msg = currentTime + ": " + msg
             return msg
         }
     }
