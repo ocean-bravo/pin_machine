@@ -182,7 +182,21 @@ ColumnLayout {
     function parseGpio(msg) {
         let lines = msg.split(/\r?\n/)
 
-        console.log(lines)
+        while (lines.length > 0) {
+            let line = lines.shift()
+
+            let pinInfo = line.split(' ')
+
+            let number = pinInfo[0]
+            let name = pinInfo[1]
+            let dirVal = pinInfo[2]
+
+            console.log(number, name, dirVal)
+        }
+
+
+
+        //console.log(lines)
     }
 
     DebugLog { }
