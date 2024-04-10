@@ -12,6 +12,9 @@ Item {
     id: root
 
     function write(msg) {
+        if (status === "Home" && msg !== "?")
+            return
+
         Serial.write(msg + "\n")
         appendCommandsLog(msg)
     }

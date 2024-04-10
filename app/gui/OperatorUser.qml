@@ -26,6 +26,9 @@ Control {
 
 
     function write(msg) {
+        if (status === "Home" && msg !== "?")
+            return
+
         Serial.write(msg + "\n")
         appendLog(msg)
     }
