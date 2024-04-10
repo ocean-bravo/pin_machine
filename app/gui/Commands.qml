@@ -70,7 +70,7 @@ Item {
         return resMjpg.concat(resYuyv)
     }
 
-    Connections { target: Serial;            function onMessage(msg) { appendLog(msg + '<br>', 'lightgrey') } }
+    Connections { target: Serial;            function onMessage(msg) { appendCommandsLog(msg + '<br>', 'lightgrey') } }
     Connections { target: TaskScan;          function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskUpdate;        function onMessage(msg) { appendLog(msg + '<br>') } }
     Connections { target: TaskCheckCamera;   function onMessage(msg) { appendLog(msg + '<br>') } }
