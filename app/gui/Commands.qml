@@ -23,6 +23,7 @@ Item {
     }
 
     function appendLog(message, color) {
+        console.log(" color ", color)
         logViewer.append(coloredMessage(message, color))
     }
 

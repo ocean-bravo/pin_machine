@@ -36,15 +36,13 @@ ColumnLayout {
         Layout.fillWidth: true
     }
 
-
-
     function coloredMessage(message, color) {
         if (color === undefined)
             color = 'red'
 
-        let msg = message.split('').join('') // Копирую строку фактически
-        msg = msg.replace(/\r?\n/g, '<br>')
-        msg = String(Date.now()).slice(-4) + ": " + msg
+        let msg = String(message) // Копирую строку фактически
+        // msg = msg.replace(/\r?\n/g, '<br>')
+        // msg = String(Date.now()).slice(-4) + ": " + msg
         msg = "<font color=" + color + ">" + msg + "</font>"
         return msg
     }
