@@ -110,11 +110,11 @@ ColumnLayout {
         msg = lines.join('\n')
 
         if (msg.match(/^[<].+[>]$/)) {
-            parseStatus()
+            parseStatus(msg)
         }
 
         if (msg.match(/Input Matrix/g)) {
-            parseGpio()
+            parseGpio(msg)
         }
 
 
