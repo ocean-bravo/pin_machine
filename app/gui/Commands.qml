@@ -13,7 +13,7 @@ Item {
 
     function write(msg) {
         Serial.write(msg + "\n")
-        appendLog(msg)
+        appendCommandsLog(msg)
     }
 
     function jog(axis, mm, feed) {
@@ -22,7 +22,7 @@ Item {
         write("$J=G91 " + axis + mm + " F" + feed)
     }
 
-    function appendLog(message, color) {
+    function appendCommandsLog(message, color) {
         console.log(" color ", color)
 
         // Подготовил к показу

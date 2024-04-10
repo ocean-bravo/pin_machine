@@ -13,8 +13,8 @@ Control {
     // y: 0
     // flags: Qt.Desktop//Qt.Window
 
-    function appendToLog(msg) {
-        commands.appendLog(msg)
+    function appendToCommandsLog(msg, color) {
+        commands.appendCommandsLog(msg, color)
     }
 
     Commands {

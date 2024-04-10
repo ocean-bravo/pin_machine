@@ -54,7 +54,7 @@ ColumnLayout {
             let completeMessage = parseSerialMessage(msg)
 
             if (completeMessage.length > 0) {
-                superUser.appendToLog(completeMessage, 'darkblue')
+                superUser.appendToCommandsLog(completeMessage, 'darkblue')
                 operatorUser.appendLog(completeMessage, 'darkblue')
             }
         }
