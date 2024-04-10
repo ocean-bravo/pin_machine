@@ -109,7 +109,7 @@ ColumnLayout {
 
         msg = lines.join('\n')
 
-        if (1) {
+        if (0) {
             let m3 = String(msg)
             m3 = m3.replace(/</g, '|')
             m3 = m3.replace(/>/g, '|')
@@ -155,6 +155,15 @@ ColumnLayout {
     }
 
     function parseStatus(msg) {
+        if (1) {
+            let m3 = String(msg)
+            m3 = m3.replace(/</g, '|')
+            m3 = m3.replace(/>/g, '|')
+            m3 = m3.replace(/\r?\n/g, '<br>')
+            console.log("parseStatus: ", m3)
+        }
+
+
         msg = msg.replace('/</g', '')
         msg = msg.replace('/>/g', '')
         let statusValues = msg.split("|")
@@ -181,7 +190,7 @@ ColumnLayout {
     }
 
     function parseGpio(msg) {
-
+        console.log("parse GPIO")
     }
 
 
