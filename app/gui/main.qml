@@ -91,7 +91,7 @@ ColumnLayout {
         }
 
         // Сообщение из одного ok\r\n выбрасываю
-        if (msg === "ok\r\n") {
+        if (msg.match(/^ok\r\n$/)) {
             prevMsg = ""
             return ""
         }
