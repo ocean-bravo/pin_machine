@@ -64,10 +64,10 @@ ColumnLayout {
     property string prevMsg: ""
 
 
-    // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял
+    // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
     function parseSerialMessage(msg) {
 
-        if (1) {
+        if (0) {
             let m1 = String(msg)
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
@@ -77,18 +77,7 @@ ColumnLayout {
             console.log("m1: ", m1)
         }
 
-
-        // console.log("message ok")
-
-        // console.log("-----", msg.length)
-        // console.log(msg)
-        // console.log("^^^^^")
-
         msg = String(prevMsg + msg)
-
-        // console.log("-----", msg.length)
-        // console.log(msg)
-        // console.log("^^^^^")
 
         // Ищу текст "ok" окруженный переводами строк
         let found = msg.match(/\r?\nok\r?\n/g)
@@ -99,17 +88,13 @@ ColumnLayout {
 
         prevMsg = ""
 
-        if (1) {
+        if (0) {
             let m2 = String(msg)
             m2 = m2.replace(/</g, '|')
             m2 = m2.replace(/>/g, '|')
             m2 = m2.replace(/\r?\n/g, '<br>')
             console.log("m2: ", m2)
         }
-
-        return
-
-
 
         var messages = msg.split(/\r?\n/)
 
@@ -126,11 +111,8 @@ ColumnLayout {
         // }
 
 
-
-
-
-        msg = msg.replace(/</g, '|')
-        msg = msg.replace(/>/g, '|')
+        // msg = msg.replace(/</g, '|')
+        // msg = msg.replace(/>/g, '|')
 
 
 
@@ -147,6 +129,7 @@ ColumnLayout {
         // }
 
 
+        console.log("messages count " , messages.length)
 
 
 
