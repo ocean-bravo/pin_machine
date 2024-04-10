@@ -169,14 +169,10 @@ ColumnLayout {
             console.log("parseStatus: ", m3)
         }
 
-
         let statusValues = msg.split("|")
 
-        console.log(" satu s ", statusValues[0], statusValues[1], statusValues[2])
-        return
-
-        status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
-        let position = statusValues[2] // третий элемент - позиция
+        status = statusValues[0]
+        let position = statusValues[1] // второй элемент - позиция
         let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
         DataBus.x_coord = pos[0]
         DataBus.y_coord = pos[1]
