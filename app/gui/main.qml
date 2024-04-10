@@ -65,14 +65,13 @@ ColumnLayout {
 
     function parseSerialMessage(msg) {
 
-        let m1 = String(msg)
-        m1 = m1.replace(/</g, '|')
-        m1 = m1.replace(/>/g, '|')
-        m1 = m1.replace(/\r?\n/g, '<br>')
-        console.log("m1: ", m1)
-
-
-        return
+        if (0) {
+            let m1 = String(msg)
+            m1 = m1.replace(/</g, '|')
+            m1 = m1.replace(/>/g, '|')
+            m1 = m1.replace(/\r?\n/g, '<br>')
+            console.log("m1: ", m1)
+        }
 
 
         // console.log("message ok")
@@ -81,9 +80,7 @@ ColumnLayout {
         // console.log(msg)
         // console.log("^^^^^")
 
-
-
-        msg = prevMsg + msg
+        msg = String(prevMsg + msg)
 
         // console.log("-----", msg.length)
         // console.log(msg)
@@ -91,17 +88,21 @@ ColumnLayout {
 
         // Ищу текст "ok" окруженный переводами строк
         if (/\nok\n/.exec(msg)) {
-            prevMsg = msg
+            prevMsg = String(msg)
             return
         }
 
         prevMsg = ""
 
-        // console.log("message ok")
+        if (0) {
+            let m2 = String(msg)
+            m2 = m2.replace(/</g, '|')
+            m2 = m2.replace(/>/g, '|')
+            m2 = m2.replace(/\r?\n/g, '<br>')
+            console.log("m2: ", m2)
+        }
 
-        // console.log("-----", msg.length)
-        // console.log(msg)
-        // console.log("^^^^^")
+        return
 
 
 
