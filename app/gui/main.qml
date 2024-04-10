@@ -87,7 +87,8 @@ ColumnLayout {
         // console.log("^^^^^")
 
         // Ищу текст "ok" окруженный переводами строк
-        if (!/\nok\n/.exec(msg)) {
+        let match = /\nok\n/.exec(msg)
+        if (!match) {
             prevMsg = String(msg)
             return
         }
