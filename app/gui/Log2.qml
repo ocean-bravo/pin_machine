@@ -112,42 +112,41 @@ Loader {
             }
 
             MouseArea {
-                    id: selectionArea
-                    property int selStartIndex
-                    property int selEndIndex
-                    property int selStartPos
-                    property int selEndPos
+                id: selectionArea
+                property int selStartIndex
+                property int selEndIndex
+                property int selStartPos
+                property int selEndPos
 
-                    signal selectionChanged
+                signal selectionChanged
 
-                    anchors.fill: root
-                    //enabled: true//!scrollBar.hovered
-                    enabled: loader.selectionEnabled
-                    cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
-                    acceptedButtons: Qt.LeftButton
+                anchors.fill: root
+                enabled: !scrollBar.hovered && loader.selectionEnabled
+                //enabled: loader.selectionEnabled
+                cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
+                acceptedButtons: Qt.LeftButton
 
-                    function indexAndPos(x, y) {
-                        const index = root.indexAtRelative(x, y);
-                        if (index === -1)
-                            return;
-                        const item = root.itemAtIndex(index);
-                        const relItemY = item.y - root.contentY;
-                        const pos = item.positionAt(x, y - relItemY);
+                function indexAndPos(x, y) {
+                    const index = root.indexAtRelative(x, y);
+                    if (index === -1)
+                        return;
+                    const item = root.itemAtIndex(index);
+                    const relItemY = item.y - root.contentY;
+                    const pos = item.positionAt(x, y - relItemY);
 
-                        return [index, pos];
-                    }
-
-                    onPressed: {
-                        [selStartIndex, selStartPos] = indexAndPos(mouse.x, mouse.y);
-                        selectionChanged();
-                    }
-
-                    onPositionChanged: {
-                        [selEndIndex, selEndPos] = indexAndPos(mouse.x, mouse.y);
-                        selectionChanged();
-                    }
+                    return [index, pos];
                 }
 
+                onPressed: {
+                    [selStartIndex, selStartPos] = indexAndPos(mouse.x, mouse.y);
+                    selectionChanged();
+                }
+
+                onPositionChanged: {
+                    [selEndIndex, selEndPos] = indexAndPos(mouse.x, mouse.y);
+                    selectionChanged();
+                }
+            }
         }
     }
     Component.onCompleted: {
