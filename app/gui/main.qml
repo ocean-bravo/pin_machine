@@ -150,7 +150,7 @@ ColumnLayout {
         msg = msg.replace('/>/g', '')
         let statusValues = msg.split("|")
 
-        console.log(" satu s ", statusValues)
+        console.log(" satu s ", statusValues[0], statusValues[1], statusValues[2])
         return
 
         status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
