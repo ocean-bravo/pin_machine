@@ -195,7 +195,7 @@ ColumnLayout {
             let name = pinInfo[1]
             let dirVal = pinInfo[2]
 
-            if (dirVal === 'I0') { let dir = 'input'; let value = '0' }
+            if (dirVal === 'I0') { var dir = 'input'; var value = '0' }
             if (dirVal === 'I1') { dir = 'input'; value = '1' }
             if (dirVal === 'O0') { dir = 'output'; value = '0' }
             if (dirVal === 'O1') { dir = 'output'; value = '1' }
