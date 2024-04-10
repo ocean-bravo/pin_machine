@@ -27,8 +27,6 @@ Item {
     }
 
     function appendCommandsLog(message, color) {
-        console.log(" color ", color)
-
         // Подготовил к показу
         message = String(message) // так, на всякий скопировал
 

@@ -45,7 +45,7 @@ Loader {
 
             model: listModel
 
-            property bool snap
+            property bool snap: true
 
             clip: true
 

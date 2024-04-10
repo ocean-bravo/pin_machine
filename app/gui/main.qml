@@ -121,10 +121,6 @@ ColumnLayout {
 
         var lines = msg.split(/\r?\n/)
 
-        // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-        // line = line.replace(/</g, '|')
-        // line = line.replace(/>/g, '|')
-
         // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
         // pop() модифицирует массив
         while (lines.pop() !== "ok");
@@ -151,10 +147,11 @@ ColumnLayout {
     }
 
     function parseStatus(msg) {
+        // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
         msg = msg.replace(/</g, '')
         msg = msg.replace(/>/g, '')
 
-        if (1) {
+        if (0) {
             let m3 = String(msg)
             m3 = m3.replace(/</g, '|')
             m3 = m3.replace(/>/g, '|')
@@ -183,7 +180,9 @@ ColumnLayout {
     }
 
     function parseGpio(msg) {
-        console.log("parse GPIO")
+        let lines = msg.split(/\r?\n/)
+
+        console.log(lines)
     }
 
     DebugLog { }
