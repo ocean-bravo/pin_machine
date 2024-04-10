@@ -53,17 +53,23 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-            msg = parseSerialMessage(msg)
-            // superUser.appendToLog(msg, 'darkblue')
-            // operatorUser.appendLog(msg, 'darkblue')
+            let message = parseSerialMessage(msg)
+
+            if (message.length > 0) {
+                // Подготовил к показу
+                message = message.replace(/</g, '|')
+                message = message.replace(/>/g, '|')
+                message = message.replace(/\r?\n/g, '<br>')
+
+                superUser.appendToLog(message, 'darkblue')
+                operatorUser.appendLog(message, 'darkblue')
+            }
         }
     }
 
     property bool messageFinished: false
 
     property string prevMsg: ""
-
-
 
     // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
     function parseSerialMessage(msg) {
@@ -84,7 +90,7 @@ ColumnLayout {
         let found = msg.match(/\r?\nok\r?\n/g)
         if (!found) {
             prevMsg = String(msg)
-            return
+            return ""
         }
 
         prevMsg = ""
@@ -117,7 +123,6 @@ ColumnLayout {
             console.log("m3: ", m3)
         }
 
-
         if (msg.match(/^[<].+[>]$/)) {
             parseStatus(msg)
         }
@@ -126,37 +131,14 @@ ColumnLayout {
             parseGpio(msg)
         }
 
+        if (0) {
+            parseAlarms(msg)
+        }
 
-
-            //                for (let k = 0; k < modes.length; ++k) {
-            //                    let stat = modes[k]
-            //                    if (msg.includes(stat)) {
-            //                        status = stat
-            //                        fullStatus = msg
-            //                        //continue nextMessage
-            //                    }
-            //                }
-
-            //            for (let i = 1; i < 11; ++i) {
-            //                let alrm = "ALARM:" + i
-            //                if (msg.includes(alrm))
-            //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
-            //            }
-            //                for (let j = 1; j < 100; ++j) {
-            //                    let err = "error:" + j
-            //                    if (msg.includes(err))
-            //                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
-            //                }
-
-
-            //msg = currentTime + ": " + msg
         return msg
-
     }
 
     function parseStatus(msg) {
-
-
 
         msg = msg.replace(/</g, '')
         msg = msg.replace(/>/g, '')
@@ -192,7 +174,6 @@ ColumnLayout {
     function parseGpio(msg) {
         console.log("parse GPIO")
     }
-
 
     DebugLog { }
 
@@ -364,5 +345,29 @@ ColumnLayout {
                 destroy();
             }
         }
+    }
+
+    function parseAlarms(msg) {
+        console.log("parse Alarms")
+
+        //                for (let k = 0; k < modes.length; ++k) {
+        //                    let stat = modes[k]
+        //                    if (msg.includes(stat)) {
+        //                        status = stat
+        //                        fullStatus = msg
+        //                        //continue nextMessage
+        //                    }
+        //                }
+
+        //            for (let i = 1; i < 11; ++i) {
+        //                let alrm = "ALARM:" + i
+        //                if (msg.includes(alrm))
+        //                    msg = msg.replace(new RegExp(alrm,'g'), alrm +  ' [' + alarms[i] + ']')
+        //            }
+        //                for (let j = 1; j < 100; ++j) {
+        //                    let err = "error:" + j
+        //                    if (msg.includes(err))
+        //                        msg = msg.replace(new RegExp(err,'g'), err +  ' [' + errors[j] + ']')
+        //                }
     }
 }
