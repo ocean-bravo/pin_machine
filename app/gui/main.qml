@@ -63,15 +63,17 @@ ColumnLayout {
 
     property string prevMsg: ""
 
+
+    // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял
     function parseSerialMessage(msg) {
 
         if (1) {
             let m1 = String(msg)
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
-            m1 = m1.replace(/\r?\n/g, '<br>')
-            // m1 = m1.replace(/\r/g, 'RRRRRR<br>')
-            // m1 = m1.replace(/\n/g, 'NNNNNN<br>')
+            //m1 = m1.replace(/\r?\n/g, '<br>')
+             m1 = m1.replace(/\r/g, 'RRRRRR<br>')
+             m1 = m1.replace(/\n/g, 'NNNNNN<br>')
             console.log("m1: ", m1)
         }
 
