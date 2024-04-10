@@ -94,7 +94,7 @@ ColumnLayout {
 
         prevMsg = ""
 
-        if (0) {
+        if (1) {
             let m2 = String(msg)
             m2 = m2.replace(/</g, '|')
             m2 = m2.replace(/>/g, '|')
