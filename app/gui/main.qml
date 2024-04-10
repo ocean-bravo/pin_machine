@@ -80,7 +80,11 @@ ColumnLayout {
         }
 
         // Буду считать, что статус ограничен символами < и >. И эти символы только в статусе.
+        // ok в конце может быть, а может и не быть
         if (msg.match(/[<].+[>]/)) {
+            let lines = msg.split(/\r\n/)
+            msg = lines[0]
+
             parseStatus(msg)
             prevMsg = ""
             return msg
