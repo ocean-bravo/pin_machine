@@ -25,6 +25,8 @@ Loader {
         item.model.clear()
     }
 
+    property bool selectionEnabled: false
+
     Component {
         id: comp
 
@@ -51,7 +53,8 @@ Loader {
                 }
             }
 
-            delegate: SmText {
+            delegate: TextArea {
+                id: delegateRoot
                 padding: 0
                 width: ListView.view.width
                 //height: 18
@@ -61,6 +64,29 @@ Loader {
                 textFormat: TextEdit.RichText
                 wrapMode: Text.WordWrap
                 text: val
+
+                Connections {
+                    target: selectionArea
+                    function onSelectionChanged() {
+                        updateSelection();
+                    }
+                }
+
+                Component.onCompleted: updateSelection()
+
+                function updateSelection() {
+                    if (index < selectionArea.selStartIndex || index > selectionArea.selEndIndex)
+                        delegateRoot.select(0, 0);
+                    else if (index > selectionArea.selStartIndex && index < selectionArea.selEndIndex)
+                        delegateRoot.selectAll();
+                    else if (index === selectionArea.selStartIndex && index === selectionArea.selEndIndex)
+                        delegateRoot.select(selectionArea.selStartPos, selectionArea.selEndPos);
+                    else if (index === selectionArea.selStartIndex)
+                        delegateRoot.select(selectionArea.selStartPos, delegateRoot.length);
+                    else if (index === selectionArea.selEndIndex)
+                        delegateRoot.select(0, selectionArea.selEndPos);
+                }
+
             }
 
             onAtYEndChanged: {
@@ -80,6 +106,48 @@ Loader {
                 policy: ScrollBar.AlwaysOn
                 minimumSize: 0.1
             }
+
+            function indexAtRelative(x, y) {
+                return indexAt(x + contentX, y + contentY)
+            }
+
+            MouseArea {
+                    id: selectionArea
+                    property int selStartIndex
+                    property int selEndIndex
+                    property int selStartPos
+                    property int selEndPos
+
+                    signal selectionChanged
+
+                    anchors.fill: root
+                    //enabled: true//!scrollBar.hovered
+                    enabled: loader.selectionEnabled
+                    cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
+                    acceptedButtons: Qt.LeftButton
+
+                    function indexAndPos(x, y) {
+                        const index = root.indexAtRelative(x, y);
+                        if (index === -1)
+                            return;
+                        const item = root.itemAtIndex(index);
+                        const relItemY = item.y - root.contentY;
+                        const pos = item.positionAt(x, y - relItemY);
+
+                        return [index, pos];
+                    }
+
+                    onPressed: {
+                        [selStartIndex, selStartPos] = indexAndPos(mouse.x, mouse.y);
+                        selectionChanged();
+                    }
+
+                    onPositionChanged: {
+                        [selEndIndex, selEndPos] = indexAndPos(mouse.x, mouse.y);
+                        selectionChanged();
+                    }
+                }
+
         }
     }
     Component.onCompleted: {

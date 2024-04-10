@@ -20,6 +20,7 @@ Window {
         id: debugLog
         anchors.fill: parent
         loadOnCompleted: true
+        selectionEnabled: true
         Connections { target: Logger; function onNewMessage(message) { debugLog.append(message); } }
     }
 
