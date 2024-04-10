@@ -31,7 +31,6 @@ ColumnLayout {
     SuperUser {
         id: superUser
 
-
         Layout.fillHeight: true
         Layout.fillWidth: true
     }
@@ -69,7 +68,7 @@ ColumnLayout {
     // Статус всегда помещается в одно сообщение (пока).
     function parseSerialMessage(msg) {
 
-        if (1) {
+        if (0) {
             let m1 = String(msg)
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
@@ -99,7 +98,6 @@ ColumnLayout {
         // Если во время хоуминга накидывать многострочные команды вроде GPIO/Dump, то после окончания хоуминга
         // все эти комнды придут, вместе с ok\r\n вперемешку.
         // Т.е. в одном сообщении может быть окончание предыдущей команды, куча ok\r\n (ответов на статус) и начало ответа на след команду.
-
 
         // Дальше всё, что не статус
         msg = String(prevMsg + msg)

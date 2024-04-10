@@ -16,16 +16,8 @@ Control {
         color: colors.primary_10
     }
 
-    property bool guiDebug: false
-    // visible: true
-    // width: Screen.width
-    // height: Screen.height
-    // x: 0
-    // y: 0
-    // flags: Qt.Popup//Qt.Window
-
-
     function write(msg) {
+        // Во время хоуминга разрешаю только команду запроса статуса
         if (status === "Home" && msg !== "?")
             return
 
@@ -43,13 +35,6 @@ Control {
 
         machineLog.append(coloredMessage(message, color))
     }
-
-    //color: "transparent" //colors.primary_10
-
-    // function write(msg) {
-    //     Serial.write(msg+"\n")
-    // }
-
 
     function sortResolutions(resolutions) {
         if (resolutions === undefined)

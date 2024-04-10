@@ -12,6 +12,7 @@ Item {
     id: root
 
     function write(msg) {
+        // Во время хоуминга разрешаю только команду запроса статуса
         if (status === "Home" && msg !== "?")
             return
 
