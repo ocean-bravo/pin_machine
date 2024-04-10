@@ -64,6 +64,7 @@ ColumnLayout {
     property string prevMsg: ""
 
 
+
     // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
     function parseSerialMessage(msg) {
 
@@ -72,8 +73,8 @@ ColumnLayout {
             m1 = m1.replace(/</g, '|')
             m1 = m1.replace(/>/g, '|')
             //m1 = m1.replace(/\r?\n/g, '<br>')
-             m1 = m1.replace(/\r/g, 'RRRRRR<br>')
-             m1 = m1.replace(/\n/g, 'NNNNNN<br>')
+            m1 = m1.replace(/\r/g, 'RRRRRR<br>')
+            m1 = m1.replace(/\n/g, 'NNNNNN<br>')
             console.log("m1: ", m1)
         }
 
@@ -96,79 +97,27 @@ ColumnLayout {
             console.log("m2: ", m2)
         }
 
-        var messages = msg.split(/\r?\n/)
+        var lines = msg.split(/\r?\n/)
+
+        // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
+        // line = line.replace(/</g, '|')
+        // line = line.replace(/>/g, '|')
 
         // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
         // pop() модифицирует массив
-        while (messages.pop() !== "ok");
+        while (lines.pop() !== "ok");
+
+        msg = lines.join('\n')
+
+        if (msg.match(/^[<].+[>]$/)) {
+            parseStatus()
+        }
+
+        if (msg.match(/Input Matrix/g)) {
+            parseGpio()
+        }
 
 
-
-        // var last = messages.pop()
-        // // Если последняя стрка непустая - значит сообщение не закончилось (перевода строки не было). Сохраняем его.
-        // if (last !== '') {
-        //     prevMsg = last
-        // }
-
-
-        // msg = msg.replace(/</g, '|')
-        // msg = msg.replace(/>/g, '|')
-
-
-
-        //msg = msg.replace(/\r?\n/g, '<br>')
-
-
-
-        //let currentTime = String(Date.now()).slice(-4)
-
-        // Нет перевода строки - копим сообщения дальше
-        // if (!msg.match(/\r?\n/)) {
-        //     prevMsg = msg
-        //     return
-        // }
-
-
-        console.log("messages count " , messages.length)
-
-
-
-        nextMessage: while (messages.length > 0) {
-            msg = messages.shift()
-
-            msg = msg.replace(/</g, '|')
-            msg = msg.replace(/>/g, '|')
-
-
-            console.log("line: ", msg )
-            continue
-
-
-
-            // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
-            msg = msg.replace(/</g, '|')
-            msg = msg.replace(/>/g, '|')
-
-            // Если это статус - разделить его на части
-            if (msg.match(/^[|].+[|]$/)) {
-                let statusValues = msg.split("|")
-                status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
-                let position = statusValues[2] // третий элемент - позиция
-                let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
-                DataBus.x_coord = pos[0]
-                DataBus.y_coord = pos[1]
-                DataBus.z_coord = pos[2]
-                DataBus.status = status // Позиция этого присваивания влияет на другой код, хреново
-                fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
-
-                xPos = parseFloat(pos[0])
-                yPos = parseFloat(pos[1])
-                zPos = parseFloat(pos[2])
-
-                DataBus.xPos = xPos
-                DataBus.yPos = yPos
-                DataBus.zPos = zPos
-            }
 
             //                for (let k = 0; k < modes.length; ++k) {
             //                    let stat = modes[k]
@@ -192,8 +141,38 @@ ColumnLayout {
 
 
             //msg = currentTime + ": " + msg
-            return msg
-        }
+        return msg
+
+    }
+
+    function parseStatus(msg) {
+        msg = msg.replace('/</g', '')
+        msg = msg.replace('/>/g', '')
+        let statusValues = msg.split("|")
+
+        console.log(" satu s ", statusValues)
+        return
+
+        status = statusValues[1] // первый элемент будет пустой. Второй как раз статус
+        let position = statusValues[2] // третий элемент - позиция
+        let pos = position.split(":")[1].split(",") // Позиция выглядит так: MPos:0.000,121.250,0.000
+        DataBus.x_coord = pos[0]
+        DataBus.y_coord = pos[1]
+        DataBus.z_coord = pos[2]
+        DataBus.status = status // Позиция этого присваивания влияет на другой код, хреново
+        fullStatus = DataBus.x_coord + " " + DataBus.y_coord + " " + DataBus.z_coord
+
+        xPos = parseFloat(pos[0])
+        yPos = parseFloat(pos[1])
+        zPos = parseFloat(pos[2])
+
+        DataBus.xPos = xPos
+        DataBus.yPos = yPos
+        DataBus.zPos = zPos
+    }
+
+    function parseGpio(msg) {
+
     }
 
 
