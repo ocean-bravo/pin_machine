@@ -37,10 +37,10 @@ CollapsiblePanel2 {
         color: {
             if (modelData.dir === 'input') return "green"
             if (modelData.dir === 'output') return "red"
-            return "#80808080"
+            return "#60808080"
         }
         opacity: {
-            if (modelData.value === '0') return 0.3
+            if (modelData.value === '0') return 0.25
             return 1.0
         }
     }
@@ -50,7 +50,6 @@ CollapsiblePanel2 {
         height: 10
         font.pixelSize: 10
         text: modelData.number === undefined ? "" : modelData.number
-
     }
 
     ColumnLayout {
