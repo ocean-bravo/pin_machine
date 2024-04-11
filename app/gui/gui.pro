@@ -2,7 +2,6 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
-    PanelGpio.qml
 
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \
