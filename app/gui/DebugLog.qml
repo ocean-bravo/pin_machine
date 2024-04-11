@@ -16,12 +16,57 @@ Window {
     x: Screen.width - width
     y: Screen.height - height
 
-    Log2 {
-        id: debugLog
+    RowLayout {
         anchors.fill: parent
-        loadOnCompleted: true
-        selectionEnabled: true
-        Connections { target: Logger; function onNewMessage(message) { debugLog.append(message); } }
+
+        MouseArea {
+            id: leftEdgeWindowResizeMouseArea
+            onEntered: cursorShape = Qt.SizeHorCursor
+            onExited: cursorShape = Qt.ArrowCursor
+            onPressed: startSystemResize(Qt.LeftEdge)
+            acceptedButtons: Qt.LeftButton
+            hoverEnabled: true
+
+            Layout.preferredWidth: 5
+            Layout.fillHeight: true
+        }
+
+        Log2 {
+            id: debugLog
+            loadOnCompleted: true
+            selectionEnabled: true
+            Connections { target: Logger; function onNewMessage(message) { debugLog.append(message); } }
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+        MouseArea {
+            anchors.fill: debugLog
+            acceptedButtons: Qt.RightButton
+
+            onClicked: contextMenu.popup()
+
+            onPressAndHold: {
+                if (mouse.source === Qt.MouseEventNotSynthesized)
+                    contextMenu.popup()
+            }
+
+            Menu {
+                id: contextMenu
+                MenuItem {
+                    text: "Clear"
+                    onTriggered: debugLog.clear()
+                }
+
+                MenuItem {
+                    text: "Ignore"
+                    enabled: debugLog.selectedText.length > 0
+                    onTriggered: {
+                        mb.show()
+                    }
+                }
+            }
+        }
     }
 
     Shortcut {
@@ -34,43 +79,9 @@ Window {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.RightButton
-        onClicked: {
-            contextMenu.popup()
-        }
-        onPressAndHold: {
-            if (mouse.source === Qt.MouseEventNotSynthesized)
-                contextMenu.popup()
-        }
-
-        Menu {
-            id: contextMenu
-            MenuItem {
-                text: "Clear"
-                onTriggered: debugLog.clear()
-            }
-
-            MenuItem {
-                text: "Ignore"
-                enabled: debugLog.selectedText.length > 0
-                onTriggered: {
-                    mb.show()
-                }
-            }
-
-            // MenuItem {
-            //     text: "Not stay on top"
-            //     onTriggered: root.flags = Qt.FramelessWindowHint
-            // }
-        }
-    }
-
     SmallMessageBox {
         id: mb
     }
-
 
     component SmallMessageBox : MessageBoxLoader {
         width: 400
