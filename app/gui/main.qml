@@ -137,6 +137,7 @@ ColumnLayout {
 
         if (msg.match(/Input Matrix/g)) {
             parseGpio(msg)
+            return ""
         }
 
         if (0) {

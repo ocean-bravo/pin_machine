@@ -37,10 +37,10 @@ CollapsiblePanel2 {
         color: {
             if (modelData.dir === 'input') return "green"
             if (modelData.dir === 'output') return "red"
-            return "lightgrey"
+            return "#80808080"
         }
         opacity: {
-            if (modelData.value === '0') return 0.2
+            if (modelData.value === '0') return 0.3
             return 1.0
         }
     }
