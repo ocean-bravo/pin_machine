@@ -12,13 +12,6 @@ CollapsiblePanel2 {
 
     text: qsTr("GPIO state")
 
-    // ToolTip {
-    //     text: "red - output, green - input"
-
-    //     delay:  1000
-    //     visible: hovered
-    // }
-
     Component.onCompleted: {
         // // Начальный прогрев значения, чтобы не сыпало ошибками
         let pins = new Array(32)
@@ -37,7 +30,7 @@ CollapsiblePanel2 {
         color: {
             if (modelData.dir === 'input') return "green"
             if (modelData.dir === 'output') return "red"
-            return "#40808080"
+            return "#20808080"
         }
         opacity: {
             if (modelData.value === '0') return 0.25
