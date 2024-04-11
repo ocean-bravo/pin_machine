@@ -41,7 +41,6 @@ CollapsiblePanel2 {
 
             SmButton {
                 text: qsTr("Status(?)")
-                tooltipText: "F5";
                 checkable: true
                 checked: true
                 onCheckedChanged: checked ? statusTimer.start() : statusTimer.stop()
@@ -53,6 +52,22 @@ CollapsiblePanel2 {
                     triggeredOnStart: true
                     running: true
                     onTriggered: Serial.write("?\n")
+                }
+            }
+
+            SmButton {
+                text: qsTr("GPIO")
+                checkable: true
+                checked: true
+                onCheckedChanged: checked ? gpioTimer.start() : gpioTimer.stop()
+
+                Timer {
+                    id: gpioTimer
+                    interval: 505 // Чтобы чуть чуть в разбежку с таймером статуса
+                    repeat: true
+                    triggeredOnStart: true
+                    running: true
+                    onTriggered: Serial.write("$GD\n")
                 }
             }
 

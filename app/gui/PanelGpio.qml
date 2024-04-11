@@ -12,9 +12,7 @@ CollapsiblePanel2 {
 
     text: qsTr("GPIO state")
 
-
     Component.onCompleted: {
-
         // // Начальный прогрев значения, чтобы не сыпало ошибками
         let pins = new Array(32)
 
@@ -51,7 +49,7 @@ CollapsiblePanel2 {
     ColumnLayout {
         id: column
         width: parent.width
-        spacing: 0
+        spacing: 2
 
         Rectangle {
             color: guiDebug ? "#4000FF00" : Qt.transparent
@@ -96,15 +94,10 @@ CollapsiblePanel2 {
             }
         }
 
-
-
-
-
-
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
+        // Item {
+        //     Layout.fillHeight: true
+        //     Layout.fillWidth: true
+        // }
 
     }
 }
