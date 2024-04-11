@@ -146,7 +146,7 @@ Loader {
                 function indexAndPos(x, y) {
                     const index = root.indexAtRelative(x, y);
                     if (index === -1)
-                        return;
+                        return [-1, -1]
                     const item = root.itemAtIndex(index);
                     const relItemY = item.y - root.contentY;
                     const pos = item.positionAt(x, y - relItemY);
@@ -156,11 +156,21 @@ Loader {
 
                 onPressed: {
                     [selStartIndex, selStartPos] = indexAndPos(mouse.x, mouse.y);
+
+                    // Пустое место пытаюсь выделить или мышь выводится за пределы окна (отрицательные значения координаты)
+                    if (selEndIndex === -1 && selEndPos === -1)
+                        return
+
                     selectionChanged();
                 }
 
                 onPositionChanged: {
                     [selEndIndex, selEndPos] = indexAndPos(mouse.x, mouse.y);
+
+                    // Пустое место пытаюсь выделить или мышь выводится за пределы окна (отрицательные значения координаты)
+                    if (selEndIndex === -1 && selEndPos === -1)
+                        return
+
                     selectionChanged();
                 }
             }
