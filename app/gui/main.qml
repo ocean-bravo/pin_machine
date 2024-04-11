@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 ColumnLayout {
     id: root
 
-    property bool guiDebug: true
+    property bool guiDebug: false
 
     property var appWin: operatorUser
 
