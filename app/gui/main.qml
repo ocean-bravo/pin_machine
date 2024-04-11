@@ -182,7 +182,10 @@ ColumnLayout {
     function parseGpio(msg) {
         let lines = msg.split(/\r?\n/)
 
-        let pins = []
+        let pins = new Array(32)
+
+        for (let i = 0; i < pins.length; ++i)
+            pins[i] = {};
 
         while (lines.length > 0) {
             let line = lines.shift()
@@ -207,12 +210,12 @@ ColumnLayout {
             if (dirVal === 'O0') { dir = 'output'; value = '0' }
             if (dirVal === 'O1') { dir = 'output'; value = '1' }
 
-            let pin = [number, name, dir, value].join(' ')
+            let pin = { number: number, name: name, dir: dir, value: value }
 
-            pins.push(pin)
+            pins[number] = pin
         }
 
-        console.log(pins)
+        DataBus.gpio = pins
     }
 
     DebugLog { }

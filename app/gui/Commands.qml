@@ -168,6 +168,7 @@ Item {
 
                 PanelStartPoint { }
                 PanelToolShift {}
+                PanelGpio {}
                 PanelDebug {}
                 PanelCameraSettings {}
                 PanelBlobDetectionSettings {}

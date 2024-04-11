@@ -34,3 +34,7 @@ function generateSteps(xMin, yMin, xMax, yMax, stepX, stepY, feed) {
 
     return cmds
 }
+
+function range(start, end) {
+  return Array.apply(0, Array(end - start + 1)).map((element, index) => index + start);
+}
