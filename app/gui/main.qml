@@ -224,7 +224,8 @@ ColumnLayout {
     OpenSerialPromise { id: openSerialPromise }
 
     Component.onCompleted: {
-        operatorUser.visible = true
+        operatorUser.visible = false
+        superUser.visible = true
         DataBus.live_preview_mode = "raw"
         openSerialPromise.runAsync()
     }
