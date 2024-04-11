@@ -18,6 +18,11 @@ Loader {
     property bool loadOnCompleted: false
 
     function append(text) {
+        for (const ignoreText of item.ignoreList) {
+            if (text.includes(ignoreText))
+                return
+        }
+
         item.model.append({"val" : text})
     }
 
@@ -25,13 +30,22 @@ Loader {
         item.model.clear()
     }
 
+    function ignoreSelected() {
+        item.ignoreList.push(selectedText)
+    }
+
     property bool selectionEnabled: false
+
+    property string selectedText
 
     Component {
         id: comp
 
         ListView {
             id: root
+
+            property var ignoreList : []
+
 
             ListModel {
                 id: listModel
@@ -70,6 +84,10 @@ Loader {
                 textFormat: TextEdit.RichText
                 wrapMode: Text.WordWrap
                 text: val
+
+                onSelectedTextChanged: {
+                    loader.selectedText = selectedText
+                }
 
                 Connections {
                     target: selectionArea

@@ -52,15 +52,38 @@ Window {
                 onTriggered: debugLog.clear()
             }
 
-            // MenuItem {
-            //     text: "Stay on top"
-            //     onTriggered: root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-            // }
+            MenuItem {
+                text: "Ignore"
+                enabled: debugLog.selectedText.length > 0
+                onTriggered: {
+                    mb.show()
+                }
+            }
 
             // MenuItem {
             //     text: "Not stay on top"
             //     onTriggered: root.flags = Qt.FramelessWindowHint
             // }
         }
+    }
+
+    SmallMessageBox {
+        id: mb
+    }
+
+
+    component SmallMessageBox : MessageBoxLoader {
+        width: 400
+        anchors.centerIn: Overlay.overlay
+        height: 200
+        hasCancelButton: true
+        text: "Ignore?\n" + debugLog.selectedText
+        onReject: hide()
+        onAccept: {
+            debugLog.ignoreSelected()
+            hide()
+        }
+
+        backgroundColor: "maroon"
     }
 }

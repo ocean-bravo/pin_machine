@@ -49,7 +49,8 @@ Loader {
             id: root
             width: loader.width
             height: loader.height
-            anchors.centerIn: Overlay.overlay
+            //parent: Overlay.overlay
+            //anchors.centerIn: Overlay.overlay
             modal: true
             closePolicy: Popup.NoAutoClose
             z: loader.z
