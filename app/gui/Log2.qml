@@ -28,6 +28,7 @@ Loader {
 
     function clear() {
         item.model.clear()
+        item.snap = true // После очистки примагничиваемся
     }
 
     function ignoreSelected() {
@@ -49,12 +50,6 @@ Loader {
 
             ListModel {
                 id: listModel
-
-                // После очистки примагничиваемся
-                onCountChanged: {
-                    if (count === 0)
-                        snap = true
-                }
             }
 
             model: listModel
@@ -77,13 +72,12 @@ Loader {
                 id: delegateRoot
                 padding: 0
                 width: ListView.view.width
-                //height: 18
-                //width: parent.width
                 font.family: "Consolas"
-                font.pixelSize: 14
+                font.pixelSize: 13
                 textFormat: TextEdit.RichText
                 wrapMode: Text.WordWrap
                 text: val
+                renderType: Text.NativeRendering // ! Текст выглядит значительно лучше
 
                 onSelectedTextChanged: {
                     loader.selectedText = selectedText
@@ -146,7 +140,6 @@ Loader {
 
                 anchors.fill: root
                 //enabled: !scrollBar.hovered && loader.selectionEnabled
-                //enabled: loader.selectionEnabled
                 cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
                 acceptedButtons: Qt.LeftButton
 
