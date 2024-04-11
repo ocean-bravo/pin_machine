@@ -86,6 +86,8 @@ CollapsiblePanel2 {
                     model: DataBus.gpio.slice(0, 15)
 
                     Column {
+                        padding: 0
+                        spacing: 10
                         PinNumber { }
                         Pin { }
                     }
