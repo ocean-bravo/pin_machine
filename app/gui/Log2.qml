@@ -140,6 +140,7 @@ Loader {
 
                 anchors.fill: root
                 //enabled: !scrollBar.hovered && loader.selectionEnabled
+                enabled: !scrollBar.hovered && loader.selectionEnabled
                 cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
                 acceptedButtons: Qt.LeftButton
 
