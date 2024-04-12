@@ -39,34 +39,37 @@ Window {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-        }
-        MouseArea {
-            anchors.fill: debugLog
-            acceptedButtons: Qt.RightButton
 
-            onClicked: contextMenu.popup()
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                z: 1 // Внутри Log2 тоже есть MouserArea. Они конфликтуют. Эта не работает. Поднял выше - работает.
 
-            onPressAndHold: {
-                if (mouse.source === Qt.MouseEventNotSynthesized)
-                    contextMenu.popup()
-            }
+                onClicked: contextMenu.popup()
 
-            Menu {
-                id: contextMenu
-                MenuItem {
-                    text: "Clear"
-                    onTriggered: debugLog.clear()
+                onPressAndHold: {
+                    if (mouse.source === Qt.MouseEventNotSynthesized)
+                        contextMenu.popup()
                 }
 
-                MenuItem {
-                    text: "Ignore"
-                    enabled: debugLog.selectedText.length > 0
-                    onTriggered: {
-                        mb.show()
+                Menu {
+                    id: contextMenu
+                    MenuItem {
+                        text: "Clear"
+                        onTriggered: debugLog.clear()
+                    }
+
+                    MenuItem {
+                        text: "Ignore"
+                        enabled: debugLog.selectedText.length > 0
+                        onTriggered: {
+                            mb.show()
+                        }
                     }
                 }
             }
         }
+
     }
 
     Shortcut {
