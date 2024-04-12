@@ -23,8 +23,9 @@ TaskPunch::TaskPunch(QObject* parent)
     , _impl(new TaskPunchPrivate)
     , _thread(new QThread)
 {
-    connect(_impl, &TaskPunchPrivate::message, this, &TaskPunch::message, Qt::QueuedConnection);
-    connect(_impl, &TaskPunchPrivate::finished, this, &TaskPunch::finished, Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::message,          this, &TaskPunch::message,          Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::finished,         this, &TaskPunch::finished,         Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::isRunningChanged, this, &TaskPunch::isRunningChanged, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -53,6 +54,40 @@ void TaskPunch::stopProgram()
     _impl->_stop = true;
 }
 
+bool TaskPunch::isRunning() const
+{
+    return _impl->_running;
+}
+
+bool TaskPunch::stepByStep() const
+{
+    return _impl->_stepByStep;
+}
+
+void TaskPunch::setStepByStep(bool state)
+{
+    if (_impl->_stepByStep == state)
+        return;
+
+    _impl->_stepByStep = state;
+    emit stepByStepChanged();
+}
+
+bool TaskPunch::noPunch() const
+{
+    return _impl->_noPunch;
+}
+
+void TaskPunch::setNoPunch(bool state)
+{
+    if (_impl->_noPunch == state)
+        return;
+
+    _impl->_noPunch = state;
+    emit noPunchChanged();
+}
+
+
 
 TaskPunchPrivate::TaskPunchPrivate()
 {
@@ -73,6 +108,10 @@ void TaskPunchPrivate::waitForNextStep()
 
 void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
 {
+    _running = true;
+    emit isRunningChanged();
+    auto running = qScopeGuard([this]{ _running = false; emit isRunningChanged(); });
+
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
     if (!_mutex.tryLock()) return;
@@ -167,8 +206,6 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
     int count  = 0;
 
-    const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
-
     QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
 
     if (blobs.isEmpty())
@@ -181,8 +218,10 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         qd() << blob->scenePos();
     }
 
+    const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
     const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
     const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
+
     for (BlobItem* blob : qAsConst(blobs))
     {
         moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
@@ -190,13 +229,17 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         waitForNextStep();
 
         if (_stop) { emit message("program interrupted"); return; }
-        for (const QString& gCode : punchCode)
+
+        if (!_noPunch)
         {
-            if (_stop) { emit message("program interrupted"); return; }
-            serial().write(gCode.toLatin1() + "\n");
-            emit message(gCode);
-            const double z = extractFromGcodeZ(gCode);
-            waitPosZ(z);
+            for (const QString& gCode : punchCode)
+            {
+                if (_stop) { emit message("program interrupted"); return; }
+                serial().write(gCode.toLatin1() + "\n");
+                emit message(gCode);
+                const double z = extractFromGcodeZ(gCode);
+                waitPosZ(z);
+            }
         }
         ++count;
     }

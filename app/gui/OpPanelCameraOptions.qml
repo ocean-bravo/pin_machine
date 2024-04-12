@@ -25,12 +25,16 @@ Control {
         CustomSwitch {
             text: qsTr("Проверка реперных отверстий перед установкой")
 
+
+
             Layout.preferredHeight: 48
             Layout.fillWidth: true
         }
 
         CustomSwitch {
             text: qsTr("Проверка всех отверстий перед установкой")
+
+
 
             Layout.preferredHeight: 48
             Layout.fillWidth: true

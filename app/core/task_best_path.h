@@ -18,7 +18,6 @@ public:
     ~TaskBestPath();
 
     Q_INVOKABLE void run(QPointF pos);
-
     Q_INVOKABLE void stopProgram();
 
     bool isRunning() const;

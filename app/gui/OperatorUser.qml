@@ -310,19 +310,44 @@ Control {
 
                                     spacing: 32
 
+
+                                    // onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
+                                    //                           : TaskPunch.stopProgram()
+                                    // function selectedResolution() {
+                                    //     return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
+                                    // }
+                                    // Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
+
+                                    // Connections { target: TaskPunch;
+                                    //     function on()
+                                    //     { punch.checked = false } }
+
                                     ToolButton {
                                         icon.source: "images/play.svg"
                                         color: colors.success_90
+                                        enabled: !TaskPunch.isRunning
+                                        onClicked: {
+                                            let punchCode = Settings.value("punch_code")
+                                            TaskPunch.run(punchCode, 800, 600, "YUYV")
+                                        }
                                     }
 
                                     ToolButton {
                                         icon.source: "images/pause.svg"
                                         color: colors.primary_50
+                                        onClicked: {
+                                            // Какая логика?
+                                            TaskPunch.pauseProgram()
+                                        }
                                     }
 
                                     ToolButton {
                                         icon.source: "images/stop.svg"
                                         color: colors.error_80
+                                        enabled: TaskPunch.isRunning
+                                        onClicked: {
+                                            TaskPunch.stopProgram()
+                                        }
                                     }
                                 }
                             }

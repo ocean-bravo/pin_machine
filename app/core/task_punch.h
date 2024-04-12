@@ -12,6 +12,9 @@ class TaskPunchPrivate;
 class TaskPunch : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool isRunning  READ isRunning NOTIFY isRunningChanged FINAL)
+    Q_PROPERTY(bool stepByStep READ stepByStep WRITE setStepByStep NOTIFY stepByStepChanged FINAL)
+    Q_PROPERTY(bool noPunch    READ noPunch    WRITE setNoPunch    NOTIFY noPunchChanged    FINAL)
 
 public:
     TaskPunch(QObject* parent = nullptr);
@@ -23,8 +26,19 @@ public:
 signals:
     void message(QString);
     void finished();
+    void isRunningChanged();
+    void stepByStepChanged();
+    void noPunchChanged();
 
 private:
+    bool isRunning() const;
+
+    bool stepByStep() const;
+    void setStepByStep(bool state);
+
+    bool noPunch() const;
+    void setNoPunch(bool state);
+
     TaskPunchPrivate* const _impl;
     QScopedPointer<QThread> _thread;
 };
@@ -40,8 +54,14 @@ public:
 public slots:
     void run(QString punchProgram, int width, int height, QString fourcc);
 
+signals:
+    void isRunningChanged();
+
 private:
     void waitForNextStep();
+
+    QAtomicInteger<bool> _stepByStep = true;
+    QAtomicInteger<bool> _noPunch = true;
 
     friend class TaskPunch;
 };

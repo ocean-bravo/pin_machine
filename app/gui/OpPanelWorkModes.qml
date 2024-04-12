@@ -25,12 +25,18 @@ Control {
         CustomSwitch {
             text: qsTr("Без установки")
 
+            checked: TaskPunch.noPunch
+            onCheckedChanged: TaskPunch.noPunch = checked
+
             Layout.preferredHeight: 48
             Layout.fillWidth: true
         }
 
         CustomSwitch {
             text: qsTr("Пошагово")
+
+            checked: TaskPunch.stepByStep
+            onCheckedChanged: TaskPunch.stepByStep = checked
 
             Layout.preferredHeight: 48
             Layout.fillWidth: true
