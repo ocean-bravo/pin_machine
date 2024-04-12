@@ -325,13 +325,22 @@ Control {
                                     ToolButton {
                                         icon.source: "images/play.svg"
                                         color: colors.success_90
-                                        enabled: !TaskPunch.isRunning && DataBus.homing_status === "Ready"
+                                        enabled: (!TaskPunch.isRunning || TaskPunch.isPaused) && DataBus.homing_status === "Ready"
                                         onClicked: {
                                             if (DataBus.homing_status !== "Ready")
                                                 return
 
-                                            let punchCode = Settings.value("punch_code")
-                                            TaskPunch.run(punchCode, 800, 600, "YUYV")
+                                            if (!TaskPunch.isRunning) {
+                                                let punchCode = Settings.value("punch_code")
+                                                TaskPunch.run(punchCode, 800, 600, "YUYV")
+                                                return
+                                            }
+
+                                            if (TaskPunch.isPaused) {
+                                                TaskPunch.isPaused = false
+                                                return
+                                            }
+
                                         }
                                     }
 
@@ -341,7 +350,7 @@ Control {
                                         enabled: TaskPunch.isRunning
                                         onClicked: {
                                             // Какая логика?
-                                            TaskPunch.pauseProgram()
+                                            TaskPunch.isPaused = true
                                         }
                                     }
 

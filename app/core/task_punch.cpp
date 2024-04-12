@@ -26,6 +26,7 @@ TaskPunch::TaskPunch(QObject* parent)
     connect(_impl, &TaskPunchPrivate::message,          this, &TaskPunch::message,          Qt::QueuedConnection);
     connect(_impl, &TaskPunchPrivate::finished,         this, &TaskPunch::finished,         Qt::QueuedConnection);
     connect(_impl, &TaskPunchPrivate::isRunningChanged, this, &TaskPunch::isRunningChanged, Qt::QueuedConnection);
+    connect(_impl, &TaskPunchPrivate::isPausedChanged,  this, &TaskPunch::isPausedChanged,  Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -87,6 +88,20 @@ void TaskPunch::setNoPunch(bool state)
     emit noPunchChanged();
 }
 
+bool TaskPunch::isPaused() const
+{
+    return _impl->_isPaused;
+}
+
+void TaskPunch::setIsPaused(bool state)
+{
+    if (_impl->_isPaused == state)
+        return;
+
+    _impl->_isPaused = state;
+    emit isPausedChanged();
+}
+
 
 
 TaskPunchPrivate::TaskPunchPrivate()
@@ -96,14 +111,34 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 void TaskPunchPrivate::waitForNextStep()
 {
-    const bool stepByStep = db().value("punch_step_by_step").toBool();
+    //const bool stepByStep = db().value("punch_step_by_step").toBool();
 
-    if (!stepByStep)
-        return;
+    if (_stepByStep)
+    {
+        _isPaused = true;
+        emit isPausedChanged();
+    }
 
-    db().insert("punch_next", "wait"); // Показать в GUI окно предложение продолжения
-    waitDataBus("punch_next", "ok");
-    db().insert("punch_next", QString());
+    if (_isPaused)
+    {
+        QTimer timer;
+        QEventLoop loop;
+        QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
+        {
+            if (!_isPaused)
+                loop.quit();
+        });
+
+        auto guard = qScopeGuard([=]() { QObject::disconnect(conn); });
+
+        timer.start(50);
+        loop.exec();
+    }
+
+
+    // db().insert("punch_next", "wait"); // Показать в GUI окно предложение продолжения
+    // waitDataBus("punch_next", "ok");
+    // db().insert("punch_next", QString());
 }
 
 void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
@@ -211,12 +246,11 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     if (blobs.isEmpty())
         blobs = scene().punchBlobs();
 
-    qd() << "blobs to punch";
+    // qd() << "blobs to punch";
 
-    for (BlobItem* blob : qAsConst(blobs))
-    {
-        qd() << blob->scenePos();
-    }
+    // for (BlobItem* blob : qAsConst(blobs))
+    //     qd() << blob->scenePos();
+
 
     const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
     const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
@@ -224,17 +258,20 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
     for (BlobItem* blob : qAsConst(blobs))
     {
-        moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
+        waitForNextStep(); // Перед ехать
 
-        waitForNextStep();
+        moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
 
         if (_stop) { emit message("program interrupted"); return; }
 
         if (!_noPunch)
         {
+            waitForNextStep(); // Перед панчем
+
             for (const QString& gCode : punchCode)
             {
                 if (_stop) { emit message("program interrupted"); return; }
+
                 serial().write(gCode.toLatin1() + "\n");
                 emit message(gCode);
                 const double z = extractFromGcodeZ(gCode);
@@ -244,6 +281,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         ++count;
     }
 
+    waitForNextStep(); // Перед ехать
     // Поехали назад в домашнюю точку
     moveToAndWaitPosition(db().value("punchpath_start_point").toPointF());
 
