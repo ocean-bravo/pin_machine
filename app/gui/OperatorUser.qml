@@ -325,7 +325,7 @@ Control {
                                     ToolButton {
                                         icon.source: "images/play.svg"
                                         color: colors.success_90
-                                        enabled: !TaskPunch.isRunning
+                                        enabled: !TaskPunch.isRunning && DataBus.homing_status === "Ready"
                                         onClicked: {
                                             if (DataBus.homing_status !== "Ready")
                                                 return
