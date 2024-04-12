@@ -63,11 +63,14 @@ CollapsiblePanel2 {
 
                 Timer {
                     id: gpioTimer
-                    interval: 505 // Чтобы чуть чуть в разбежку с таймером статуса
+                    interval: 500
                     repeat: true
                     triggeredOnStart: true
-                    running: true
+                    running: false
                     onTriggered: Serial.write("$GD\n")
+                    Component.onCompleted: {
+                        execAfterDelay(function() { start() }, 250) // В противофазе с таймером статуса. Мешают друг другу ответы, смешиваются.
+                    }
                 }
             }
 

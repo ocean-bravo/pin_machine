@@ -127,7 +127,6 @@ Control {
     //         modal: true
     //         focus: true
     //         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-    //         z: 2
     //     }
 
     // Shortcut {

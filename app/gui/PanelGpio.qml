@@ -3,7 +3,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import "utils.js" as Utils
 
 CollapsiblePanel2 {
     id: root
@@ -63,9 +62,6 @@ CollapsiblePanel2 {
                     model: DataBus.gpio.slice(16, 31)
 
                     Column {
-                        // padding: 0
-                        // spacing: 10
-
                         PinNumber { }
                         Pin { }
                     }
@@ -86,19 +82,11 @@ CollapsiblePanel2 {
                     model: DataBus.gpio.slice(0, 15)
 
                     Column {
-                        // padding: 0
-                        // spacing: 10
                         PinNumber { }
                         Pin { }
                     }
                 }
             }
         }
-
-        // Item {
-        //     Layout.fillHeight: true
-        //     Layout.fillWidth: true
-        // }
-
     }
 }
