@@ -94,7 +94,7 @@ void GraphicsView::wheelEvent(QWheelEvent* event)
 
 void GraphicsView::mousePressEvent(QMouseEvent* event)
 {
-    qd() << "graphics view mouse press event";
+    //qd() << "graphics view mouse press event";
 
     if (event->button() == Qt::MiddleButton)
     {

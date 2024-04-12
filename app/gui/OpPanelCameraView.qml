@@ -31,8 +31,8 @@ Control {
 
             color: colors.black_30
 
-            Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.preferredHeight: width * DataBus.resolution_height / DataBus.resolution_width
 
             clip: true
             ImageItem {
@@ -68,6 +68,11 @@ Control {
             }
         }
 
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
         OpFrameButton {
             icon.source: checked ? "images/videocam_off.png" : "images/videocam_on.png"
             checkable: true
@@ -101,8 +106,5 @@ Control {
                 //Video4.reloadDevices()
             }
         }
-
-
-
     }
 }

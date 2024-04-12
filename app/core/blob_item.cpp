@@ -168,7 +168,7 @@ QString BlobItem::sceneFileName() const
 
 void BlobItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
-    qd() << "blob hover enter event";
+    //qd() << "blob hover enter event";
     {
         QJsonObject jo;
         jo.insert("label_number", 1);
