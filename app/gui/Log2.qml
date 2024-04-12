@@ -129,6 +129,9 @@ Loader {
                 return indexAt(x + contentX, y + contentY)
             }
 
+            // Есть небольшой конфликт с ListView когда мышь pressAndHold. Но мешает несильно.
+            // ListView хочет перемещаться, а selectionArea выделять текст. ListView побеждает.
+            // Вообще, выделение плоховато работает, странно.
             MouseArea {
                 id: selectionArea
                 property int selStartIndex
