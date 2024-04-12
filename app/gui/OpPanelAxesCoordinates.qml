@@ -36,7 +36,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: DataBus.x_coord
+                    text: DataBus.x_coord === undefined ? "" : DataBus.x_coord
                 }
 
                 Item {
@@ -49,7 +49,7 @@ Control {
                 }
 
                 MyLabel {
-                    text: DataBus.y_coord
+                    text: DataBus.y_coord === undefined ? "" : DataBus.y_coord
                 }
 
                 Item {
@@ -72,7 +72,7 @@ Control {
                     text: "Z"
                 }
                 MyLabel {
-                    text: DataBus.z_coord
+                    text: DataBus.z_coord === undefined ? "" : DataBus.z_coord
                 }
 
                 Item {

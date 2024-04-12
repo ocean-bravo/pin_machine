@@ -20,8 +20,9 @@ DataBus::DataBus(QObject *parent)
         insert(res, settings().value(res).toDouble());
     }
 
-    insert("x_coord", QString("0.000"));
-    insert("y_coord", QString("0.000"));
+    insert("x_coord", QString("????"));
+    insert("y_coord", QString("????"));
+    insert("z_coord", QString("????"));
 
     insert("live_preview_image_raw", QImage());
     insert("live_preview_image_blob", QImage());
