@@ -44,7 +44,7 @@ public:
     void waitForNext();
 
 protected:
-    static QMutex _mutex;
+    static QMutex _someTaskInProgress;
     QAtomicInteger<bool> _stop = false;
     QAtomicInteger<bool> _running = false;
 

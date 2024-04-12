@@ -55,8 +55,8 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
-    if (!_mutex.tryLock()) return;
-    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+    if (!_someTaskInProgress.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 

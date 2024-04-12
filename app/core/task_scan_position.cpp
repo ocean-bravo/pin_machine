@@ -52,8 +52,8 @@ void TaskScanPositionPrivate::run(QPointF pos, QString sceneFile)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
-    if (!_mutex.tryLock()) return;
-    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+    if (!_someTaskInProgress.tryLock()) return;
+    auto mutexUnlock = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });

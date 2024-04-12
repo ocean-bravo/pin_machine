@@ -143,14 +143,14 @@ void TaskPunchPrivate::waitForNextStep()
 
 void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
 {
+    const auto fin = qScopeGuard([this]{ emit finished(); });
+
+    if (!_someTaskInProgress.tryLock()) return;
+    auto someTaskInProgress = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
+
     _running = true;
     emit isRunningChanged();
     auto running = qScopeGuard([this]{ _running = false; emit isRunningChanged(); });
-
-    const auto fin = qScopeGuard([this]{ emit finished(); });
-
-    if (!_mutex.tryLock()) return;
-    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });

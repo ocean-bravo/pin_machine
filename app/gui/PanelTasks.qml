@@ -103,7 +103,7 @@ CollapsiblePanel2 {
 
                 for (let i = 0; i < res.length; i++) {
                     let r = res[i]
-                    if (r.width === 1280 && r.height === 960 && r.fourcc === "YUYV")
+                    if (r.width === 800 && r.height === 600 && r.fourcc === "YUYV")
                         currentIndex = i
                 }
             }

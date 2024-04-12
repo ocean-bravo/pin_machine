@@ -153,17 +153,17 @@ void TaskBestPathPrivate::run(QPointF startPoint)
 {
     qd() << "run program ";
 
-    _running = true;
-    auto running = qScopeGuard([this]{ _running = false; });
-
     const auto fin = qScopeGuard([this]
     {
         emit finished();
         qd() << "finished program";
     });
 
-    if (!_mutex.tryLock()) return;
-    auto mutexUnlock = qScopeGuard([this]{ _mutex.unlock(); });
+    if (!_someTaskInProgress.tryLock()) return;
+    auto someTaskInProgress = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
+
+    _running = true;
+    auto running = qScopeGuard([this]{ _running = false; });
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 

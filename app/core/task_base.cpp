@@ -16,7 +16,7 @@
 #include <QString>
 #include <QRegularExpression>
 
-QMutex TaskBase::_mutex;
+QMutex TaskBase::_someTaskInProgress;
 
 void TaskBase::moveTo(QPointF pos)
 {
