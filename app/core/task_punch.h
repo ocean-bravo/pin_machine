@@ -60,8 +60,8 @@ signals:
 private:
     void waitForNextStep();
 
-    QAtomicInteger<bool> _stepByStep = true;
-    QAtomicInteger<bool> _noPunch = true;
+    QAtomicInteger<bool> _stepByStep = false;
+    QAtomicInteger<bool> _noPunch = false;
 
     friend class TaskPunch;
 };

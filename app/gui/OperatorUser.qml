@@ -327,6 +327,9 @@ Control {
                                         color: colors.success_90
                                         enabled: !TaskPunch.isRunning
                                         onClicked: {
+                                            if (DataBus.homing_status !== "Ready")
+                                                return
+
                                             let punchCode = Settings.value("punch_code")
                                             TaskPunch.run(punchCode, 800, 600, "YUYV")
                                         }
@@ -335,6 +338,7 @@ Control {
                                     ToolButton {
                                         icon.source: "images/pause.svg"
                                         color: colors.primary_50
+                                        enabled: TaskPunch.isRunning
                                         onClicked: {
                                             // Какая логика?
                                             TaskPunch.pauseProgram()
