@@ -121,6 +121,8 @@ Control {
                             color: colors.black_80
                             font.pixelSize: 16
                             font.weight: Font.Medium
+
+                            //Layout.preferredHeight: 28
                         }
 
                         OpSlider {
@@ -128,7 +130,7 @@ Control {
                             value: 25
                             to: 100
 
-                            Layout.preferredHeight: 28
+                            //Layout.preferredHeight: 28
                             Layout.fillWidth: true
                         }
 
@@ -137,6 +139,8 @@ Control {
                             color: colors.black_80
                             font.pixelSize: 16
                             font.weight: Font.Medium
+
+                            //Layout.preferredHeight: 28
                         }
                     }
                 }

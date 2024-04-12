@@ -14,9 +14,9 @@ Slider {
         x: root.leftPadding
         y: root.topPadding + root.availableHeight / 2 - height / 2
         implicitWidth: 200
-        implicitHeight: 4
+        //implicitHeight: 4
         width: root.availableWidth
-        height: implicitHeight
+        height: 4
         radius: 2
         color: colors.black_50
 
@@ -34,9 +34,11 @@ Slider {
         id: knob
         x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
         y: root.topPadding + root.availableHeight / 2 - height / 2
-        implicitWidth: root.height
-        implicitHeight: root.height
-        radius: root.height / 2
+        //implicitWidth: root.height
+        implicitHeight: 28
+        width: height
+        height: root.height
+        radius: height / 2
         color: root.pressed ? "lightgrey" : "white"
         border.color: colors.primary_20
         border.width: 2
