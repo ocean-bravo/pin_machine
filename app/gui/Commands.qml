@@ -70,14 +70,14 @@ Item {
         return resMjpg.concat(resYuyv)
     }
 
-    Connections { target: Serial;            function onMessage(msg) { appendCommandsLog(msg + '<br>', 'lightgrey') } }
-    Connections { target: TaskScan;          function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
-    Connections { target: TaskUpdate;        function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
-    Connections { target: TaskCheckCamera;   function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
-    Connections { target: TaskPunch;         function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
-    Connections { target: TaskFindPixelSize; function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
+    Connections { target: Serial;            function onMessage(msg) { appendCommandsLog(msg, 'lightgrey') } }
+    Connections { target: TaskScan;          function onMessage(msg) { appendCommandsLog(msg) } }
+    Connections { target: TaskUpdate;        function onMessage(msg) { appendCommandsLog(msg) } }
+    Connections { target: TaskCheckCamera;   function onMessage(msg) { appendCommandsLog(msg) } }
+    Connections { target: TaskPunch;         function onMessage(msg) { appendCommandsLog(msg) } }
+    Connections { target: TaskFindPixelSize; function onMessage(msg) { appendCommandsLog(msg) } }
     // Connections { target: TaskBestPath;      function onMessage(msg) { appendLog(msg + '<br>') } }
-    Connections { target: TaskFindBlob;      function onMessage(msg) { appendCommandsLog(msg + '<br>') } }
+    Connections { target: TaskFindBlob;      function onMessage(msg) { appendCommandsLog(msg) } }
 
 
     SplitView {
