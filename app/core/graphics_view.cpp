@@ -72,7 +72,7 @@ void GraphicsView::setSizeToFit(QSizeF size)
 ////https://stackoverflow.com/questions/19113532/qgraphicsview-zooming-in-and-out-under-mouse-position-using-mouse-wheel
 void GraphicsView::wheelEvent(QWheelEvent* event)
 {
-    qd() << "graphics view wheel event";
+    //qd() << "graphics view wheel event";
 
     QPointF pos = event->position();
 
