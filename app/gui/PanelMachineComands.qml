@@ -63,7 +63,7 @@ CollapsiblePanel2 {
 
                 Timer {
                     id: gpioTimer
-                    interval: 450
+                    interval: 550
                     repeat: true
                     triggeredOnStart: true
                     running: true
