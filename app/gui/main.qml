@@ -73,7 +73,7 @@ ColumnLayout {
     function parseSerialMessage(msg) {
         let lines = msg.split(/\r?\n/)
 
-        let showLines = []
+        var showLines = []
 
         for (let line of lines) {
 
@@ -89,7 +89,7 @@ ColumnLayout {
             }
 
             // Проверяю каждую строку не GPIO ли
-            // Бывают пины вида 16 GPIO19 I0 O0 HSPIQ_out - что с ними делать не знаю
+            // Бывают пины вида 19 GPIO19 I0 O0 HSPIQ_out - что с ними делать не знаю
 
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
                 let pin =  parseGpioPin(line)
