@@ -87,7 +87,7 @@ ColumnLayout {
 
             // Проверяю каждую строку не GPIO ли
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
-                let pin =  parseGpio(line)
+                let pin =  parseGpioPin(line)
 
                 let gpio = DataBus.gpio
                 gpio[pin.number] = pin
