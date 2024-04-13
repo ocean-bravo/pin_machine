@@ -112,6 +112,7 @@ ColumnLayout {
             showLines.push(line)
         }
 
+        console.log("showlines2: ", showLines)
         return showLines
 
 
