@@ -85,6 +85,9 @@ ColumnLayout {
             if (line.match(/[<].+[>]/)) {
                 line =  parseStatus(line)
                 showLines.push(line)
+
+                console.log("line: ", line)
+
                 continue
             }
 
