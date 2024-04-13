@@ -63,17 +63,17 @@ CollapsiblePanel2 {
 
                 Timer {
                     id: gpioTimer
-                    interval: 500
+                    interval: 450
                     repeat: true
                     triggeredOnStart: true
-                    running: false
+                    running: true
                     onTriggered: {
                         // Во время хоуминга, контроллер отвечает только на статус. Поэтому приостанавливаю запросы GPIO
                         if (DataBus.homing_status !== "In progress")
                             Serial.write("$GD\n")
                     }
                     Component.onCompleted: {
-                        execAfterDelay(function() { start() }, 250) // В противофазе с таймером статуса. Мешают друг другу ответы, смешиваются.
+                        //execAfterDelay(function() { start() }, 250) // В противофазе с таймером статуса. Мешают друг другу ответы, смешиваются.
                     }
                 }
             }
