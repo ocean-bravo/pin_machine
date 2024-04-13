@@ -51,7 +51,7 @@ ColumnLayout {
 
         function onData(msg) {
 
-            console.log(msg)
+            console.log(msg.split(/\r?\n/))
 
             let showLines = parseSerialMessage(msg)
 
@@ -89,6 +89,8 @@ ColumnLayout {
             }
 
             // Проверяю каждую строку не GPIO ли
+            // Бывают пины вида 16 GPIO19 I0 O0 HSPIQ_out - что с ними делать не знаю
+
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
                 let pin =  parseGpioPin(line)
 
