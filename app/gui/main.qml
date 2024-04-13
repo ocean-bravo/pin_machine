@@ -87,6 +87,7 @@ ColumnLayout {
                 showLines.push(line)
 
                 console.log("line: ", line)
+                console.log("showlines: ", showLines)
 
                 continue
             }
