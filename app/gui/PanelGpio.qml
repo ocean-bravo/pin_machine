@@ -13,7 +13,7 @@ CollapsiblePanel2 {
 
     Component.onCompleted: {
         // // Начальный прогрев значения, чтобы не сыпало ошибками
-        let pins = new Array(32)
+        let pins = new Array(48)
 
         for (let i = 0; i < pins.length; ++i)
             pins[i] = {};
@@ -48,6 +48,26 @@ CollapsiblePanel2 {
         id: column
         width: parent.width
         spacing: 2
+
+        Rectangle {
+            color: guiDebug ? "#4000FF00" : "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 1
+
+                Repeater {
+                    model: DataBus.gpio.slice(32, 47)
+
+                    Column {
+                        PinNumber { }
+                        Pin { }
+                    }
+                }
+            }
+        }
 
         Rectangle {
             color: guiDebug ? "#4000FF00" : "transparent"
