@@ -50,101 +50,124 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-            let completeMessage = parseSerialMessage(msg)
+            let showLines = parseSerialMessage(msg)
 
-            if (completeMessage.length > 0) {
-                superUser.appendToCommandsLog(completeMessage, 'darkblue')
-                operatorUser.appendLog(completeMessage, 'darkblue')
+            for (let line of showLines) {
+                superUser.appendToCommandsLog(line, 'darkblue')
+                operatorUser.appendLog(line, 'darkblue')
             }
+
         }
     }
 
-    property bool messageFinished: false
+    //property bool messageFinished: false
 
-    property string prevMsg: ""
+    //property string prevMsg: ""
 
     // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
     // При хоуминге статус отвечает. Сообщение имеет вид: статус\r\n Но в конце нет ok\r\n. Потом, вдогонку, наваливает кучу ok\r\n
     // Статус всегда помещается в одно сообщение (пока).
     function parseSerialMessage(msg) {
+        let lines = msg.split(/\r?\n/)
 
-        if (0) {
-            let m1 = String(msg)
-            m1 = m1.replace(/</g, '|')
-            m1 = m1.replace(/>/g, '|')
-            //m1 = m1.replace(/\r?\n/g, '<br>')
-            m1 = m1.replace(/\r/g, 'RRRRRR<br>')
-            m1 = m1.replace(/\n/g, 'NNNNNN<br>')
-            console.log("m1: ", m1)
+        let showLines = []
+
+        for (let line of lines) {
+
+            // Буду считать, что статус:
+            // - ограничен символами < и >
+            // - эти символы только в статусе
+            // - всегда неделим, т.е. не разбивается переносом строк
+            // - в одной строке может быть только статус, без добавлений частей других команд
+            if (line.match(/[<].+[>]/)) {
+                line =  parseStatus(line)
+                showLines.push(line)
+                continue
+            }
+
+            // Проверяю каждую строку не GPIO ли
+            if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
+                let pin =  parseGpio(line)
+
+                let gpio = DataBus.gpio
+                gpio[pin.number] = pin
+                DataBus.gpio = gpio
+                continue
+            }
+
+            // Строку из одного ok выбрасываю
+            if (line.match(/^ok$/)) {
+                continue
+            }
+
+            showLines.push(line)
         }
 
-        // Буду считать, что статус ограничен символами < и >. И эти символы только в статусе.
-        // ok в конце может быть, а может и не быть
-        if (msg.match(/[<].+[>]/)) {
-            let lines = msg.split(/\r\n/)
-            msg = lines[0]
+        return showLines
 
-            parseStatus(msg)
-            prevMsg = ""
-            return msg
-        }
 
-        // Сообщение из одного ok\r\n выбрасываю
-        if (msg.match(/^ok\r\n$/)) {
-            prevMsg = ""
-            return ""
-        }
+
+        // if (0) {
+        //     let m1 = String(msg)
+        //     m1 = m1.replace(/</g, '|')
+        //     m1 = m1.replace(/>/g, '|')
+        //     //m1 = m1.replace(/\r?\n/g, '<br>')
+        //     m1 = m1.replace(/\r/g, 'RRRRRR<br>')
+        //     m1 = m1.replace(/\n/g, 'NNNNNN<br>')
+        //     console.log("m1: ", m1)
+        // }
+
 
         // Если во время хоуминга накидывать многострочные команды вроде GPIO/Dump, то после окончания хоуминга
         // все эти комнды придут, вместе с ok\r\n вперемешку.
         // Т.е. в одном сообщении может быть окончание предыдущей команды, куча ok\r\n (ответов на статус) и начало ответа на след команду.
 
-        // Дальше всё, что не статус
-        msg = String(prevMsg + msg)
+        // // Дальше всё, что не статус
+        // msg = String(prevMsg + msg)
 
-        // Ищу текст "ok" окруженный переводами строк
-        let found = msg.match(/\r?\nok\r\n/g) // После ok всегда идет \r\n, а вот в конце команды не всегда. Иногда и просто \n
-        if (!found) {
-            prevMsg = String(msg)
-            return ""
-        }
+        // // Ищу текст "ok" окруженный переводами строк
+        // let found = msg.match(/\r?\nok\r\n/g) // После ok всегда идет \r\n, а вот в конце команды не всегда. Иногда и просто \n
+        // if (!found) {
+        //     prevMsg = String(msg)
+        //     return ""
+        // }
 
-        prevMsg = ""
+        // prevMsg = ""
 
-        if (0) {
-            let m2 = String(msg)
-            m2 = m2.replace(/</g, '|')
-            m2 = m2.replace(/>/g, '|')
-            m2 = m2.replace(/\r?\n/g, '<br>')
-            console.log("m2: ", m2)
-        }
+        // if (0) {
+        //     let m2 = String(msg)
+        //     m2 = m2.replace(/</g, '|')
+        //     m2 = m2.replace(/>/g, '|')
+        //     m2 = m2.replace(/\r?\n/g, '<br>')
+        //     console.log("m2: ", m2)
+        // }
 
-        var lines = msg.split(/\r?\n/)
+        // var lines = msg.split(/\r?\n/)
 
-        // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
-        // pop() модифицирует массив
-        while (lines.pop() !== "ok");
+        // // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
+        // // pop() модифицирует массив
+        // while (lines.pop() !== "ok");
 
-        msg = lines.join('\n')
+        // msg = lines.join('\n')
 
-        if (0) {
-            let m3 = String(msg)
-            m3 = m3.replace(/</g, '|')
-            m3 = m3.replace(/>/g, '|')
-            m3 = m3.replace(/\r?\n/g, '<br>')
-            console.log("m3: ", m3)
-        }
+        // if (0) {
+        //     let m3 = String(msg)
+        //     m3 = m3.replace(/</g, '|')
+        //     m3 = m3.replace(/>/g, '|')
+        //     m3 = m3.replace(/\r?\n/g, '<br>')
+        //     console.log("m3: ", m3)
+        // }
 
-        if (msg.match(/Input Matrix/g)) {
-            parseGpio(msg)
-            return ""
-        }
+        // if (msg.match(/Input Matrix/g)) {
+        //     parseGpio(msg)
+        //     return ""
+        // }
 
-        if (0) {
-            parseAlarms(msg)
-        }
+        // if (0) {
+        //     parseAlarms(msg)
+        // }
 
-        return msg
+        //return msg
     }
 
     function parseStatus(msg) {
@@ -178,6 +201,25 @@ ColumnLayout {
         DataBus.xPos = xPos
         DataBus.yPos = yPos
         DataBus.zPos = zPos
+
+        return msg
+    }
+
+    function parseGpioPin(msg) {
+        let pinInfo = msg.split(' ')
+
+        let number = pinInfo[0]
+        let name = pinInfo[1]
+        let dirVal = pinInfo[2]
+
+        if (dirVal === 'I0') { var dir = 'input'; var value = '0' }
+        if (dirVal === 'I1') { dir = 'input'; value = '1' }
+        if (dirVal === 'O0') { dir = 'output'; value = '0' }
+        if (dirVal === 'O1') { dir = 'output'; value = '1' }
+
+        let pin = { number: number, name: name, dir: dir, value: value }
+
+        return pin
     }
 
     function parseGpio(msg) {
