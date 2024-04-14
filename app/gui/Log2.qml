@@ -31,6 +31,10 @@ Loader {
         item.snap = true // После очистки примагничиваемся
     }
 
+    function toEnd() {
+        item.toEnd()
+    }
+
     function ignoreSelected() {
         item.ignoreList.push(selectedText)
     }
@@ -42,6 +46,7 @@ Loader {
     function highlightSelected() {
         item.highlightText = selectedText
     }
+
 
     property bool selectionEnabled: false
 
@@ -141,6 +146,11 @@ Loader {
                 id: scrollBar
                 policy: ScrollBar.AlwaysOn
                 minimumSize: 0.1
+            }
+
+            function toEnd() {
+                scrollBar.position = 1.0
+                snap = true
             }
 
             function indexAtRelative(x, y) {

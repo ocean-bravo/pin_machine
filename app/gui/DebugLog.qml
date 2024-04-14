@@ -98,6 +98,14 @@ Window {
         }
     }
 
+    Shortcut {
+        sequence: "End"
+        context: Qt.WindowShortcut
+        onActivated: {
+            debugLog.toEnd()
+        }
+    }
+
     SmallMessageBox {
         id: mbIgnore
         text: "Ignore?\n" + debugLog.selectedText

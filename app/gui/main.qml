@@ -114,83 +114,15 @@ ColumnLayout {
         console.log("showlines2: ", showLines)
         return showLines
 
-
-
-        // if (0) {
-        //     let m1 = String(msg)
-        //     m1 = m1.replace(/</g, '|')
-        //     m1 = m1.replace(/>/g, '|')
-        //     //m1 = m1.replace(/\r?\n/g, '<br>')
-        //     m1 = m1.replace(/\r/g, 'RRRRRR<br>')
-        //     m1 = m1.replace(/\n/g, 'NNNNNN<br>')
-        //     console.log("m1: ", m1)
-        // }
-
-
         // Если во время хоуминга накидывать многострочные команды вроде GPIO/Dump, то после окончания хоуминга
         // все эти комнды придут, вместе с ok\r\n вперемешку.
         // Т.е. в одном сообщении может быть окончание предыдущей команды, куча ok\r\n (ответов на статус) и начало ответа на след команду.
-
-        // // Дальше всё, что не статус
-        // msg = String(prevMsg + msg)
-
-        // // Ищу текст "ok" окруженный переводами строк
-        // let found = msg.match(/\r?\nok\r\n/g) // После ok всегда идет \r\n, а вот в конце команды не всегда. Иногда и просто \n
-        // if (!found) {
-        //     prevMsg = String(msg)
-        //     return ""
-        // }
-
-        // prevMsg = ""
-
-        // if (0) {
-        //     let m2 = String(msg)
-        //     m2 = m2.replace(/</g, '|')
-        //     m2 = m2.replace(/>/g, '|')
-        //     m2 = m2.replace(/\r?\n/g, '<br>')
-        //     console.log("m2: ", m2)
-        // }
-
-        // var lines = msg.split(/\r?\n/)
-
-        // // Выбираю строки с конца, пока не встретится ok. ok тоже не нужен
-        // // pop() модифицирует массив
-        // while (lines.pop() !== "ok");
-
-        // msg = lines.join('\n')
-
-        // if (0) {
-        //     let m3 = String(msg)
-        //     m3 = m3.replace(/</g, '|')
-        //     m3 = m3.replace(/>/g, '|')
-        //     m3 = m3.replace(/\r?\n/g, '<br>')
-        //     console.log("m3: ", m3)
-        // }
-
-        // if (msg.match(/Input Matrix/g)) {
-        //     parseGpio(msg)
-        //     return ""
-        // }
-
-        // if (0) {
-        //     parseAlarms(msg)
-        // }
-
-        //return msg
     }
 
     function parseStatus(msg) {
         // Симвлы < и > есть во входящих данных. Они интерпретируются как Html. Надо заменить на другие.
         msg = msg.replace(/</g, '')
         msg = msg.replace(/>/g, '')
-
-        if (0) {
-            let m3 = String(msg)
-            m3 = m3.replace(/</g, '|')
-            m3 = m3.replace(/>/g, '|')
-            m3 = m3.replace(/\r?\n/g, '<br>')
-            console.log("parseStatus: ", m3)
-        }
 
         let statusValues = msg.split("|")
 
