@@ -111,7 +111,7 @@ ColumnLayout {
             showLines.push(line)
         }
 
-        console.log("showlines2: ", showLines)
+        //console.log("showlines2: ", showLines)
         return showLines
 
         // Если во время хоуминга накидывать многострочные команды вроде GPIO/Dump, то после окончания хоуминга
