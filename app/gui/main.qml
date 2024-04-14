@@ -75,6 +75,10 @@ ColumnLayout {
 
         var showLines = []
 
+        // if (gpioRequested) {
+        //     parseGpio(msg) { }
+        // }
+
         for (let line of lines) {
 
             // Буду считать, что статус:

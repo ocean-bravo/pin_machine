@@ -35,6 +35,14 @@ Loader {
         item.ignoreList.push(selectedText)
     }
 
+    function clearHighlight() {
+        item.highlight = null
+    }
+
+    function highlightSelected() {
+        item.highlight = selectedText
+    }
+
     property bool selectionEnabled: false
 
     property string selectedText
@@ -46,6 +54,7 @@ Loader {
             id: root
 
             property var ignoreList : []
+            property var highlightText: null
 
 
             ListModel {
@@ -76,7 +85,14 @@ Loader {
                 font.pixelSize: 13
                 textFormat: TextEdit.RichText
                 wrapMode: Text.WordWrap
-                text: val
+
+                text: {
+                    let textToHighlight = root.highlightText
+
+                    if (val.includes(textToHighlight))
+                        return val.replace(textToHighlight, "<span style='background-color:yellow;'>" + textToHighlight + "</span>")
+                    return val
+                }
                 renderType: Text.NativeRendering // ! Текст выглядит значительно лучше
 
                 onSelectedTextChanged: {
@@ -90,7 +106,9 @@ Loader {
                     }
                 }
 
-                Component.onCompleted: updateSelection()
+                Component.onCompleted: {
+                    updateSelection()
+                }
 
                 function updateSelection() {
                     if (index < selectionArea.selStartIndex || index > selectionArea.selEndIndex)

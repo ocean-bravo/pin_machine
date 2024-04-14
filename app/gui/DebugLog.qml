@@ -63,9 +63,26 @@ Window {
                         text: "Ignore"
                         enabled: debugLog.selectedText.length > 0
                         onTriggered: {
-                            mb.show()
+                            mbIgnore.show()
                         }
                     }
+
+                    MenuItem {
+                        text: "Highlight"
+                        enabled: debugLog.selectedText.length > 0
+                        onTriggered: {
+                            mbHighlight.show()
+                        }
+                    }
+
+                    MenuItem {
+                        text: "Clear highlight"
+                        //enabled: debugLog.selectedText.length > 0
+                        onTriggered: {
+                            debugLog.clearHighlight()
+                        }
+                    }
+
                 }
             }
         }
@@ -83,7 +100,21 @@ Window {
     }
 
     SmallMessageBox {
-        id: mb
+        id: mbIgnore
+        text: "Ignore?\n" + debugLog.selectedText
+        onAccept: {
+            debugLog.ignoreSelected()
+            hide()
+        }
+    }
+
+    SmallMessageBox {
+        id: mbHighlight
+        text: "Highlight?\n" + debugLog.selectedText
+        onAccept: {
+            debugLog.highlightSelected()
+            hide()
+        }
     }
 
     component SmallMessageBox : MessageBoxLoader {
@@ -91,13 +122,7 @@ Window {
         anchors.centerIn: Overlay.overlay
         height: 200
         hasCancelButton: true
-        text: "Ignore?\n" + debugLog.selectedText
         onReject: hide()
-        onAccept: {
-            debugLog.ignoreSelected()
-            hide()
-        }
-
         backgroundColor: "maroon"
     }
 }
