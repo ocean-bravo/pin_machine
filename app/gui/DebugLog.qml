@@ -71,7 +71,7 @@ Window {
                         text: "Highlight"
                         enabled: debugLog.selectedText.length > 0
                         onTriggered: {
-                            mbHighlight.show()
+                            debugLog.highlightSelected()
                         }
                     }
 
@@ -108,14 +108,14 @@ Window {
         }
     }
 
-    SmallMessageBox {
-        id: mbHighlight
-        text: "Highlight?\n" + debugLog.selectedText
-        onAccept: {
-            debugLog.highlightSelected()
-            hide()
-        }
-    }
+    // SmallMessageBox {
+    //     id: mbHighlight
+    //     text: "Highlight?\n" + debugLog.selectedText
+    //     onAccept: {
+    //         debugLog.highlightSelected()
+    //         hide()
+    //     }
+    // }
 
     component SmallMessageBox : MessageBoxLoader {
         width: 400

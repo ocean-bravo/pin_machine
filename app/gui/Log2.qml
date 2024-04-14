@@ -36,11 +36,11 @@ Loader {
     }
 
     function clearHighlight() {
-        item.highlight = null
+        item.highlightText = null
     }
 
     function highlightSelected() {
-        item.highlight = selectedText
+        item.highlightText = selectedText
     }
 
     property bool selectionEnabled: false
