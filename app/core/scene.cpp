@@ -323,6 +323,7 @@ QByteArray Scene::saveSceneToByteArray()
         map.insert(mainKey + ".dia" , blob->rect().width());
         map.insert(mainKey + ".isFiducial" , blob->isFiducial());
         map.insert(mainKey + ".isPunch" , blob->isPunch());
+        map.insert(mainKey + ".sceneFilename" , blob->sceneFileName());
     });
 
     Measure mes2("datastream");
@@ -403,10 +404,12 @@ void Scene::loadSceneFromByteArray(const QByteArray& ba)
         const double dia = map.value(mainKey + ".dia").toDouble();
         const bool isFiducial = map.value(mainKey + ".isFiducial").toBool();
         const bool isPunch = map.value(mainKey + ".isPunch").toBool();
+        const QString sceneFilename = map.value(mainKey + ".sceneFilename").toString();
 
         BlobItem* blob = addBlob(pos.x(), pos.y(), dia);
         blob->setPunch(isPunch);
         blob->setFiducial(isFiducial);
+        blob->setSceneFileName(sceneFilename);
     }
 }
 
