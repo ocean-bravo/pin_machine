@@ -51,7 +51,7 @@ ColumnLayout {
 
         function onData(msg) {
 
-            console.log(msg.split(/\r?\n/))
+            //console.log(msg.split(/\r?\n/))
 
             let showLines = parseSerialMessage(msg)
 
@@ -85,10 +85,6 @@ ColumnLayout {
             if (line.match(/^[<].+[>]$/)) {
                 line =  parseStatus(line)
                 showLines.push(line)
-
-                console.log("line: ", line)
-                console.log("showlines: ", showLines)
-
                 continue
             }
 
@@ -97,6 +93,9 @@ ColumnLayout {
 
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
                 let pin =  parseGpioPin(line)
+
+                if (pin === null)
+                    continue
 
                 let gpio = DataBus.gpio
                 gpio[pin.number] = pin
@@ -221,6 +220,11 @@ ColumnLayout {
         let number = pinInfo[0]
         let name = pinInfo[1]
         let dirVal = pinInfo[2]
+
+        // Строка должна состоять из 3 частей. Если их больше - такая строка нас не интересует.
+        // Ищем строку вида "15 GPIO15 I0"
+        if (pinInfo[3] !== undefined)
+            return null
 
         if (dirVal === 'I0') { var dir = 'input'; var value = '0' }
         if (dirVal === 'I1') { dir = 'input'; value = '1' }
