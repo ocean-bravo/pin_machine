@@ -208,6 +208,8 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
         const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
+        qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+
         updateBlobPosition(realFiducialBlob, options);
         updateBlobPosition(realFiducialBlob, options);
         updateBlobPosition(realFiducialBlob, options);
