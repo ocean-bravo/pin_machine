@@ -121,6 +121,8 @@ void TaskPunchPrivate::waitForNextStep()
 
     if (_isPaused)
     {
+        qd() << "waiting for continue...";
+
         QTimer timer;
         QEventLoop loop;
         QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
