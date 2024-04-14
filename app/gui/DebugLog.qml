@@ -77,7 +77,6 @@ Window {
 
                     MenuItem {
                         text: "Clear highlight"
-                        //enabled: debugLog.selectedText.length > 0
                         onTriggered: {
                             debugLog.clearHighlight()
                         }
@@ -107,15 +106,6 @@ Window {
             hide()
         }
     }
-
-    // SmallMessageBox {
-    //     id: mbHighlight
-    //     text: "Highlight?\n" + debugLog.selectedText
-    //     onAccept: {
-    //         debugLog.highlightSelected()
-    //         hide()
-    //     }
-    // }
 
     component SmallMessageBox : MessageBoxLoader {
         width: 400
