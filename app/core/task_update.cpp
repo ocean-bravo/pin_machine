@@ -71,68 +71,76 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 
     auto start = QDateTime::currentMSecsSinceEpoch();
 
-    // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
-    video().reloadDevices();
-    wait(500);
-    video().stop();
 
-    db().insert("resolution_width", width);
-    db().insert("resolution_height", height);
-
-    video().changeCamera(cameraId(), width, height, fourcc);
-    video().start();
-
-    auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-
-    QList<BlobItem*> blobs;
-
-    every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
+    try
     {
-        if (blob->isFiducial() || blob->isPunch())
-            blobs.append(blob);
-    });
+        // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
+        video().reloadDevices();
+        wait(500);
+        video().stop();
 
-    if (blobs.isEmpty())
-    {
+        db().insert("resolution_width", width);
+        db().insert("resolution_height", height);
+
+        video().changeCamera(cameraId(), width, height, fourcc);
+        video().start();
+
+        auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+        QList<BlobItem*> blobs;
+
         every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
         {
-            blobs.append(blob);
+            if (blob->isFiducial() || blob->isPunch())
+                blobs.append(blob);
         });
-    }
 
-    int count  = 0;
-
-    QPointF startPoint = currPos();
-    QList<BlobItem*> orderedBlobsToUpdate = findShortestPath(blobs, startPoint);
-
-    for (BlobItem* blob : orderedBlobsToUpdate)
-    {
-        if (_stop)
+        if (blobs.isEmpty())
         {
-            emit message("program interrupted");
-            return;
+            every<BlobItem>(scene().items(), [&blobs](BlobItem* blob)
+            {
+                blobs.append(blob);
+            });
         }
 
-        ++count;
+        int count  = 0;
 
-        const QVariantMap options = openIniFile(blob->sceneFileName());
-        updateBlobPosition(blob, options);
-        int result = updateBlobPosition(blob, options);
-        if (result > 0)
+        QPointF startPoint = currPos();
+        QList<BlobItem*> orderedBlobsToUpdate = findShortestPath(blobs, startPoint);
+
+        for (BlobItem* blob : orderedBlobsToUpdate)
         {
-            result = updateBlobPosition(blob, options);
+            ++count;
+
+            const QVariantMap options = openIniFile(blob->sceneFileName());
+            updateBlobPosition(blob, options);
+            int result = updateBlobPosition(blob, options);
             if (result > 0)
+            {
                 result = updateBlobPosition(blob, options);
+                if (result > 0)
+                    result = updateBlobPosition(blob, options);
+            }
+
+            const double x = blob->scenePos().x();
+            const double y = blob->scenePos().y();
+            qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
         }
 
-        const double x = blob->scenePos().x();
-        const double y = blob->scenePos().y();
-        qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
+        emit message("count " + QString::number(count));
+    }
+    catch (const stopEx& e)
+    {
+        qd() << "program interrupted";
+        emit message("program interrupted");
+    }
+    catch (...)
+    {
+
     }
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("update blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
-    emit message("count " + QString::number(count));
 }

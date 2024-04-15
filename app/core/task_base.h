@@ -16,7 +16,7 @@ public:
     void moveTo(QPointF pos);
     void moveToAndWaitPosition(QPointF pos); // stopEx
 
-    int updateBlobPosition(BlobItem* blob, QVariantMap options);
+    int updateBlobPosition(BlobItem* blob, QVariantMap options); // stopEx
 
     // Не знаю куда приткнуть этот метод
     static void algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem *secondRefBlob, BlobItem *secondRealBlob);

@@ -158,7 +158,6 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
     try
     {
-
         // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
         video().reloadDevices();
         wait(500);
@@ -266,10 +265,8 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         for (BlobItem* blob : qAsConst(blobs))
         {
             waitForNextStep(); // Перед ехать
-            //if (_stop) { emit message("program interrupted"); return; }
 
             moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
-            //if (_stop) { emit message("program interrupted"); return; }
 
             if (!_noPunch)
             {
@@ -289,14 +286,14 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
         waitForNextStep(); // Перед ехать
 
-        // Поехали назад в домашнюю точку
-        moveToAndWaitPosition(db().value("punchpath_start_point").toPointF());
+        moveToAndWaitPosition(db().value("punchpath_start_point").toPointF()); // Поехали назад в домашнюю точку
 
         qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
         emit message("count " + QString::number(count));
     }
     catch (const stopEx& e)
     {
+        qd() << "program interrupted";
         emit message("program interrupted");
     }
     catch (...)

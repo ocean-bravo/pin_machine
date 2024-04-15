@@ -32,7 +32,7 @@ void TaskBase::moveToAndWaitPosition(QPointF pos) // stopEx
     waitPosXY(pos, _stop);
 }
 
-int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options)
+int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options) // stopEx
 {
     const double diaBlob = blob->rect().width();
 

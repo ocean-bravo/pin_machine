@@ -33,7 +33,10 @@ void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop) // stopEx
     QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop, &stop](const QString& key, const QVariant&)
     {
         if (stop)
-            throw stopEx();
+        {
+            loop.quit();
+            return;
+        }
 
         if ( key == "status" || key == "xPos" || key == "yPos")
         {
@@ -55,6 +58,9 @@ void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop) // stopEx
         return;
 
     loop.exec();
+
+    if (stop)
+        throw stopEx();
 }
 
 void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop) // stopEx
@@ -73,7 +79,10 @@ void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop) // stopEx
     QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop, &stop](const QString& key, const QVariant&)
     {
         if (stop)
-            throw stopEx();
+        {
+            loop.quit();
+            return;
+        }
 
         if ( key == "status" || key == "zPos")
         {
@@ -95,8 +104,10 @@ void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop) // stopEx
         return;
 
     loop.exec();
-}
 
+    if (stop)
+        throw stopEx();
+}
 
 void waitDataBus(const QString& key, const QString& value)
 {
