@@ -109,7 +109,7 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 }
 
-void TaskPunchPrivate::waitForNextStep()
+void TaskPunchPrivate::waitForNextStep() // stopEx
 {
     if (_stepByStep)
     {
@@ -125,7 +125,10 @@ void TaskPunchPrivate::waitForNextStep()
         QEventLoop loop;
         QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
         {
-            if (!_isPaused || _stop)
+            if (_stop)
+                throw stopEx();
+
+            if (!_isPaused)
                 loop.quit();
         });
 
@@ -153,147 +156,155 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
-    video().reloadDevices();
-    wait(500);
-    video().stop();
-
-    db().insert("resolution_width", width);
-    db().insert("resolution_height", height);
-
-    video().changeCamera(cameraId(), width, height, fourcc);
-    video().start();
-
-    auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-
-    // Эта точка должна быть в пути! Убрать это отсюда потом
-    const QPointF startPoint = db().value("punchpath_start_point").toPointF();
-    moveToAndWaitPosition(startPoint); // Приехали на позицию
-    if (_stop) { emit message("program interrupted"); return; }
-
-    // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
-    every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) blob->deleteLater(); });
-
-    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
-
-    // Восстанавливаю поворот и позицию платы с предудущего раза.
-    // Надо выполнять в потоке сцены, там внутри запускается какой то таймер
-    runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
-    runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
-    runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
-
-    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
-
-    QList<BlobItem*> referenceFiducialBlobs;
-
-    every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
+    try
     {
-        if (blob->isFiducial())
-            referenceFiducialBlobs.append(blob);
-    });
 
+        // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
+        video().reloadDevices();
+        wait(500);
+        video().stop();
 
-    QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
-    for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
-    {
-        waitForNextStep();
-        if (_stop) { emit message("program interrupted"); return; }
+        db().insert("resolution_width", width);
+        db().insert("resolution_height", height);
 
-        BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
-        //realFiducialBlob->setRealFiducial(true);
-        runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
+        video().changeCamera(cameraId(), width, height, fourcc);
+        video().start();
 
-        const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
-        qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+        auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-        updateBlobPosition(realFiducialBlob, options);
-        updateBlobPosition(realFiducialBlob, options);
-        updateBlobPosition(realFiducialBlob, options);
-        int result = updateBlobPosition(realFiducialBlob, options);
-        if (result > 0)
+        // Эта точка должна быть в пути! Убрать это отсюда потом
+        const QPointF startPoint = db().value("punchpath_start_point").toPointF();
+        // qd() << "На стартовой позиции";
+        moveToAndWaitPosition(startPoint); // Приехали на позицию
+
+        // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
+        every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) blob->deleteLater(); });
+
+        qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+
+        // Восстанавливаю поворот и позицию платы с предудущего раза.
+        // Надо выполнять в потоке сцены, там внутри запускается какой то таймер
+        runOnThreadWait(&scene(), []() { scene().board()->setRotation(0);});
+        runOnThreadWait(&scene(), []() { scene().board()->setPos({0,0});});
+        runOnThreadWait(&scene(), []() { scene().board()->setTransformOriginPoint({0,0});});
+
+        qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+
+        QList<BlobItem*> referenceFiducialBlobs;
+
+        every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
         {
-            result = updateBlobPosition(realFiducialBlob, options);
+            if (blob->isFiducial())
+                referenceFiducialBlobs.append(blob);
+        });
+
+
+        QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
+        for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
+        {
+            waitForNextStep();
+            //if (_stop) { emit message("program interrupted"); return; }
+
+            BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
+            //realFiducialBlob->setRealFiducial(true);
+            runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
+
+            const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
+            qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+
+            updateBlobPosition(realFiducialBlob, options);
+            updateBlobPosition(realFiducialBlob, options);
+            updateBlobPosition(realFiducialBlob, options);
+            int result = updateBlobPosition(realFiducialBlob, options);
             if (result > 0)
-                result = updateBlobPosition(realFiducialBlob, options);
-        }
-        fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
-    }
-
-    // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
-    // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
-    // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
-    // realFiducialBlob  не привязана никуда.
-
-    if (fiducialBlobs.size() != 2)
-    {
-        db().insert("messagebox", "fiducial точек должно быть 2");
-        return;
-    }
-
-    QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
-    QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
-
-    BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
-    BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
-
-    algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
-
-    // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
-    int count  = 0;
-
-    QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
-
-    if (blobs.isEmpty())
-        blobs = scene().punchBlobs();
-
-    // qd() << "blobs to punch";
-
-    // for (BlobItem* blob : qAsConst(blobs))
-    //     qd() << blob->scenePos();
-
-
-    const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
-    const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
-    const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
-
-    for (BlobItem* blob : qAsConst(blobs))
-    {
-        waitForNextStep(); // Перед ехать
-        if (_stop) { emit message("program interrupted"); return; }
-
-        moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
-        if (_stop) { emit message("program interrupted"); return; }
-
-        if (!_noPunch)
-        {
-            waitForNextStep(); // Перед панчем
-            if (_stop) { emit message("program interrupted"); return; }
-
-            for (const QString& gCode : punchCode)
             {
-                serial().write(gCode.toLatin1() + "\n");
-                emit message(gCode);
-                const double z = extractFromGcodeZ(gCode);
-
-                waitPosZ(z, _stop);
-                if (_stop) { emit message("program interrupted"); return; }
+                result = updateBlobPosition(realFiducialBlob, options);
+                if (result > 0)
+                    result = updateBlobPosition(realFiducialBlob, options);
             }
+            fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
         }
-        ++count;
+
+        // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
+        // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
+        // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
+        // realFiducialBlob  не привязана никуда.
+
+        if (fiducialBlobs.size() != 2)
+        {
+            db().insert("messagebox", "fiducial точек должно быть 2");
+            return;
+        }
+
+        QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
+        QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
+
+        BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
+        BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
+
+        algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
+
+        // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
+        int count  = 0;
+
+        QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
+
+        if (blobs.isEmpty())
+            blobs = scene().punchBlobs();
+
+        // qd() << "blobs to punch";
+
+        // for (BlobItem* blob : qAsConst(blobs))
+        //     qd() << blob->scenePos();
+
+
+        const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
+        const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
+        const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
+
+        for (BlobItem* blob : qAsConst(blobs))
+        {
+            waitForNextStep(); // Перед ехать
+            //if (_stop) { emit message("program interrupted"); return; }
+
+            moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
+            //if (_stop) { emit message("program interrupted"); return; }
+
+            if (!_noPunch)
+            {
+                waitForNextStep(); // Перед панчем
+
+                for (const QString& gCode : punchCode)
+                {
+                    serial().write(gCode.toLatin1() + "\n");
+                    emit message(gCode);
+                    const double z = extractFromGcodeZ(gCode);
+
+                    waitPosZ(z, _stop);
+                }
+            }
+            ++count;
+        }
+
+        waitForNextStep(); // Перед ехать
+
+        // Поехали назад в домашнюю точку
+        moveToAndWaitPosition(db().value("punchpath_start_point").toPointF());
+
+        qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+        emit message("count " + QString::number(count));
     }
+    catch (const stopEx& e)
+    {
+        emit message("program interrupted");
+    }
+    catch (...)
+    {
 
-    waitForNextStep(); // Перед ехать
-    if (_stop) { emit message("program interrupted"); return; }
-
-    // Поехали назад в домашнюю точку
-    moveToAndWaitPosition(db().value("punchpath_start_point").toPointF());
-    if (_stop) { emit message("program interrupted"); return; }
-
-    qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+    }
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("punch blobs finished");
     emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
-    emit message("count " + QString::number(count));
 }

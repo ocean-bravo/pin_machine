@@ -14,7 +14,7 @@ class TaskBase : public QObject
 
 public:
     void moveTo(QPointF pos);
-    void moveToAndWaitPosition(QPointF pos);
+    void moveToAndWaitPosition(QPointF pos); // stopEx
 
     int updateBlobPosition(BlobItem* blob, QVariantMap options);
 

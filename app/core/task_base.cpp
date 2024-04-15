@@ -26,7 +26,7 @@ void TaskBase::moveTo(QPointF pos)
 
 }
 
-void TaskBase::moveToAndWaitPosition(QPointF pos)
+void TaskBase::moveToAndWaitPosition(QPointF pos) // stopEx
 {
     moveTo(pos);
     waitPosXY(pos, _stop);

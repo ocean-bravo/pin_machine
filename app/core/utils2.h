@@ -8,6 +8,8 @@
 #include <tuple>
 #include "data_bus.h"
 
+struct stopEx : std::exception {};
+
 inline std::tuple<double, double, double> blobToDouble(const QString& blob)
 {
     const QStringList coord = blob.split(" ", Qt::SkipEmptyParts);
@@ -17,8 +19,8 @@ inline std::tuple<double, double, double> blobToDouble(const QString& blob)
     return {x, y, dia};
 }
 
-void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop);
-void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop);
+void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop); // stopEx
+void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop); // stopEx
 
 void waitDataBus(const QString& key, const QString& value);
 

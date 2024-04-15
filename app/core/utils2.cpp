@@ -16,7 +16,7 @@ bool okValue(double targetValue, double currentValue)
 
 }
 
-void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop)
+void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop) // stopEx
 {
     auto condition = [target]() -> bool
     {
@@ -33,10 +33,7 @@ void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop)
     QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop, &stop](const QString& key, const QVariant&)
     {
         if (stop)
-        {
-            loop.quit();
-            return;
-        }
+            throw stopEx();
 
         if ( key == "status" || key == "xPos" || key == "yPos")
         {
@@ -60,7 +57,7 @@ void waitPosXY(QPointF target, const QAtomicInteger<bool>& stop)
     loop.exec();
 }
 
-void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop)
+void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop) // stopEx
 {
     auto condition = [zTarget]() -> bool
     {
@@ -76,10 +73,7 @@ void waitPosZ(double zTarget, const QAtomicInteger<bool>& stop)
     QMetaObject::Connection conn = QObject::connect(&db(), &DataBus::valueChanged, &loop, [&condition, &loop, &stop](const QString& key, const QVariant&)
     {
         if (stop)
-        {
-            loop.quit();
-            return;
-        }
+            throw stopEx();
 
         if ( key == "status" || key == "zPos")
         {
