@@ -125,10 +125,7 @@ void TaskPunchPrivate::waitForNextStep() // stopEx
         QEventLoop loop;
         QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
         {
-            if (_stop)
-                throw stopEx();
-
-            if (!_isPaused)
+            if (!_isPaused || _stop)
                 loop.quit();
         });
 
@@ -136,6 +133,9 @@ void TaskPunchPrivate::waitForNextStep() // stopEx
 
         timer.start(50);
         loop.exec();
+
+        if (_stop)
+            throw stopEx();
     }
 }
 
