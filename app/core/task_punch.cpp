@@ -111,8 +111,6 @@ TaskPunchPrivate::TaskPunchPrivate()
 
 void TaskPunchPrivate::waitForNextStep()
 {
-    //const bool stepByStep = db().value("punch_step_by_step").toBool();
-
     if (_stepByStep)
     {
         _isPaused = true;

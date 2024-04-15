@@ -45,12 +45,11 @@ CollapsiblePanel2 {
         }
 
         RowLayout {
-
             SmButton {
                 id: punch
                 text: qsTr("Punch")
                 checkable: true
-                Layout.preferredWidth: 70
+                //Layout.preferredWidth: 70
                 onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
                                           : TaskPunch.stopProgram()
                 function selectedResolution() {
@@ -78,22 +77,22 @@ CollapsiblePanel2 {
             }
         }
 
-        CheckBox {
-            id: slowFindBlobs
-            text: "step by step (F8)"
-            onCheckedChanged: DataBus.punch_step_by_step = checked
-            checked: false
+        RowLayout {
+            CheckBox {
+                id: slowFindBlobs
+                text: qsTr("Step by step")
+                onCheckedChanged: TaskPunch.stepByStep = checked
+                checked: false
+            }
 
-            //Layout.preferredHeight: 30
-            //Layout.preferredWidth: 20
-        }
-    }
-
-    Shortcut {
-        sequence: "F8"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            DataBus.punch_next = "ok"
+            SmButton {
+                id: nextStep
+                text: qsTr("Next")
+                onClicked: {
+                    if (TaskPunch.isPaused)
+                        TaskPunch.isPaused = false
+                }
+            }
         }
     }
 }
