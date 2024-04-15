@@ -134,11 +134,6 @@ void TaskPunchPrivate::waitForNextStep()
         timer.start(50);
         loop.exec();
     }
-
-
-    // db().insert("punch_next", "wait"); // Показать в GUI окно предложение продолжения
-    // waitDataBus("punch_next", "ok");
-    // db().insert("punch_next", QString());
 }
 
 void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
@@ -171,6 +166,11 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
     auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
     auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+    // Эта точка должна быть в пути! Убрать это отсюда потом
+    const QPointF startPoint = db().value("punchpath_start_point").toPointF();
+    moveToAndWaitPosition(startPoint); // Приехали на позицию
+    if (_stop) { emit message("program interrupted"); return; }
 
     // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
     every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) blob->deleteLater(); });

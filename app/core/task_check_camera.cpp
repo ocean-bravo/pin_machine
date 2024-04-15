@@ -109,11 +109,7 @@ void TaskCheckCameraPrivate::run(QVariantMap options)
     QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
     for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
-        if (_stop)
-        {
-            emit message("program interrupted");
-            break;
-        }
+        if (_stop) { emit message("program interrupted"); break; }
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         //realFiducialBlob->setRealFiducial(true);
