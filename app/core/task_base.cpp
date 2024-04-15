@@ -29,7 +29,7 @@ void TaskBase::moveTo(QPointF pos)
 void TaskBase::moveToAndWaitPosition(QPointF pos)
 {
     moveTo(pos);
-    waitPosXY(pos);
+    waitPosXY(pos, _stop);
 }
 
 int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options)

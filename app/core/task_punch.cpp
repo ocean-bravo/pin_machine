@@ -127,7 +127,7 @@ void TaskPunchPrivate::waitForNextStep()
         QEventLoop loop;
         QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
         {
-            if (!_isPaused)
+            if (!_isPaused || _stop)
                 loop.quit();
         });
 
@@ -200,8 +200,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
     {
         waitForNextStep();
-
-        if (_stop) { emit message("program interrupted"); break; }
+        if (_stop) { emit message("program interrupted"); return; }
 
         BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
         //realFiducialBlob->setRealFiducial(true);
@@ -263,31 +262,35 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
     for (BlobItem* blob : qAsConst(blobs))
     {
         waitForNextStep(); // Перед ехать
+        if (_stop) { emit message("program interrupted"); return; }
 
         moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
-
         if (_stop) { emit message("program interrupted"); return; }
 
         if (!_noPunch)
         {
             waitForNextStep(); // Перед панчем
+            if (_stop) { emit message("program interrupted"); return; }
 
             for (const QString& gCode : punchCode)
             {
-                if (_stop) { emit message("program interrupted"); return; }
-
                 serial().write(gCode.toLatin1() + "\n");
                 emit message(gCode);
                 const double z = extractFromGcodeZ(gCode);
-                waitPosZ(z);
+
+                waitPosZ(z, _stop);
+                if (_stop) { emit message("program interrupted"); return; }
             }
         }
         ++count;
     }
 
     waitForNextStep(); // Перед ехать
+    if (_stop) { emit message("program interrupted"); return; }
+
     // Поехали назад в домашнюю точку
     moveToAndWaitPosition(db().value("punchpath_start_point").toPointF());
+    if (_stop) { emit message("program interrupted"); return; }
 
     qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
