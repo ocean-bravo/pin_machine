@@ -21,6 +21,12 @@ SmButton {
         okButtonText: qsTr("Save")
         cancelButtonText: qsTr("No")
 
+
+        width: 500
+        height: 250
+        parent: appWin
+        anchors.centerIn: parent
+
         onAccept: {
             acceptFunc()
             hide()
