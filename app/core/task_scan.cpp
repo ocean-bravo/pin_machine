@@ -138,96 +138,110 @@ void TaskScanPrivate::run(QString program, int width, int height, QString fourcc
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
-    video().reloadDevices();
-    wait(500);
-    video().stop();
-
-    db().insert("resolution_width", width);
-    db().insert("resolution_height", height);
-
-    video().changeCamera(cameraId(), width, height, fourcc);
-    video().start();
-
-    _lineToSend = 0;
-    _codeLines = program.split("\n", Qt::KeepEmptyParts);
-
-    db().insert("capture_number", 0);
-    //ImagesStorage.clearCaptured()
-    scene().clear();
-    scene().addBoard();
-
-    // Костыль. Чтобы плата показывалась во весь экран. Иначе плата была неизвестно где, на сцене ее было не видно.
-    for (QGraphicsView* view : scene().views())
+    try
     {
-        GraphicsView* v = dynamic_cast<GraphicsView*>(view);
-        if (v)
-            v->fit();
+        // Мешается GUI. При обнуражении камеры идет ее запуск. Решить бы это как то.
+        video().reloadDevices();
+        wait(500);
+        video().stop();
+
+        db().insert("resolution_width", width);
+        db().insert("resolution_height", height);
+
+        video().changeCamera(cameraId(), width, height, fourcc);
+        video().start();
+
+        auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
+        {
+                scene().setImage(img.copy()); // копия не нужна. Внутри делается копия
+                db().insert("image_raw_captured", img.copy());
+                //opencv().appendToBlobDetectorQueue(img.copy());
+        });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+
+
+        _lineToSend = 0;
+        _codeLines = program.split("\n", Qt::KeepEmptyParts);
+
+        db().insert("capture_number", 0);
+        //ImagesStorage.clearCaptured()
+        scene().clear();
+        scene().addBoard();
+
+        // Костыль. Чтобы плата показывалась во весь экран. Иначе плата была неизвестно где, на сцене ее было не видно.
+        for (QGraphicsView* view : scene().views())
+        {
+            GraphicsView* v = dynamic_cast<GraphicsView*>(view);
+            if (v)
+                v->fit();
+        }
+
+        //    scene().addBlob(5,5,25);
+
+        //    scene().addBlob(35,5,25);
+        //    {
+        //        BlobItem* bl = scene().addBlob(5,35,2);
+        //        bl->setFiducial(true);
+        //        //bl->setRotation(45);
+        //    }
+        //    {
+        //        BlobItem* bl = scene().addBlob(5.05,35.05,2);
+        //        bl->setRealFiducial(true);
+        //        //bl->setRotation(0);
+        //    }
+
+        //    return;
+
+        wait(200);
+
+        while (true)
+        {
+            if (_stop)
+            {
+                emit message("program interrupted");
+                break;
+            }
+
+            if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
+
+                waitPosXY(QPointF(_xTarget, _yTarget), _stop);
+
+
+                emit message("capturing ...");
+                auto a = QDateTime::currentMSecsSinceEpoch();
+                video().capture();
+                waitForSignal(&video(), &Video4::captured, 2000);
+                auto b = QDateTime::currentMSecsSinceEpoch();
+                emit message(QString("captured %1 ms").arg(b-a));
+
+                // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
+                wait(1);
+                db().insert("capture_number", db().value("capture_number").toInt() + 1);
+            }
+
+            if (_lineToSend >= _codeLines.length())
+            {
+                emit message("program finished");
+                break;
+            }
+        }
+
+        wait(300); // не успевает блоб отдетектироваться
+        scene().removeDuplicatedBlobs();
+    }
+    catch (const stopEx& e)
+    {
+        qd() << "program interrupted";
+        emit message("program interrupted");
+    }
+    catch (...)
+    {
+
     }
 
-//    scene().addBlob(5,5,25);
-
-//    scene().addBlob(35,5,25);
-//    {
-//        BlobItem* bl = scene().addBlob(5,35,2);
-//        bl->setFiducial(true);
-//        //bl->setRotation(45);
-//    }
-//    {
-//        BlobItem* bl = scene().addBlob(5.05,35.05,2);
-//        bl->setRealFiducial(true);
-//        //bl->setRotation(0);
-//    }
-
-//    return;
-
-    wait(200);
-
-    auto connection = connect(&video(), &Video4::captured, this, [](QImage img)
-    {
-        scene().setImage(img.copy()); // копия не нужна. Внутри делается копия
-        db().insert("image_raw_captured", img.copy());
-        //opencv().appendToBlobDetectorQueue(img.copy());
-    });
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-
-    while (true)
-    {
-        if (_stop)
-        {
-            emit message("program interrupted");
-            break;
-        }
-
-        if (sendNextLine()) { // Если строка пустая, никаких действий после нее не надо делать
-
-            waitPosXY(QPointF(_xTarget, _yTarget), _stop);
-
-
-            emit message("capturing ...");
-            auto a = QDateTime::currentMSecsSinceEpoch();
-            video().capture();
-            waitForSignal(&video(), &Video4::captured, 2000);
-            auto b = QDateTime::currentMSecsSinceEpoch();
-            emit message(QString("captured %1 ms").arg(b-a));
-
-            // Дать обработаться захвату, получить номер capture_number и потом его инкрементировать
-            wait(1);
-            db().insert("capture_number", db().value("capture_number").toInt() + 1);
-        }
-
-        if (_lineToSend >= _codeLines.length())
-        {
-            emit message("program finished");
-            break;
-        }
-    }
-
-    wait(300); // не успевает блоб отдетектироваться
-    scene().removeDuplicatedBlobs();
-
-    auto finish = QDateTime::currentMSecsSinceEpoch();
-
-    emit message("program time " + QString::number((finish - start)/1000) + " sec");
+    const auto finish = QDateTime::currentMSecsSinceEpoch();
+    emit message("scan blobs finished");
+    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
     wait(10);
 }
