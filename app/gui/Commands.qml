@@ -28,6 +28,10 @@ Item {
 
     function appendCommandsLog(message, color) {
         // Подготовил к показу
+
+        if (message.length === 0)
+            return
+
         message = String(message) // так, на всякий скопировал
 
         message = message.replace(/</g, '|')
