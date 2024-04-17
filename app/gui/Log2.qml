@@ -52,6 +52,8 @@ Loader {
 
     property string selectedText
 
+    property bool richText: true
+
     Component {
         id: comp
 
@@ -88,7 +90,7 @@ Loader {
                 width: ListView.view.width
                 font.family: "Consolas"
                 font.pixelSize: 13
-                textFormat: TextEdit.RichText
+                textFormat: loader.richText ? Text.StyledText : Text.PlainText
                 wrapMode: Text.WordWrap
 
                 text: {
