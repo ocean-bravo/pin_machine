@@ -189,8 +189,6 @@ cv::Mat adaptiveThreshold(const cv::Mat& in, QVariantMap options)
 //Найти, кто дергает эту функцию
 OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
 {
-    trace();
-
     static quint32 count = 0;
     ++count;
 

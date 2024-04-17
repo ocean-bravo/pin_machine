@@ -208,10 +208,10 @@ void Scene::setImagePrivate(QImage img)
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
 
-    static int i = 0;
-    qd() << "set image i x y pos offset " << i << x << y << item->pos() << item->offset();
-    //        qd() << "pix rect " << pix.rect();
-    //            qd() << "pix offset " << item->offset();
+    //static int i = 0;
+    //qd() << "set image i x y pos offset " << i << x << y << item->pos() << item->offset();
+    //qd() << "pix rect " << pix.rect();
+    //qd() << "pix offset " << item->offset();
 }
 
 QList<QGraphicsPixmapItem*> Scene::pixmaps() const
