@@ -33,8 +33,7 @@ Item {
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')
         message = message.replace(/\r?\n/g, '<br>')
-
-        console.log(message.split('<br>'))
+        message = message.replace(/<br>$/, '') // Убираю последний перенос строки
 
         logViewer.append(coloredMessage(message, color))
     }
