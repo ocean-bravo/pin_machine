@@ -33,7 +33,8 @@ Item {
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')
         message = message.replace(/\r?\n/g, '<br>')
-        message = message.replace(/<br>$/, '') // Убираю последний перенос строки
+
+        message = message.replace(/<br>$/g, '') // Убираю последний перенос строки
 
         logViewer.append(coloredMessage(message, color))
     }
