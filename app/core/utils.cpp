@@ -175,3 +175,15 @@ void saveIniFile(const QString& path, const QVariantMap& newData)
     for (const QString& key : newData.keys())
         sett.setValue(key, newData.value(key));
 }
+
+QString replaceAnsiToRich(QString str)
+{
+    str = str.replace(lineSeparatorRegExp, "<br>");
+    str = str.replace(csi + "0m", "</font>");
+    str = str.replace(csi + "32m", "<font color='green'>");
+    str = str.replace(csi + "33m", "<font color='orange'>"); // был желтый, но его не видно на белом фоне
+    str = str.replace(csi + "34m", "<font color='blue'>");
+    str = str.replace(csi + "35m", "<font color='magenta'>");
+    str = str.replace(csi + "35m", "<font color='cyan'>");
+    return str;
+}

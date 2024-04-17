@@ -12,6 +12,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
+#include <cpptrace/cpptrace.hpp>
+
 namespace ColorRgb {
 cv::Scalar Blue(0, 0, 255, 255);
 cv::Scalar Red(255, 0, 0, 255);
@@ -21,6 +23,14 @@ cv::Scalar Black(0, 0, 0, 0);
 }
 
 namespace {
+
+void trace() {
+    std::stringstream out;
+    cpptrace::stacktrace().current().print_with_snippets(out);
+
+    auto str = QString::fromStdString(out.str());
+    qd() << replaceAnsiToRich(str);
+}
 
 // void Rearrange(cv::Mat& src, cv::Mat& dst)
 // {
@@ -176,8 +186,11 @@ cv::Mat adaptiveThreshold(const cv::Mat& in, QVariantMap options)
 
 // img должно быть скопировано, при передаче в эту функцию
 // Круги рисуются прямо на переданном изображении, без копирования.
+//Найти, кто дергает эту функцию
 OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
 {
+    trace();
+
     static quint32 count = 0;
     ++count;
 

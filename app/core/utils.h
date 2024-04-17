@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <QDebug>
+#include <QRegularExpression>
 
 #include <chrono>
 #include <tuple>
@@ -16,6 +17,7 @@ const QString up("1A");
 const QString fwd10("10C");
 const QString beginprevline(csi + "F");
 inline const QString setpos(int column) { return csi + QString("%1C").arg(column); }
+const QRegularExpression lineSeparatorRegExp = QRegularExpression(R"((\r\n?|\n))"); // Сработает на crlf, cr или lf
 
 
 inline QString toReal3(double value)
@@ -163,6 +165,9 @@ inline QByteArray v4l2_fourcc2s(quint32 fourcc)
 
     return buf;
 }
+
+QString replaceAnsiToRich(QString str);
+
 
 QByteArray openAndReadAll(const QString& path);
 QStringList filesInDirectory(QString dir, QStringList nameFilters);

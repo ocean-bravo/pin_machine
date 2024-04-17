@@ -69,8 +69,7 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
     statusTimer.start(100);
 
-    auto start = QDateTime::currentMSecsSinceEpoch();
-
+    const auto start = QDateTime::currentMSecsSinceEpoch();
 
     try
     {
@@ -87,6 +86,8 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
 
         auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
         auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+
 
         QList<BlobItem*> blobs;
 

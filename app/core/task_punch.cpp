@@ -172,6 +172,8 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
         auto guard = qScopeGuard([=]() { disconnect(connection); });
 
+
+
         // Эта точка должна быть в пути! Убрать это отсюда потом
         const QPointF startPoint = db().value("punchpath_start_point").toPointF();
         // qd() << "На стартовой позиции";

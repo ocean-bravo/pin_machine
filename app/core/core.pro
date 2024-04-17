@@ -36,7 +36,8 @@ LIBS += -L/usr/lib/x86_64-linux-gnu/ \
 -lopencv_structured_light -lopencv_superres -lopencv_surface_matching -lopencv_text \
 -lopencv_tracking -lopencv_videoio -lopencv_video -lopencv_videostab \
 -lopencv_ximgproc -lopencv_xobjdetect -lopencv_xphoto \
--lturbojpeg # libturbojpeg0-dev
+-lturbojpeg \ # libturbojpeg0-dev
+-lcpptrace -ldwarf -lz -lzstd -ldl # для cpptrace
 
 OTHER_FILES +=
 
