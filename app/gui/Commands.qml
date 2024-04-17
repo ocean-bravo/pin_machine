@@ -196,6 +196,7 @@ Item {
                         SplitView.preferredHeight: parent.height / 2
                         Log2 {
                             id: logViewer
+                            richText: false
                             anchors.fill:parent
                             loadOnCompleted: true
                         }
