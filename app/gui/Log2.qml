@@ -90,7 +90,7 @@ Loader {
                 width: ListView.view.width
                 font.family: "Consolas"
                 font.pixelSize: 13
-                textFormat: Text.StyledText //loader.richText ? TextArea.StyledText : TextArea.PlainText
+                textFormat: loader.richText ? TextArea.RichText : TextArea.PlainText
                 wrapMode: Text.WordWrap
 
                 text: {
