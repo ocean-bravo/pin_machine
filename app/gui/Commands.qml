@@ -32,7 +32,7 @@ Item {
         if (message.length === 0)
             return
 
-        message = String(message) // так, на всякий скопировал
+        // message = String(message) // так, на всякий скопировал
 
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')

@@ -29,8 +29,8 @@ Control {
         if (message.length === 0)
             return
 
-        // Подготовил к показу
-        message = String(message) // так, на всякий скопировал
+        // // Подготовил к показу
+        // message = String(message) // так, на всякий скопировал
 
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')

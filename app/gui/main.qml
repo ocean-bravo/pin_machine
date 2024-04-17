@@ -50,7 +50,7 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-
+            console.log(msg)
             //console.log(msg.split(/\r?\n/))
 
             let showLines = parseSerialMessage(msg)
