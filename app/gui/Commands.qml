@@ -34,7 +34,7 @@ Item {
         message = message.replace(/>/g, '|')
         message = message.replace(/\r?\n/g, '<br>')
 
-        console.log(message)
+        console.log(message.split('<br>'))
 
         logViewer.append(coloredMessage(message, color))
     }
