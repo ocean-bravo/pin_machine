@@ -55,7 +55,7 @@ void ImageItem::clear()
 
 void ImageItem::wheelEvent(QWheelEvent *event)
 {
-    qd() << "image item wheel event";
+    //qd() << "image item wheel event";
     const QPoint angleDelta = event->angleDelta();
 
     if (angleDelta.x() == 0 && angleDelta.y() != 0) // Вертикальный скролл

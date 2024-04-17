@@ -75,6 +75,8 @@ ColumnLayout {
 
         var showLines = []
 
+        let gpioMessage = false
+
         for (let line of lines) {
 
             // Буду считать, что статус:
@@ -94,6 +96,8 @@ ColumnLayout {
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
                 let pin =  parseGpioPin(line)
 
+                gpioMessage = true // Не показывать в логе всё сообщение
+
                 if (pin === null)
                     continue
 
@@ -108,7 +112,8 @@ ColumnLayout {
                 continue
             }
 
-            showLines.push(line)
+            if (!gpioMessage)
+                showLines.push(line)
         }
 
         //console.log("showlines2: ", showLines)
