@@ -57,7 +57,12 @@ ColumnLayout {
 
             //console.log(msg.split(/\r?\n/))
 
-            let showLines = parseSerialMessage(msg)
+            const [stat, showLines] = parseSerialMessage(msg)
+
+            if (stat !== undefined) {
+                superUser.appendToCommandsLog(stat, 'darkblue')
+                operatorUser.appendLog(stat, 'darkblue')
+            }
 
             for (let line of showLines) {
                 superUser.appendToCommandsLog(line, 'darkblue')
@@ -77,7 +82,7 @@ ColumnLayout {
     function parseSerialMessage(msg) {
         let lines = msg.split(/\r?\n/)
 
-        var showLines = []
+        let showLines = []
 
         let gpioMessage = false
 
@@ -90,7 +95,7 @@ ColumnLayout {
             // - в одной строке может быть только статус, без добавлений частей других команд
             if (line.match(/^[<].+[>]$/)) {
                 line =  parseStatus(line)
-                showLines.push(line)
+                var status = line
                 continue
             }
 
@@ -116,12 +121,14 @@ ColumnLayout {
                 continue
             }
 
-            if (!gpioMessage)
-                showLines.push(line)
+            showLines.push(line)
         }
 
-        //console.log("showlines2: ", showLines)
-        return showLines
+        // Если в сообщение попало что-то похожее на статус GPIO - всё сообщение не показываем. Кроме статуса. Его надо показать.
+        if (gpioMessage)
+            showLines = []
+
+        return [status, showLines]
 
         // Если во время хоуминга накидывать многострочные команды вроде GPIO/Dump, то после окончания хоуминга
         // все эти комнды придут, вместе с ok\r\n вперемешку.
