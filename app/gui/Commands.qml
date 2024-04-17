@@ -27,17 +27,13 @@ Item {
     }
 
     function appendCommandsLog(message, color) {
-        // Подготовил к показу
-
         if (message.length === 0)
             return
 
-        // message = String(message) // так, на всякий скопировал
-
+        // Подготовил к показу
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')
         message = message.replace(/\r?\n/g, '<br>')
-
         message = message.replace(/<br>$/g, '') // Убираю последний перенос строки
 
         logViewer.append(coloredMessage(message, color))
@@ -200,7 +196,6 @@ Item {
                         SplitView.preferredHeight: parent.height / 2
                         Log2 {
                             id: logViewer
-                            richText: false
                             anchors.fill:parent
                             loadOnCompleted: true
                         }

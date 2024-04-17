@@ -29,12 +29,11 @@ Control {
         if (message.length === 0)
             return
 
-        // // Подготовил к показу
-        // message = String(message) // так, на всякий скопировал
-
+        // Подготовил к показу
         message = message.replace(/</g, '|')
         message = message.replace(/>/g, '|')
         message = message.replace(/\r?\n/g, '<br>')
+        message = message.replace(/<br>$/g, '') // Убираю последний перенос строки
 
         machineLog.append(coloredMessage(message, color))
     }

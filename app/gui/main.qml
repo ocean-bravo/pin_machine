@@ -50,12 +50,9 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-
-            console.log("_________________")
-            console.log(msg)
-            console.log("^^^^^^^^^^^^^^^^^")
-
-            //console.log(msg.split(/\r?\n/))
+            // console.log("_________________")
+            // console.log(msg)
+            // console.log("^^^^^^^^^^^^^^^^^")
 
             const [stat, showLines] = parseSerialMessage(msg)
 
@@ -68,7 +65,6 @@ ColumnLayout {
                 superUser.appendToCommandsLog(line, 'darkblue')
                 operatorUser.appendLog(line, 'darkblue')
             }
-
         }
     }
 
@@ -87,7 +83,6 @@ ColumnLayout {
         let gpioMessage = false
 
         for (let line of lines) {
-
             // Буду считать, что статус:
             // - ограничен символами < и >
             // - эти символы только в статусе

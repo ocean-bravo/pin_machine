@@ -37,8 +37,6 @@ Window {
             selectionEnabled: true
             Connections { target: Logger; function onNewMessage(message) { debugLog.append(message); } }
 
-            richText: false
-
             Layout.fillWidth: true
             Layout.fillHeight: true
 
