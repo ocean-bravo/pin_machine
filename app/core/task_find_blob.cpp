@@ -3,6 +3,7 @@
 #include "video4.h"
 #include "serial.h"
 #include "scene.h"
+#include "utils2.h"
 #include "data_bus.h"
 #include "openCv.h"
 #include "find_blob_view_item.h"
@@ -60,48 +61,59 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    QList<QGraphicsPixmapItem*> pixs = scene().pixmaps();
-
-    // подать на обнаружение
-    qd() << "images to find " << pixs.size();
-
-    // every<FindBlobViewItem>(scene().items(), [](FindBlobViewItem* item) { delete item; });
-    // FindBlobViewItem* viewItem = new FindBlobViewItem;
-    // scene().addItem(viewItem);
-
-    for (QGraphicsPixmapItem* pixmap : pixs)
+    try
     {
-        QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
+        QList<QGraphicsPixmapItem*> pixs = scene().pixmaps();
 
-        // auto w = img.width();
-        // auto h = img.height();
-        // auto ps = img.devicePixelRatioF();
-        // auto x = img.text("x").toDouble();
-        // auto y = img.text("y").toDouble();
+        // подать на обнаружение
+        qd() << "images to find " << pixs.size();
 
-        // viewItem->setPos(x, y);
-        // viewItem->setRect(-w/(ps*2), -h/(ps*2), w/ps, h/ps);
+        // every<FindBlobViewItem>(scene().items(), [](FindBlobViewItem* item) { delete item; });
+        // FindBlobViewItem* viewItem = new FindBlobViewItem;
+        // scene().addItem(viewItem);
 
-        db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
-        //wait(10); //(slow ? 2000 : 10);
+        for (QGraphicsPixmapItem* pixmap : pixs)
+        {
+            ScopedMeasure m("convert to format: ", ScopedMeasure::Milli);
+            QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
+
+            // auto w = img.width();
+            // auto h = img.height();
+            // auto ps = img.devicePixelRatioF();
+            // auto x = img.text("x").toDouble();
+            // auto y = img.text("y").toDouble();
+
+            // viewItem->setPos(x, y);
+            // viewItem->setRect(-w/(ps*2), -h/(ps*2), w/ps, h/ps);
+
+            db().insert("image_raw_captured", img.copy());
+            opencv().appendToBlobDetectorQueue(img.mirrored(false, true), options);
+            //wait(10); //(slow ? 2000 : 10);
+        }
 
         if (_stop)
+            throw stopEx();
+
+        waitForSignal(&opencv(), &OpenCv::queueIsEmpty, 10000);
+
         {
-            emit message("program interrupted");
-            break;
+            qd() << "start remove blobs";
+            ScopedMeasure m("remove blobs", ScopedMeasure::Milli);
+            scene().removeDuplicatedBlobs();
         }
     }
-
-    waitForSignal(&opencv(), &OpenCv::queueIsEmpty, 10000);
-
+    catch (const stopEx& e)
     {
-        qd() << "start remove blobs";
-        ScopedMeasure m("remove blobs", ScopedMeasure::Milli);
-        scene().removeDuplicatedBlobs();
+        qd() << "program interrupted";
+        emit message("program interrupted");
+    }
+    catch (...)
+    {
+
     }
 
-    auto finish = QDateTime::currentMSecsSinceEpoch();
 
-    emit message("program time " + QString::number((finish - start)/1000) + " sec");
+    const auto finish = QDateTime::currentMSecsSinceEpoch();
+    emit message("find blobs finished");
+    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
 }
