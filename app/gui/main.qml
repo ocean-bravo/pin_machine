@@ -50,9 +50,9 @@ ColumnLayout {
         target: Serial
 
         function onData(msg) {
-            console.log("___________________________________________________")
-            console.log(String(msg))
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+            // console.log("___________________________________________________")
+            // console.log(String(msg))
+            // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
             const [stat, showLines] = parseSerialMessage(msg)
 
