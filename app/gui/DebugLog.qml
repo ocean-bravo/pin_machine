@@ -82,6 +82,15 @@ Window {
                         }
                     }
 
+                    MenuItem {
+                        text: "Rich text"
+                        checkable: true
+                        checked: true
+                        onTriggered: {
+                            debugLog.richText = checked
+                        }
+                    }
+
                 }
             }
         }
