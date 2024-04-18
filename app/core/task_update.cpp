@@ -41,6 +41,7 @@ TaskUpdate::~TaskUpdate()
 void TaskUpdate::run(int width, int height, QString fourcc)
 {
     _impl->_stop = false;
+    _impl->_stopObj.run();
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection,
                               Q_ARG(int, width),
                               Q_ARG(int, height),
@@ -50,6 +51,7 @@ void TaskUpdate::run(int width, int height, QString fourcc)
 void TaskUpdate::stopProgram()
 {
     _impl->_stop = true;
+    _impl->_stopObj.stop();
 }
 
 

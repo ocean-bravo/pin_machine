@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "data_bus.h"
 #include "openCv.h"
+#include "utils2.h"
 
 #include <QScopeGuard>
 #include <QDateTime>
@@ -32,12 +33,14 @@ TaskScanPosition::~TaskScanPosition()
 void TaskScanPosition::run(QPointF pos, QString sceneFile)
 {
     _impl->_stop = false;
+    _impl->_stopObj.run();
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QPointF, pos), Q_ARG(QString, sceneFile));
 }
 
 void TaskScanPosition::stopProgram()
 {
     _impl->_stop = true;
+    _impl->_stopObj.stop();
 }
 
 
@@ -47,7 +50,6 @@ TaskScanPositionPrivate::TaskScanPositionPrivate()
 }
 
 // Нужно, чтобы было установлено разрешение камере. Если нет, будут проблемы.
-
 void TaskScanPositionPrivate::run(QPointF pos, QString sceneFile)
 {
     const auto fin = qScopeGuard([this]{ emit finished(); });
@@ -61,29 +63,42 @@ void TaskScanPositionPrivate::run(QPointF pos, QString sceneFile)
 
     const auto start = QDateTime::currentMSecsSinceEpoch();
 
-    // Не разрешать выезжать за пределы нуля. Пока так, на скорую руку.
-    if (pos.x() < 5 || pos.y() < 5)
-        return;
-
-    video().start();
-
-    auto connection = connect(&video(), &Video4::captured, this, [sceneFile](QImage img)
+    try
     {
-        scene().setImage(img.copy());
-        db().insert("image_raw_captured", img.copy());
-        opencv().appendToBlobDetectorQueue(img.copy(), openIniFile(sceneFile));
-    });
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
+        // Не разрешать выезжать за пределы нуля. Пока так, на скорую руку.
+        if (pos.x() < 5 || pos.y() < 5)
+            return;
 
-    moveToAndWaitPosition(pos);
-    wait(300);
-    video().capture();
-    waitForSignal(&video(), &Video4::captured, 2000);
-    wait(300); // не успевает блоб отдетектироваться
-    scene().removeDuplicatedBlobs();
+        video().start();
 
-    auto finish = QDateTime::currentMSecsSinceEpoch();
+        auto connection = connect(&video(), &Video4::captured, this, [sceneFile](QImage img)
+        {
+                scene().setImage(img.copy());
+                db().insert("image_raw_captured", img.copy());
+                opencv().appendToBlobDetectorQueue(img.copy(), openIniFile(sceneFile));
+        });
+        auto guard = qScopeGuard([=]() { disconnect(connection); });
 
-    emit message("program time " + QString::number((finish - start)/1000) + " sec");
-    //wait(10);
+
+
+        moveToAndWaitPosition(pos);
+        waitForSignal(&_stopObj, &Stop::stopped, 300);
+        video().capture();
+        waitForSignal(&video(), &Video4::captured, 2000);
+        waitForSignal(&_stopObj, &Stop::stopped, 300); // не успевает блоб отдетектироваться
+        scene().removeDuplicatedBlobs();
+    }
+    catch (const stopEx& e)
+    {
+        qd() << "program interrupted";
+        emit message("program interrupted");
+    }
+    catch (...)
+    {
+
+    }
+
+    const auto finish = QDateTime::currentMSecsSinceEpoch();
+    emit message("scan position finished");
+    emit message("time " + QString::number(std::floor((finish-start)/1000)) + " sec");
 }
