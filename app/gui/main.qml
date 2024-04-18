@@ -94,13 +94,19 @@ ColumnLayout {
                 continue
             }
 
+            // Просто по набору признаков в сообщении, определяю, является ли оно GPIO статусом.
+            // Пока настройка по 2 признакам:
+            // 1. "15 GPIO" (к примеру)
+            // 2. "Input Matrix"
+            // Возможно понадобится расширить список признаков.
+            if (line.match(/[\d]{1,2} GPIO[\d]{1,2}|Input Matrix/)) {
+                gpioMessage = true // Не показывать в логе всё сообщение
+            }
+
             // Проверяю каждую строку не GPIO ли
             // Бывают пины вида 19 GPIO19 I0 O0 HSPIQ_out - что с ними делать не знаю
-
             if (line.match(/[\d]{1,2} GPIO[\d]{1,2} [IO][01]/)) {
                 let pin =  parseGpioPin(line)
-
-                gpioMessage = true // Не показывать в логе всё сообщение
 
                 if (pin === null)
                     continue
