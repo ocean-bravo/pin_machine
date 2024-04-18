@@ -46,6 +46,32 @@ ColumnLayout {
         return msg
     }
 
+    QtObject {
+        id: colors
+
+        readonly property color primary_10: "#F6FAFF"
+        readonly property color primary_20: "#DBEAFE"
+        readonly property color primary_50: "#60A5FA"
+        readonly property color primary_70: "#2563EB"
+        readonly property color primary_90: "#1E40AF"
+
+        readonly property color black_20: "#CCCCCC"
+        readonly property color black_30: "#B3B3B3"
+        readonly property color black_50: "#808080"
+        readonly property color black_80: "#333333"
+        readonly property color black_90: "#1A1A1A"
+
+        readonly property color error_80: "#FF5E5C"
+
+        readonly property color accent_90: "#FFC800"
+
+        readonly property color success_90: "#14B8A6"
+
+        readonly property color green: "#14B842"
+
+        readonly property color disabledButton: "#E5E5E5"
+    }
+
     Connections {
         target: Serial
 

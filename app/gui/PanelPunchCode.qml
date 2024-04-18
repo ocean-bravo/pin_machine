@@ -44,55 +44,160 @@ CollapsiblePanel2 {
             }
         }
 
-        RowLayout {
-            SmButton {
-                id: punch
-                text: qsTr("Punch")
-                checkable: true
-                //Layout.preferredWidth: 70
-                onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
-                                          : TaskPunch.stopProgram()
-                function selectedResolution() {
-                    return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
-                }
-                Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
-            }
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 40
 
-            ComboBox {
-                id: resolutionListForPunch
-                //width: 200
-                Layout.preferredWidth: 180
-                Layout.columnSpan: 2
-                textRole: "display"
-                model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
-                onModelChanged: {
-                    let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
+            RowLayout {
+                anchors.fill: parent
 
-                    for (let i = 0; i < res.length; i++) {
-                        let r = res[i]
-                        if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
-                            currentIndex = i
+                ComboBox {
+                    id: resolutionListForPunch
+                    //width: 200
+                    Layout.preferredWidth: 180
+                    Layout.columnSpan: 2
+                    textRole: "display"
+                    model: sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue]) // Плохо, по другому выбирать откуда брать разрешения
+                    onModelChanged: {
+                        let res = sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])
+
+                        for (let i = 0; i < res.length; i++) {
+                            let r = res[i]
+                            if (r.width === 800 && r.height === 600 &&  r.fourcc === "YUYV")
+                                currentIndex = i
+                        }
                     }
                 }
             }
         }
 
-        RowLayout {
-            CheckBox {
-                id: slowFindBlobs
-                text: qsTr("Step by step")
-                onCheckedChanged: TaskPunch.stepByStep = checked
-                checked: false
-            }
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 70
 
-            SmButton {
-                id: nextStep
-                text: qsTr("Next")
-                onClicked: {
-                    if (TaskPunch.isPaused)
-                        TaskPunch.isPaused = false
+            GridLayout {
+                anchors.fill: parent
+                flow: GridLayout.TopToBottom
+                columns: 2
+                rows: 2
+                columnSpacing: 5
+
+                CheckBox {
+                    text: qsTr("Проверка реперных отверстий перед установкой")
+                    font.pixelSize: 12
+
+                    Layout.preferredHeight: 24
+                    Layout.fillWidth: true
+                }
+
+                CheckBox {
+                    text: qsTr("Проверка всех отверстий перед установкой")
+                    font.pixelSize: 12
+
+                    Layout.preferredHeight: 24
+                    Layout.fillWidth: true
+                }
+
+                CheckBox {
+                    text: qsTr("Без установки")
+                    font.pixelSize: 12
+
+                    checked: TaskPunch.noPunch
+                    onCheckedChanged: TaskPunch.noPunch = checked
+
+                    Layout.preferredHeight: 24
+                    Layout.fillWidth: true
+                }
+
+                CheckBox {
+                    text: qsTr("Пошагово")
+                    font.pixelSize: 12
+
+                    checked: TaskPunch.stepByStep
+                    onCheckedChanged: TaskPunch.stepByStep = checked
+
+                    Layout.preferredHeight: 24
+                    Layout.fillWidth: true
                 }
             }
+        }
+
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 40
+
+            RowLayout {
+                anchors.fill: parent
+
+                ToolButton {
+                    icon.source: "images/play.svg"
+                    color: colors.success_90
+                    enabled: (!TaskPunch.isRunning || TaskPunch.isPaused) && DataBus.homing_status === "Ready"
+                    onClicked: {
+                        if (DataBus.homing_status !== "Ready")
+                            return
+
+                        if (!TaskPunch.isRunning) {
+                            let punchCode = Settings.value("punch_code")
+                            //TaskPunch.run(punchCode, 800, 600, "YUYV")
+                            TaskPunch.run(punchCode, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
+                            return
+                        }
+
+                        if (TaskPunch.isPaused) {
+                            TaskPunch.isPaused = false
+                            return
+                        }
+                    }
+
+                    function selectedResolution() {
+                        return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
+                    }
+                }
+
+                ToolButton {
+                    icon.source: "images/pause.svg"
+                    color: colors.primary_50
+                    enabled: TaskPunch.isRunning
+                    onClicked: {
+                        // Какая логика?
+                        TaskPunch.isPaused = true
+                    }
+                }
+
+                ToolButton {
+                    icon.source: "images/stop.svg"
+                    color: colors.error_80
+                    enabled: TaskPunch.isRunning
+                    onClicked: {
+                        TaskPunch.stopProgram()
+                    }
+                }
+            }
+        }
+    }
+
+    component ToolButton : Button {
+        id: toolButton
+
+        icon.height: 20
+        icon.width: 20
+        checkable: true
+        display: AbstractButton.IconOnly
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: 40
+
+        property color color
+
+        background: Rectangle {
+            id: bg
+            color: enabled ? down ? "lightgrey" : toolButton.color : colors.disabledButton
+            border.width: 0
+            radius: 8
         }
     }
 }
