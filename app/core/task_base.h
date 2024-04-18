@@ -7,6 +7,24 @@
 class BlobItem;
 class QGraphicsItem;
 
+class Stop : public QObject
+{
+    Q_OBJECT
+
+public:
+    Stop();
+    void stop();
+    void run();
+
+    bool isStopped() const;
+
+signals:
+    void stopped();
+
+private:
+    QAtomicInteger<bool> _stop = false;
+};
+
 
 class TaskBase : public QObject
 {
@@ -47,6 +65,7 @@ protected:
     static QMutex _someTaskInProgress;
     QAtomicInteger<bool> _stop = false;
     QAtomicInteger<bool> _running = false;
+    Stop _stopObj;
 
 signals:
     void message(QString);

@@ -404,8 +404,15 @@ void OpenCv::blobDetectorCaptured()
 
 void OpenCv::appendToBlobDetectorQueue(QImage img, QVariantMap options)
 {
+    QMutexLocker lock(&_mutex);
     _detectBlobQueue.push_back(std::make_tuple(img, options));
     blobDetectorCaptured();
+}
+
+void OpenCv::clearQueue()
+{
+    QMutexLocker lock(&_mutex);
+    _detectBlobQueue.clear();
 }
 
 void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)

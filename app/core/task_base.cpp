@@ -242,3 +242,21 @@ void TaskBase::waitForNext()
     waitDataBus("next", "ok");
     db().insert("next", QString());
 }
+
+Stop::Stop() {}
+
+void Stop::stop()
+{
+    _stop = true;
+    emit stopped();
+}
+
+void Stop::run()
+{
+    _stop = false;
+}
+
+bool Stop::isStopped() const
+{
+    return _stop;
+}

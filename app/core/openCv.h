@@ -36,6 +36,7 @@ public:
     void blobDetectorLive(QImage img, QVariantMap options);
 
     void appendToBlobDetectorQueue(QImage img, QVariantMap options);
+    void clearQueue();
 
     void blobDetectorUpdated(QImage img, QVariantMap options);
     std::tuple<bool, double, double, double> smallRegionBlob() const;
@@ -63,6 +64,8 @@ private:
 
     QMetaObject::Connection _smallRegConn;
     std::tuple<bool, double, double, double> _smallRegionBlob;
+
+    mutable QMutex _mutex;
 
     friend class Singleton<OpenCv>;
 };

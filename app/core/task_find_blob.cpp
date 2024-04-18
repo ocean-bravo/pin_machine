@@ -38,12 +38,14 @@ TaskFindBlob::~TaskFindBlob()
 void TaskFindBlob::run(QVariantMap options, bool slow)
 {
     _impl->_stop = false;
+    _impl->_stopObj.run();
     QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QVariantMap, options), Q_ARG(bool, slow));
 }
 
 void TaskFindBlob::stopProgram()
 {
     _impl->_stop = true;
+    _impl->_stopObj.stop();
 }
 
 
@@ -93,10 +95,25 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
         if (_stop)
             throw stopEx();
 
-        Measure m("queie is emtpy ");
-        m.start();
-        waitForSignal(&opencv(), &OpenCv::queueIsEmpty, 10000);
-        m.stop();
+        // int exit = waitForSignals(100000, a, &OpenCv::queueIsEmpty); //, &_stopObj, &Stop::stopped);
+        int exit = 0;
+        {
+            int timeout = 100000;
+            QEventLoop loop;
+            QTimer::singleShot(timeout, &loop, [&loop]() { loop.quit(); });
+            QMetaObject::Connection conn1 = QObject::connect(&opencv(), &OpenCv::queueIsEmpty, &loop, [&loop, &exit]() { exit = 1; loop.quit(); });
+            QMetaObject::Connection conn2 = QObject::connect(&_stopObj, &Stop::stopped,        &loop, [&loop, &exit]() { exit = 2; loop.quit(); });
+
+            auto guard = qScopeGuard([=]()
+            {
+                QObject::disconnect(conn1);
+                QObject::disconnect(conn2);
+            });
+            loop.exec();
+        }
+
+        if (exit == 2)
+            throw stopEx();
 
         {
             qd() << "start remove blobs";
@@ -108,12 +125,12 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
     {
         qd() << "program interrupted";
         emit message("program interrupted");
+        opencv().clearQueue();
     }
     catch (...)
     {
 
     }
-
 
     const auto finish = QDateTime::currentMSecsSinceEpoch();
     emit message("find blobs finished");
