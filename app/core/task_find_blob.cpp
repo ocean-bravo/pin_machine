@@ -74,7 +74,6 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
 
         for (QGraphicsPixmapItem* pixmap : pixs)
         {
-            ScopedMeasure m("convert to format: ", ScopedMeasure::Milli);
             QImage img = pixmap->pixmap().toImage().convertToFormat(QImage::Format_RGB888, Qt::ColorOnly);
 
             // auto w = img.width();
@@ -94,7 +93,10 @@ void TaskFindBlobPrivate::run(QVariantMap options, bool slow)
         if (_stop)
             throw stopEx();
 
+        Measure m("queie is emtpy ");
+        m.start();
         waitForSignal(&opencv(), &OpenCv::queueIsEmpty, 10000);
+        m.stop();
 
         {
             qd() << "start remove blobs";
