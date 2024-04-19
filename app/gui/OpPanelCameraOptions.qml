@@ -25,6 +25,8 @@ Control {
         CustomSwitch {
             text: qsTr("Проверка реперных отверстий перед установкой")
 
+            checked: DataBus.check_fiducial
+            onCheckedChanged: DataBus.check_fiducial = checked
 
             Layout.preferredHeight: 48
             Layout.fillWidth: true
@@ -42,6 +44,7 @@ Control {
     }
 
     Component.onCompleted: {
-        DataBus.check_every_blob = true
+        DataBus.check_fiducial = true
+        DataBus.check_every_blob = false
     }
 }
