@@ -313,26 +313,10 @@ ColumnLayout {
         }
     }
 
-    // Shortcut {
-    //     sequence: "F3"
-    //     context: Qt.ApplicationShortcut
-    //     onActivated: {
-    //         superUser.visible = false
-    //         operatorUser.visible = false
-    //         appWin = testUser
-    //         testUser.visible = true
-    //     }
-    // }
-
-
-
     Shortcut {
         sequence: "F5"
         context: Qt.ApplicationShortcut
         onActivated: {
-            // console.log("reload")
-            // loader.reload()
-
             DataBus.messagebox = "dsafasdf"
         }
     }
@@ -342,10 +326,8 @@ ColumnLayout {
         text: DataBus.messagebox
         backgroundColor: "maroon"
         interval: 2000
-        onTextChanged: {
-            if (text.length > 0)
-                open()
-        }
+        anchors.centerIn: parent
+        onTextChanged: if (text.length > 0) open()
         onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
         Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
@@ -355,12 +337,7 @@ ColumnLayout {
         text: DataBus.splash
         backgroundColor: "green"
         noButtons: true
-        onTextChanged: {
-            if (text.length > 0)
-                show()
-            else
-                hide()
-        }
+        onTextChanged: text.length > 0 ? show() : hide()
         Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
 

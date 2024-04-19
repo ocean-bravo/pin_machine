@@ -17,18 +17,18 @@ Control {
         anchors.fill: parent
     }
 
-    FlashMessageBox {
-        id: message
-        text: DataBus.messagebox
-        backgroundColor: "maroon"
-        interval: 2000
-        onTextChanged: {
-            if (text.length > 0)
-                open()
-        }
-        onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
-        Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
-    }
+    // FlashMessageBox {
+    //     id: message
+    //     text: DataBus.messagebox
+    //     backgroundColor: "maroon"
+    //     interval: 2000
+    //     onTextChanged: {
+    //         if (text.length > 0)
+    //             open()
+    //     }
+    //     onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+    //     Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+    // }
 
     MessageBox {
         id: splash

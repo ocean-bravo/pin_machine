@@ -14,8 +14,6 @@ MessageBox {
 
     width: 500
     height: 250
-    parent: appWin
-    anchors.centerIn: parent
 
     Timer {
         id: autoCloseTimer
