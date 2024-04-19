@@ -116,19 +116,11 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
         {
             ++count;
 
-            const QVariantMap options = openIniFile(blob->sceneFileName());
-            updateBlobPosition(blob, options);
-            int result = updateBlobPosition(blob, options);
-            if (result > 0)
-            {
-                result = updateBlobPosition(blob, options);
-                if (result > 0)
-                    result = updateBlobPosition(blob, options);
-            }
+            updateBlobPosition5x(blob);
 
-            const double x = blob->scenePos().x();
-            const double y = blob->scenePos().y();
-            qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
+            // const double x = blob->scenePos().x();
+            // const double y = blob->scenePos().y();
+            // qd() << QString("updated blob position: %1 %2").arg(toReal3(x), toReal3(y));
         }
 
         emit message("count " + QString::number(count));
