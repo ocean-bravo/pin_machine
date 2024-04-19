@@ -170,11 +170,6 @@ CollapsiblePanel2 {
             Layout.preferredWidth: 120
         }
 
-        Item { height: 30; width: 10}
-        Item { height: 30; width: 10}
-        Item { height: 30; width: 10}
-
-        // 7.
         Text {
             text: qsTr("Scene")
             verticalAlignment: Text.AlignVCenter
