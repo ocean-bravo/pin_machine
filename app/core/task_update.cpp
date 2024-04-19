@@ -115,7 +115,10 @@ void TaskUpdatePrivate::run(int width, int height, QString fourcc)
         for (BlobItem* blob : orderedBlobsToUpdate)
         {
             ++count;
-
+            auto msg = QString("blob %1 of %2").arg(count).arg(orderedBlobsToUpdate.size());
+            emit message(msg);
+            qd() << msg;
+            ScopedMeasure mes("time: ");
             updateBlobPosition5x(blob);
 
             // const double x = blob->scenePos().x();
