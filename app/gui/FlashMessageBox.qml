@@ -12,6 +12,11 @@ MessageBox {
 
     property int interval: 500
 
+    width: 500
+    height: 250
+    parent: appWin
+    anchors.centerIn: parent
+
     Timer {
         id: autoCloseTimer
         interval: root.interval
