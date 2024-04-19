@@ -150,7 +150,7 @@ CollapsiblePanel2 {
             id: checkCamera
             text: qsTr("Check camera")
             checkable: true
-            onCheckedChanged: checked ? TaskCheckCamera.run(currentOptions) : TaskCheckCamera.stopProgram()
+            onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
             Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
             Layout.preferredWidth: 120
         }

@@ -17,7 +17,7 @@ public:
     TaskCheckCamera(QObject* parent = nullptr);
     ~TaskCheckCamera();
 
-    Q_INVOKABLE void run(QVariantMap options);
+    Q_INVOKABLE void run();
     Q_INVOKABLE void stopProgram();
 
 signals:
@@ -38,8 +38,18 @@ public:
     TaskCheckCameraPrivate();
 
 public slots:
-    void run(QVariantMap options);
+    void run();
+
+signals:
+    void isRunningChanged();
+    void isPausedChanged();
 
 private:
+    void waitForNextStep();
+
+    QAtomicInteger<bool> _isPaused = false;
+    QAtomicInteger<bool> _stepByStep = false;
+    QAtomicInteger<bool> _noPunch = false;
+
     friend class TaskCheckCamera;
 };

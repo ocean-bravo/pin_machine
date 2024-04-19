@@ -26,7 +26,6 @@ Control {
             text: qsTr("Проверка реперных отверстий перед установкой")
 
 
-
             Layout.preferredHeight: 48
             Layout.fillWidth: true
         }
@@ -34,10 +33,15 @@ Control {
         CustomSwitch {
             text: qsTr("Проверка всех отверстий перед установкой")
 
-
+            checked: DataBus.check_every_blob
+            onCheckedChanged: DataBus.check_every_blob = checked
 
             Layout.preferredHeight: 48
             Layout.fillWidth: true
         }
+    }
+
+    Component.onCompleted: {
+        DataBus.check_every_blob = true
     }
 }

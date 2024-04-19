@@ -66,7 +66,6 @@ signals:
 private:
     void waitForNextStep();
 
-
     QAtomicInteger<bool> _isPaused = false;
     QAtomicInteger<bool> _stepByStep = false;
     QAtomicInteger<bool> _noPunch = false;

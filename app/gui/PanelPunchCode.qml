@@ -96,6 +96,9 @@ CollapsiblePanel2 {
                     text: qsTr("Проверка всех отверстий перед установкой")
                     font.pixelSize: 12
 
+                    checked: DataBus.check_every_blob
+                    onCheckedChanged: DataBus.check_every_blob = checked
+
                     Layout.preferredHeight: 24
                     Layout.fillWidth: true
                 }

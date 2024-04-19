@@ -205,25 +205,15 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
         {
             waitForNextStep();
-            //if (_stop) { emit message("program interrupted"); return; }
 
             BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
-            //realFiducialBlob->setRealFiducial(true);
+
             runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
-            const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
-            qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+            //const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
+            //qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
 
-            updateBlobPosition(realFiducialBlob, options);
-            updateBlobPosition(realFiducialBlob, options);
-            updateBlobPosition(realFiducialBlob, options);
-            int result = updateBlobPosition(realFiducialBlob, options);
-            if (result > 0)
-            {
-                result = updateBlobPosition(realFiducialBlob, options);
-                if (result > 0)
-                    result = updateBlobPosition(realFiducialBlob, options);
-            }
+            updateBlobPosition5x(realFiducialBlob);
             fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
         }
 
@@ -246,6 +236,12 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
         algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
+
+        // сделать тест доворота.
+        // разные точки в разных местах.
+
+        //И сделать тест разброса определения координат блоба
+
         // Теперь определяем реальные координаты точек для забивания, добавляем сдвиг на инструмент и поехали забивать.
         int count  = 0;
 
@@ -254,18 +250,15 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         if (blobs.isEmpty())
             blobs = scene().punchBlobs();
 
-        // qd() << "blobs to punch";
-
-        // for (BlobItem* blob : qAsConst(blobs))
-        //     qd() << blob->scenePos();
-
-
         const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
         const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
         const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
 
         for (BlobItem* blob : qAsConst(blobs))
         {
+            if (db().value("check_every_blob").toBool())
+                updateBlobPosition5x(blob);
+
             waitForNextStep(); // Перед ехать
 
             moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
@@ -290,7 +283,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
         moveToAndWaitPosition(db().value("punchpath_start_point").toPointF()); // Поехали назад в домашнюю точку
 
-        qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
+        //qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
         emit message("count " + QString::number(count));
     }
     catch (const stopEx& e)

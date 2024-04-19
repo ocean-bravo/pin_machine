@@ -81,6 +81,22 @@ int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options) // stopEx
     waitForNext();
 }
 
+void TaskBase::updateBlobPosition5x(BlobItem* blob)
+{
+    const QVariantMap options = openIniFile(blob->sceneFileName());
+
+    for (int i = 0; i < 5; ++i)
+    {
+        const int result = updateBlobPosition(blob, options);
+        if (result > 0)
+        {
+            const QString msg = tr("Отверстие не найдено. Попытка").arg(i+1);
+            db().insert("messagebox", msg);
+            throw stopEx();
+        }
+    }
+}
+
 void TaskBase::algorithmMatchPoints(QPointF firstRef, QPointF firstReal, BlobItem* secondRefBlob, BlobItem* secondRealBlob)
 {
     const QPointF secondRef = secondRefBlob->scenePos();

@@ -37,10 +37,10 @@ TaskCheckCamera::~TaskCheckCamera()
     _thread->wait(1000);
 }
 
-void TaskCheckCamera::run(QVariantMap options)
+void TaskCheckCamera::run()
 {
     _impl->_stop = false;
-    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection, Q_ARG(QVariantMap, options));
+    QMetaObject::invokeMethod(_impl, "run", Qt::QueuedConnection);
 }
 
 void TaskCheckCamera::stopProgram()
@@ -54,15 +54,46 @@ TaskCheckCameraPrivate::TaskCheckCameraPrivate()
 
 }
 
-void TaskCheckCameraPrivate::run(QVariantMap options)
+void TaskCheckCameraPrivate::waitForNextStep() // stopEx
 {
-    // Разница в диаметрах блобов, больше которой считается что блоб неправильный
-    //static const double wrongBlobDiaError = 0.3;
+    if (_stepByStep)
+    {
+        _isPaused = true;
+        emit isPausedChanged();
+    }
 
+    if (_isPaused)
+    {
+        qd() << "waiting for continue...";
+
+        QTimer timer;
+        QEventLoop loop;
+        QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
+        {
+            if (!_isPaused || _stop)
+                loop.quit();
+        });
+
+        auto guard = qScopeGuard([=]() { QObject::disconnect(conn); });
+
+        timer.start(50);
+        loop.exec();
+
+        if (_stop)
+            throw stopEx();
+    }
+}
+
+void TaskCheckCameraPrivate::run()
+{
     const auto fin = qScopeGuard([this]{ emit finished(); });
 
     if (!_someTaskInProgress.tryLock()) return;
-    auto mutexUnlock = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
+    auto someTaskInProgress = qScopeGuard([this]{ _someTaskInProgress.unlock(); });
+
+    _running = true;
+    emit isRunningChanged();
+    auto running = qScopeGuard([this]{ _running = false; emit isRunningChanged(); });
 
     QTimer statusTimer;
     connect(&statusTimer, &QTimer::timeout, this, []() { serial().write("?\n"); });
@@ -85,6 +116,9 @@ void TaskCheckCameraPrivate::run(QVariantMap options)
 
         auto connection = connect(&video(), &Video4::capturedSmallRegion, this, [](QImage img) { scene().setImage(img.copy()); });
         auto guard = qScopeGuard([=]() { disconnect(connection); });
+
+
+
 
         // Удаляю все реальные опорные точки, оставшиеся на сцене с предыдущего раза
         every<BlobItem>(scene().items(), [](BlobItem* blob) { if (blob->isRealFiducial()) blob->deleteLater(); });
@@ -111,22 +145,16 @@ void TaskCheckCameraPrivate::run(QVariantMap options)
         QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
         for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
         {
-            if (_stop) { emit message("program interrupted"); break; }
+            waitForNextStep();
 
             BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
-            //realFiducialBlob->setRealFiducial(true);
+
             runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
-            updateBlobPosition(realFiducialBlob, options);
-            updateBlobPosition(realFiducialBlob, options);
-            updateBlobPosition(realFiducialBlob, options);
-            int result = updateBlobPosition(realFiducialBlob, options);
-            if (result > 0)
-            {
-                result = updateBlobPosition(realFiducialBlob, options);
-                if (result > 0)
-                    result = updateBlobPosition(realFiducialBlob, options);
-            }
+            //const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
+            //qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+
+            updateBlobPosition5x(realFiducialBlob);
             fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
         }
 
@@ -156,13 +184,17 @@ void TaskCheckCameraPrivate::run(QVariantMap options)
         //И сделать тест разброса определения координат блоба
 
         // Теперь определяем реальные координаты точек для забивания и посещаем их.
+        int count  = 0;
 
         QList<BlobItem*> blobs = db().value("punchpath").value<QList<BlobItem*>>();
 
         if (blobs.isEmpty())
             blobs = scene().punchBlobs();
 
-        int count  = 0;
+
+
+
+
         for (BlobItem* blob : qAsConst(blobs))
         {
             moveToAndWaitPosition(blob->scenePos());
@@ -170,8 +202,29 @@ void TaskCheckCameraPrivate::run(QVariantMap options)
             ++count;
         }
 
-        //qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
         emit message("count " + QString::number(count));
     }
     catch (const stopEx& e)
