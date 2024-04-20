@@ -145,19 +145,19 @@ CollapsiblePanel2 {
         }
         Item { height: 30; width: 10}
 
-        // 5.
-        SmButton {
-            id: checkCamera
-            text: qsTr("Check camera")
-            checkable: true
-            onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
-            Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
-            Layout.preferredWidth: 120
-        }
+        // // 5.
+        // SmButton {
+        //     id: checkCamera
+        //     text: qsTr("Check camera")
+        //     checkable: true
+        //     onCheckedChanged: checked ? TaskCheckCamera.run() : TaskCheckCamera.stopProgram()
+        //     Connections { target: TaskCheckCamera; function onFinished() { checkCamera.checked = false } }
+        //     Layout.preferredWidth: 120
+        // }
 
-        Item { height: 30; width: 10}
-        Item { height: 30; width: 10}
-        Item { height: 30; width: 10}
+        // Item { height: 30; width: 10}
+        // Item { height: 30; width: 10}
+        // Item { height: 30; width: 10}
 
         // 6.
         SmButton {

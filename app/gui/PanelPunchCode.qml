@@ -69,6 +69,21 @@ CollapsiblePanel2 {
                         }
                     }
                 }
+
+                CheckBox {
+                    text: qsTr("Visit camera")
+                    font.pixelSize: 12
+
+                    checked: DataBus.taskpunch_visit_camera
+                    onCheckedChanged: {
+                        DataBus.taskpunch_visit_camera = checked
+                        if (checked)
+                            TaskPunch.noPunch = true
+                    }
+
+                    Layout.preferredHeight: 24
+                    Layout.fillWidth: true
+                }
             }
         }
 
@@ -108,7 +123,11 @@ CollapsiblePanel2 {
                     font.pixelSize: 12
 
                     checked: TaskPunch.noPunch
-                    onCheckedChanged: TaskPunch.noPunch = checked
+                    onCheckedChanged: {
+                        TaskPunch.noPunch = checked
+                        if (!checked)
+                            DataBus.taskpunch_visit_camera = false
+                    }
 
                     Layout.preferredHeight: 24
                     Layout.fillWidth: true

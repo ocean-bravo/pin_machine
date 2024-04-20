@@ -209,7 +209,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         if (fiducialBlobs.size() != 2)
         {
             db().insert("messagebox", "fiducial точек должно быть 2");
-            return;
+            throw stopEx();
         }
 
         QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
@@ -235,8 +235,14 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
             blobs = scene().punchBlobs();
 
         const QStringList punchCode = punchProgram.split("\n", Qt::SkipEmptyParts);
-        const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
-        const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
+        double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
+        double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
+
+        if (db().value("taskpunch_visit_camera").toBool())
+        {
+            dx = 0.0;
+            dy = 0.0;
+        }
 
         // Основной цикл - проход по блобам и действия с ними
         for (BlobItem* blob : qAsConst(blobs))
@@ -248,6 +254,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
             waitNext(); // Перед ехать
 
             // Еду в позицию для забивания этого блоба
+
             moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
 
             waitNext(); // Перед панчем
