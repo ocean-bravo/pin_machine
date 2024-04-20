@@ -35,8 +35,8 @@ Control {
         CustomSwitch {
             text: qsTr("Проверка всех отверстий перед установкой")
 
-            checked: DataBus.check_every_blob
-            onCheckedChanged: DataBus.check_every_blob = checked
+            checked: TaskPunch.checkEveryBlob
+            onCheckedChanged: TaskPunch.checkEveryBlob = checked
 
             Layout.preferredHeight: 48
             Layout.fillWidth: true
@@ -45,6 +45,6 @@ Control {
 
     Component.onCompleted: {
         DataBus.check_fiducial = true
-        DataBus.check_every_blob = false
+        //DataBus.check_every_blob = false
     }
 }

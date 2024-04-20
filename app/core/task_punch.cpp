@@ -102,41 +102,25 @@ void TaskPunch::setIsPaused(bool state)
     emit isPausedChanged();
 }
 
+bool TaskPunch::checkEveryBlob() const
+{
+    return _impl->_checkEveryBlob;
+}
+
+void TaskPunch::setCheckEveryBlob(bool state)
+{
+    if (_impl->_checkEveryBlob == state)
+        return;
+
+    _impl->_checkEveryBlob = state;
+    emit checkEveryBlobChanged();
+}
+
 
 
 TaskPunchPrivate::TaskPunchPrivate()
 {
 
-}
-
-void TaskPunchPrivate::waitForNextStep() // stopEx
-{
-    if (_stepByStep)
-    {
-        _isPaused = true;
-        emit isPausedChanged();
-    }
-
-    if (_isPaused)
-    {
-        qd() << "waiting for continue...";
-
-        QTimer timer;
-        QEventLoop loop;
-        QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
-        {
-            if (!_isPaused || _stop)
-                loop.quit();
-        });
-
-        auto guard = qScopeGuard([=]() { QObject::disconnect(conn); });
-
-        timer.start(50);
-        loop.exec();
-
-        if (_stop)
-            throw stopEx();
-    }
 }
 
 void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString fourcc)
@@ -204,7 +188,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
         for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
         {
-            waitForNextStep();
+            waitNext();
 
             BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
 
@@ -254,19 +238,26 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
         const double dx = db().value("punch_tool_shift_dx").toDouble(); // сдвиг инструмента
         const double dy = db().value("punch_tool_shift_dy").toDouble(); // сдвиг инструмента
 
+        // Основной цикл - проход по блобам и действия с ними
         for (BlobItem* blob : qAsConst(blobs))
         {
-            if (db().value("check_every_blob").toBool())
+            // Уточняю позицию блоба
+            if (_checkEveryBlob)
                 updateBlobPosition5x(blob);
 
-            waitForNextStep(); // Перед ехать
+            waitNext(); // Перед ехать
 
+            // Еду в позицию для забивания этого блоба
             moveToAndWaitPosition(blob->scenePos() - QPointF(dx, dy)); // Приехали на позицию
 
-            if (!_noPunch)
-            {
-                waitForNextStep(); // Перед панчем
+            waitNext(); // Перед панчем
 
+            if (_noPunch)
+            {
+                wait(500);
+            }
+            else
+            {
                 for (const QString& gCode : punchCode)
                 {
                     serial().write(gCode.toLatin1() + "\n");
@@ -279,7 +270,7 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
             ++count;
         }
 
-        waitForNextStep(); // Перед ехать
+        waitNext(); // Перед ехать
 
         moveToAndWaitPosition(db().value("punchpath_start_point").toPointF()); // Поехали назад в домашнюю точку
 

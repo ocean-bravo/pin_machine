@@ -12,10 +12,11 @@ class TaskPunchPrivate;
 class TaskPunch : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool isRunning  READ isRunning                      NOTIFY isRunningChanged  FINAL)
-    Q_PROPERTY(bool isPaused   READ isPaused   WRITE setIsPaused   NOTIFY isPausedChanged   FINAL)
-    Q_PROPERTY(bool stepByStep READ stepByStep WRITE setStepByStep NOTIFY stepByStepChanged FINAL)
-    Q_PROPERTY(bool noPunch    READ noPunch    WRITE setNoPunch    NOTIFY noPunchChanged    FINAL)
+    Q_PROPERTY(bool isRunning      READ isRunning                              NOTIFY isRunningChanged      FINAL)
+    Q_PROPERTY(bool isPaused       READ isPaused       WRITE setIsPaused       NOTIFY isPausedChanged       FINAL)
+    Q_PROPERTY(bool stepByStep     READ stepByStep     WRITE setStepByStep     NOTIFY stepByStepChanged     FINAL)
+    Q_PROPERTY(bool noPunch        READ noPunch        WRITE setNoPunch        NOTIFY noPunchChanged        FINAL)
+    Q_PROPERTY(bool checkEveryBlob READ checkEveryBlob WRITE setCheckEveryBlob NOTIFY checkEveryBlobChanged FINAL)
 
 public:
     TaskPunch(QObject* parent = nullptr);
@@ -31,6 +32,7 @@ signals:
     void isPausedChanged();
     void stepByStepChanged();
     void noPunchChanged();
+    void checkEveryBlobChanged();
 
 private:
     bool isRunning() const;
@@ -43,6 +45,9 @@ private:
 
     bool isPaused() const;
     void setIsPaused(bool state);
+
+    bool checkEveryBlob() const;
+    void setCheckEveryBlob(bool state);
 
     TaskPunchPrivate* const _impl;
     QScopedPointer<QThread> _thread;
@@ -59,16 +64,9 @@ public:
 public slots:
     void run(QString punchProgram, int width, int height, QString fourcc);
 
-signals:
-    void isRunningChanged();
-    void isPausedChanged();
-
 private:
-    void waitForNextStep();
-
-    QAtomicInteger<bool> _isPaused = false;
-    QAtomicInteger<bool> _stepByStep = false;
     QAtomicInteger<bool> _noPunch = false;
+    QAtomicInteger<bool> _checkEveryBlob = false;
 
     friend class TaskPunch;
 };

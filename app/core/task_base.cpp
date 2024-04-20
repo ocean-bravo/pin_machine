@@ -15,6 +15,7 @@
 #include <QJsonObject>
 #include <QString>
 #include <QRegularExpression>
+#include <QScopeGuard>
 
 QMutex TaskBase::_someTaskInProgress;
 
@@ -259,6 +260,41 @@ void TaskBase::waitForNext()
     db().insert("next", "wait"); // Показать в GUI окно предложение продолжения
     waitDataBus("next", "ok");
     db().insert("next", QString());
+}
+
+void TaskBase::wait(int) // stopEx
+{
+    waitForSignal(&_stopObj, &Stop::stopped, 500);
+}
+
+void TaskBase::waitNext() // stopEx
+{
+    if (_stepByStep)
+    {
+        _isPaused = true;
+        emit isPausedChanged();
+    }
+
+    if (_isPaused)
+    {
+        qd() << "waiting for continue...";
+
+        QTimer timer;
+        QEventLoop loop;
+        QMetaObject::Connection conn = QObject::connect(&timer, &QTimer::timeout, &loop, [&loop, this]()
+        {
+            if (!_isPaused || _stop)
+                loop.quit();
+        });
+
+        auto guard = qScopeGuard([=]() { QObject::disconnect(conn); });
+
+        timer.start(50);
+        loop.exec();
+
+        if (_stop)
+            throw stopEx();
+    }
 }
 
 Stop::Stop() {}

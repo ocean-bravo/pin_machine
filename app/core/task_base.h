@@ -62,10 +62,19 @@ public:
 
     void waitForNext();
 
+signals:
+    void isRunningChanged();
+    void isPausedChanged();
+
 protected:
+    void wait(int);
+    void waitNext();
+
     static QMutex _someTaskInProgress;
     QAtomicInteger<bool> _stop = false;
     QAtomicInteger<bool> _running = false;
+    QAtomicInteger<bool> _isPaused = false;
+    QAtomicInteger<bool> _stepByStep = false;
     Stop _stopObj;
 
 signals:
