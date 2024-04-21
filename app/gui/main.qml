@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
-    property bool guiDebug: false
+    property bool guiDebug: true
 
     property var appWin: operatorUser
 

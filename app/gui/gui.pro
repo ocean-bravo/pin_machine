@@ -2,6 +2,8 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    OpLabel.qml \
+    OpPanelInsertParameters.qml
 
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \

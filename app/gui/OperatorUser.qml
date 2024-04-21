@@ -227,13 +227,6 @@ Control {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
                                             }
-
-                                            OpPanelCameraOptions {
-                                                id: cameraOption
-
-                                                Layout.preferredHeight: 186
-                                                Layout.fillWidth: true
-                                            }
                                         }
                                     }
 
@@ -266,12 +259,37 @@ Control {
                                                 Layout.fillWidth: true
                                             }
 
-                                            OpPanelWorkModes {
-                                                id: workModes
-                                                Layout.preferredHeight: 186
-                                                Layout.fillWidth: true
-                                            }
+
                                         }
+                                    }
+                                }
+                            }
+
+                            Item {
+                                Layout.preferredWidth: 816
+                                Layout.preferredHeight: 186
+
+                                RowLayout {
+                                    id: row2
+                                    anchors.fill: parent
+                                    spacing: 8
+
+                                    OpPanelCameraOptions {
+                                        id: cameraOption
+                                        Layout.fillHeight: true
+                                        Layout.preferredWidth: 336
+                                    }
+
+                                    OpPanelWorkModes {
+                                        id: workModes
+                                        Layout.fillHeight: true
+                                        Layout.preferredWidth: 236
+                                    }
+
+                                    OpPanelInsertParameters {
+                                        id: insertParameters
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
                                     }
                                 }
                             }

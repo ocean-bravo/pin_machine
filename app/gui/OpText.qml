@@ -11,8 +11,10 @@ Text {
     verticalAlignment: Text.AlignVCenter
 
     Rectangle {
-        visible: guiDebug
+        z: -1
         anchors.fill: parent
+        visible: guiDebug
         color: "#4000FF00"
     }
 }
+

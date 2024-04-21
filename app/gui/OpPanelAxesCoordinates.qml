@@ -169,21 +169,8 @@ Control {
         color: colors.black_90
     }
 
-    component MyLabel: Label {
+    component MyLabel: OpLabel {
         Layout.preferredWidth: 80
         Layout.preferredHeight: 32
-
-        font.pixelSize: 16
-        font.family: mainFont
-        font.weight: Font.Medium
-        leftPadding: 12
-
-        verticalAlignment: Text.AlignVCenter
-        background: Rectangle {
-            radius: 8
-            border.width: 1
-            border.color: colors.black_20
-        }
     }
-
 }
