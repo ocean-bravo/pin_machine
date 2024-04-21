@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-ColumnLayout {
+Item {
     id: root
 
     property bool guiDebug: false
@@ -24,15 +24,16 @@ ColumnLayout {
     OperatorUser {
         id: operatorUser
 
-        Layout.fillHeight: true
-        Layout.fillWidth: true
+        // Layout.fillHeight: true
+        // Layout.fillWidth: true
+        anchors.fill: parent
     }
 
     SuperUser {
         id: superUser
-
-        Layout.fillHeight: true
-        Layout.fillWidth: true
+        anchors.fill: parent
+        // Layout.fillHeight: true
+        // Layout.fillWidth: true
     }
 
     function coloredMessage(message, color) {
@@ -321,14 +322,30 @@ ColumnLayout {
         }
     }
 
-    FlashMessageBox {
-        id: message
+    // FlashMessageBox {
+    //     id: message
+    //     text: DataBus.messagebox
+    //     backgroundColor: "maroon"
+    //     interval: 2000
+    //     anchors.centerIn: parent
+    //     onTextChanged: if (text.length > 0) open()
+    //     onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+    //     Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+    // }
+
+    MessageBoxLoader {
+        id: messageWithOk
+        width: 500
+        height: 250
         text: DataBus.messagebox
         backgroundColor: "maroon"
-        interval: 2000
+        okButtonText: qsTr("Close")
         anchors.centerIn: parent
-        onTextChanged: if (text.length > 0) open()
-        onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+        onTextChanged: if (text.length > 0) show()
+        onAccept: {
+            hide()
+            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+        }
         Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     }
 
