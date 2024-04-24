@@ -255,6 +255,9 @@ void Engine::createQmlEngine()
     /// 3. Чтобы растянуло виджет
     _mw->centralWidget()->layout()->addWidget(_quickWidget);
 
+    // Доработать.
+    _quickWidget2->resize(_quickWidget->size());
+
     QQmlEngine* qmlEngine = _quickWidget->engine();
     qmlEngine->addImportPath(appDir() + "libs");
 
@@ -288,6 +291,14 @@ void Engine::createQmlEngine()
     _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 
+    QQmlEngine* qmlEngine2 = _quickWidget2->engine();
+    qmlEngine2->rootContext()->setContextProperty("DataBus", &DataBus::instance());
+    qmlEngine2->rootContext()->setContextProperty("MainWindow", _mw.data());
+    qmlEngine2->rootContext()->setContextProperty("QuickWidget2", _quickWidget2);
+    qmlEngine2->rootContext()->setContextProperty("Engine", this);
+    _quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main_overlay.qml")));
+
+
     /// 4. Важные настройки
     //QQuickWindow::setDefaultAlphaBuffer(true); // Вроде бы должна быть полезна, но толку от нее не нашел.
     //_quickWidget2->setWindowFlags(Qt::SplashScreen);
@@ -295,7 +306,7 @@ void Engine::createQmlEngine()
     _quickWidget2->setAttribute(Qt::WA_TranslucentBackground);
     _quickWidget2->setClearColor(Qt::transparent);
     _quickWidget2->setResizeMode(QQuickWidget::SizeRootObjectToView);
-    //_quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents); // Работает, но обошелся без этого
+    _quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents);
     //_quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/overlay.qml")));
     //_quickWidget2->show();
     //_quickWidget2->move(60,60);
@@ -379,4 +390,9 @@ QVariantMap Engine::readSceneFile(QString filename) const
 void Engine::saveSceneFile(QString filename, QVariantMap options)
 {
     saveIniFile(QString("find_blob_scenes/") + filename, options);
+}
+
+void Engine::setOverlayWidgetTransparent(bool state)
+{
+    _quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents, state); // Работает, но обошелся без этого
 }

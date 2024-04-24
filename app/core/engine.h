@@ -56,6 +56,9 @@ public:
     Q_INVOKABLE QVariantMap readSceneFile(QString filename) const;
     Q_INVOKABLE void saveSceneFile(QString filename, QVariantMap options);
 
+
+    Q_INVOKABLE void setOverlayWidgetTransparent(bool state);
+
 signals:
     void imageChanged(QString id);
 
