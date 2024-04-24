@@ -11,6 +11,9 @@ Button {
     leftPadding: 16
     rightPadding: 16
 
+    icon.height: 20
+    icon.width: 20
+
     font.family: mainFont
 
     property color color: "blue"

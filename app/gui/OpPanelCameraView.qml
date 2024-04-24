@@ -74,7 +74,7 @@ Control {
         }
 
         OpFrameButton {
-            icon.source: checked ? "images/videocam_off.png" : "images/videocam_on.png"
+            icon.source: checked ? "images/videocam_off_20.svg" : "images/videocam_on_20.svg"
             checkable: true
             text: checked ? qsTr("Выключить камеру") : qsTr("Включить камеру")
             color: colors.primary_90

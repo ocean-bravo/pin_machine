@@ -205,8 +205,8 @@ CollapsiblePanel2 {
     component ToolButton : Button {
         id: toolButton
 
-        icon.height: 20
-        icon.width: 20
+        icon.height: 40
+        icon.width: 40
         checkable: true
         display: AbstractButton.IconOnly
 

@@ -430,8 +430,8 @@ Control {
     component ToolButton : Button {
         id: root
 
-        icon.height: 45
-        icon.width: 45
+        icon.height: 80
+        icon.width: 80
         checkable: true
         display: AbstractButton.IconOnly
 
