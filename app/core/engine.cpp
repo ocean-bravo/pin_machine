@@ -342,7 +342,12 @@ void Engine::reload()
 
         QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
         _widgetAnchor->deleteLater();
-        _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
+
+        // Так надо
+        connect(_widgetAnchor, &QObject::destroyed, this, [=]
+        {
+            _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
+        });
     });
 }
 
