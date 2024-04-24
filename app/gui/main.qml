@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
-    property bool guiDebug: true
+    property bool guiDebug: false
 
     property var appWin: operatorUser
 
@@ -23,17 +23,12 @@ Item {
 
     OperatorUser {
         id: operatorUser
-
-        // Layout.fillHeight: true
-        // Layout.fillWidth: true
         anchors.fill: parent
     }
 
     SuperUser {
         id: superUser
         anchors.fill: parent
-        // Layout.fillHeight: true
-        // Layout.fillWidth: true
     }
 
     function coloredMessage(message, color) {

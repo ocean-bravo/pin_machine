@@ -32,9 +32,34 @@ Control {
             color: colors.black_30
 
             Layout.fillWidth: true
-            Layout.preferredHeight: width * DataBus.resolution_height / DataBus.resolution_width
+            Layout.preferredHeight: {
+                if (DataBus.resolution_height === undefined)
+                    return width*0.75
+
+                return width * DataBus.resolution_height / DataBus.resolution_width
+            }
 
             clip: true
+
+            Column {
+                anchors.centerIn: parent
+                Image {
+                    width: 100
+                    height: 100
+                    source: "images/videocam_off_80.svg"
+                    fillMode: Image.Pad
+
+                }
+                OpText {
+                    width: 100
+                    color: "white"
+                    font.pixelSize: 16
+                    font.weight: Font.Medium
+                    text: qsTr("Изображение отключено")
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
             ImageItem {
                 id: image
                 image: DataBus["live_preview_image_" + DataBus.live_preview_mode]
@@ -92,7 +117,7 @@ Control {
                 else {
                     Video4.stop()
                     execAfterDelay(function() { image.clear(); }, 100)
-                 }
+                }
             }
         }
 
