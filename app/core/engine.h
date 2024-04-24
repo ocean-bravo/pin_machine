@@ -11,6 +11,8 @@ class Serial;
 class QQuickWidget;
 class MainWindow;
 class MainWindow3;
+class WidgetAnchor;
+class GraphicsView;
 
 #include <QQmlApplicationEngine>
 
@@ -37,6 +39,7 @@ public:
 
     Q_INVOKABLE void save(const QString &url);
     Q_INVOKABLE void load(const QString &url);
+    void reinit();
     //Q_INVOKABLE void capture();
 
     // Q_INVOKABLE void capture1();
@@ -59,13 +62,14 @@ signals:
 private:
     void createQmlEngine();
 
-    //QScopedPointer<EnhancedQmlApplicationEngine> _qmlEngine;
+    //QScopedPointer<EnhancedQmlApplicationEngine> qmlEngine;
 
-    QQmlEngine* _qmlEngine;
-    QQuickWidget* _quickWidget;
-    QQuickWidget* _quickWidget2;
+    QQuickWidget* _quickWidget = nullptr;
+    GraphicsView* _gw = nullptr;
+    QQuickWidget* _quickWidget2 = nullptr;
     QScopedPointer<MainWindow3> _mw;
     QScopedPointer<MainWindow> _sceneView;
+    WidgetAnchor* _widgetAnchor = nullptr;
 
 
     //V4L2 _videoDriver;

@@ -391,8 +391,10 @@ Item {
         sequence: "F9"
         context: Qt.WindowShortcut
         onActivated: {
-            QmlEngine.clearCache()
-            appWin.close()
+            //QmlEngine.clearCache()
+            //appWin.close()
+            //ApplicationWindow.close()
+
             Engine.reload()
         }
     }

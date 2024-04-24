@@ -75,7 +75,6 @@ void EnhancedQmlApplicationEngine::clearCache()
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
-    , _qmlEngine(nullptr)
 {
     Settings::instance();
     Serial::instance();
@@ -210,8 +209,14 @@ void Engine::createQmlEngine()
         db().insert("live_preview_image_small_blob_captured", img);
     });
 
-    TaskScan* taskScan = new TaskScan(this);
 
+    qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
+    qmlRegisterType<QuickScene>("QuickScene", 1, 0, "QuickScene");
+    qmlRegisterType<QmlGraphicsView>("QmlGraphicsView", 1, 0, "QmlGraphicsView");
+    // Неудачный эксперимент
+    //qmlRegisterType<PlaceholderQuickItem>("PlaceholderQuickItem", 1, 0, "PlaceholderQuickItem");
+
+    TaskScan* taskScan = new TaskScan(this);
     TaskUpdate* taskUpdate = new TaskUpdate(this);
     TaskTestScanUpdateCycle* tp = new TaskTestScanUpdateCycle(taskScan, taskUpdate, this);
     TaskCheckCamera* taskCheckCamera = new TaskCheckCamera(this);
@@ -242,54 +247,43 @@ void Engine::createQmlEngine()
     // _mw->setAttribute(Qt::WA_TranslucentBackground);
 
     /// 2. Виджеты в таком порядке добавляются на центральный виджет
+
     _quickWidget = new QQuickWidget(_mw->centralWidget());
-    GraphicsView* gw = new GraphicsView(_mw->centralWidget());
+    _gw = new GraphicsView(_mw->centralWidget());
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
 
     /// 3. Чтобы растянуло виджет
     _mw->centralWidget()->layout()->addWidget(_quickWidget);
 
-    //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
-    _qmlEngine = _quickWidget->engine();
+    QQmlEngine* qmlEngine = _quickWidget->engine();
+    qmlEngine->addImportPath(appDir() + "libs");
 
-    _qmlEngine->addImportPath(appDir() + "libs");
-
-    qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
-    qmlRegisterType<QuickScene>("QuickScene", 1, 0, "QuickScene");
-
-    qmlRegisterType<QmlGraphicsView>("QmlGraphicsView", 1, 0, "QmlGraphicsView");
-
-    // Неудачный эксперимент
-    //qmlRegisterType<PlaceholderQuickItem>("PlaceholderQuickItem", 1, 0, "PlaceholderQuickItem");
-
-    _qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
-    _qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
-    _qmlEngine->rootContext()->setContextProperty("Engine", this);
+    qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
+    qmlEngine->rootContext()->setContextProperty("DataBus", &DataBus::instance());
+    qmlEngine->rootContext()->setContextProperty("Engine", this);
     //_qmlEngine->rootContext()->setContextProperty("Video3", _videoDriver3);
-    _qmlEngine->rootContext()->setContextProperty("Video4", &video());
-    _qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
+    qmlEngine->rootContext()->setContextProperty("Video4", &video());
+    qmlEngine->rootContext()->setContextProperty("Serial", &Serial::instance());
     //_qmlEngine->rootContext()->setContextProperty("ImagesStorage", myImageProvider);
-    _qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
-    _qmlEngine->rootContext()->setContextProperty("Settings", &Settings::instance());
-    _qmlEngine->rootContext()->setContextProperty("Logger", &Logger::instance());
+    qmlEngine->rootContext()->setContextProperty("OpenCv", &opencv());
+    qmlEngine->rootContext()->setContextProperty("Settings", &Settings::instance());
+    qmlEngine->rootContext()->setContextProperty("Logger", &Logger::instance());
 
-    _qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
-    _qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
-    _qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCyoverlayItemcle", tp);
-    _qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
-    _qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
-    _qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
-    _qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
+    qmlEngine->rootContext()->setContextProperty("TaskScan", taskScan);
+    qmlEngine->rootContext()->setContextProperty("TaskUpdate", taskUpdate);
+    qmlEngine->rootContext()->setContextProperty("TaskTestScanUpdateCyoverlayItemcle", tp);
+    qmlEngine->rootContext()->setContextProperty("TaskCheckCamera", taskCheckCamera);
+    qmlEngine->rootContext()->setContextProperty("TaskTestAlgo", ta);
+    qmlEngine->rootContext()->setContextProperty("TaskPunch", taskPunch);
+    qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
-    _qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
+    qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
 
-    _qmlEngine->rootContext()->setContextProperty("MainWindow", _mw.data());
+    qmlEngine->rootContext()->setContextProperty("MainWindow", _mw.data());
+    qmlEngine->rootContext()->setContextProperty("QmlEngine", qmlEngine);
+    qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
 
-    //_qmlEngine->rootContext()->setContextProperty("QmlEngine", _qmlEngine.data());
-
-    _qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
-
-    _qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
+    qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
     //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
     _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
@@ -308,12 +302,12 @@ void Engine::createQmlEngine()
 
     /// 5. Важно
     QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
-    new WidgetAnchor(gw, graphicsViewPlaceholder);
+    _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
     //gw->resize(300, 300);
     // gw->setEnabled(true);
     // gw->setVisible(true);
     //gw->move(50,50);
-    gw->setScene(&scene());
+    _gw->setScene(&scene());
     // //gw->show();
     //_mw->showFullScreen();
     _mw->showMaximized();
@@ -325,12 +319,31 @@ void Engine::createQmlEngine()
 
 }
 
+
+void Engine::reinit()
+{
+
+}
+
 void Engine::reload()
 {
     //_qmlEngine.reset(new EnhancedQmlApplicationEngine());
     //_qmlEngine->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
-    _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+
+    _quickWidget->rootObject()->deleteLater();
+
+    connect(_quickWidget->rootObject(), &QObject::destroyed, this, [=]
+    {
+        _quickWidget->engine()->trimComponentCache();
+        _quickWidget->engine()->clearComponentCache();
+        _quickWidget->engine()->trimComponentCache();
+        _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
+
+        QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
+        _widgetAnchor->deleteLater();
+        _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
+    });
 }
 
 QStringList Engine::filesInDirectory(QString dir) const
