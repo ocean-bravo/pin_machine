@@ -9,109 +9,128 @@ Control {
 
     padding: 16
 
-    background: OpWhitePanel { /*color: "transparent"*/ }
+    background: OpWhitePanel { color: "transparent" }
 
-    contentItem: RectangleDebug {
+    contentItem: ColumnLayout {
 
-        ColumnLayout {
-            anchors.fill: parent
+        spacing: 16
 
-            spacing: 16
+        OpText {
+            text: qsTr("ПАРАМЕТРЫ УСТАНОВКИ")
 
-            OpText {
-                text: qsTr("ПАРАМЕТРЫ УСТАНОВКИ")
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
+        }
 
-                Layout.preferredHeight: 18
-                Layout.fillWidth: true
-            }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            RectangleDebug {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                RowLayout {
-                    anchors.fill: parent
+            RowLayout {
+                anchors.fill: parent
 
-                    spacing: 8
+                spacing: 8
 
-                    RectangleDebug {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 50
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            spacing: 0
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
 
-                            RectangleDebug {
-                                Layout.preferredHeight: 18
-                                Layout.fillWidth: true
+                        Item {
+                            Layout.preferredHeight: 18
+                            Layout.fillWidth: true
 
-                                Text {
-                                    anchors.fill: parent
-                                    text: "Z РЕЗ"
-                                    color: colors.black_50
-                                    font.pixelSize: 13
-                                }
-                            }
-
-                            OpLabel {
-                                Layout.preferredHeight: 32
-                                Layout.preferredWidth: 80
-                                text: "20.00"
+                            Text {
+                                anchors.fill: parent
+                                text: "Z РЕЗ"
+                                color: colors.black_50
+                                font.pixelSize: 13
                             }
                         }
-                    }
 
-                    RectangleDebug {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 50
-
-                        ColumnLayout {
-                            anchors.fill: parent
-                            spacing: 0
-
-                            RectangleDebug {
-                                Layout.preferredHeight: 18
-                                Layout.fillWidth: true
-
-                                Text {
-                                    anchors.fill: parent
-                                    text: "Z УСТАНОВКА"
-                                    color: colors.black_50
-                                    font.pixelSize: 13
-                                }
-                            }
-
-                            OpLabel {
-                                Layout.preferredHeight: 32
-                                Layout.preferredWidth: 80
-                                text: "20.00"
-                            }
-
+                        OpLabel {
+                            Layout.preferredHeight: 32
+                            Layout.preferredWidth: 80
+                            text: "4.8"
+                            color: colors.black_30
                         }
                     }
                 }
-            }
 
-            VSpacer { }
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
 
-            RectangleDebug {
-                Layout.preferredHeight: 18
-                Layout.fillWidth: true
-                Label {
-                    anchors.fill: parent
-                    text: "Контакт/Pin: 01-20113"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
 
+                        Item {
+                            Layout.preferredHeight: 18
+                            Layout.fillWidth: true
+
+                            Text {
+                                anchors.fill: parent
+                                text: "Z УСТАНОВКА"
+                                color: colors.black_50
+                                font.pixelSize: 13
+                            }
+                        }
+
+                        OpLabel {
+                            Layout.preferredHeight: 32
+                            Layout.preferredWidth: 80
+                            text: "20.00"
+                            color: colors.black_30
+                        }
+
+                    }
                 }
             }
         }
 
+        VSpacer { }
 
+        Item {
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
 
+            RowLayout {
+                anchors.fill: parent
+                spacing: 8
+
+                OpText {
+                    text: "КОНТАКТ/PIN:"
+                }
+
+                OpText {
+                    text: "01-20113"
+                    color: colors.black_80
+                }
+
+                HSpacer { }
+            }
+        }
     }
+
 
     component VSpacer: Item {
         Layout.fillHeight: true
         width: 20
+
+        Rectangle {
+            anchors.fill: parent
+            visible: guiDebug
+            color: "#400000FF"
+        }
+    }
+
+    component HSpacer: Item {
+        Layout.fillWidth: true
+        height: 10
 
         Rectangle {
             anchors.fill: parent

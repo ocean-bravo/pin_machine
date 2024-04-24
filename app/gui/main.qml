@@ -256,8 +256,8 @@ Item {
     OpenSerialPromise { id: openSerialPromise }
 
     Component.onCompleted: {
-        operatorUser.visible = false
-        superUser.visible = true
+        operatorUser.visible = true
+        superUser.visible = false
         DataBus.live_preview_mode = "raw"
         openSerialPromise.runAsync()
     }
@@ -289,38 +289,7 @@ Item {
     //     visible: false
     // }
 
-    Shortcut {
-        sequence: "F1"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            operatorUser.visible = true
-            appWin = operatorUser
-            superUser.visible = false
 
-            //loader.sourceComponent = operatorComponent
-            //appWin = operatorUser
-        }
-    }
-
-    Shortcut {
-        sequence: "F2"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            superUser.visible = true
-            appWin = superUser
-            operatorUser.visible = false
-            //loader.sourceComponent = superComponent
-            //appWin = loader.item
-        }
-    }
-
-    Shortcut {
-        sequence: "F5"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            DataBus.messagebox = "dsafasdf"
-        }
-    }
 
     // FlashMessageBox {
     //     id: message
@@ -388,13 +357,53 @@ Item {
     }
 
     Shortcut {
+        sequence: "F1"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            operatorUser.visible = true
+            appWin = operatorUser
+            superUser.visible = false
+
+            //loader.sourceComponent = operatorComponent
+            //appWin = operatorUser
+        }
+    }
+
+    Shortcut {
+        sequence: "F2"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            superUser.visible = true
+            appWin = superUser
+            operatorUser.visible = false
+            //loader.sourceComponent = superComponent
+            //appWin = loader.item
+        }
+    }
+
+    Shortcut {
+        sequence: "F5"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            DataBus.messagebox = "dsafasdf"
+        }
+    }
+
+    Shortcut {
+        sequence: "F8"
+        context: Qt.WindowShortcut
+        onActivated: {
+            guiDebug = !guiDebug
+        }
+    }
+
+    Shortcut {
         sequence: "F9"
         context: Qt.WindowShortcut
         onActivated: {
             //QmlEngine.clearCache()
             //appWin.close()
             //ApplicationWindow.close()
-
             Engine.reload()
         }
     }
