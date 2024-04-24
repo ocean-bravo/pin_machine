@@ -31,6 +31,10 @@ Item {
         anchors.fill: parent
     }
 
+    FindCamera {
+
+    }
+
     function coloredMessage(message, color) {
         if (color === undefined)
             color = 'red'
