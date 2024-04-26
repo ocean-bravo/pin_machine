@@ -30,19 +30,19 @@ Control {
     //     Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
     // }
 
-    MessageBox {
-        id: splash
-        text: DataBus.splash
-        backgroundColor: "green"
-        noButtons: true
-        onTextChanged: {
-            if (text.length > 0)
-                open()
-            else
-                close()
-        }
-        Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
-    }
+    // MessageBox {
+    //     id: splash
+    //     text: DataBus.splash
+    //     backgroundColor: "green"
+    //     noButtons: true
+    //     onTextChanged: {
+    //         if (text.length > 0)
+    //             open()
+    //         else
+    //             close()
+    //     }
+    //     Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+    // }
 
     MessageBoxLoader {
         id: bestPath

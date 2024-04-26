@@ -285,7 +285,15 @@ Item {
         sequence: "F5"
         context: Qt.ApplicationShortcut
         onActivated: {
-            DataBus.messagebox = "dsafasdf"
+            const messageBox = {
+                text: qsTr("asdfasf?"),
+                backgroundColor: "maroon",
+                hasCancelButton: false,
+                okButtonText: qsTr("Ok"),
+                cancelButtonText: qsTr("No")
+            }
+
+            DataBus.messagebox = JSON.stringify(messageBox)
         }
     }
 

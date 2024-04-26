@@ -16,6 +16,8 @@
 #include <QGraphicsItem>
 #include <QSplashScreen>
 
+#include <QJsonObject>
+
 #include <QQuickStyle>
 #include <QScopeGuard>
 #include <QTimer>
@@ -247,16 +249,19 @@ void Engine::createQmlEngine()
     // _mw->setAttribute(Qt::WA_TranslucentBackground);
 
     /// 2. Виджеты в таком порядке добавляются на центральный виджет
-
     _quickWidget = new QQuickWidget(_mw->centralWidget());
     _gw = new GraphicsView(_mw->centralWidget());
     _quickWidget2 = new QQuickWidget(_mw->centralWidget());
 
-    /// 3. Чтобы растянуло виджет
+    /// 3. Чтобы растянуло виджет самый нижний
     _mw->centralWidget()->layout()->addWidget(_quickWidget);
 
-    // Доработать.
-    _quickWidget2->resize(_quickWidget->size());
+    /// 4. Чтобы растянуло виджет самый верхний по размеру самого нижнего
+    /// Костылище. Нужно держать верхний виджет по размеру нижнего. И layout не подходит. По хорошему отнаследоваться бы от QQuickWidget.
+    QTimer* resizeTimer = new QTimer(this);
+    connect(resizeTimer, &QTimer::timeout, this, [this]() { _quickWidget2->resize(_quickWidget->size()); });
+    resizeTimer->start(100);
+
 
     QQmlEngine* qmlEngine = _quickWidget->engine();
     qmlEngine->addImportPath(appDir() + "libs");
@@ -281,13 +286,10 @@ void Engine::createQmlEngine()
     qmlEngine->rootContext()->setContextProperty("TaskFindPixelSize", taskFindPixelSize);
     //_qmlEngine->rootContext()->setContextProperty("TaskBestPath", taskBestPath);
     qmlEngine->rootContext()->setContextProperty("TaskFindBlob", taskFindBlob);
-
     qmlEngine->rootContext()->setContextProperty("MainWindow", _mw.data());
     qmlEngine->rootContext()->setContextProperty("QmlEngine", qmlEngine);
     qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
-
     qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
-    //_qmlEngine->load(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
     _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 
@@ -295,39 +297,26 @@ void Engine::createQmlEngine()
     qmlEngine2->rootContext()->setContextProperty("DataBus", &DataBus::instance());
     qmlEngine2->rootContext()->setContextProperty("MainWindow", _mw.data());
     qmlEngine2->rootContext()->setContextProperty("QuickWidget2", _quickWidget2);
+    qmlEngine2->rootContext()->setContextProperty("QuickWidget", _quickWidget);
     qmlEngine2->rootContext()->setContextProperty("Engine", this);
     _quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main_overlay.qml")));
 
 
     /// 4. Важные настройки
-    //QQuickWindow::setDefaultAlphaBuffer(true); // Вроде бы должна быть полезна, но толку от нее не нашел.
-    //_quickWidget2->setWindowFlags(Qt::SplashScreen);
     _quickWidget2->setAttribute(Qt::WA_AlwaysStackOnTop); // Ключевой параметр
     _quickWidget2->setAttribute(Qt::WA_TranslucentBackground);
     _quickWidget2->setClearColor(Qt::transparent);
     _quickWidget2->setResizeMode(QQuickWidget::SizeRootObjectToView);
     _quickWidget2->setAttribute(Qt::WA_TransparentForMouseEvents);
-    //_quickWidget2->setSource(QUrl::fromLocalFile(appDir() + QString("gui/overlay.qml")));
-    //_quickWidget2->show();
-    //_quickWidget2->move(60,60);
+
 
     /// 5. Важно
     QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
     _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
-    //gw->resize(300, 300);
-    // gw->setEnabled(true);
-    // gw->setVisible(true);
-    //gw->move(50,50);
+
+
     _gw->setScene(&scene());
-    // //gw->show();
-    //_mw->showFullScreen();
     _mw->showMaximized();
-
-    // _quickWidget->resize(_mw->size());
-    // _quickWidget->setEnabled(true);
-    // _quickWidget->setVisible(true);
-    // _quickWidget->show();
-
 }
 
 

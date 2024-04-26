@@ -4,13 +4,12 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-Item {
+Rectangle {
     id: root
 
-    width: MainWindow.width
-    height: MainWindow.height
+    color: "#8060A5FA"
 
-    enabled: false
+    //enabled: false
 
     QtObject {
         id: colors
@@ -38,56 +37,58 @@ Item {
         readonly property color disabledButton: "#E5E5E5"
     }
 
+    Connections {
+        target: DataBus
+        function onValueChanged (key, value) {
+            if (key !== "messagebox")
+                return
 
+            if (value === "")
+                return
 
+            var msg = JSON.parse(value)
 
-
-    // FlashMessageBox {
-    //     id: message
-    //     text: DataBus.messagebox
-    //     backgroundColor: "maroon"
-    //     interval: 2000
-    //     anchors.centerIn: parent
-    //     onTextChanged: if (text.length > 0) open()
-    //     onClosed: DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
-    //     Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
-    // }
+            messageWithOk.text = msg.text
+            messageWithOk.backgroundColor = msg.backgroundColor
+            messageWithOk.okButtonText = msg.okButtonText
+            messageWithOk.hasCancelButton = msg.hasCancelButton
+            messageWithOk.cancelButtonText = msg.cancelButtonText
+            messageWithOk.show()
+            Engine.setOverlayWidgetTransparent(false)
+        }
+    }
 
     MessageBoxLoader {
         id: messageWithOk
         width: 500
         height: 250
-        text: DataBus.messagebox
-        backgroundColor: "maroon"
-        okButtonText: qsTr("Close")
         anchors.centerIn: parent
-        onTextChanged: {
-            if (text.length > 0) {
-                //QuickWidget2.enabled = true
-                //root.enabled = true
-                Engine.setOverlayWidgetTransparent(false)
-                show()
-            }
-        }
-        onAccept: {
-            //QuickWidget2.enabled = false
-            //root.enabled = false
 
+        onAccept: {
+            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+            DataBus.messagebox_result = "accept"
             Engine.setOverlayWidgetTransparent(true)
             hide()
-            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+            console.log("accepted")
+
         }
-        Component.onCompleted: DataBus.messagebox = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+
+        onReject: {
+            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
+            DataBus.messagebox_result = "reject"
+            Engine.setOverlayWidgetTransparent(true)
+            hide()
+        }
     }
 
-    MessageBoxLoader {
-        id: splash
-        text: DataBus.splash
-        backgroundColor: "green"
-        noButtons: true
-        onTextChanged: text.length > 0 ? show() : hide()
-        Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
-    }
+    // MessageBoxLoader {
+    //     id: splash
+    //     text: DataBus.splash
+    //     backgroundColor: "green"
+    //     noButtons: true
+    //     onTextChanged: text.length > 0 ? show() : hide()
+    //     Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
+    // }
 
     MessageBoxLoader {
         id: bestPath
@@ -117,6 +118,12 @@ Item {
         }
         backgroundColor: "green"
     }
+
+    // MouseArea {
+    //     anchors.fill: parent
+    //     hoverEnabled: true
+    //     visible: true
+    // }
 
     // Выполняет заданную функцию через интервал времени
     function execAfterDelay(func, interval, ...params) {

@@ -39,9 +39,6 @@ Loader {
     property string okButtonText: qsTr("OK")
     property string cancelButtonText: qsTr("Cancel")
 
-    width: appWin.width * 0.75
-    height: appWin.height / 2
-
     Component {
         id: comp
 
