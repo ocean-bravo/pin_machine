@@ -286,11 +286,41 @@ Item {
         context: Qt.ApplicationShortcut
         onActivated: {
             const messageBox = {
-                text: qsTr("asdfasf?"),
-                backgroundColor: "maroon",
-                hasCancelButton: false,
-                okButtonText: qsTr("Ok"),
-                cancelButtonText: qsTr("No")
+                headerText: qsTr("Ошибка осей/Аварийная остановка"),
+                mainText: qsTr("Работа остановлена.\nДля продолжения необходимо выполнить инициализацию осей.\nУдостоверьтесь, что продукт извлечен и нет помех для движения."),
+                buttonText1: qsTr("Ok"),
+            }
+
+            DataBus.messagebox = JSON.stringify(messageBox)
+        }
+    }
+
+    Shortcut {
+        sequence: "F6"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            const messageBox = {
+                headerText: qsTr("Предыдущий продукт не закончен"),
+                mainText: qsTr("Вы хотите продолжить установку с места окончания предыдущего цикла?\nИли начать сначала?"),
+                buttonText1: qsTr("Продолжить"),
+                buttonText2: qsTr("Начать сначала"),
+            }
+
+            DataBus.messagebox = JSON.stringify(messageBox)
+        }
+    }
+
+    Shortcut {
+        sequence: "F7"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            const messageBox = {
+                headerText: qsTr("Пауза. Нет линии пинов."),
+                mainText: qsTr("Необходимо заправить пины в установочное устройство."),
+                buttonText1: qsTr("Прервать установку"),
+                buttonText2: qsTr("Продолжить в пошаговом режиме"),
+                buttonText3: qsTr("Продолжить"),
+                bgColor1: "white"
             }
 
             DataBus.messagebox = JSON.stringify(messageBox)

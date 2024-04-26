@@ -13,7 +13,8 @@ SmButton {
 
     onClicked: {
         const messageBox = {
-            text: qsTr("Really?"),
+            headerText: qsTr("Are you sure?"),
+            mainText: qsTr("Really?"),
             backgroundColor: "lightblue",
             hasCancelButton: true,
             okButtonText: qsTr("Save"),

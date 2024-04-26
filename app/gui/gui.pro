@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    OpMessageBoxLoader.qml
 
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \

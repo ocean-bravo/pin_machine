@@ -4,12 +4,16 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
-Rectangle {
+Item {
     id: root
 
-    color: "#8060A5FA"
+    //color: "#8060A5FA"
 
     //enabled: false
+
+    readonly property string mainFont : "DINPro"
+    property bool guiDebug: false
+
 
     QtObject {
         id: colors
@@ -48,20 +52,25 @@ Rectangle {
 
             var msg = JSON.parse(value)
 
-            messageWithOk.text = msg.text
-            messageWithOk.backgroundColor = msg.backgroundColor
-            messageWithOk.okButtonText = msg.okButtonText
-            messageWithOk.hasCancelButton = msg.hasCancelButton
-            messageWithOk.cancelButtonText = msg.cancelButtonText
+            messageWithOk.headerText = msg.headerText
+            messageWithOk.mainText = msg.mainText
+
+            messageWithOk.buttonText1 = msg.buttonText1
+            messageWithOk.buttonText2 = msg.buttonText2
+            messageWithOk.buttonText3 = msg.buttonText3
+
+            messageWithOk.bgColor1 = msg.bgColor1
+            messageWithOk.bgColor2 = msg.bgColor2
+            messageWithOk.bgColor3 = msg.bgColor3
+
             messageWithOk.show()
             Engine.setOverlayWidgetTransparent(false)
         }
     }
 
-    MessageBoxLoader {
+    OpMessageBoxLoader {
         id: messageWithOk
-        width: 500
-        height: 250
+
         anchors.centerIn: parent
 
         onAccept: {
@@ -118,12 +127,6 @@ Rectangle {
         }
         backgroundColor: "green"
     }
-
-    // MouseArea {
-    //     anchors.fill: parent
-    //     hoverEnabled: true
-    //     visible: true
-    // }
 
     // Выполняет заданную функцию через интервал времени
     function execAfterDelay(func, interval, ...params) {
