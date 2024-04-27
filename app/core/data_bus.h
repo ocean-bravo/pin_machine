@@ -36,6 +36,8 @@ public:
 
     DataBusRef operator[](const QString& key);
 
+        void setMessageBox(QString msg);
+
 signals:
     void pixelSizeChanged();
     void imageChanged(QString key);
@@ -54,7 +56,6 @@ private:
     ~DataBus();
 
     QString messageBox() const;
-    void setMessageBox(QString msg);
 
     QString messageBoxResult() const;
     void setMessageBoxResult(QString msg);

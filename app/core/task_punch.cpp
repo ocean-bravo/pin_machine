@@ -15,6 +15,8 @@
 #include <QMetaMethod>
 #include <QScopeGuard>
 #include <QDateTime>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include "common.h"
 
@@ -176,49 +178,62 @@ void TaskPunchPrivate::run(QString punchProgram, int width, int height, QString 
 
         qd() << "board pos " << scene().board()->pos() << " angle " << scene().board()->rotation();
 
-        QList<BlobItem*> referenceFiducialBlobs;
 
-        every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
+        const bool checkFiducial = db().value("check_fiducial").toBool();
+        if (checkFiducial)
         {
-            if (blob->isFiducial())
-                referenceFiducialBlobs.append(blob);
-        });
+            QList<BlobItem*> referenceFiducialBlobs;
+
+            every<BlobItem>(scene().items(), [&referenceFiducialBlobs](BlobItem* blob)
+            {
+                if (blob->isFiducial())
+                    referenceFiducialBlobs.append(blob);
+            });
 
 
-        QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
-        for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
-        {
-            waitNext();
+            QList<std::tuple<BlobItem*, BlobItem*>> fiducialBlobs; // Пары опорных точек - идеальная и реальная
+            for (BlobItem* referenceFiducialBlob  : qAsConst(referenceFiducialBlobs))
+            {
+                waitNext();
 
-            BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
+                BlobItem* realFiducialBlob = scene().addBlobCopy(referenceFiducialBlob, true); // Родитель - сцена
 
-            runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
+                runOnThreadWait(&scene(), [=]() { realFiducialBlob->setRealFiducial(true); });
 
-            //const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
-            //qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
+                //const QVariantMap options = openIniFile(realFiducialBlob->sceneFileName());
+                //qd() << "real fiducial blob scene filename: " << realFiducialBlob->sceneFileName();
 
-            updateBlobPosition5x(realFiducialBlob);
-            fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
+                updateBlobPosition5x(realFiducialBlob);
+                fiducialBlobs.append(std::make_tuple(referenceFiducialBlob, realFiducialBlob));
+            }
+
+            // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
+            // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
+            // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
+            // realFiducialBlob  не привязана никуда.
+
+            if (fiducialBlobs.size() != 2)
+            {
+                QJsonObject jo
+                {
+                    {"headerText", tr("Рецепт продукта не содержит реперных отверстий")},
+                    {"mainText", tr("Возможно, количество реперных отверстий в рецепте не равно двум.\nПроверьте и отредактируйте рецепт.")},
+                    {"buttonText1", tr("OK")}
+                };
+
+                db().setMessageBox(QJsonDocument(jo).toJson());
+
+                throw stopEx();
+            }
+
+            QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
+            QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
+
+            BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
+            BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
+
+            algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
         }
-
-        // Теперь надо совместить каждую пару referenceFiducialBlob и realFiducialBlob.
-        // В идеале, таких пар должно быть 2. Меньше вообще нельзя, а больше смысла не имеет, только сложнее расчет поворота платы.
-        // referenceFiducialBlob привязана к контуру платы (имеет его в качестве родителя).
-        // realFiducialBlob  не привязана никуда.
-
-        if (fiducialBlobs.size() != 2)
-        {
-            db().insert("messagebox", "fiducial точек должно быть 2");
-            throw stopEx();
-        }
-
-        QPointF firstRef = std::get<0>(fiducialBlobs[0])->scenePos();
-        QPointF firstReal = std::get<1>(fiducialBlobs[0])->scenePos();
-
-        BlobItem* secondRef = std::get<0>(fiducialBlobs[1]);
-        BlobItem* secondReal = std::get<1>(fiducialBlobs[1]);
-
-        algorithmMatchPoints(firstRef, firstReal, secondRef, secondReal);
 
 
         // сделать тест доворота.
