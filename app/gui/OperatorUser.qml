@@ -3,9 +3,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import Process 1.0
-import ImageItem 1.0
-import QuickScene 1.0
 
 import "utils.js" as Utils
 
@@ -40,28 +37,6 @@ Control {
         machineLog.append(coloredMessage(message, color))
     }
 
-    function sortResolutions(resolutions) {
-        if (resolutions === undefined)
-            return
-
-        let resYuyv = resolutions.filter(e => e.fourcc === "YUYV")
-        let resMjpg = resolutions.filter(e => e.fourcc === "MJPG")
-
-        // Функция сортировки по возрастанию разрешения
-        let sortFunction = function (a,b) {
-            if (a.width * a.height === b.width * b.height)
-                return 0
-            return a.width * a.height > b.width * b.height ? 1 : -1
-        }
-
-        // Меняю порядок сортировки - большие разрешения вперед
-        resYuyv.sort(sortFunction).reverse()
-        resMjpg.sort(sortFunction).reverse()
-
-        // Сначала MJPG разрешения
-        return resMjpg.concat(resYuyv)
-    }
-
     Connections { target: Serial;            function onMessage(msg) { appendLog(msg, 'lightgrey') } }
     Connections { target: TaskScan;          function onMessage(msg) { appendLog(msg) } }
     Connections { target: TaskUpdate;        function onMessage(msg) { appendLog(msg) } }
@@ -93,12 +68,8 @@ Control {
 
     Connections {
         target: Serial
-        function onConnected() {
-            statusText.text = "Порт открыт"
-        }
-        function onDisconnected() {
-            statusText.text = "Порт закрыт"
-        }
+        function onConnected()    { statusText.text = "Порт открыт" }
+        function onDisconnected() { statusText.text = "Порт закрыт" }
     }
 
 
@@ -131,24 +102,12 @@ Control {
     }
 
     Control {
-        visible: true
-        id: tools
-
         anchors.fill: parent
-
-
-        leftPadding: 8
-        rightPadding: 8
-        topPadding: 8
-        bottomPadding: 8
+        padding: 8
 
         contentItem: ColumnLayout {
 
             spacing: 8
-
-            // OpTitleBar {
-
-            // }
 
             Item {
                 Layout.fillWidth: true
@@ -158,12 +117,9 @@ Control {
                     anchors.fill: parent
                     spacing: 8
 
-
-
                     Item {
                         Layout.preferredWidth: 816
                         Layout.fillHeight: true
-
 
                         ColumnLayout {
                             id: tools1
@@ -240,8 +196,6 @@ Control {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
                                             }
-
-
                                         }
                                     }
                                 }
@@ -285,20 +239,7 @@ Control {
                                 RowLayout {
                                     anchors.fill: parent
                                     anchors.margins: 16
-
                                     spacing: 32
-
-
-                                    // onCheckedChanged: checked ? TaskPunch.run(punchCode.text, selectedResolution().width, selectedResolution().height, selectedResolution().fourcc)
-                                    //                           : TaskPunch.stopProgram()
-                                    // function selectedResolution() {
-                                    //     return sortResolutions(DataBus["camera_image_formats_" + cameraList.currentValue])[resolutionListForPunch.currentIndex]
-                                    // }
-                                    // Connections { target: TaskPunch; function onFinished() { punch.checked = false } }
-
-                                    // Connections { target: TaskPunch;
-                                    //     function on()
-                                    //     { punch.checked = false } }
 
                                     ToolButton {
                                         icon.source: "images/play.svg"
@@ -318,7 +259,6 @@ Control {
                                                 TaskPunch.isPaused = false
                                                 return
                                             }
-
                                         }
                                     }
 
@@ -357,16 +297,11 @@ Control {
 
                 OpText {
                     id: statusText
-
                     anchors.fill: parent
-
                     anchors.margins: 16
-
-
                     text: "Порт не открыт"
                     font.pixelSize: 16
                     font.weight: Font.Medium
-
                     color: "white"
                 }
 
@@ -376,38 +311,8 @@ Control {
                 color: colors.primary_70
                 radius: 8
             }
-
         }
     }
-
-
-    // menuBar: MenuBar {
-    //     Menu {
-    //         id: fileMenu
-    //         title: qsTr("File")
-    //         // ...
-    //     }
-
-    //     Menu {
-    //         id: editMenu
-    //         title: qsTr("&Edit")
-    //         // ...
-    //     }
-
-    //     Menu {
-    //         id: viewMenu
-    //         title: qsTr("&View")
-    //         // ...
-    //     }
-
-    //     Menu {
-    //         id: helpMenu
-    //         title: qsTr("&Help")
-    //         // ...
-    //     }
-    // }
-
-
 
     component ToolButton : Button {
         id: root
