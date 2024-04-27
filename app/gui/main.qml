@@ -8,6 +8,7 @@ Item {
     id: root
 
     property bool guiDebug: false
+    readonly property string mainFont : "DINPro"
 
     property var appWin: operatorUser
 
@@ -266,8 +267,9 @@ Item {
         context: Qt.ApplicationShortcut
         onActivated: {
             operatorUser.visible = true
-            appWin = operatorUser
             superUser.visible = false
+
+            appWin = operatorUser
         }
     }
 
@@ -276,8 +278,9 @@ Item {
         context: Qt.ApplicationShortcut
         onActivated: {
             superUser.visible = true
-            appWin = superUser
             operatorUser.visible = false
+
+            appWin = superUser
         }
     }
 
