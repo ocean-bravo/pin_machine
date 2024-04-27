@@ -8,29 +8,23 @@ Loader {
 
     function show() {
         loader.sourceComponent = comp
+        Engine.setOverlayWidgetTransparent(false)
     }
     function hide() {
         loader.sourceComponent = undefined
+        Engine.setOverlayWidgetTransparent(true)
+        DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
     }
+
     onLoaded: {
         item.open()
         item.closed.connect(loader.hide)
-
-        item.accept.connect(loader.accept)
-        item.reject.connect(loader.reject)
     }
 
-    property bool visibility: false
+    property var headerText
+    property var mainText
 
-    onVisibilityChanged: visibility ? show() : hide()
-
-    signal accept
-    signal reject
-
-    property var headerText: ""
-    property var mainText: ""
-
-    property var buttonText1: qsTr("OK")
+    property var buttonText1
     property var buttonText2
     property var buttonText3
 
@@ -41,6 +35,32 @@ Loader {
     width: 640
     height: 360
 
+    Connections {
+        target: DataBus
+        function onValueChanged (key, value) {
+            if (key !== "messagebox")
+                return
+
+            if (value === "")
+                return
+
+            var msg = JSON.parse(value)
+
+            headerText = msg.headerText
+            mainText = msg.mainText
+
+            buttonText1 = msg.buttonText1
+            buttonText2 = msg.buttonText2
+            buttonText3 = msg.buttonText3
+
+            bgColor1 = msg.bgColor1
+            bgColor2 = msg.bgColor2
+            bgColor3 = msg.bgColor3
+
+            show()
+        }
+    }
+
     Component {
         id: comp
 
@@ -50,15 +70,8 @@ Loader {
             height: loader.height
 
             padding: 0
-
-            //parent: Overlay.overlay
-            //anchors.centerIn: Overlay.overlay
             modal: true
             closePolicy: Popup.NoAutoClose
-            z: loader.z
-
-            signal accept
-            signal reject
 
             background: Rectangle {
                 color: "white"
@@ -135,7 +148,10 @@ Loader {
                             BlueButton {
                                 id: button1
                                 text: loader.buttonText1
-                                onClicked: root.accept()
+                                onClicked: {
+                                    DataBus.messagebox_result = "variant1"
+                                    hide()
+                                }
                                 bgColor: loader.bgColor1
                             }
                         }
@@ -149,7 +165,10 @@ Loader {
                             BlueButton {
                                 id: button2
                                 text: loader.buttonText2 === undefined ? "_" : loader.buttonText2 // Qt bug. Текст должен быть не пустой, иначе не lineCount не срабатывает
-                                onClicked: root.reject()
+                                onClicked: {
+                                    DataBus.messagebox_result = "variant2"
+                                    hide()
+                                }
                             }
                         }
 
@@ -162,15 +181,14 @@ Loader {
                             BlueButton {
                                 id: button3
                                 text: loader.buttonText3 === undefined ? "_" : loader.buttonText3 // Qt bug. Текст должен быть не пустой, иначе не lineCount не срабатывает
-                                onClicked: root.reject()
+                                onClicked: {
+                                    DataBus.messagebox_result = "variant3"
+                                    hide()
+                                }
                             }
                         }
                     }
                 }
-            }
-
-            QtObject {
-                id: self
             }
         }
     }

@@ -41,53 +41,10 @@ Item {
         readonly property color disabledButton: "#E5E5E5"
     }
 
-    Connections {
-        target: DataBus
-        function onValueChanged (key, value) {
-            if (key !== "messagebox")
-                return
-
-            if (value === "")
-                return
-
-            var msg = JSON.parse(value)
-
-            messageWithOk.headerText = msg.headerText
-            messageWithOk.mainText = msg.mainText
-
-            messageWithOk.buttonText1 = msg.buttonText1
-            messageWithOk.buttonText2 = msg.buttonText2
-            messageWithOk.buttonText3 = msg.buttonText3
-
-            messageWithOk.bgColor1 = msg.bgColor1
-            messageWithOk.bgColor2 = msg.bgColor2
-            messageWithOk.bgColor3 = msg.bgColor3
-
-            messageWithOk.show()
-            Engine.setOverlayWidgetTransparent(false)
-        }
-    }
 
     OpMessageBoxLoader {
         id: messageWithOk
-
         anchors.centerIn: parent
-
-        onAccept: {
-            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
-            DataBus.messagebox_result = "accept"
-            Engine.setOverlayWidgetTransparent(true)
-            hide()
-            console.log("accepted")
-
-        }
-
-        onReject: {
-            DataBus.messagebox = "" // перезарядка, чтобы одно и тоже сообщение могло показываться
-            DataBus.messagebox_result = "reject"
-            Engine.setOverlayWidgetTransparent(true)
-            hide()
-        }
     }
 
     // MessageBoxLoader {
