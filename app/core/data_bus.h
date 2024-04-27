@@ -15,6 +15,9 @@ class DataBus : public QQmlPropertyMap, public Singleton<DataBus>
 {
     Q_OBJECT
     //Q_PROPERTY(double pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
+    Q_PROPERTY(QString messageBox READ messageBox WRITE setMessageBox NOTIFY messageBoxChanged)
+    Q_PROPERTY(QString messageBoxResult READ messageBoxResult WRITE setMessageBoxResult NOTIFY messageBoxResultChanged)
+
 
 public:
     Q_INVOKABLE double pixInMm() const;
@@ -36,6 +39,8 @@ public:
 signals:
     void pixelSizeChanged();
     void imageChanged(QString key);
+    void messageBoxChanged();
+    void messageBoxResultChanged();
 
 protected:
 //    template <typename Derived>
@@ -47,6 +52,12 @@ protected:
 private:
     DataBus(QObject * parent  = nullptr);
     ~DataBus();
+
+    QString messageBox() const;
+    void setMessageBox(QString msg);
+
+    QString messageBoxResult() const;
+    void setMessageBoxResult(QString msg);
 
     mutable QReadWriteLock _lock;
 

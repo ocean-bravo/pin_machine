@@ -35,31 +35,56 @@ Loader {
     width: 640
     height: 360
 
-    Connections {
-        target: DataBus
-        function onValueChanged (key, value) {
-            if (key !== "messagebox")
-                return
 
-            if (value === "")
-                return
+    property var msg: {
+        let value = DataBus.messageBox
 
-            var msg = JSON.parse(value)
+        if (value === "")
+            return
 
-            headerText = msg.headerText
-            mainText = msg.mainText
+        let msg = JSON.parse(value)
 
-            buttonText1 = msg.buttonText1
-            buttonText2 = msg.buttonText2
-            buttonText3 = msg.buttonText3
+        headerText = msg.headerText
+        mainText = msg.mainText
 
-            bgColor1 = msg.bgColor1
-            bgColor2 = msg.bgColor2
-            bgColor3 = msg.bgColor3
+        buttonText1 = msg.buttonText1
+        buttonText2 = msg.buttonText2
+        buttonText3 = msg.buttonText3
 
-            show()
-        }
+        bgColor1 = msg.bgColor1
+        bgColor2 = msg.bgColor2
+        bgColor3 = msg.bgColor3
+
+        show()
+
+        return msg
     }
+
+    // Connections {
+    //     target: DataBus
+    //     function onMessageBoxChanged () {
+    //         if (key !== "messagebox")
+    //             return
+
+    //         if (value === "")
+    //             return
+
+    //         var msg = JSON.parse(value)
+
+    //         headerText = msg.headerText
+    //         mainText = msg.mainText
+
+    //         buttonText1 = msg.buttonText1
+    //         buttonText2 = msg.buttonText2
+    //         buttonText3 = msg.buttonText3
+
+    //         bgColor1 = msg.bgColor1
+    //         bgColor2 = msg.bgColor2
+    //         bgColor3 = msg.bgColor3
+
+    //         show()
+    //     }
+    // }
 
     Component {
         id: comp

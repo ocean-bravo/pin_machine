@@ -291,7 +291,7 @@ Item {
                 buttonText1: qsTr("Ok"),
             }
 
-            DataBus.messagebox = JSON.stringify(messageBox)
+            DataBus.messageBox = JSON.stringify(messageBox)
         }
     }
 
@@ -306,7 +306,7 @@ Item {
                 buttonText2: qsTr("Начать сначала"),
             }
 
-            DataBus.messagebox = JSON.stringify(messageBox)
+            DataBus.messageBox = JSON.stringify(messageBox)
         }
     }
 
@@ -323,7 +323,7 @@ Item {
                 bgColor1: "white"
             }
 
-            DataBus.messagebox = JSON.stringify(messageBox)
+            DataBus.messageBox = JSON.stringify(messageBox)
         }
     }
 

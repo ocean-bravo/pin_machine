@@ -50,6 +50,28 @@ DataBus::~DataBus()
 
 }
 
+QString DataBus::messageBox() const
+{
+    return value("messagebox").toString();
+}
+
+void DataBus::setMessageBox(QString msg)
+{
+    insert("messagebox", msg);
+    emit messageBoxChanged();
+}
+
+QString DataBus::messageBoxResult() const
+{
+    return value("messagebox_result").toString();
+}
+
+void DataBus::setMessageBoxResult(QString msg)
+{
+    insert("messagebox_result", msg);
+    emit messageBoxResultChanged();
+}
+
 double DataBus::pixInMm() const
 {
     int width = value("resolution_width").toInt();

@@ -12,6 +12,8 @@ import "utils.js" as Utils
 Control {
     id: appWin
 
+    readonly property string mainFont : "DINPro"
+
     background: Rectangle {
         color: colors.primary_10
     }
@@ -89,6 +91,17 @@ Control {
         }
     }
 
+    Connections {
+        target: Serial
+        function onConnected() {
+            statusText.text = "Порт открыт"
+        }
+        function onDisconnected() {
+            statusText.text = "Порт закрыт"
+        }
+    }
+
+
     Window {
         id: machineLogWindow
         title: "Machine log"
@@ -116,37 +129,6 @@ Control {
             }
         }
     }
-
-
-
-
-    // Popup {
-    //         id: popup
-    //         x: 100
-    //         y: 100
-    //         width: 200
-    //         height: 300
-    //         modal: true
-    //         focus: true
-    //         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-    //     }
-
-    // Shortcut {
-    //     sequence: "F5"
-    //     context: Qt.ApplicationShortcut
-    //     onActivated: {
-    //         // console.log("reload")
-    //         // loader.reload()
-
-    //         DataBus.messagebox = "dsafasdf"
-    //         popup.open()
-    //     }
-
-    // }
-
-
-
-    readonly property string mainFont : "DINPro"
 
     Control {
         visible: true
@@ -586,37 +568,6 @@ Control {
         134:	"Axis 5 (B) Max travel, unit",
         135:	"Axis 6 (C) Max travel, unit"
     }
-
-
-    Connections {
-        target: Serial
-        function onConnected() {
-            statusText.text = "Порт открыт"
-        }
-        function onDisconnected() {
-            statusText.text = "Порт закрыт"
-        }
-    }
-
-    // FindUsb {
-    //     id: findUsb
-    //     onUsbFound: {
-    //         if (device === "")
-    //             return
-
-    //         stop()
-    //         Serial.close()
-
-    //         Serial.setPortName(device)
-    //         Serial.setBaudRate("115200")
-    //         Serial.setDataBits("8")
-    //         Serial.setParity("N")
-    //         Serial.setStopBits("1")
-    //         Serial.open()
-
-    //         statusText.text = "Порт открыт"
-    //     }
-    // }
 
     Component.onCompleted: {
         Video4.reloadDevices()

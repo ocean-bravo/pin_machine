@@ -43,18 +43,8 @@ Item {
 
 
     OpMessageBoxLoader {
-        id: messageWithOk
         anchors.centerIn: parent
     }
-
-    // MessageBoxLoader {
-    //     id: splash
-    //     text: DataBus.splash
-    //     backgroundColor: "green"
-    //     noButtons: true
-    //     onTextChanged: text.length > 0 ? show() : hide()
-    //     Component.onCompleted: DataBus.splash = ""  // Для убирания warninga "Unable to assign [undefined] to QString"
-    // }
 
     MessageBoxLoader {
         id: bestPath
