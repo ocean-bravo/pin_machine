@@ -36,6 +36,7 @@ Loader {
     height: 360
 
 
+    // Свойство просто для биндинга на messageBox
     property var msg: {
         let value = DataBus.messageBox
 
