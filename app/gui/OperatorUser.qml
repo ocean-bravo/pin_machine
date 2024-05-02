@@ -107,17 +107,21 @@ Control {
 
             spacing: 8
 
-            SwipeView {
-                currentIndex: 1
+            StackLayout {
+                id: stackLayout
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 PanelWork {
-
+                    id: panelWork
+                    //anchors.fill: parent
+                    //visible: true
                 }
 
                 PanelManualControl {
-
+                    id: panelManualControl
+                    //anchors.fill: parent
+                    //visible: false
                 }
             }
 
@@ -140,6 +144,17 @@ Control {
                 color: colors.primary_70
                 radius: 8
             }
+        }
+    }
+
+    Shortcut {
+        sequence: "F3"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            if (stackLayout.currentIndex === 0)
+                stackLayout.currentIndex = 1
+            else
+                stackLayout.currentIndex = 0
         }
     }
 

@@ -3,7 +3,7 @@
 #include <QQuickItem>
 #include <QWidget>
 
-//#include "utils.h"
+#include "utils.h"
 
 //WidgetAnchor::WidgetAnchor(QObject* parent, QWidget* widget, QQuickItem* quickitem)
 WidgetAnchor::WidgetAnchor(QWidget* widget, QQuickItem* quickitem)
@@ -35,9 +35,14 @@ void WidgetAnchor::updateGeometry()
         //QRectF r = _quickItem->mapRectToScene(QRectF(_quickItem->x(), _quickItem->y(), _quickItem->width(), _quickItem->height()));
 
         // 3. Отлично!
-        QRectF r = _quickItem->mapRectToScene(QRectF(0, 0, _quickItem->width(), _quickItem->height()));
+        //QRectF r = _quickItem->mapRectToScene(QRectF(0, 0, _quickItem->width(), _quickItem->height()));
 
-        _widget->setGeometry(r.toRect());
+        QPointF p1 = _quickItem->mapToScene(QPointF(0, 0)); //, _quickItem->width(), _quickItem->height()));
+        QPointF p2 = _quickItem->mapToScene(QPointF(_quickItem->width(), _quickItem->height()));
+
+        qd() << p1 << p2;
+
+        _widget->setGeometry(QRect(p1.toPoint(), p2.toPoint()));
 
 
         // 1. Работает, не как хочется,поэтому костыли

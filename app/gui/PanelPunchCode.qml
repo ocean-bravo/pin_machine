@@ -103,6 +103,9 @@ CollapsiblePanel2 {
                     text: qsTr("Проверка реперных отверстий перед установкой")
                     font.pixelSize: 12
 
+                    checked: DataBus.check_fiducial
+                    onCheckedChanged: DataBus.check_fiducial = checked
+
                     Layout.preferredHeight: 24
                     Layout.fillWidth: true
                 }
