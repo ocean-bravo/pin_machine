@@ -11,6 +11,26 @@ Control {
 
     background: OpWhitePanel {}
 
+
+    component MyText : OpText {
+        font.capitalization: Font.AllUppercase
+        font.weight: Font.Medium
+        font.pixelSize: 16
+        color: colors.black_90
+
+        Layout.preferredHeight: 18
+        Layout.fillWidth: true
+    }
+
+    component MyHeader : OpText {
+        font.capitalization: Font.AllUppercase
+        font.weight: Font.Medium
+
+        Layout.preferredHeight: 18
+        Layout.fillWidth: true
+    }
+
+
     contentItem: ColumnLayout {
 
         spacing: 16
@@ -89,21 +109,11 @@ Control {
 
                         Vspacer {}
 
-                        OpText {
+                        MyHeader {
                             text: qsTr("Параметры установки контактов")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
                         }
-                        OpText {
-                            text: qsTr("Z РЕЗ")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
+                        MyText {
+                            text: qsTr("Z рез")
                         }
 
                         Item {
@@ -129,46 +139,8 @@ Control {
                                 }
                             }
                         }
-                        OpText {
-                            text: qsTr("Z УСТАНОВКА")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
-                        }
-
-                        Item {
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
-                            RowLayout {
-                                anchors.fill: parent
-
-                                OpDoubleSpinbox {
-
-                                }
-
-                                OpSolidButton {
-                                    Layout.preferredHeight: 40
-                                    Layout.fillWidth: true
-                                    text: qsTr("Идти")
-                                }
-
-                                OpFrameButton {
-                                    Layout.preferredHeight: 40
-                                    Layout.fillWidth: true
-                                    text: qsTr("Сохранить в продукт")
-                                }
-                            }
-                        }
-
-                        OpText {
-                            text: qsTr("Z ПАРКОВКА")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
+                        MyText {
+                            text: qsTr("Z установка")
                         }
 
                         Item {
@@ -195,21 +167,39 @@ Control {
                             }
                         }
 
-                        OpText {
+                        MyText {
+                            text: qsTr("Z парковка")
+                        }
+
+                        Item {
+                            Layout.preferredHeight: 18
+                            Layout.fillWidth: true
+                            RowLayout {
+                                anchors.fill: parent
+
+                                OpDoubleSpinbox {
+
+                                }
+
+                                OpSolidButton {
+                                    Layout.preferredHeight: 40
+                                    Layout.fillWidth: true
+                                    text: qsTr("Идти")
+                                }
+
+                                OpFrameButton {
+                                    Layout.preferredHeight: 40
+                                    Layout.fillWidth: true
+                                    text: qsTr("Сохранить в продукт")
+                                }
+                            }
+                        }
+
+                        MyHeader {
                             text: qsTr("Параметры Подпора платы")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
                         }
-                        OpText {
+                        MyText {
                             text: qsTr("W подпор")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
                         }
 
                         Item {
@@ -235,13 +225,8 @@ Control {
                                 }
                             }
                         }
-                        OpText {
+                        MyText {
                             text: qsTr("W парковка")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
                         }
 
                         Item {
