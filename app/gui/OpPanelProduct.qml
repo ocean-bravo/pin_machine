@@ -42,13 +42,12 @@ Control {
             }
         }
 
-        OpFrameButton {
+        OpSolidButton {
             text: qsTr("Открыть продукт")
-            solid: true
             font.pixelSize: 16
             font.weight: Font.Medium
 
-            color: colors.primary_70
+            bgcolor: colors.primary_70
 
             Layout.preferredHeight: 44
             Layout.fillWidth: true
@@ -73,6 +72,7 @@ Control {
 
                 OpText {
                     text: qsTr("СЧЕТЧИК ГОТОВЫХ ПРОДУКТОВ:")
+                    font.capitalization: Font.AllUppercase
 
                     Layout.preferredHeight: 32
                 }

@@ -62,8 +62,6 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
-
-
             }
         }
 
@@ -77,6 +75,15 @@ Item {
 
                 spacing: 8
 
+                OpPanelPunchParameters {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                OpPanelStepByStepPunch {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
             }
         }

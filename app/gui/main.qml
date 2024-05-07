@@ -57,7 +57,9 @@ Item {
         readonly property color primary_10: "#F6FAFF"
         readonly property color primary_20: "#DBEAFE"
         readonly property color primary_50: "#60A5FA"
+        readonly property color primary_60: "#3B82F6"
         readonly property color primary_70: "#2563EB"
+        readonly property color primary_80: "#1D4ED8"
         readonly property color primary_90: "#1E40AF"
 
         readonly property color black_20: "#CCCCCC"
@@ -65,6 +67,7 @@ Item {
         readonly property color black_50: "#808080"
         readonly property color black_80: "#333333"
         readonly property color black_90: "#1A1A1A"
+        readonly property color black_100: "#000000"
 
         readonly property color error_80: "#FF5E5C"
 

@@ -49,12 +49,11 @@ Control {
                     Layout.fillWidth: true
                 }
 
-                OpFrameButton {
+                OpSolidButton {
                     icon.source: "images/home.svg"
-                    solid: true
                     display: AbstractButton.IconOnly
 
-                    color: colors.primary_70
+                    bgcolor: colors.primary_70
 
                     Layout.preferredHeight: 44
                     Layout.fillWidth: true

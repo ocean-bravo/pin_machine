@@ -16,30 +16,69 @@ Control {
         spacing: 16
 
         OpText {
-            text: qsTr("РЕЖИМЫ РАБОТЫ")
+            text: qsTr("Расстояние между осью Камеры и осью Инструмента")
+            font.capitalization: Font.AllUppercase
 
             Layout.preferredHeight: 18
             Layout.fillWidth: true
         }
 
-        CustomSwitch {
-            text: qsTr("Без установки")
+        Item {
 
-            checked: TaskPunch.noPunch
-            onCheckedChanged: TaskPunch.noPunch = checked
+            Layout.fillWidth: true
 
-            Layout.preferredHeight: 48
+            RowLayout {
+                anchors.fill: parent
+
+            }
+        }
+
+        OpText {
+            text: qsTr("Переместить точку под Камерой в точку под Инструментом")
+            font.capitalization: Font.AllUppercase
+
+            Layout.preferredHeight: 18
             Layout.fillWidth: true
         }
 
-        CustomSwitch {
-            text: qsTr("Пошагово")
-
-            checked: TaskPunch.stepByStep
-            onCheckedChanged: TaskPunch.stepByStep = checked
-
-            Layout.preferredHeight: 48
+        Item {
             Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                OpFrameButton {
+                    text: qsTr("Идти")
+                    color: colors.primary_90
+                    font.pixelSize: 14
+
+                    display: AbstractButton.TextOnly
+
+                    Layout.preferredHeight: 32
+                }
+            }
+        }
+
+        OpText {
+            text: qsTr("Переместить точку под Инструментом в точку под Камерой")
+            font.capitalization: Font.AllUppercase
+
+            Layout.preferredHeight: 18
+            Layout.fillWidth: true
+        }
+
+        Item {
+            Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                OpFrameButton {
+                    text: qsTr("Идти")
+                    color: colors.primary_90
+                    font.pixelSize: 14
+
+                    display: AbstractButton.TextOnly
+
+                    Layout.preferredHeight: 32
+                }
+            }
         }
     }
 }

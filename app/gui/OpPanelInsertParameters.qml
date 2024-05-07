@@ -92,7 +92,7 @@ Control {
             }
         }
 
-        VSpacer { }
+        Vspacer { }
 
         Item {
             Layout.preferredHeight: 18
@@ -111,31 +111,8 @@ Control {
                     color: colors.black_80
                 }
 
-                HSpacer { }
+                Hspacer { }
             }
-        }
-    }
-
-
-    component VSpacer: Item {
-        Layout.fillHeight: true
-        width: 20
-
-        Rectangle {
-            anchors.fill: parent
-            visible: guiDebug
-            color: "#400000FF"
-        }
-    }
-
-    component HSpacer: Item {
-        Layout.fillWidth: true
-        height: 10
-
-        Rectangle {
-            anchors.fill: parent
-            visible: guiDebug
-            color: "#400000FF"
         }
     }
 

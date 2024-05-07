@@ -32,7 +32,7 @@ Control {
         message = message.replace(/\r?\n/g, '<br>')
         message = message.replace(/<br>$/g, '') // Убираю последний перенос строки
 
-        machineLog.append(coloredMessage(message, color))
+        logMachine.append(coloredMessage(message, color))
     }
 
     Connections { target: Serial;            function onMessage(msg) { appendLog(msg, 'lightgrey') } }

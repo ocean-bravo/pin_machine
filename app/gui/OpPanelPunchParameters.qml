@@ -3,6 +3,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+
 Control {
     id: root
 
@@ -15,19 +16,16 @@ Control {
         spacing: 16
 
         OpText {
-            text: qsTr("ВИЗУАЛИЗАЦИЯ ПРОДУКТА")
+            text: qsTr("Скорость осей Z/W")
             font.capitalization: Font.AllUppercase
 
             Layout.preferredHeight: 18
             Layout.fillWidth: true
         }
-
-        Item {
-            id: scene
-            objectName: "placeholderForGraphicsView"
-
-            Layout.fillHeight: true
+        OpSlider {
             Layout.fillWidth: true
         }
+
+
     }
 }

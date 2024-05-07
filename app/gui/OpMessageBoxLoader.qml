@@ -144,7 +144,7 @@ Loader {
                     }
                 }
 
-                VSpacer {}
+                Vspacer {}
 
                 Item {
                     id: buttons
@@ -243,17 +243,6 @@ Loader {
             verticalAlignment: Text.AlignVCenter
 
             wrapMode: Text.WordWrap
-        }
-    }
-
-    component VSpacer: Item {
-        Layout.fillHeight: true
-        width: 20
-
-        Rectangle {
-            anchors.fill: parent
-            visible: guiDebug
-            color: "#400000FF"
         }
     }
 }

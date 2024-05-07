@@ -2,9 +2,6 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
-    LogMachine.qml \
-    OpPanelMove.qml \
-    OpPanelToolShift.qml
 
 TRANSLATIONS += gui_language_de.ts \
                 gui_language_pl.ts \

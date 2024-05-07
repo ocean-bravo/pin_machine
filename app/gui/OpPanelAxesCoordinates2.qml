@@ -21,7 +21,7 @@ Control {
             Layout.fillWidth: true
         }
 
-        VSpacer {}
+        Vspacer {}
 
         Item {
             Layout.preferredHeight: 32
@@ -58,7 +58,7 @@ Control {
             }
         }
 
-        VSpacer {}
+        Vspacer {}
 
         Item {
             Layout.preferredHeight: 32
@@ -91,21 +91,10 @@ Control {
             }
         }
 
-        VSpacer {}
+        Vspacer {}
 
         }
 
-
-    component VSpacer: Item {
-        Layout.fillHeight: true
-        width: 20
-
-        Rectangle {
-            anchors.fill: parent
-            visible: guiDebug
-            color: "#400000FF"
-        }
-    }
 
     component MyText: OpText {
         Layout.preferredWidth: 24

@@ -6,7 +6,6 @@ import QtQuick.Window 2.15
 
 
 Window {
-    id: machineLogWindow
     title: "Machine log"
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
@@ -16,8 +15,12 @@ Window {
     x: Screen.width - width
     y: 0
 
+    function append(text) {
+        log.append(text)
+    }
+
     Log2 {
-        id: machineLog
+        id: log
         anchors.fill: parent
         loadOnCompleted: true
     }

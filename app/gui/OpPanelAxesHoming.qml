@@ -51,14 +51,14 @@ Control {
             }
         }
 
-        OpFrameButton {
+        OpSolidButton {
             text: qsTr("Выполнить инициализацию осей")
             icon.source: "images/home.svg"
-            solid: true
+
             font.pixelSize: 16
             font.weight: Font.Medium
 
-            color: colors.primary_70
+            bgcolor: colors.primary_70
 
             Layout.preferredHeight: 44
             Layout.fillWidth: true
