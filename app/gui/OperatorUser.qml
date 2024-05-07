@@ -71,34 +71,6 @@ Control {
     }
 
 
-    Window {
-        id: machineLogWindow
-        title: "Machine log"
-        flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-
-        width: MainWindow.width / 3
-        height: MainWindow.height / 2
-
-        x: Screen.width - width
-        y: 0
-
-        Log2 {
-            id: machineLog
-            anchors.fill: parent
-            loadOnCompleted: true
-        }
-
-        Shortcut {
-            sequence: "F11"
-            context: Qt.ApplicationShortcut
-            onActivated: {
-                machineLogWindow.visible = !machineLogWindow.visible
-                if (machineLogWindow.visible)
-                    machineLogWindow.raise()
-            }
-        }
-    }
-
     Control {
         anchors.fill: parent
         padding: 8
@@ -112,16 +84,12 @@ Control {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                PanelWork {
-                    id: panelWork
-                    //anchors.fill: parent
-                    //visible: true
-                }
-
                 PanelManualControl {
                     id: panelManualControl
-                    //anchors.fill: parent
-                    //visible: false
+                }
+
+                PanelWork {
+                    id: panelWork
                 }
             }
 

@@ -10,8 +10,8 @@ Window {
     title: "Debug log"
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
-    width: MainWindow.width / 3
-    height: MainWindow.height / 2
+    width: Screen.width / 3
+    height: Screen.height / 2
 
     x: Screen.width - width
     y: Screen.height - height
@@ -93,17 +93,6 @@ Window {
 
                 }
             }
-        }
-
-    }
-
-    Shortcut {
-        sequence: "F12"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            root.visible = !root.visible
-            if (root.visible)
-                root.raise()
         }
     }
 

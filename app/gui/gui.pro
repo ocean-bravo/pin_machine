@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 DISTFILES = $$PWD/*.qml \
             $$PWD/*.js \
+    LogMachine.qml \
     OpPanelMove.qml \
     OpPanelToolShift.qml
 

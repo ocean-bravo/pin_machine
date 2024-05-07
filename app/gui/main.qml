@@ -22,14 +22,18 @@ Item {
     width: MainWindow.width
     height: MainWindow.height
 
-    OperatorUser {
-        id: operatorUser
+    StackLayout {
+        id: stackLayout
         anchors.fill: parent
-    }
 
-    SuperUser {
-        id: superUser
-        anchors.fill: parent
+        OperatorUser {
+            id: operatorUser
+        }
+
+        SuperUser {
+            id: superUser
+        }
+
     }
 
     FindCamera {
@@ -251,42 +255,52 @@ Item {
         DataBus.gpio = pins
     }
 
-    DebugLog { }
+    LogMachine {
+        id: logMachine
+
+        Shortcut { sequence: "F11"; context: Qt.ApplicationShortcut;
+            onActivated: {
+                logMachine.visible = !logMachine.visible
+                if (logMachine.visible)
+                    logMachine.raise()
+            }
+        }
+    }
+
+    LogDebug {
+        id: logDebug
+
+        Shortcut { sequence: "F12"; context: Qt.ApplicationShortcut;
+            onActivated: {
+                logDebug.visible = !logDebug.visible
+                if (logDebug.visible)
+                    logDebug.raise()
+            }
+        }
+    }
 
     OpenSerialPromise { id: openSerialPromise }
 
     Component.onCompleted: {
-        operatorUser.visible = true
-        superUser.visible = false
         DataBus.live_preview_mode = "raw"
         openSerialPromise.runAsync()
     }
 
-    Shortcut {
-        sequence: "F1"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F1"; context: Qt.ApplicationShortcut;
         onActivated: {
-            operatorUser.visible = true
-            superUser.visible = false
-
-            appWin = operatorUser
+            stackLayout.currentIndex = 0
+            //appWin = operatorUser
         }
     }
 
-    Shortcut {
-        sequence: "F2"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F2"; context: Qt.ApplicationShortcut;
         onActivated: {
-            superUser.visible = true
-            operatorUser.visible = false
-
-            appWin = superUser
+            stackLayout.currentIndex = 1
+            // appWin = superUser
         }
     }
 
-    Shortcut {
-        sequence: "F5"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F5"; context: Qt.ApplicationShortcut;
         onActivated: {
             const messageBox = {
                 headerText: qsTr("Ошибка осей/Аварийная остановка"),
@@ -298,9 +312,7 @@ Item {
         }
     }
 
-    Shortcut {
-        sequence: "F6"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F6"; context: Qt.ApplicationShortcut;
         onActivated: {
             const messageBox = {
                 headerText: qsTr("Предыдущий продукт не закончен"),
@@ -313,9 +325,7 @@ Item {
         }
     }
 
-    Shortcut {
-        sequence: "F7"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F7"; context: Qt.ApplicationShortcut;
         onActivated: {
             const messageBox = {
                 headerText: qsTr("Пауза. Нет линии пинов."),
@@ -330,17 +340,13 @@ Item {
         }
     }
 
-    Shortcut {
-        sequence: "F8"
-        context: Qt.WindowShortcut
+    Shortcut { sequence: "F8"; context: Qt.ApplicationShortcut;
         onActivated: {
             guiDebug = !guiDebug
         }
     }
 
-    Shortcut {
-        sequence: "F9"
-        context: Qt.WindowShortcut
+    Shortcut { sequence: "F9"; context: Qt.ApplicationShortcut;
         onActivated: {
             //QmlEngine.clearCache()
             //appWin.close()
