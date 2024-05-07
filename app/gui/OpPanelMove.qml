@@ -11,6 +11,17 @@ Control {
 
     background: OpWhitePanel {}
 
+
+    component MyText: OpText {
+        Layout.fillHeight: true
+
+        horizontalAlignment: Text.AlignHCenter
+
+        font.weight: Font.Medium
+        font.pixelSize: 28
+        color: colors.black_100
+    }
+
     contentItem: ColumnLayout {
 
         spacing: 0
@@ -18,6 +29,8 @@ Control {
         Item {
             Layout.preferredHeight: 172
             Layout.fillWidth: true
+
+            Rectangle { anchors.fill: parent; visible: guiDebug; color: "#22FF0FF0"; }
 
             RowLayout {
                 anchors.fill: parent
@@ -30,6 +43,7 @@ Control {
 
                     ColumnLayout {
                         anchors.fill: parent
+                        spacing: 16
 
                         OpText {
                             Layout.preferredHeight: 18
@@ -37,15 +51,46 @@ Control {
 
                             text: qsTr("Движение в заданные координаты")
                             font.capitalization: Font.AllUppercase
+                            font.weight: Font.Medium
                         }
 
                         Item {
-                            Layout.preferredHeight: 58
+                            Layout.preferredHeight: 40
                             Layout.fillWidth: true
 
                             RowLayout {
                                 anchors.fill: parent
+                                spacing: 16
 
+                                MyText { text: "X"; }
+                                OpLabel {
+                                    text: "900.00"
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 80
+                                }
+                                OpFrameButton {
+                                    Layout.fillHeight: true
+                                    text: qsTr("Идти")
+                                    font.pixelSize: 16
+                                    color: colors.primary_90
+                                    font.weight: Font.Medium
+                                }
+
+                                Hspacer {}
+
+                                MyText { text: "Y"; }
+                                OpLabel {
+                                    text: "1.01"
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 80
+                                }
+                                OpFrameButton {
+                                    Layout.fillHeight: true
+                                    text: qsTr("Идти")
+                                    font.pixelSize: 16
+                                    color: colors.primary_90
+                                    font.weight: Font.Medium
+                                }
                             }
                         }
 
@@ -59,7 +104,9 @@ Control {
                                 spacing: 4
 
                                 OpText {
-                                    text: qsTr("СКОРОСТЬ ОСЕЙ")
+                                    text: qsTr("Скорость осей X/Y")
+                                    font.capitalization: Font.AllUppercase
+                                    font.weight: Font.Medium
 
                                     Layout.preferredHeight: 18
                                     Layout.fillWidth: true
@@ -77,8 +124,6 @@ Control {
                                             color: colors.black_80
                                             font.pixelSize: 16
                                             font.weight: Font.Medium
-
-                                            //Layout.preferredHeight: 28
                                         }
 
                                         OpSlider {
@@ -86,7 +131,6 @@ Control {
                                             value: 25
                                             to: 100
 
-                                            //Layout.preferredHeight: 28
                                             Layout.fillWidth: true
                                         }
 
@@ -95,14 +139,11 @@ Control {
                                             color: colors.black_80
                                             font.pixelSize: 16
                                             font.weight: Font.Medium
-
-                                            //Layout.preferredHeight: 28
                                         }
                                     }
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -110,7 +151,7 @@ Control {
             }
         }
 
-        OpJog {
+        OpJogXY {
             Layout.preferredHeight: 700
             Layout.fillWidth: true
         }

@@ -48,29 +48,16 @@ Item {
             }
         }
 
-        Item {
-            Layout.fillWidth: true
+        OpPanelMove {
             Layout.fillHeight: true
-
-            ColumnLayout {
-                id: column2
-                anchors.fill: parent
-
-                spacing: 8
-
-                OpPanelMove {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-            }
+            Layout.fillWidth: true
         }
-
 
         Item {
             Layout.preferredWidth: 550
             Layout.fillHeight: true
+
             ColumnLayout {
-                id: column3
                 anchors.fill: parent
 
                 spacing: 8
@@ -81,7 +68,7 @@ Item {
                 }
 
                 OpPanelStepByStepPunch {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 218
                     Layout.fillWidth: true
                 }
 

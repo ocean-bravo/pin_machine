@@ -22,6 +22,9 @@ Item {
         Layout.preferredWidth: 60
         Layout.preferredHeight: 60
 
+        enabled: false
+        background.opacity: 1.0
+
         leftPadding: 0
         rightPadding: 0
 
