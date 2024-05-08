@@ -19,7 +19,7 @@ Button {
     property color color: "blue"
     property color framecolor: color
 
-    display: AbstractButton.TextBesideIcon
+    display: icon.source === "" ? AbstractButton.TextOnly : AbstractButton.TextBesideIcon
 
     background: Rectangle {
         color: down ? "lightgrey" : "transparent"
@@ -28,6 +28,26 @@ Button {
         border.width: 1
         radius: 8
     }
+
+    // contentItem: Text {
+    //     text: root.text
+    //     font: root.font
+    //     opacity: enabled ? 1.0 : 0.3
+    //     color: root.color
+    //     horizontalAlignment: Text.AlignHCenter
+    //     verticalAlignment: Text.AlignVCenter
+    //     elide: Text.ElideRight
+    // }
+
+    // indicator: Image {
+    //     id: image
+
+    //     width: icon.width
+    //     height: icon.height
+    //     //anchors.centerIn: parent
+    //     source: root.icon.source
+    //     mipmap: true
+    // }
 
     Component.onCompleted: {
         // Не хотел переопределять свойство contentItem, а добраться до нужного свойства у существуюущего
