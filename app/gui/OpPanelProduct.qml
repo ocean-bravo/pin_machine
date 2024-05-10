@@ -44,7 +44,6 @@ Control {
 
         OpSolidButton {
             text: qsTr("Открыть продукт")
-            font.pixelSize: 16
             font.weight: Font.Medium
 
             bgcolor: colors.primary_70
@@ -95,9 +94,7 @@ Control {
                 OpFrameButton {
                     text: qsTr("Сбросить")
                     color: colors.primary_90
-                    font.pixelSize: 14
-
-                    display: AbstractButton.TextOnly
+                    //font.pixelSize: 14 // DESIGN отступление от дизайна. По дизайну - 14
 
                     Layout.preferredHeight: 32
                 }

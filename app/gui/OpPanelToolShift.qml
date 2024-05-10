@@ -11,9 +11,22 @@ Control {
 
     background: OpWhitePanel {}
 
+    component MyText: OpText {
+        Layout.fillHeight: true
+
+        horizontalAlignment: Text.AlignHCenter
+
+        font.weight: Font.Medium
+        font.pixelSize: 28
+        color: colors.black_100
+    }
+
+    component Gap16 : Vspacer {Layout.preferredHeight: 16}
+    component Gap20 : Vspacer {Layout.preferredHeight: 20}
+
     contentItem: ColumnLayout {
 
-        spacing: 16
+        spacing: 0
 
         OpText {
             text: qsTr("Расстояние между осью Камеры и осью Инструмента")
@@ -23,15 +36,42 @@ Control {
             Layout.fillWidth: true
         }
 
-        Item {
+        Gap16 {}
 
+        Item {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
 
             RowLayout {
                 anchors.fill: parent
 
+                MyText {
+                    text: "dX"
+
+                }
+
+                OpLabel {
+                    text: "120.00"
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 80
+
+
+                }
+
+                MyText {
+                    text: "dY"
+                }
+                OpLabel{
+                    text: "150.00"
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 80
+                }
+                Hspacer {}
+
             }
         }
+
+        Gap20 {}
 
         OpText {
             text: qsTr("Переместить точку под Камерой в точку под Инструментом")
@@ -41,21 +81,34 @@ Control {
             Layout.fillWidth: true
         }
 
+        Gap16 {}
+
         Item {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
+
             RowLayout {
                 anchors.fill: parent
+                spacing: 24
+
+                Image {
+                    source: "images/camera_tool.svg"
+                    Layout.fillHeight: true
+                }
+
                 OpFrameButton {
                     text: qsTr("Идти")
                     color: colors.primary_90
-                    font.pixelSize: 14
+                    font.weight: Font.Medium
 
-                    display: AbstractButton.TextOnly
-
-                    Layout.preferredHeight: 32
+                    Layout.fillHeight: true
                 }
+
+                Hspacer {}
             }
         }
+
+        Gap20 {}
 
         OpText {
             text: qsTr("Переместить точку под Инструментом в точку под Камерой")
@@ -65,20 +118,33 @@ Control {
             Layout.fillWidth: true
         }
 
+        Gap16 {}
+
         Item {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
+
             RowLayout {
                 anchors.fill: parent
+                spacing: 24
+
+                Image {
+                    source: "images/tool_camera.svg"
+                    Layout.fillHeight: true
+                }
+
                 OpFrameButton {
                     text: qsTr("Идти")
                     color: colors.primary_90
-                    font.pixelSize: 14
+                    font.weight: Font.Medium
 
-                    display: AbstractButton.TextOnly
-
-                    Layout.preferredHeight: 32
+                    Layout.fillHeight: true
                 }
+
+                Hspacer {}
             }
         }
+
+        Vspacer {}
     }
 }

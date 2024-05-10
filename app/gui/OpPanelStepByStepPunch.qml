@@ -15,20 +15,20 @@ Control {
 
     property bool st: true
 
-    Timer {
-        running: true
-        onTriggered: {
-            st = !st
+    // Timer {
+    //     running: true
+    //     onTriggered: {
+    //         st = !st
 
-            if (st)
-                stopFrame.text = qsTr("ПускПускПускПуск")
-            else
-                stopFrame.text = qsTr("Пуск")
-        }
-        interval: 2000
+    //         if (st)
+    //             stopFrame.text = qsTr("ПускПускПускПуск")
+    //         else
+    //             stopFrame.text = qsTr("Пуск")
+    //     }
+    //     interval: 2000
 
-        repeat: true
-    }
+    //     repeat: true
+    // }
 
     component MyHeader : OpText {
         font.capitalization: Font.AllUppercase
@@ -47,7 +47,7 @@ Control {
             text: qsTr("Пошаговый цикл установки контакта")
             GridLayout.columnSpan: 3
 
-            Layout.fillWidth: fill
+            Layout.fillWidth: true
         }
 
         OpFrameButton {
@@ -56,22 +56,19 @@ Control {
 
             icon.source: "images/next_20.svg"
 
-            font.pixelSize: 14
-
-            Layout.fillWidth: fill
+            Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
 
             Layout.preferredHeight: 40
         }
 
         OpFrameButton {
-            text: qsTr("СтопCтопСтопСтоп")
+            text: qsTr("Стоп")
             color: colors.error_80
-            font.pixelSize: 14
 
             icon.source: "images/stop_20.svg"
 
-            Layout.fillWidth: fill
+            Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
 
             Layout.preferredHeight: 40
@@ -80,8 +77,8 @@ Control {
         OpText {
             text: "Парковка Z и W"
 
-            Layout.fillWidth: fill
-            Layout.preferredWidth: implicitWidth*2
+            Layout.fillWidth: true
+            Layout.preferredWidth: implicitWidth * 3 // 3 - фактически коэффициент расширения
 
             Layout.preferredHeight: 40
         }
@@ -90,7 +87,6 @@ Control {
             GridLayout.columnSpan: 3
 
             Layout.fillWidth: fill
-
             Layout.preferredHeight: 40
 
             RowLayout {
@@ -106,9 +102,11 @@ Control {
 
                 OpDoubleSpinbox {
                     decimals: 0
-                    Layout.preferredWidth: 50
+                    from: 1
+                    to: 100
+                    Layout.preferredWidth: 60
+                    Layout.fillHeight: true
                 }
-
 
                 OpText {
                     text: qsTr("контактов")
@@ -125,13 +123,12 @@ Control {
 
         OpFrameButton {
             id: stopFrame
-            text: qsTr("ПускПускПускПуск")
+            text: qsTr("Пуск")
             color: colors.primary_90
-            font.pixelSize: 14
 
             icon.source: "images/play_20.svg"
 
-            Layout.fillWidth: fill
+            Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
 
             Layout.preferredHeight: 40
@@ -140,10 +137,9 @@ Control {
         OpFrameButton {
             text: qsTr("Стоп")
             color: colors.error_80
-            font.pixelSize: 14
             icon.source: "images/stop_20.svg"
 
-            Layout.fillWidth: fill
+            Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
 
             Layout.preferredHeight: 40

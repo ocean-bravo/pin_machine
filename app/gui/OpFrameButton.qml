@@ -15,6 +15,7 @@ Button {
     icon.width: 20
 
     font.family: mainFont
+    font.pixelSize: 16
 
     property color color: "blue"
     property color framecolor: color

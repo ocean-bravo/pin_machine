@@ -3,6 +3,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+// BUG, косяк с редактированием. Если нажимать в места down и up кнопок, хотя их не видно - значение изменяется. Возможно что-то с activeFocus
+
 Item {
     id: root
 
@@ -31,15 +33,19 @@ Item {
         font.family: mainFont
         font.weight: Font.Medium
         leftPadding: 12
-
+        focus: false
 
         value: root.value * self.factor
         stepSize: 1
-        editable: root.editable
+        editable: root.editable && activeFocus
         from: Math.min(root.from, root.to) * self.factor
         to: Math.max(root.from, root.to) * self.factor
         locale: Qt.locale("en_US") // Чтобы использовалась точка для десятичных разрядов
         wheelEnabled: activeFocus
+
+        onEditableChanged: {
+            console.log("editable ", editable)
+        }
 
         onValueModified: {
             root.value = spinbox.value / self.factor
@@ -71,7 +77,9 @@ Item {
         }
 
         down.indicator.visible: activeFocus
+        down.indicator.enabled: activeFocus
         up.indicator.visible: activeFocus
+        up.indicator.enabled: activeFocus
     }
     QtObject {
         id: self

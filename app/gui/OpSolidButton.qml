@@ -10,6 +10,7 @@ Button {
     spacing: 4
 
     font.family: mainFont
+    font.pixelSize: 16
 
     property color textcolor: "white"
     property color bgcolor: "blue"

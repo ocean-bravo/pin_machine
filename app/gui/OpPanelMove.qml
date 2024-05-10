@@ -71,7 +71,6 @@ Control {
                                 OpFrameButton {
                                     Layout.fillHeight: true
                                     text: qsTr("Идти")
-                                    font.pixelSize: 16
                                     color: colors.primary_90
                                     font.weight: Font.Medium
                                 }
@@ -79,15 +78,25 @@ Control {
                                 Hspacer {}
 
                                 MyText { text: "Y"; }
-                                OpLabel {
-                                    text: "1.01"
+                                // OpLabel {
+                                //     text: "1.01"
+                                //     Layout.fillHeight: true
+                                //     Layout.preferredWidth: 80
+                                // }
+
+                                OpDoubleSpinbox {
+                                    decimals: 2
+                                    from: 0
+                                    to: 990
+
+                                    value: 1.01
                                     Layout.fillHeight: true
                                     Layout.preferredWidth: 80
                                 }
+
                                 OpFrameButton {
                                     Layout.fillHeight: true
                                     text: qsTr("Идти")
-                                    font.pixelSize: 16
                                     color: colors.primary_90
                                     font.weight: Font.Medium
                                 }

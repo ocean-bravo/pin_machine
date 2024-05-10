@@ -55,7 +55,6 @@ Control {
             text: qsTr("Выполнить инициализацию осей")
             icon.source: "images/home.svg"
 
-            font.pixelSize: 16
             font.weight: Font.Medium
 
             bgcolor: colors.primary_70
