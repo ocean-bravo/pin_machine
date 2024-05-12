@@ -12,6 +12,8 @@ Button {
     font.family: mainFont
     font.pixelSize: 16
 
+    Layout.preferredHeight: 40
+
     property color textcolor: "white"
     property color bgcolor: "blue"
 

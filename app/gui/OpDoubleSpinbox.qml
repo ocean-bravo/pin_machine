@@ -11,7 +11,7 @@ Item {
     property real from: -300
     property real to: 300
     property int decimals: 2
-    property bool editable: true
+    property bool editable: true // Похоже не биндится к этой переменной!!!
     property real value: 0.0
 
     width: 80
@@ -67,7 +67,8 @@ Item {
         }
 
         Component.onCompleted: {
-            contentItem.selectByMouse = true
+            //contentItem.selectByMouse = true
+            contentItem.color = Qt.binding( () => editable ? colors.black_100 : colors.black_40)
         }
 
         background: Rectangle {
@@ -76,11 +77,19 @@ Item {
             border.color: colors.black_20
         }
 
-        down.indicator.visible: activeFocus
-        down.indicator.enabled: activeFocus
-        up.indicator.visible: activeFocus
-        up.indicator.enabled: activeFocus
+        down.indicator.visible: root.editable && activeFocus
+        down.indicator.enabled: root.editable && activeFocus
+        up.indicator.visible: root.editable && activeFocus
+        up.indicator.enabled: root.editable && activeFocus
     }
+
+    // Костыль. Пока непойму, как починить странный BUG с редактированием
+    MouseArea {
+        anchors.fill: parent
+        enabled: Qt.binding(() => root.editable)
+        acceptedButtons: Qt.AllButtons
+    }
+
     QtObject {
         id: self
         property int factor: Math.pow(10, root.decimals)

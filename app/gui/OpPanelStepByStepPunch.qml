@@ -58,8 +58,6 @@ Control {
 
             Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
-
-            Layout.preferredHeight: 40
         }
 
         OpFrameButton {
@@ -70,8 +68,6 @@ Control {
 
             Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
-
-            Layout.preferredHeight: 40
         }
 
         OpText {
@@ -130,8 +126,6 @@ Control {
 
             Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
-
-            Layout.preferredHeight: 40
         }
 
         OpFrameButton {
@@ -141,8 +135,6 @@ Control {
 
             Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth
-
-            Layout.preferredHeight: 40
         }
     }
 }

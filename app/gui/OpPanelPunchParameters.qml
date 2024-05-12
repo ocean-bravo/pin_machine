@@ -117,7 +117,7 @@ Control {
                         }
 
                         Item {
-                            Layout.preferredHeight: 18
+                            Layout.preferredHeight: 40
                             Layout.fillWidth: true
                             RowLayout {
                                 anchors.fill: parent
@@ -127,13 +127,12 @@ Control {
                                 }
 
                                 OpSolidButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth * 2
                                     text: qsTr("Идти")
                                 }
 
                                 OpFrameButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
                                     text: qsTr("Сохранить в продукт")
                                 }
@@ -144,7 +143,7 @@ Control {
                         }
 
                         Item {
-                            Layout.preferredHeight: 18
+                            Layout.preferredHeight: 40
                             Layout.fillWidth: true
                             RowLayout {
                                 anchors.fill: parent
@@ -154,14 +153,14 @@ Control {
                                 }
 
                                 OpSolidButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth * 2
                                     text: qsTr("Идти")
                                 }
 
                                 OpFrameButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth
                                     text: qsTr("Сохранить в продукт")
                                 }
                             }
@@ -172,7 +171,7 @@ Control {
                         }
 
                         Item {
-                            Layout.preferredHeight: 18
+                            Layout.preferredHeight: 40
                             Layout.fillWidth: true
                             RowLayout {
                                 anchors.fill: parent
@@ -182,13 +181,12 @@ Control {
                                 }
 
                                 OpSolidButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth * 2
                                     text: qsTr("Идти")
                                 }
 
                                 OpFrameButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
                                     text: qsTr("Сохранить в продукт")
                                 }
@@ -203,7 +201,7 @@ Control {
                         }
 
                         Item {
-                            Layout.preferredHeight: 18
+                            Layout.preferredHeight: 40
                             Layout.fillWidth: true
                             RowLayout {
                                 anchors.fill: parent
@@ -213,14 +211,14 @@ Control {
                                 }
 
                                 OpSolidButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth * 2
                                     text: qsTr("Идти")
                                 }
 
                                 OpFrameButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    Layout.preferredWidth: 40
                                     text: qsTr("Сохранить в продукт")
                                 }
                             }
@@ -240,13 +238,12 @@ Control {
                                 }
 
                                 OpSolidButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
+                                    //Layout.preferredWidth: implicitWidth * 2
                                     text: qsTr("Идти")
                                 }
 
                                 OpFrameButton {
-                                    Layout.preferredHeight: 40
                                     Layout.fillWidth: true
                                     text: qsTr("Сохранить в продукт")
                                 }

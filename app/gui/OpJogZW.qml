@@ -26,9 +26,6 @@ Item {
         rightPadding: 0
 
         color: colors.primary_90
-
-        font.pixelSize: 16
-        font.weight: Font.Medium
     }
 
     component Sp: Item {

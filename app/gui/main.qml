@@ -64,6 +64,7 @@ Item {
 
         readonly property color black_20: "#CCCCCC"
         readonly property color black_30: "#B3B3B3"
+        readonly property color black_40: "#999999"
         readonly property color black_50: "#808080"
         readonly property color black_80: "#333333"
         readonly property color black_90: "#1A1A1A"

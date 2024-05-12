@@ -95,6 +95,7 @@ Control {
                     text: qsTr("Сбросить")
                     color: colors.primary_90
                     //font.pixelSize: 14 // DESIGN отступление от дизайна. По дизайну - 14
+                    // И font.weight: не медиум по дизайну. Ошибка возможно
 
                     Layout.preferredHeight: 32
                 }

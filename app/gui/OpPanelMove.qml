@@ -72,7 +72,6 @@ Control {
                                     Layout.fillHeight: true
                                     text: qsTr("Идти")
                                     color: colors.primary_90
-                                    font.weight: Font.Medium
                                 }
 
                                 Hspacer {}
@@ -98,7 +97,6 @@ Control {
                                     Layout.fillHeight: true
                                     text: qsTr("Идти")
                                     color: colors.primary_90
-                                    font.weight: Font.Medium
                                 }
                             }
                         }

@@ -21,22 +21,26 @@ Control {
         color: colors.black_100
     }
 
-    component Gap16 : Vspacer {Layout.preferredHeight: 16}
-    component Gap20 : Vspacer {Layout.preferredHeight: 20}
+    component Header : OpText {
+        font.capitalization: Font.AllUppercase
+        font.weight: Font.Medium
+
+        Layout.preferredHeight: 18
+        Layout.fillWidth: true
+    }
+
+    component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
+    component VGap20 : Item { width: 10; DebugRect {} Layout.preferredHeight: 20}
+
+    component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
+    component HGap24 : Item { height: 10; DebugRect {} Layout.preferredWidth: 24}
 
     contentItem: ColumnLayout {
-
         spacing: 0
 
-        OpText {
-            text: qsTr("Расстояние между осью Камеры и осью Инструмента")
-            font.capitalization: Font.AllUppercase
+        Header { text: qsTr("Расстояние между осью Камеры и осью Инструмента") }
 
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
-
-        Gap16 {}
+        VGap16 {}
 
         Item {
             Layout.fillWidth: true
@@ -44,44 +48,40 @@ Control {
 
             RowLayout {
                 anchors.fill: parent
+                spacing: 0
 
-                MyText {
-                    text: "dX"
+                MyText { text: "dX" }
+                HGap8 {}
+                OpDoubleSpinbox {
+                    value: DataBus.punch_tool_shift_dx
+                    editable: false
 
-                }
-
-                OpLabel {
-                    text: "120.00"
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 80
-
-
-                }
-
-                MyText {
-                    text: "dY"
-                }
-                OpLabel{
-                    text: "150.00"
                     Layout.fillHeight: true
                     Layout.preferredWidth: 80
                 }
+
+                HGap24 {}
+
+                MyText { text: "dY" }
+                HGap8 {}
+                OpDoubleSpinbox{
+                    value: DataBus.punch_tool_shift_dy
+                    editable: false
+
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 80
+                }
+
                 Hspacer {}
 
             }
         }
 
-        Gap20 {}
+        VGap20 {}
 
-        OpText {
-            text: qsTr("Переместить точку под Камерой в точку под Инструментом")
-            font.capitalization: Font.AllUppercase
+        Header { text: qsTr("Переместить точку под Камерой в точку под Инструментом") }
 
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
-
-        Gap16 {}
+        VGap16 {}
 
         Item {
             Layout.fillWidth: true
@@ -89,17 +89,22 @@ Control {
 
             RowLayout {
                 anchors.fill: parent
-                spacing: 24
+                spacing: 0
 
                 Image {
                     source: "images/camera_tool.svg"
                     Layout.fillHeight: true
                 }
 
+                HGap24{}
+
                 OpFrameButton {
                     text: qsTr("Идти")
                     color: colors.primary_90
-                    font.weight: Font.Medium
+                    onClicked: {
+                        jog("X", -DataBus.punch_tool_shift_dx)
+                        jog("Y", DataBus.punch_tool_shift_dy)
+                    }
 
                     Layout.fillHeight: true
                 }
@@ -108,17 +113,11 @@ Control {
             }
         }
 
-        Gap20 {}
+        VGap20 {}
 
-        OpText {
-            text: qsTr("Переместить точку под Инструментом в точку под Камерой")
-            font.capitalization: Font.AllUppercase
+        Header { text: qsTr("Переместить точку под Инструментом в точку под Камерой") }
 
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
-
-        Gap16 {}
+        VGap16 {}
 
         Item {
             Layout.fillWidth: true
@@ -126,17 +125,21 @@ Control {
 
             RowLayout {
                 anchors.fill: parent
-                spacing: 24
+                spacing: 0
 
                 Image {
                     source: "images/tool_camera.svg"
                     Layout.fillHeight: true
                 }
-
+                HGap24{}
                 OpFrameButton {
                     text: qsTr("Идти")
                     color: colors.primary_90
-                    font.weight: Font.Medium
+
+                    onClicked: {
+                        jog("X", DataBus.punch_tool_shift_dx)
+                        jog("Y", -DataBus.punch_tool_shift_dy)
+                    }
 
                     Layout.fillHeight: true
                 }
