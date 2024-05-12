@@ -24,13 +24,13 @@ Item {
                 spacing: 8
 
                 OpPanelAxesCoordinates2 {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 162
                     Layout.fillWidth: true
 
                 }
 
                 OpPanelAxesHoming2 {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 72
                     Layout.fillWidth: true
                 }
 
@@ -41,7 +41,7 @@ Item {
                 }
 
                 OpPanelToolShift {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 294
                     Layout.fillWidth: true
 
                 }

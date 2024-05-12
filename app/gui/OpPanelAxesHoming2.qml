@@ -13,20 +13,19 @@ Control {
 
     contentItem: ColumnLayout {
 
-        spacing: 16
+        spacing: 0
 
         Item {
-            Layout.preferredHeight: 32
+            Layout.preferredHeight: 40
             Layout.fillWidth: true
 
             RowLayout {
                 anchors.fill: parent
                 spacing: 4
 
-                OpText {
+                OpHeader {
                     text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
-
-                    Layout.preferredHeight: 32
+                    Layout.preferredHeight: 40
                 }
 
                 OpText {
@@ -45,7 +44,7 @@ Control {
                     font.pixelSize: 16
                     font.weight: Font.DemiBold
 
-                    Layout.preferredHeight: 32
+                    Layout.preferredHeight: 40
                     Layout.fillWidth: true
                 }
 
@@ -55,8 +54,8 @@ Control {
 
                     bgcolor: colors.primary_70
 
-                    Layout.preferredHeight: 44
-                    Layout.fillWidth: true
+                    //Layout.preferredHeight: 44
+                    Layout.preferredWidth: 50
 
                     onClicked: {
                         write("$H")

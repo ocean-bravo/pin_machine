@@ -17,12 +17,7 @@ Control {
 
         spacing: 16
 
-        OpText {
-            text: qsTr("ВИД С КАМЕРЫ")
-
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
+        OpHeader { text: qsTr("ВИД С КАМЕРЫ") }
 
         Rectangle {
             border.color: colors.accent_90

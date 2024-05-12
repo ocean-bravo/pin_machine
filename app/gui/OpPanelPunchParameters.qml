@@ -22,15 +22,6 @@ Control {
         Layout.fillWidth: true
     }
 
-    component MyHeader : OpText {
-        font.capitalization: Font.AllUppercase
-        font.weight: Font.Medium
-
-        Layout.preferredHeight: 18
-        Layout.fillWidth: true
-    }
-
-
     contentItem: ColumnLayout {
 
         spacing: 16
@@ -109,12 +100,8 @@ Control {
 
                         Vspacer {}
 
-                        MyHeader {
-                            text: qsTr("Параметры установки контактов")
-                        }
-                        MyText {
-                            text: qsTr("Z рез")
-                        }
+                        OpHeader { text: qsTr("Параметры установки контактов") }
+                        MyText { text: qsTr("Z рез") }
 
                         Item {
                             Layout.preferredHeight: 40
@@ -138,9 +125,7 @@ Control {
                                 }
                             }
                         }
-                        MyText {
-                            text: qsTr("Z установка")
-                        }
+                        MyText { text: qsTr("Z установка") }
 
                         Item {
                             Layout.preferredHeight: 40
@@ -166,9 +151,7 @@ Control {
                             }
                         }
 
-                        MyText {
-                            text: qsTr("Z парковка")
-                        }
+                        MyText { text: qsTr("Z парковка") }
 
                         Item {
                             Layout.preferredHeight: 40
@@ -193,12 +176,8 @@ Control {
                             }
                         }
 
-                        MyHeader {
-                            text: qsTr("Параметры Подпора платы")
-                        }
-                        MyText {
-                            text: qsTr("W подпор")
-                        }
+                        OpHeader { text: qsTr("Параметры Подпора платы") }
+                        MyText { text: qsTr("W подпор") }
 
                         Item {
                             Layout.preferredHeight: 40
@@ -223,9 +202,7 @@ Control {
                                 }
                             }
                         }
-                        MyText {
-                            text: qsTr("W парковка")
-                        }
+                        MyText { text: qsTr("W парковка") }
 
                         Item {
                             Layout.preferredHeight: 18

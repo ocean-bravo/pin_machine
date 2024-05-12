@@ -30,20 +30,13 @@ Control {
     //     repeat: true
     // }
 
-    component MyHeader : OpText {
-        font.capitalization: Font.AllUppercase
-        font.weight: Font.Medium
-
-        Layout.preferredHeight: 18
-        Layout.fillWidth: true
-    }
 
     contentItem: GridLayout {
         columns: 3
         rowSpacing: 10
         columnSpacing: 16
 
-        MyHeader {
+        OpHeader {
             text: qsTr("Пошаговый цикл установки контакта")
             GridLayout.columnSpan: 3
 

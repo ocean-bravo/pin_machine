@@ -11,102 +11,85 @@ Control {
 
     background: OpWhitePanel {}
 
-    contentItem: ColumnLayout {
-        spacing: 0
+    component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
+    component VGap20 : Item { width: 10; DebugRect {} Layout.preferredHeight: 20}
 
-        OpText {
-            text: qsTr("КООРДИНАТЫ ОСЕЙ")
-
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
-
-        Vspacer {}
-
-        Item {
-            Layout.preferredHeight: 32
-            Layout.fillWidth: true
-            RowLayout {
-                anchors.fill: parent
-
-                spacing: 8
-
-                MyText {
-                    text: "X"
-                }
-
-                MyLabel {
-                    text: DataBus.x_coord === undefined ? "" : DataBus.x_coord
-                }
-
-                Item {
-                    Layout.preferredWidth: 8
-                }
-
-
-                MyText {
-                    text: "Y"
-                }
-
-                MyLabel {
-                    text: DataBus.y_coord === undefined ? "" : DataBus.y_coord
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-            }
-        }
-
-        Vspacer {}
-
-        Item {
-            Layout.preferredHeight: 32
-            Layout.fillWidth: true
-            RowLayout {
-                anchors.fill: parent
-
-                spacing: 8
-
-                MyText {
-                    text: "Z"
-                }
-                MyLabel {
-                    text: DataBus.z_coord === undefined ? "" : DataBus.z_coord
-                }
-
-                Item {
-                    Layout.preferredWidth: 8
-                }
-
-                MyText {
-                    text: "W"
-                }
-                MyLabel {
-                    text: "0.000"
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
-            }
-        }
-
-        Vspacer {}
-
-        }
-
+    component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
+    component HGap24 : Item { height: 10; DebugRect {} Layout.preferredWidth: 24}
 
     component MyText: OpText {
         Layout.preferredWidth: 24
-        Layout.preferredHeight: 32
+        Layout.fillHeight: true
+        horizontalAlignment: Text.AlignLeft
 
         font.weight: Font.Medium
         font.pixelSize: 24
         color: colors.black_90
     }
 
-    component MyLabel: OpLabel {
-        Layout.preferredWidth: 80
-        Layout.preferredHeight: 32
+    contentItem: ColumnLayout {
+        spacing: 0
+
+        OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
+
+        VGap16 {}
+
+        Item {
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
+
+                MyText { text: "X" }
+                HGap8 {}
+                OpDoubleSpinbox {
+                    value: DataBus.xPos === undefined ? 0.0 : DataBus.xPos
+                    editable: false
+                }
+
+                HGap24 {}
+
+
+                MyText { text: "Y" }
+                HGap8 {}
+                OpDoubleSpinbox {
+                    value: DataBus.yPos === undefined ? 0.0 : DataBus.yPos
+                    editable: false
+                }
+                Hspacer {}
+            }
+        }
+
+        VGap16 {}
+
+        Item {
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
+
+                MyText { text: "Z" }
+                HGap8{}
+                OpDoubleSpinbox {
+                    value: DataBus.zPos === undefined ? 0.0 : DataBus.zPos
+                    editable: false
+                }
+
+                HGap24{}
+
+                MyText { text: "W" }
+                HGap8{}
+                OpDoubleSpinbox {
+                    value: 0
+                    editable: false
+                }
+                Hspacer {}
+            }
+        }
+        Vspacer {}
     }
 }

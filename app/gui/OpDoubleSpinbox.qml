@@ -12,7 +12,7 @@ Item {
     property real to: 300
     property int decimals: 2
     property bool editable: true // Похоже не биндится к этой переменной!!!
-    property real value: 0.0
+    property double value: 0.0
 
     width: 80
     height: 40

@@ -14,12 +14,7 @@ Control {
     contentItem: ColumnLayout {
         spacing: 0
 
-        OpText {
-            text: qsTr("КООРДИНАТЫ ОСЕЙ")
-
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
+        OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
 
         Vspacer {}
 

@@ -21,14 +21,6 @@ Control {
         color: colors.black_100
     }
 
-    component Header : OpText {
-        font.capitalization: Font.AllUppercase
-        font.weight: Font.Medium
-
-        Layout.preferredHeight: 18
-        Layout.fillWidth: true
-    }
-
     component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
     component VGap20 : Item { width: 10; DebugRect {} Layout.preferredHeight: 20}
 
@@ -38,7 +30,7 @@ Control {
     contentItem: ColumnLayout {
         spacing: 0
 
-        Header { text: qsTr("Расстояние между осью Камеры и осью Инструмента") }
+        OpHeader { text: qsTr("Расстояние между осью Камеры и осью Инструмента") }
 
         VGap16 {}
 
@@ -79,7 +71,7 @@ Control {
 
         VGap20 {}
 
-        Header { text: qsTr("Переместить точку под Камерой в точку под Инструментом") }
+        OpHeader { text: qsTr("Переместить точку под Камерой в точку под Инструментом") }
 
         VGap16 {}
 
@@ -115,7 +107,7 @@ Control {
 
         VGap20 {}
 
-        Header { text: qsTr("Переместить точку под Инструментом в точку под Камерой") }
+        OpHeader { text: qsTr("Переместить точку под Инструментом в точку под Камерой") }
 
         VGap16 {}
 

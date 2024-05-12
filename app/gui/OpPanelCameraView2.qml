@@ -17,12 +17,7 @@ Control {
 
         spacing: 16
 
-        OpText {
-            text: qsTr("ВИД С КАМЕРЫ")
-
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
+        OpHeader { text: qsTr("ВИД С КАМЕРЫ") }
 
         Rectangle {
             border.color: colors.accent_90
@@ -31,12 +26,20 @@ Control {
 
             color: colors.black_30
 
-            Layout.fillWidth: true
-            Layout.preferredHeight: {
-                if (DataBus.resolution_height === undefined)
-                    return width*0.75
+            // Layout.fillWidth: true
+            // Layout.preferredHeight: {
+            //     if (DataBus.resolution_height === undefined)
+            //         return width*0.75
 
-                return width * DataBus.resolution_height / DataBus.resolution_width
+            //     return width * DataBus.resolution_height / DataBus.resolution_width
+            // }
+
+            Layout.fillHeight: true
+            Layout.preferredWidth: {
+                if (DataBus.resolution_height === undefined)
+                    return height/0.75
+
+                return height / (DataBus.resolution_height / DataBus.resolution_width)
             }
 
             clip: true
@@ -93,9 +96,9 @@ Control {
             }
         }
 
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
+        // Item {
+        //     Layout.fillHeight: true
+        //     Layout.fillWidth: true
+        // }
     }
 }

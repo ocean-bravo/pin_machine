@@ -23,7 +23,7 @@ Control {
                 anchors.fill: parent
                 spacing: 4
 
-                OpText {
+                OpHeader {
                     text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
 
                     Layout.preferredHeight: 32

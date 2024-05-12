@@ -11,7 +11,6 @@ Control {
 
     background: OpWhitePanel {}
 
-
     component MyText: OpText {
         Layout.fillHeight: true
 
@@ -21,6 +20,12 @@ Control {
         font.pixelSize: 28
         color: colors.black_100
     }
+
+    // component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
+    // component VGap20 : Item { width: 10; DebugRect {} Layout.preferredHeight: 20}
+
+    // component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
+    // component HGap24 : Item { height: 10; DebugRect {} Layout.preferredWidth: 24}
 
     contentItem: ColumnLayout {
 
@@ -45,14 +50,7 @@ Control {
                         anchors.fill: parent
                         spacing: 16
 
-                        OpText {
-                            Layout.preferredHeight: 18
-                            Layout.fillWidth: true
-
-                            text: qsTr("Движение в заданные координаты")
-                            font.capitalization: Font.AllUppercase
-                            font.weight: Font.Medium
-                        }
+                        OpHeader { text: qsTr("Движение в заданные координаты") }
 
                         Item {
                             Layout.preferredHeight: 40
@@ -110,14 +108,7 @@ Control {
 
                                 spacing: 4
 
-                                OpText {
-                                    text: qsTr("Скорость осей X/Y")
-                                    font.capitalization: Font.AllUppercase
-                                    font.weight: Font.Medium
-
-                                    Layout.preferredHeight: 18
-                                    Layout.fillWidth: true
-                                }
+                                OpHeader { text: qsTr("Скорость осей X/Y") }
 
                                 Item {
                                     Layout.preferredHeight: 36
