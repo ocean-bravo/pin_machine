@@ -8,6 +8,8 @@ Item {
     width: 700
     height: 700
 
+    property int xyFeedRate
+
     component Btn: OpSolidButton {
         Layout.preferredWidth: 60
         Layout.preferredHeight: 60
@@ -47,6 +49,8 @@ Item {
         color: colors.black_100
     }
 
+    DebugRect { color: "#22FFFF00" }
+
     RowLayout {
         anchors.fill: parent
 
@@ -59,13 +63,6 @@ Item {
         Hspacer {}
     }
 
-    Rectangle {
-        z: -1
-        anchors.fill: parent
-        visible: guiDebug
-        color: "#22FFFF00"
-    }
-
     component Grid: GridLayout {
         id: grid
         anchors.fill: parent
@@ -74,75 +71,75 @@ Item {
         rowSpacing: 4
 
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y+" }                                                      Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y+" }                                                                            Sp {} Sp {} Sp {} Sp {} Sp {}
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", 10,   xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", 1,    xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", 0.1,  xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", 0.01, xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", 10,   xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", 1,    xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", 0.1,  xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", 0.01, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
 
 
         MyText { text: "X-" }
-        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", -10,   xyFeedRate.value)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", -1,    xyFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", -0.1,  xyFeedRate.value)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", -0.01, xyFeedRate.value)} }
+        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", -10,   xyFeedRate)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", -1,    xyFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", -0.1,  xyFeedRate)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", -0.01, xyFeedRate)} }
 
         CentralButton { text: "ШАГ"; }
 
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", 0.01, xyFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", 0.1,  xyFeedRate.value)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", 1,    xyFeedRate.value)} }
-        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", 10,   xyFeedRate.value)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", 0.01, xyFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", 0.1,  xyFeedRate)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", 1,    xyFeedRate)} }
+        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", 10,   xyFeedRate)} }
         MyText { text: "X+" }
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", -0.01, xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", -0.1,  xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", -1,    xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", -10,   xyFeedRate.value)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", -0.01, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", -0.1,  xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", -1,    xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", -10,   xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y-" }                                                       Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y-" }                                                                             Sp {} Sp {} Sp {} Sp {} Sp {}
     }
 
 
     Shortcut {
         sequence: "Ctrl+Up"
         context: Qt.WindowShortcut
-        onActivated: jog("Y", 1,  xyFeedRate.value)
+        onActivated: jog("Y", 1,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Down"
         context: Qt.WindowShortcut
-        onActivated: jog("Y", -1,  xyFeedRate.value)
+        onActivated: jog("Y", -1,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Left"
         context: Qt.WindowShortcut
-        onActivated: jog("X", -1,  xyFeedRate.value)
+        onActivated: jog("X", -1,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Right"
         context: Qt.WindowShortcut
-        onActivated: jog("X", 1,  xyFeedRate.value)
+        onActivated: jog("X", 1,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Shift+Up"
         context: Qt.WindowShortcut
-        onActivated: jog("Y", 10,  xyFeedRate.value)
+        onActivated: jog("Y", 10,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Shift+Down"
         context: Qt.WindowShortcut
-        onActivated: jog("Y", -10,  xyFeedRate.value)
+        onActivated: jog("Y", -10,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Shift+Left"
         context: Qt.WindowShortcut
-        onActivated: jog("X", -10,  xyFeedRate.value)
+        onActivated: jog("X", -10,  xyFeedRate)
     }
     Shortcut {
         sequence: "Ctrl+Shift+Right"
         context: Qt.WindowShortcut
-        onActivated: jog("X", 10,  xyFeedRate.value)
+        onActivated: jog("X", 10,  xyFeedRate)
     }
 }

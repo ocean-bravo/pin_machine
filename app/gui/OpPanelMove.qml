@@ -71,20 +71,18 @@ Control {
                                     MyText { text: "X"; }
                                     HGap8 {}
                                     OpDoubleSpinbox {
+                                        id: moveX
                                         decimals: 2
                                         from: 0
-                                        to: 990
-                                        value: 900
+                                        to: 300
+                                        value: 200
                                         editable: true
-
-                                        // Layout.fillHeight: true
-                                        // Layout.preferredWidth: 80
                                     }
                                     HGap16 {}
                                     OpFrameButton {
-                                        //Layout.fillHeight: true
                                         text: qsTr("Идти")
                                         color: colors.primary_90
+                                        onClicked: write("G1 G90 F" + xyFeedRateSlider.value + " X" + moveX.text)
                                     }
 
                                     Hspacer {}
@@ -92,17 +90,18 @@ Control {
                                     MyText { text: "Y"; }
                                     HGap8 {}
                                     OpDoubleSpinbox {
+                                        id: moveY
                                         decimals: 2
                                         from: 0
-                                        to: 990
-                                        value: 1.01
+                                        to: 300
+                                        value: 10.05
                                         editable: true
                                     }
                                     HGap16 {}
                                     OpFrameButton {
-                                        //Layout.fillHeight: true
                                         text: qsTr("Идти")
                                         color: colors.primary_90
+                                        onClicked: write("G1 G90 F" + xyFeedRateSlider.value + " Y" + moveY.text)
                                     }
                                 }
                             }
@@ -137,9 +136,11 @@ Control {
                                             }
 
                                             OpSlider {
-                                                from: 1
-                                                value: 25
-                                                to: 100
+                                                id: xyFeedRateSlider
+                                                from: 10
+                                                value: 1000
+                                                to: 5000
+                                                stepSize: 10
 
                                                 Layout.fillWidth: true
                                             }
@@ -162,6 +163,7 @@ Control {
             }
 
             OpJogXY {
+                xyFeedRate: xyFeedRateSlider.value
                 Layout.preferredHeight: 700
                 Layout.fillWidth: true
             }

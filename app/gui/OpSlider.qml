@@ -44,9 +44,7 @@ Slider {
         border.width: 2
     }
 
-    Rectangle {
-        visible: guiDebug
-        anchors.fill: parent
+    DebugRect {
         color: "#4000FF00"
     }
 }
