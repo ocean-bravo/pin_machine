@@ -12,12 +12,16 @@ Button {
     font.family: mainFont
     font.pixelSize: 16
 
-    Layout.preferredHeight: 40
-
     property color textcolor: "white"
     property color bgcolor: "blue"
 
-    display: icon.source === "" ? AbstractButton.TextOnly : AbstractButton.TextBesideIcon
+    Layout.preferredHeight: 40
+
+    display: {
+        if (icon.source && text) return AbstractButton.TextBesideIcon
+        if (icon.source) return AbstractButton.IconOnly
+        return AbstractButton.TextOnly
+    }
 
     background: Rectangle {
         color: down ? "lightgrey" : root.bgcolor

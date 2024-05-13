@@ -13,15 +13,6 @@ Control {
         color: colors.primary_10
     }
 
-    function write(msg) {
-        // Во время хоуминга разрешаю только команду запроса статуса
-        if (status === "Home" && msg !== "?")
-            return
-
-        Serial.write(msg + "\n")
-        appendLog(msg)
-    }
-
     function appendLog(message, color) {
         if (message.length === 0)
             return

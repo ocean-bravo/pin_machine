@@ -18,7 +18,7 @@ Control {
 
         font.weight: Font.Medium
         font.pixelSize: 28
-        color: colors.black_100
+        color: colors.black_90
     }
 
     component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
@@ -27,119 +27,114 @@ Control {
     component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
     component HGap24 : Item { height: 10; DebugRect {} Layout.preferredWidth: 24}
 
-    contentItem: ColumnLayout {
-        spacing: 0
+    contentItem: Item {
+        DebugRect { color: "#22FF0FF0" }
 
-        OpHeader { text: qsTr("Расстояние между осью Камеры и осью Инструмента") }
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 0
 
-        VGap16 {}
+            OpHeader { text: qsTr("Расстояние между осью Камеры и осью Инструмента") }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
+            VGap16 {}
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
 
-                MyText { text: "dX" }
-                HGap8 {}
-                OpDoubleSpinbox {
-                    value: DataBus.punch_tool_shift_dx
-                    editable: false
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
 
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 80
-                }
-
-                HGap24 {}
-
-                MyText { text: "dY" }
-                HGap8 {}
-                OpDoubleSpinbox{
-                    value: DataBus.punch_tool_shift_dy
-                    editable: false
-
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 80
-                }
-
-                Hspacer {}
-
-            }
-        }
-
-        VGap20 {}
-
-        OpHeader { text: qsTr("Переместить точку под Камерой в точку под Инструментом") }
-
-        VGap16 {}
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-
-                Image {
-                    source: "images/camera_tool.svg"
-                    Layout.fillHeight: true
-                }
-
-                HGap24{}
-
-                OpFrameButton {
-                    text: qsTr("Идти")
-                    color: colors.primary_90
-                    onClicked: {
-                        jog("X", -DataBus.punch_tool_shift_dx)
-                        jog("Y", DataBus.punch_tool_shift_dy)
+                    MyText { text: "dX" }
+                    HGap8 {}
+                    OpDoubleSpinbox {
+                        value: DataBus.punch_tool_shift_dx
+                        editable: false
                     }
 
-                    Layout.fillHeight: true
-                }
+                    HGap24 {}
 
-                Hspacer {}
-            }
-        }
-
-        VGap20 {}
-
-        OpHeader { text: qsTr("Переместить точку под Инструментом в точку под Камерой") }
-
-        VGap16 {}
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-
-                Image {
-                    source: "images/tool_camera.svg"
-                    Layout.fillHeight: true
-                }
-                HGap24{}
-                OpFrameButton {
-                    text: qsTr("Идти")
-                    color: colors.primary_90
-
-                    onClicked: {
-                        jog("X", DataBus.punch_tool_shift_dx)
-                        jog("Y", -DataBus.punch_tool_shift_dy)
+                    MyText { text: "dY" }
+                    HGap8 {}
+                    OpDoubleSpinbox{
+                        value: DataBus.punch_tool_shift_dy
+                        editable: false
                     }
 
-                    Layout.fillHeight: true
+                    Hspacer {}
+
                 }
-
-                Hspacer {}
             }
-        }
 
-        Vspacer {}
+            VGap20 {}
+
+            OpHeader { text: qsTr("Переместить точку под Камерой в точку под Инструментом") }
+
+            VGap16 {}
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Image {
+                        source: "images/camera_tool.svg"
+                        Layout.fillHeight: true
+                    }
+
+                    HGap24{}
+
+                    OpFrameButton {
+                        text: qsTr("Идти")
+                        color: colors.primary_90
+                        onClicked: {
+                            jog("X", -DataBus.punch_tool_shift_dx)
+                            jog("Y", DataBus.punch_tool_shift_dy)
+                        }
+                    }
+
+                    Hspacer {}
+                }
+            }
+
+            VGap20 {}
+
+            OpHeader { text: qsTr("Переместить точку под Инструментом в точку под Камерой") }
+
+            VGap16 {}
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Image {
+                        source: "images/tool_camera.svg"
+                        Layout.fillHeight: true
+                    }
+                    HGap24{}
+                    OpFrameButton {
+                        text: qsTr("Идти")
+                        color: colors.primary_90
+
+                        onClicked: {
+                            jog("X", DataBus.punch_tool_shift_dx)
+                            jog("Y", -DataBus.punch_tool_shift_dy)
+                        }
+                    }
+
+                    Hspacer {}
+                }
+            }
+
+            Vspacer {}
+        }
     }
 }

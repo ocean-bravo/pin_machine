@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.15
 
 Button {
     id: root
-    text: qsTr("Button")
     spacing: 4
 
     leftPadding: 16
@@ -23,7 +22,11 @@ Button {
 
     Layout.preferredHeight: 40
 
-    display: icon.source === "" ? AbstractButton.TextOnly : AbstractButton.TextBesideIcon
+    display: {
+        if (icon.source && text) return AbstractButton.TextBesideIcon
+        if (icon.source) return AbstractButton.IconOnly
+        return AbstractButton.TextOnly
+    }
 
     background: Rectangle {
         color: down ? "lightgrey" : "transparent"

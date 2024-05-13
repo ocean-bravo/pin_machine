@@ -39,8 +39,6 @@ Control {
         OpHeader {
             text: qsTr("Пошаговый цикл установки контакта")
             GridLayout.columnSpan: 3
-
-            Layout.fillWidth: true
         }
 
         OpFrameButton {
@@ -64,7 +62,7 @@ Control {
         }
 
         OpText {
-            text: "Парковка Z и W"
+            text: qsTr("Парковка Z и W")
 
             Layout.fillWidth: true
             Layout.preferredWidth: implicitWidth * 3 // 3 - фактически коэффициент расширения
@@ -93,8 +91,8 @@ Control {
                     decimals: 0
                     from: 1
                     to: 100
+                    editable: true
                     Layout.preferredWidth: 60
-                    Layout.fillHeight: true
                 }
 
                 OpText {
@@ -106,7 +104,6 @@ Control {
                 }
 
                 Hspacer {}
-
             }
         }
 

@@ -33,7 +33,6 @@ Item {
         SuperUser {
             id: superUser
         }
-
     }
 
     FindCamera {
@@ -103,9 +102,22 @@ Item {
         }
     }
 
-    //property bool messageFinished: false
+    function write(msg) {
+        // Во время хоуминга разрешаю только команду запроса статуса
+        if (status === "Home" && msg !== "?")
+            return
 
-    //property string prevMsg: ""
+        Serial.write(msg + "\n")
+
+        operatorUser.appendLog(msg)
+        superUser.appendToCommandsLog(msg)
+    }
+
+    function jog(axis, mm, feed) {
+        if (feed === undefined)
+            feed = 1000
+        write("$J=G91 " + axis + mm + " F" + feed)
+    }
 
     // В сообщении строки иногда заканчиваютс \r\n иногда \n. Системы не понял. После ок идет \r\n всегда.
     // При хоуминге статус отвечает. Сообщение имеет вид: статус\r\n Но в конце нет ok\r\n. Потом, вдогонку, наваливает кучу ok\r\n

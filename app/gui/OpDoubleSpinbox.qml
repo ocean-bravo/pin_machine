@@ -11,7 +11,7 @@ Item {
     property real from: -300
     property real to: 300
     property int decimals: 2
-    property bool editable: true // Похоже не биндится к этой переменной!!!
+    property bool editable: false // Похоже не биндится к этой переменной!!!
     property double value: 0.0
 
     width: 80
@@ -37,14 +37,14 @@ Item {
 
         value: root.value * self.factor
         stepSize: 1
-        editable: root.editable && activeFocus
+        editable: Qt.binding( () => root.editable && activeFocus) //root.editable && activeFocus
         from: Math.min(root.from, root.to) * self.factor
         to: Math.max(root.from, root.to) * self.factor
         locale: Qt.locale("en_US") // Чтобы использовалась точка для десятичных разрядов
-        wheelEnabled: activeFocus
+        wheelEnabled: spinbox.activeFocus
 
         onEditableChanged: {
-            console.log("editable ", editable)
+            //console.log("editable ", editable)
         }
 
         onValueModified: {
@@ -68,7 +68,9 @@ Item {
 
         Component.onCompleted: {
             //contentItem.selectByMouse = true
-            contentItem.color = Qt.binding( () => editable ? colors.black_100 : colors.black_40)
+            contentItem.color = Qt.binding( () => root.editable ? colors.black_100 : colors.black_40)
+            spinbox.focus = true
+            spinbox.focus = false
         }
 
         background: Rectangle {
@@ -86,9 +88,15 @@ Item {
     // Костыль. Пока непойму, как починить странный BUG с редактированием
     MouseArea {
         anchors.fill: parent
-        enabled: Qt.binding(() => root.editable)
+        //enabled: Qt.binding(() => !root.editable) // Так не работает!!
         acceptedButtons: Qt.AllButtons
+        Component.onCompleted: {
+            enabled = true
+            enabled = Qt.binding(() => !root.editable)
+        }
     }
+
+
 
     QtObject {
         id: self

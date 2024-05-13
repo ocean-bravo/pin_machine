@@ -11,21 +11,6 @@ import "utils.js" as Utils
 Item {
     id: root
 
-    function write(msg) {
-        // Во время хоуминга разрешаю только команду запроса статуса
-        if (status === "Home" && msg !== "?")
-            return
-
-        Serial.write(msg + "\n")
-        appendCommandsLog(msg)
-    }
-
-    function jog(axis, mm, feed) {
-        if (feed === undefined)
-            feed = 1000
-        write("$J=G91 " + axis + mm + " F" + feed)
-    }
-
     function appendCommandsLog(message, color) {
         if (message.length === 0)
             return

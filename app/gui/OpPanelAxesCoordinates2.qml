@@ -27,69 +27,73 @@ Control {
         color: colors.black_90
     }
 
-    contentItem: ColumnLayout {
-        spacing: 0
+    contentItem: Item {
+        DebugRect { color: "#22FF0FF0" }
 
-        OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 0
 
-        VGap16 {}
+            OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
 
-        Item {
-            Layout.preferredHeight: 40
-            Layout.fillWidth: true
+            VGap16 {}
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
+            Item {
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
 
-                MyText { text: "X" }
-                HGap8 {}
-                OpDoubleSpinbox {
-                    value: DataBus.xPos === undefined ? 0.0 : DataBus.xPos
-                    editable: false
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    MyText { text: "X" }
+                    HGap8 {}
+                    OpDoubleSpinbox {
+                        value: DataBus.xPos === undefined ? 0.0 : DataBus.xPos
+                        editable: false
+                    }
+
+                    HGap24 {}
+
+                    MyText { text: "Y" }
+                    HGap8 {}
+                    OpDoubleSpinbox {
+                        value: DataBus.yPos === undefined ? 0.0 : DataBus.yPos
+                        editable: false
+                    }
+                    Hspacer {}
                 }
-
-                HGap24 {}
-
-
-                MyText { text: "Y" }
-                HGap8 {}
-                OpDoubleSpinbox {
-                    value: DataBus.yPos === undefined ? 0.0 : DataBus.yPos
-                    editable: false
-                }
-                Hspacer {}
             }
-        }
 
-        VGap16 {}
+            VGap16 {}
 
-        Item {
-            Layout.preferredHeight: 40
-            Layout.fillWidth: true
+            Item {
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
 
-                MyText { text: "Z" }
-                HGap8{}
-                OpDoubleSpinbox {
-                    value: DataBus.zPos === undefined ? 0.0 : DataBus.zPos
-                    editable: false
+                    MyText { text: "Z" }
+                    HGap8{}
+                    OpDoubleSpinbox {
+                        value: DataBus.zPos === undefined ? 0.0 : DataBus.zPos
+                        editable: false
+                    }
+
+                    HGap24{}
+
+                    MyText { text: "W" }
+                    HGap8{}
+                    OpDoubleSpinbox {
+                        value: 0
+                        editable: false
+                    }
+                    Hspacer {}
                 }
-
-                HGap24{}
-
-                MyText { text: "W" }
-                HGap8{}
-                OpDoubleSpinbox {
-                    value: 0
-                    editable: false
-                }
-                Hspacer {}
             }
+            Vspacer {}
         }
-        Vspacer {}
     }
 }
