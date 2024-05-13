@@ -57,7 +57,7 @@ Control {
 
                     MyText { text: "dY" }
                     HGap8 {}
-                    OpDoubleSpinbox{
+                    OpDoubleSpinbox {
                         value: DataBus.punch_tool_shift_dy
                         editable: false
                     }

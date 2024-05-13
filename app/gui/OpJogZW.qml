@@ -5,6 +5,10 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    id: root
+
+    property int zwFeedRate
+
     component Btn: OpSolidButton {
         Layout.preferredWidth: 60
         Layout.preferredHeight: 60
@@ -44,26 +48,19 @@ Item {
         color: colors.primary_70
     }
 
-    RowLayout {
-        anchors.fill: parent
+    DebugRect { color: "#22FF0FF0" }
 
-        Hspacer {}
-        Item {
-            Layout.preferredWidth: 192
-            Layout.preferredHeight: 592
-            Grid {}
-        }
-        Hspacer {}
-    }
+    // RowLayout {
+    //     anchors.fill: parent
 
-    Rectangle {
-        z: -1
-        anchors.fill: parent
-        visible: guiDebug
-        color: "#22FFFF00"
-    }
+    //     Item {
+    //         Layout.preferredWidth: 140
+    //         Layout.preferredHeight: 592
+    //         Grid {}
+    //     }
+    // }
 
-    component Grid: GridLayout {
+    GridLayout {
         id: grid
         anchors.fill: parent
         rows: 9
@@ -73,65 +70,23 @@ Item {
         flow: GridLayout.TopToBottom
 
         MyText { text: "Z+" }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", 1,    zwFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", 0.1,  zwFeedRate.value)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", 0.01, zwFeedRate.value)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", 1,    zwFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", 0.1,  zwFeedRate)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", 0.01, zwFeedRate)} }
         CentralButton { text: "ШАГ"; }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", -0.01, zwFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", -0.1,  zwFeedRate.value)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", -1,    zwFeedRate.value)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", -0.01, zwFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", -0.1,  zwFeedRate)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", -1,    zwFeedRate)} }
         MyText { text: "Z-" }
 
         MyText { text: "W+" }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", 1,    zwFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", 0.1,  zwFeedRate.value)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", 0.01, zwFeedRate.value)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", 1,    zwFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", 0.1,  zwFeedRate)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", 0.01, zwFeedRate)} }
         CentralButton { text: "ШАГ"; }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", -0.01, zwFeedRate.value)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", -0.1,  zwFeedRate.value)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", -1,    zwFeedRate.value)} }
+        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", -0.01, zwFeedRate)} }
+        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", -0.1,  zwFeedRate)} }
+        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", -1,    zwFeedRate)} }
         MyText { text: "W-" }
-    }
-
-
-    Shortcut {
-        sequence: "Ctrl+Up"
-        context: Qt.WindowShortcut
-        onActivated: jog("Y", 1,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Down"
-        context: Qt.WindowShortcut
-        onActivated: jog("Y", -1,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Left"
-        context: Qt.WindowShortcut
-        onActivated: jog("X", -1,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Right"
-        context: Qt.WindowShortcut
-        onActivated: jog("X", 1,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Shift+Up"
-        context: Qt.WindowShortcut
-        onActivated: jog("Y", 10,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Shift+Down"
-        context: Qt.WindowShortcut
-        onActivated: jog("Y", -10,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Shift+Left"
-        context: Qt.WindowShortcut
-        onActivated: jog("X", -10,  xyFeedRate.value)
-    }
-    Shortcut {
-        sequence: "Ctrl+Shift+Right"
-        context: Qt.WindowShortcut
-        onActivated: jog("X", 10,  xyFeedRate.value)
     }
 }
