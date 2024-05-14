@@ -31,6 +31,29 @@ Control {
         color: colors.black_90
     }
 
+
+    component AspectItem: Item {
+        property real ratio: DataBus.resolution_height === undefined ? 0.75 : DataBus.resolution_height / DataBus.resolution_width
+
+        implicitWidth: height / ratio
+        implicitHeight: width * ratio
+
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            height: parent.height
+            implicitWidth: height / parent.ratio
+
+            border.color: colors.accent_90
+            border.width: 2
+            radius: 8
+
+            color: colors.black_30
+            clip: true
+        }
+    }
+
+
     contentItem: Item {
         DebugRect { color: "#22FF0FF0" }
 
@@ -40,31 +63,11 @@ Control {
 
             OpHeader { text: qsTr("ВИД С КАМЕРЫ") }
             VGap8 {}
-            Rectangle {
-                border.color: colors.accent_90
-                border.width: 2
-                radius: 8
 
-                color: colors.black_30
-
-                // Layout.fillWidth: true
-                // Layout.preferredHeight: {
-                //     if (DataBus.resolution_height === undefined)
-                //         return width*0.75
-
-                //     return width * DataBus.resolution_height / DataBus.resolution_width
-                // }
-
+            AspectItem {
+                Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                Layout.preferredWidth: {
-                    if (DataBus.resolution_height === undefined)
-                        return height/0.75
-
-                    return height / (DataBus.resolution_height / DataBus.resolution_width)
-                }
-
-                clip: true
+                Layout.maximumHeight: implicitHeight
 
                 Column {
                     anchors.centerIn: parent
@@ -118,24 +121,36 @@ Control {
                 }
             }
 
-            VGap16 {}
+            Vspacer {}
 
             OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
-            VGap8 {}
 
             Item {
-                Layout.preferredHeight: 100
+                Layout.preferredHeight: 120
                 Layout.fillWidth: true
+
+                DebugRect { color: "#110000FF" }
 
                 GridLayout {
                     anchors.fill: parent
+
                     columns: 3
+                    rows: 2
+                    rowSpacing: 0
+                    columnSpacing: 0
+
 
                     Item {
-                        Layout.preferredWidth: 100
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 40
+
+                        Layout.row: 0
+                        Layout.column: 0
+
+                        DebugRect { color: "#110000FF" }
+
                         RowLayout {
                             anchors.fill: parent
-
 
                             MyText { text: "X" }
                             HGap8 {}
@@ -149,7 +164,14 @@ Control {
                     //HGap24 {}
 
                     Item {
-                        Layout.preferredWidth: 100
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 40
+
+                        Layout.row: 0
+                        Layout.column: 1
+
+                        DebugRect { color: "#110000FF" }
+
                         RowLayout {
                             anchors.fill: parent
 
@@ -165,13 +187,15 @@ Control {
 
                     OpSolidButton {
                         Layout.rowSpan: 2
+                        Layout.row: 0
+                        Layout.column: 2
                         icon.source: "images/home.svg"
-                        display: AbstractButton.IconOnly
 
                         bgcolor: colors.primary_70
 
                         //Layout.preferredHeight: 44
-                        Layout.preferredWidth: 50
+                        Layout.preferredWidth: 40
+                        Layout.preferredHeight: 40
 
                         onClicked: {
                             write("$H")
@@ -182,7 +206,14 @@ Control {
 
 
                     Item {
-                        Layout.preferredWidth: 100
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 40
+
+                        Layout.row: 1
+                        Layout.column: 0
+
+                        DebugRect { color: "#110000FF" }
+
                         RowLayout {
                             anchors.fill: parent
 
@@ -197,7 +228,14 @@ Control {
                     }
 
                     Item {
-                        Layout.preferredWidth: 100
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 40
+
+                        Layout.row: 1
+                        Layout.column: 1
+
+                        DebugRect { color: "#110000FF" }
+
                         RowLayout {
                             anchors.fill: parent
 
@@ -220,35 +258,8 @@ Control {
 
             VGap16 {}
 
-            // Item {
-            //     Layout.preferredHeight: 40
-            //     Layout.fillWidth: true
-
-            //     RowLayout {
-            //         anchors.fill: parent
-            //         spacing: 0
-
-            //         MyText { text: "Z" }
-            //         HGap8{}
-            //         OpDoubleSpinbox {
-            //             value: DataBus.zPos === undefined ? 0.0 : DataBus.zPos
-            //             editable: false
-            //         }
-
-            //         HGap24{}
-
-            //         MyText { text: "W" }
-            //         HGap8{}
-            //         OpDoubleSpinbox {
-            //             value: DataBus.wPos === undefined ? 0.0 : DataBus.wPos
-            //             editable: false
-            //         }
-            //         Hspacer {}
-            //     }
-            // }
-
             Item {
-                Layout.preferredHeight: 40
+                Layout.preferredHeight: 18
                 Layout.fillWidth: true
 
                 RowLayout {
@@ -257,10 +268,14 @@ Control {
 
                     OpHeader {
                         text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
-                        Layout.preferredHeight: 40
+                        Layout.fillWidth: false
                     }
 
                     OpText {
+                        Layout.preferredHeight: 18
+                        //Layout.fillWidth: true
+                        //Layout.preferredWidth: implicitWidth
+
                         text: {
                             if (DataBus.homing_status === "Not ready")   return qsTr("Не готов")
                             if (DataBus.homing_status === "In progress") return qsTr("В процессе")
@@ -275,12 +290,8 @@ Control {
 
                         font.pixelSize: 16
                         font.weight: Font.DemiBold
-
-                        Layout.preferredHeight: 40
-                        Layout.fillWidth: true
                     }
-
-
+                    Hspacer {}
                 }
             }
         }
