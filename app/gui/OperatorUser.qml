@@ -9,7 +9,7 @@ import "utils.js" as Utils
 Control {
     id: root
 
-    property int panelIndex: 0
+    property int panelIndex: 2
 
     background: Rectangle {
         color: colors.primary_10

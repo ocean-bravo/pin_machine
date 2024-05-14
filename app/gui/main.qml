@@ -18,6 +18,7 @@ Item {
     property real xPos
     property real yPos
     property real zPos
+    property real wPos
 
     width: MainWindow.width
     height: MainWindow.height
@@ -25,14 +26,10 @@ Item {
     StackLayout {
         id: stackLayout
         anchors.fill: parent
+        currentIndex: 1
 
-        SuperUser {
-            id: superUser
-        }
-
-        OperatorUser {
-            id: operatorUser
-        }
+        SuperUser { id: superUser }
+        OperatorUser { id: operatorUser }
     }
 
     FindCamera {
@@ -305,8 +302,6 @@ Item {
     Shortcut { sequence: "F1"; context: Qt.ApplicationShortcut;
         onActivated: {
             stackLayout.currentIndex = 0
-
-            //appWin = operatorUser
         }
     }
 
@@ -314,22 +309,17 @@ Item {
         onActivated: {
             stackLayout.currentIndex = 1
             operatorUser.panelIndex = 0
-            // appWin = superUser
         }
     }
 
-    Shortcut {
-        sequence: "F3"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F3"; context: Qt.ApplicationShortcut
         onActivated: {
             stackLayout.currentIndex = 1
             operatorUser.panelIndex = 1
         }
     }
 
-    Shortcut {
-        sequence: "F4"
-        context: Qt.ApplicationShortcut
+    Shortcut { sequence: "F4"; context: Qt.ApplicationShortcut
         onActivated: {
             stackLayout.currentIndex = 1
             operatorUser.panelIndex = 2
