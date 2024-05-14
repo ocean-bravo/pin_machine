@@ -24,26 +24,25 @@ Item {
                 spacing: 8
 
                 OpPanelAxesCoordinates2 {
-                    Layout.preferredHeight: 162
-                    Layout.fillWidth: true
-
-                }
-
-                OpPanelAxesHoming2 {
-                    Layout.preferredHeight: 72
-                    Layout.fillWidth: true
-                }
-
-                OpPanelCameraView2 {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
                 }
 
+                // OpPanelAxesHoming2 {
+                //     Layout.preferredHeight: 72
+                //     Layout.fillWidth: true
+                // }
+
+                // OpPanelCameraView2 {
+                //     Layout.fillHeight: true
+                //     Layout.fillWidth: true
+
+                // }
+
                 OpPanelToolShift {
                     Layout.preferredHeight: 294
                     Layout.fillWidth: true
-
                 }
             }
         }
