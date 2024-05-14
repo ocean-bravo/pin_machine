@@ -11,6 +11,8 @@ Control {
 
     background: OpWhitePanel {}
 
+    component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
+
     contentItem: ColumnLayout {
         spacing: 0
 
@@ -30,26 +32,23 @@ Control {
                     text: "X"
                 }
 
-                MyLabel {
-                    text: DataBus.x_coord === undefined ? "" : DataBus.x_coord
+                OpDoubleSpinbox {
+                    value: DataBus.xPos === undefined ? 0 : DataBus.xPos
+                    Layout.preferredHeight: 32
                 }
 
-                Item {
-                    Layout.preferredWidth: 8
-                }
-
+                HGap8 {}
 
                 MyText {
                     text: "Y"
                 }
 
-                MyLabel {
-                    text: DataBus.y_coord === undefined ? "" : DataBus.y_coord
+                OpDoubleSpinbox {
+                    value: DataBus.yPos === undefined ? 0 : DataBus.yPos
+                    Layout.preferredHeight: 32
                 }
 
-                Item {
-                    Layout.fillWidth: true
-                }
+                Hspacer {}
             }
         }
 
@@ -66,23 +65,23 @@ Control {
                 MyText {
                     text: "Z"
                 }
-                MyLabel {
-                    text: DataBus.z_coord === undefined ? "" : DataBus.z_coord
+                OpDoubleSpinbox {
+                    value: DataBus.zPos === undefined ? 0 : DataBus.zPos
+                    Layout.preferredHeight: 32
                 }
 
-                Item {
-                    Layout.preferredWidth: 8
-                }
+                HGap8 {}
 
                 MyText {
                     text: "W"
                 }
-                MyLabel {
-                    text: "0.000"
+
+                OpDoubleSpinbox {
+                    value: DataBus.wPos === undefined ? 0 : DataBus.wPos
+                    Layout.preferredHeight: 32
                 }
-                Item {
-                    Layout.fillWidth: true
-                }
+
+                Hspacer {}
             }
         }
 
@@ -97,11 +96,8 @@ Control {
 
                 spacing: 4
 
-                OpText {
+                OpHeader {
                     text: qsTr("СКОРОСТЬ ОСЕЙ")
-
-                    Layout.preferredHeight: 18
-                    Layout.fillWidth: true
                 }
 
                 Item {
@@ -150,10 +146,5 @@ Control {
         font.weight: Font.Medium
         font.pixelSize: 24
         color: colors.black_90
-    }
-
-    component MyLabel: OpLabel {
-        Layout.preferredWidth: 80
-        Layout.preferredHeight: 32
     }
 }

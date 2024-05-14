@@ -10,7 +10,7 @@ Item {
     property bool guiDebug: false
     readonly property string mainFont : "DINPro"
 
-    property var appWin: operatorUser
+    //property var appWin: operatorUser
 
     property string status: "Idle"
     property string fullStatus
@@ -26,12 +26,12 @@ Item {
         id: stackLayout
         anchors.fill: parent
 
-        OperatorUser {
-            id: operatorUser
-        }
-
         SuperUser {
             id: superUser
+        }
+
+        OperatorUser {
+            id: operatorUser
         }
     }
 
