@@ -55,14 +55,14 @@ Control {
                 GridLayout {
                     anchors.fill: parent
 
-                    columns: 3
+                    columns: 4
                     rows: 2
                     rowSpacing: 0
-                    columnSpacing: 0
+                    columnSpacing: 24
 
 
                     Item {
-                        Layout.preferredWidth: 120
+                        Layout.preferredWidth: 112
                         Layout.preferredHeight: 40
 
                         Layout.row: 0
@@ -72,6 +72,7 @@ Control {
 
                         RowLayout {
                             anchors.fill: parent
+                            spacing: 0
 
                             MyText { text: "X" }
                             HGap8 {}
@@ -85,7 +86,7 @@ Control {
                     //HGap24 {}
 
                     Item {
-                        Layout.preferredWidth: 120
+                        Layout.preferredWidth: 112
                         Layout.preferredHeight: 40
 
                         Layout.row: 0
@@ -95,6 +96,7 @@ Control {
 
                         RowLayout {
                             anchors.fill: parent
+                            spacing: 0
 
                             MyText { text: "Y" }
                             HGap8 {}
@@ -106,17 +108,19 @@ Control {
                         }
                     }
 
+                    Hspacer {}
+
                     OpSolidButton {
                         Layout.rowSpan: 2
                         Layout.row: 0
-                        Layout.column: 2
+                        Layout.column: 3
                         icon.source: "images/home.svg"
 
                         bgcolor: colors.primary_70
 
                         //Layout.preferredHeight: 44
-                        Layout.preferredWidth: 40
-                        Layout.preferredHeight: 40
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
 
                         onClicked: {
                             write("$H")
@@ -127,7 +131,7 @@ Control {
 
 
                     Item {
-                        Layout.preferredWidth: 120
+                        Layout.preferredWidth: 112
                         Layout.preferredHeight: 40
 
                         Layout.row: 1
@@ -137,6 +141,7 @@ Control {
 
                         RowLayout {
                             anchors.fill: parent
+                            spacing: 0
 
                             MyText { text: "Z" }
                             HGap8 {}
@@ -149,7 +154,7 @@ Control {
                     }
 
                     Item {
-                        Layout.preferredWidth: 120
+                        Layout.preferredWidth: 112
                         Layout.preferredHeight: 40
 
                         Layout.row: 1
@@ -159,6 +164,7 @@ Control {
 
                         RowLayout {
                             anchors.fill: parent
+                            spacing: 0
 
                             MyText { text: "W" }
                             HGap8 {}

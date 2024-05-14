@@ -16,11 +16,28 @@ Item {
         anchors.fill: parent
         spacing: 8
 
-        OpPanel3 {
+
+        Item {
             Layout.preferredWidth: 400
             Layout.fillHeight: true
-        }
 
+            ColumnLayout {
+                anchors.fill: parent
+
+                spacing: 8
+
+                OpPanelAxesCoordinates2 {
+                    Layout.preferredHeight: 480
+                    Layout.fillWidth: true
+                }
+
+                OpPanelAxesControl {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+
+            }
+        }
         Item {
             Layout.preferredWidth: 400
             Layout.fillHeight: true
