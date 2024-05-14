@@ -14,13 +14,7 @@ Control {
 
         spacing: 16
 
-        OpText {
-            text: qsTr("ВИЗУАЛИЗАЦИЯ ПРОДУКТА")
-            font.capitalization: Font.AllUppercase
-
-            Layout.preferredHeight: 18
-            Layout.fillWidth: true
-        }
+        OpHeader { text: qsTr("Визуализация продукта") }
 
         Item {
             id: scene

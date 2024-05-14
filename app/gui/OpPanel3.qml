@@ -13,29 +13,38 @@ Control {
 
     background: OpWhitePanel {}
 
+    component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
+    component VGap20 : Item { width: 10; DebugRect {} Layout.preferredHeight: 20}
+
+    component HGap8 : Item { height: 10; DebugRect {} Layout.preferredWidth: 8}
+    component HGap24 : Item { height: 10; DebugRect {} Layout.preferredWidth: 24}
+
+    component MyText: OpText {
+        Layout.preferredWidth: 24
+        Layout.fillHeight: true
+        horizontalAlignment: Text.AlignLeft
+
+        font.weight: Font.Medium
+        font.pixelSize: 24
+        color: colors.black_90
+    }
+
     contentItem: Item {
         DebugRect { color: "#22FF0FF0" }
 
         ColumnLayout {
             anchors.fill: parent
-            spacing: 16
+            spacing: 0
 
             OpHeader { text: qsTr("ВИД С КАМЕРЫ") }
 
             Rectangle {
+                id: cameraView
                 border.color: colors.accent_90
                 border.width: 2
                 radius: 8
 
                 color: colors.black_30
-
-                // Layout.fillWidth: true
-                // Layout.preferredHeight: {
-                //     if (DataBus.resolution_height === undefined)
-                //         return width*0.75
-
-                //     return width * DataBus.resolution_height / DataBus.resolution_width
-                // }
 
                 Layout.fillHeight: true
                 Layout.preferredWidth: {
@@ -100,6 +109,7 @@ Control {
             }
 
             Item {
+                id: homing
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
 

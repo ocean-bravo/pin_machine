@@ -9,6 +9,8 @@ import "utils.js" as Utils
 Control {
     id: root
 
+    property int panelIndex: 0
+
     background: Rectangle {
         color: colors.primary_10
     }
@@ -75,12 +77,18 @@ Control {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                currentIndex: root.panelIndex
+
+                PanelWork {
+                    id: panelWork
+                }
+
                 PanelManualControl {
                     id: panelManualControl
                 }
 
-                PanelWork {
-                    id: panelWork
+                PanelProductRecipe {
+                    id: panelProductRecipe
                 }
             }
 
@@ -103,17 +111,6 @@ Control {
                 color: colors.primary_70
                 radius: 8
             }
-        }
-    }
-
-    Shortcut {
-        sequence: "F3"
-        context: Qt.ApplicationShortcut
-        onActivated: {
-            if (stackLayout.currentIndex === 0)
-                stackLayout.currentIndex = 1
-            else
-                stackLayout.currentIndex = 0
         }
     }
 

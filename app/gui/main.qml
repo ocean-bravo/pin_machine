@@ -305,6 +305,7 @@ Item {
     Shortcut { sequence: "F1"; context: Qt.ApplicationShortcut;
         onActivated: {
             stackLayout.currentIndex = 0
+
             //appWin = operatorUser
         }
     }
@@ -312,7 +313,26 @@ Item {
     Shortcut { sequence: "F2"; context: Qt.ApplicationShortcut;
         onActivated: {
             stackLayout.currentIndex = 1
+            operatorUser.panelIndex = 0
             // appWin = superUser
+        }
+    }
+
+    Shortcut {
+        sequence: "F3"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            stackLayout.currentIndex = 1
+            operatorUser.panelIndex = 1
+        }
+    }
+
+    Shortcut {
+        sequence: "F4"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            stackLayout.currentIndex = 1
+            operatorUser.panelIndex = 2
         }
     }
 
