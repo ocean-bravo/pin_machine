@@ -48,7 +48,7 @@ Item {
                 spacing: 8
 
                 OpPanelProduct2 {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 130
                     Layout.fillWidth: true
                 }
 

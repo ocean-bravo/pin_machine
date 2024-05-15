@@ -15,12 +15,45 @@ Control {
     component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
 
     contentItem: ColumnLayout {
-        spacing: 16
+        spacing: 0
 
         OpHeader { text: qsTr("Управление координатами") }
-        Vspacer {}
+
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            component Sp: Item {
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 60
+            }
+
+            component Btn: OpSolidButton {
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 60
+                icon.width: 40
+                icon.height: 40
+                icon.source: "images/arrow_40.svg"
+                bgcolor: colors.primary_50
+            }
+
+            GridLayout {
+                anchors.centerIn: parent
+                columns: 3
+                rows: 3
+                rowSpacing: 4
+                columnSpacing: 4
+
+                Sp {}               Btn {rotation: 90}  Sp {}
+                Btn { rotation: 0 } Sp{}                Btn{rotation: 180}
+                Sp {}               Btn {rotation: 270} Sp {}
+
+            }
+        }
 
 
+        OpHeader { text: qsTr("ШАГ") }
+        VGap4 {}
         Item {
             Layout.preferredHeight: 40
             Layout.fillWidth: true
@@ -32,18 +65,12 @@ Control {
 
                 component StepButton : OpFrameButton {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 60
+                    Layout.preferredWidth: implicitWidth
                     color: colors.primary_50
                     checkable: true
                     ButtonGroup.group: btnGroup
                 }
 
-                OpText {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 30
-                    text: qsTr("ШАГ")
-                }
 
                 StepButton {
                     text: "0.1"
@@ -65,6 +92,8 @@ Control {
             }
 
         }
+
+        VGap16 {}
 
         OpHeader { text: qsTr("Скорость осей X/Y") }
         VGap4 {}

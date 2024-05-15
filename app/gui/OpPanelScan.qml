@@ -15,36 +15,146 @@ Control {
 
         spacing: 16
 
-        OpText {
-            text: qsTr("ОПЦИИ КАМЕРЫ")
+        OpHeader { text: qsTr("Область сканирования продукта") }
 
-            Layout.preferredHeight: 18
+
+        Item {
             Layout.fillWidth: true
+
+            Layout.fillHeight: true
+
+            GridLayout {
+                anchors.fill: parent
+                columns: 5
+                columnSpacing: 4
+
+                OpHeader {
+                    Layout.columnSpan: 2
+                    Layout.column: 0
+                    Layout.row: 0
+
+                    text: qsTr("Левый нижний угол:")
+                }
+
+                Rectangle {
+                    color: "lightgrey"
+                    Layout.preferredWidth: 1
+                    Layout.fillHeight: true
+                    Layout.rowSpan: 4
+                    Layout.column: 2
+                    Layout.row: 0
+                }
+
+                OpHeader {
+                    Layout.columnSpan: 2
+                    Layout.column: 3
+                    Layout.row: 0
+                    text: qsTr("Правый верхний угол:")
+                }
+
+                OpText {
+
+                    text: "X1"
+                }
+
+                OpText {
+                    text: "Y1"
+                }
+
+                OpText {
+                    text: "X2"
+                }
+
+                OpText {
+                    text: "Y2"
+                }
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+
+                }
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+
+                }
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+
+                }
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+
+                }
+
+                OpFrameButton {
+                    Layout.columnSpan: 2
+                    Layout.fillWidth: true
+
+                    text:  "Взять текущие координаты"
+
+                }
+                OpFrameButton {
+                    Layout.columnSpan: 2
+                    Layout.fillWidth: true
+                    text:  "Взять текущие координаты"
+                }
+            }
+
+
         }
 
-        CustomSwitch {
-            text: qsTr("Проверка реперных отверстий перед установкой")
 
-            checked: DataBus.check_fiducial
-            onCheckedChanged: DataBus.check_fiducial = checked
 
-            Layout.preferredHeight: 48
+        OpSolidButton {
             Layout.fillWidth: true
+            text: "Быстрое сканирование"
         }
 
-        CustomSwitch {
-            text: qsTr("Проверка всех отверстий перед установкой")
-
-            checked: TaskPunch.checkEveryBlob
-            onCheckedChanged: TaskPunch.checkEveryBlob = checked
-
-            Layout.preferredHeight: 48
+        Item {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
+            RowLayout {
+                anchors.fill: parent
+                OpFrameButton {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    text: "Выбор сцены"
+
+                    onClicked: {
+                        pop.open()
+                    }
+                    Popup {
+                        id: pop
+                        width: 100
+                        height: 100
+                        ListView {
+                            anchors.fill: parent
+                            model: [1,2,3,4,5]
+                            delegate: Text {text: modelData}
+                        }
+                    }
+                }
+
+                OpFrameButton {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    text: "Поиск отверстий"
+                }
+            }
         }
+
+        OpSolidButton {
+            Layout.fillWidth: true
+            text: "Уточнить координаты выбранных точек"
+        }
+
     }
 
-    Component.onCompleted: {
-        DataBus.check_fiducial = true
-        //DataBus.check_every_blob = false
-    }
+
+
 }
