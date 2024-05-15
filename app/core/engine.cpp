@@ -311,9 +311,12 @@ void Engine::createQmlEngine()
 
 
     /// 5. Важно
-    QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
-    _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
+    QQuickItem* graphicsViewPlaceholder1 = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView1");
+    _widgetAnchor1 = new WidgetAnchor(_gw, graphicsViewPlaceholder1);
 
+
+    QQuickItem* graphicsViewPlaceholder2 = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView2");
+    _widgetAnchor2 = new WidgetAnchor(_gw, graphicsViewPlaceholder2);
 
     _gw->setScene(&scene());
     _mw->showMaximized();
@@ -340,13 +343,21 @@ void Engine::reload()
         _quickWidget->engine()->trimComponentCache();
         _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
-        QQuickItem* graphicsViewPlaceholder = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView");
-        _widgetAnchor->deleteLater();
+        QQuickItem* graphicsViewPlaceholder1 = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView1");
+        _widgetAnchor1->deleteLater();
+
+        QQuickItem* graphicsViewPlaceholder2 = _quickWidget->rootObject()->findChild<QQuickItem*>("placeholderForGraphicsView2");
+        _widgetAnchor2->deleteLater();
 
         // Так надо
-        connect(_widgetAnchor, &QObject::destroyed, this, [=]
+        connect(_widgetAnchor1, &QObject::destroyed, this, [=]
         {
-            _widgetAnchor = new WidgetAnchor(_gw, graphicsViewPlaceholder);
+            _widgetAnchor1 = new WidgetAnchor(_gw, graphicsViewPlaceholder1);
+        });
+
+        connect(_widgetAnchor2, &QObject::destroyed, this, [=]
+        {
+            _widgetAnchor2 = new WidgetAnchor(_gw, graphicsViewPlaceholder2);
         });
     });
 }

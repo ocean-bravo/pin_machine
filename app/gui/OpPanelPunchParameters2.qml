@@ -13,38 +13,134 @@ Control {
 
     contentItem: ColumnLayout {
 
-        spacing: 16
+        spacing: 8
 
-        OpText {
-            text: qsTr("ОПЦИИ КАМЕРЫ")
+        OpHeader {
+            text: qsTr("Параметры установки контактов")
+        }
 
-            Layout.preferredHeight: 18
+        Item {
             Layout.fillWidth: true
+
+            Layout.fillHeight: true
+
+            GridLayout {
+                anchors.fill: parent
+                columns: 3
+                columnSpacing: 4
+
+                OpText {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    text: "Z рез"
+                }
+
+                OpText {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    text: "Z установка"
+                }
+
+                OpText {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    text: "Z парковка"
+                }
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+
+                }
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+
+                }
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+
+                }
+            }
+        }
+
+        OpHeader {
+            text: qsTr("Параметры подпора платы")
+        }
+
+        Item {
+            Layout.fillWidth: true
+
+            Layout.fillHeight: true
+
+            GridLayout {
+                anchors.fill: parent
+                columns: 3
+                columnSpacing: 4
+
+                OpText {
+                    Layout.fillWidth: true
+                    text: "W подпор"
+                    Layout.preferredWidth: 1
+                }
+
+                OpText {
+                    Layout.fillWidth: true
+                    text: "W парковка"
+                    Layout.preferredWidth: 1
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 10
+                    Layout.preferredWidth: 1
+
+                }
+
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+
+                }
+
+                OpDoubleSpinbox {
+                    editable: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 10
+                    Layout.preferredWidth: 1
+
+                }
+            }
+
+
+        }
+
+
+        OpHeader {
+            text: qsTr("Артикул контакта")
         }
 
         CustomSwitch {
-            text: qsTr("Проверка реперных отверстий перед установкой")
-
-            checked: DataBus.check_fiducial
-            onCheckedChanged: DataBus.check_fiducial = checked
-
-            Layout.preferredHeight: 48
             Layout.fillWidth: true
+            text: "Отобразить путь установки"
         }
 
-        CustomSwitch {
-            text: qsTr("Проверка всех отверстий перед установкой")
-
-            checked: TaskPunch.checkEveryBlob
-            onCheckedChanged: TaskPunch.checkEveryBlob = checked
-
-            Layout.preferredHeight: 48
-            Layout.fillWidth: true
+        OpFrameButton {
+            text: "Автоматический поиск оптимального пути"
         }
-    }
 
-    Component.onCompleted: {
-        DataBus.check_fiducial = true
-        //DataBus.check_every_blob = false
     }
 }

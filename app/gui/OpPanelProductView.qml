@@ -17,11 +17,21 @@ Control {
         OpHeader { text: qsTr("Визуализация продукта") }
 
         Item {
-            id: scene
-            objectName: "placeholderForGraphicsView"
-
             Layout.fillHeight: true
             Layout.fillWidth: true
+
+            Item {
+               anchors.fill: parent
+               objectName: "placeholderForGraphicsView2"
+            }
+
+            // Item {
+            //     id: scene1
+            //     anchors.fill: parent
+            //     objectName: "placeholderForGraphicsView1"
+            // }
+
+
         }
     }
 }

@@ -39,7 +39,7 @@ Item {
             }
         }
         Item {
-            Layout.preferredWidth: 400
+            Layout.fillWidth: true
             Layout.fillHeight: true
 
             ColumnLayout {
