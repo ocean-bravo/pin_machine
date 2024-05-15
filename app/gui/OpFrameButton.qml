@@ -29,7 +29,7 @@ Button {
     }
 
     background: Rectangle {
-        color: down ? "lightgrey" : "transparent"
+        color: (checked || down) ? colors.primary_20 : "transparent"
         opacity: enabled ? 1 : 0.3
         border.color: root.framecolor
         border.width: 1

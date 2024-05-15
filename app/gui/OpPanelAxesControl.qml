@@ -19,6 +19,53 @@ Control {
 
         OpHeader { text: qsTr("Управление координатами") }
         Vspacer {}
+
+
+        Item {
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+
+            RowLayout {
+                anchors.fill: parent
+
+                ButtonGroup { id: btnGroup }
+
+                component StepButton : OpFrameButton {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 60
+                    color: colors.primary_50
+                    checkable: true
+                    ButtonGroup.group: btnGroup
+                }
+
+                OpText {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 30
+                    text: qsTr("ШАГ")
+                }
+
+                StepButton {
+                    text: "0.1"
+                }
+                StepButton {
+                    text: "1"
+                }
+                StepButton {
+                    text: "5"
+                    checked: true
+                }
+                StepButton {
+                    text: "10"
+                }
+                StepButton {
+                    text: "50"
+                }
+
+            }
+
+        }
+
         OpHeader { text: qsTr("Скорость осей X/Y") }
         VGap4 {}
 
