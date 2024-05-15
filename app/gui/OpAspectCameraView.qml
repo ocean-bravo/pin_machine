@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true    // aspect
     Layout.fillHeight: true   // aspect
     Layout.maximumHeight: implicitHeight  // aspect
-    implicitWidth: height / ratio  // aspect
+    //implicitWidth: height / ratio  // aspect
     implicitHeight: width * ratio  // aspect
 
     Rectangle {

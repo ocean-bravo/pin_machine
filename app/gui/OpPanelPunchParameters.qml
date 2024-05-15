@@ -50,40 +50,16 @@ Control {
 
                     OpHeader { text: qsTr("Скорость осей Z/W") }
 
-                    Item {
+                    OpSliderMinMax {
+                        id: zwFeedRateSlider
+
                         Layout.preferredHeight: 36
                         Layout.fillWidth: true
 
-                        DebugRect {}
-
-                        RowLayout {
-                            anchors.fill: parent
-                            spacing: 0
-
-                            OpText {
-                                text: "0"
-                                color: colors.black_80
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                            }
-
-                            OpSlider {
-                                id: zwFeedRateSlider
-                                from: 1
-                                value: 25
-                                to: 100
-                                stepSize: 1
-
-                                Layout.fillWidth: true
-                            }
-
-                            OpText {
-                                text: "100%"
-                                color: colors.black_80
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                            }
-                        }
+                        from: 1
+                        value: 25
+                        to: 100
+                        stepSize: 1
                     }
                 }
             }

@@ -121,38 +121,18 @@ Control {
 
                                     VGap4 {}
 
-                                    Item {
+
+                                    OpSliderMinMax {
+                                        id: xyFeedRateSlider
                                         Layout.preferredHeight: 36
                                         Layout.fillWidth: true
 
-                                        RowLayout {
-                                            anchors.fill: parent
-
-                                            OpText {
-                                                text: "0"
-                                                color: colors.black_80
-                                                font.pixelSize: 16
-                                                font.weight: Font.Medium
-                                            }
-
-                                            OpSlider {
-                                                id: xyFeedRateSlider
-                                                from: 10
-                                                value: 1000
-                                                to: 5000
-                                                stepSize: 10
-
-                                                Layout.fillWidth: true
-                                            }
-
-                                            OpText {
-                                                text: "100%"
-                                                color: colors.black_80
-                                                font.pixelSize: 16
-                                                font.weight: Font.Medium
-                                            }
-                                        }
+                                        from: 10
+                                        value: 1000
+                                        to: 5000
+                                        stepSize: 10
                                     }
+
                                 }
                             }
                         }

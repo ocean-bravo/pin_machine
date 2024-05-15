@@ -36,7 +36,7 @@ Control {
             anchors.fill: parent
             spacing: 0
 
-            OpHeader { text: qsTr("ВИД С КАМЕРЫ") }
+            OpHeader { text: qsTr("Вид с камеры") }
             VGap16 {}
 
             OpAspectCameraView {}
@@ -44,7 +44,7 @@ Control {
 
             Vspacer {}
 
-            OpHeader { text: qsTr("КООРДИНАТЫ ОСЕЙ") }
+            OpHeader { text: qsTr("Координаты осей") }
 
             Item {
                 Layout.preferredHeight: 120
@@ -177,9 +177,6 @@ Control {
                     }
 
 
-
-
-
                 }
             }
 
@@ -194,7 +191,7 @@ Control {
                     spacing: 4
 
                     OpHeader {
-                        text: qsTr("СТАТУС ИНИЦИАЛИЗАЦИИ ОСЕЙ (HOMING):")
+                        text: qsTr("Статус инициализации осей (homing):")
                         Layout.fillWidth: false
                     }
 
