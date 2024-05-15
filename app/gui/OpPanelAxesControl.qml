@@ -65,7 +65,7 @@ Control {
 
                 component StepButton : OpFrameButton {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: implicitWidth
+                    Layout.preferredWidth: 1
                     color: colors.primary_50
                     checkable: true
                     ButtonGroup.group: btnGroup
