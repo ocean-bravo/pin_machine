@@ -6,6 +6,8 @@ import QtQuick.Layouts 1.15
 Control {
     id: root
 
+    property string objName
+
     padding: 16
 
     background: OpWhitePanel {}
@@ -22,16 +24,8 @@ Control {
 
             Item {
                anchors.fill: parent
-               objectName: "placeholderForGraphicsView2"
+               objectName: root.objName
             }
-
-            // Item {
-            //     id: scene1
-            //     anchors.fill: parent
-            //     objectName: "placeholderForGraphicsView1"
-            // }
-
-
         }
     }
 }

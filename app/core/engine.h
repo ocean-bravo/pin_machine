@@ -72,9 +72,7 @@ private:
     QQuickWidget* _quickWidget2 = nullptr;
     QScopedPointer<MainWindow3> _mw;
     QScopedPointer<MainWindow> _sceneView;
-    WidgetAnchor* _widgetAnchor1 = nullptr;
-    WidgetAnchor* _widgetAnchor2 = nullptr;
-
+    WidgetAnchor* _widgetAnchor = nullptr;
 
     //V4L2 _videoDriver;
 //    Video3* _videoDriver3;

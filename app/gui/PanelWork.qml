@@ -182,6 +182,7 @@ Item {
         }
         OpPanelProductView {
             id: productVisualisation
+            objName: "placeholderForGraphicsView1"
 
             Layout.fillWidth: true
             Layout.fillHeight: true

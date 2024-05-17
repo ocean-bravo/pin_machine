@@ -66,6 +66,7 @@ Item {
 
         OpPanelProductView {
             id: productVisualisation
+            objName: "placeholderForGraphicsView2"
 
             Layout.preferredWidth: 1080
             Layout.fillHeight: true
