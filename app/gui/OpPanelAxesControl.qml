@@ -100,11 +100,6 @@ Control {
 
             Layout.preferredHeight: 36
             Layout.fillWidth: true
-
-            from: 1
-            value: 25
-            to: 100
-            stepSize: 1
         }
 
     }

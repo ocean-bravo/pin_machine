@@ -29,6 +29,12 @@ Item {
 
         OpSlider {
             id: slider
+
+            from: 1
+            value: 25
+            to: 100
+            stepSize: 1
+
             Layout.fillWidth: true
         }
 

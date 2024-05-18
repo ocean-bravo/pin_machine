@@ -11,6 +11,7 @@ Control {
 
     background: OpWhitePanel {}
 
+    property int zwFeedRate: zwFeedRateMax * zwFeedRateSlider.value / 100
 
     component MyText : OpText {
         font.capitalization: Font.AllUppercase
@@ -55,11 +56,6 @@ Control {
 
                         Layout.preferredHeight: 36
                         Layout.fillWidth: true
-
-                        from: 1
-                        value: 25
-                        to: 100
-                        stepSize: 1
                     }
                 }
             }
@@ -75,7 +71,7 @@ Control {
                     //HGap16 {}
 
                     OpJogZW {
-                        zwFeedRate: zwFeedRateSlider.value
+                        zwFeedRate: root.zwFeedRate
 
                         Layout.preferredWidth: 160
                         Layout.fillHeight: true
@@ -119,7 +115,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth * 2
                                         text: qsTr("Идти")
-                                        onClicked: write("G1 G90 F" + zwFeedRateSlider.value + " Z" + zCut.text)
+                                        onClicked: write("G1 G90 F" + zwFeedRate + " Z" + zCut.text)
                                     }
 
                                     OpFrameButton {
@@ -151,7 +147,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth * 2
                                         text: qsTr("Идти")
-                                        onClicked: write("G1 G90 F" + zwFeedRateSlider.value + " Z" + zSet.text)
+                                        onClicked: write("G1 G90 F" + zwFeedRate + " Z" + zSet.text)
                                     }
 
                                     OpFrameButton {
@@ -184,7 +180,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth * 2
                                         text: qsTr("Идти")
-                                        onClicked: write("G1 G90 F" + zwFeedRateSlider.value + " Z" + zPark.text)
+                                        onClicked: write("G1 G90 F" + zwFeedRate + " Z" + zPark.text)
                                     }
 
                                     OpFrameButton {
@@ -220,7 +216,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth * 2
                                         text: qsTr("Идти")
-                                        onClicked: write("G1 G90 F" + zwFeedRateSlider.value + " W" + wPodpor.text)
+                                        onClicked: write("G1 G90 F" + zwFeedRate + " W" + wPodpor.text)
                                     }
 
                                     OpFrameButton {
@@ -253,7 +249,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth * 2
                                         text: qsTr("Идти")
-                                        onClicked: write("G1 G90 F" + zwFeedRateSlider.value + " W" + wPark.text)
+                                        onClicked: write("G1 G90 F" + zwFeedRate + " W" + wPark.text)
                                     }
 
                                     OpFrameButton {

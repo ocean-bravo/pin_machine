@@ -100,40 +100,8 @@ Control {
                     text: qsTr("СКОРОСТЬ ОСЕЙ")
                 }
 
-                Item {
-                    Layout.preferredHeight: 36
+                OpSliderMinMax {
                     Layout.fillWidth: true
-
-                    RowLayout {
-                        anchors.fill: parent
-
-                        OpText {
-                            text: "0"
-                            color: colors.black_80
-                            font.pixelSize: 16
-                            font.weight: Font.Medium
-
-                            //Layout.preferredHeight: 28
-                        }
-
-                        OpSlider {
-                            from: 1
-                            value: 25
-                            to: 100
-
-                            //Layout.preferredHeight: 28
-                            Layout.fillWidth: true
-                        }
-
-                        OpText {
-                            text: "100%"
-                            color: colors.black_80
-                            font.pixelSize: 16
-                            font.weight: Font.Medium
-
-                            //Layout.preferredHeight: 28
-                        }
-                    }
                 }
             }
         }

@@ -70,23 +70,23 @@ Item {
         flow: GridLayout.TopToBottom
 
         MyText { text: "Z+" }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", 1,    zwFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", 0.1,  zwFeedRate)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", 0.01, zwFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("Z", text, zwFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("Z", text, zwFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("Z", text, zwFeedRate)} }
         CentralButton { text: "ШАГ"; }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Z", -0.01, zwFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Z", -0.1,  zwFeedRate)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Z", -1,    zwFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("Z", -text, zwFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("Z", -text, zwFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("Z", -text, zwFeedRate)} }
         MyText { text: "Z-" }
 
         MyText { text: "W+" }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", 1,    zwFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", 0.1,  zwFeedRate)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", 0.01, zwFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("W", text, zwFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("W", text, zwFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("W", text, zwFeedRate)} }
         CentralButton { text: "ШАГ"; }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("W", -0.01, zwFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("W", -0.1,  zwFeedRate)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("W", -1,    zwFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("W", -text, zwFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("W", -text, zwFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("W", -text, zwFeedRate)} }
         MyText { text: "W-" }
     }
 }
