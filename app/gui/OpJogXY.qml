@@ -73,30 +73,30 @@ Item {
 
         Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y+" }                                                                            Sp {} Sp {} Sp {} Sp {} Sp {}
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", 10,   xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", 1,    xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", 0.1,  xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", 0.01, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "10";   bgcolor: colors.primary_90; onClicked: { jog("Y", text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("Y", text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("Y", text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("Y", text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
 
 
         MyText { text: "X-" }
-        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", -10,   xyFeedRate)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", -1,    xyFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", -0.1,  xyFeedRate)} }
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", -0.01, xyFeedRate)} }
+        Btn { text: "10";   bgcolor: colors.primary_90; onClicked: { jog("X", -text, xyFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("X", -text, xyFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("X", -text, xyFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("X", -text, xyFeedRate)} }
 
         CentralButton { text: "ШАГ"; }
 
-        Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("X", 0.01, xyFeedRate)} }
-        Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("X", 0.1,  xyFeedRate)} }
-        Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("X", 1,    xyFeedRate)} }
-        Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("X", 10,   xyFeedRate)} }
+        Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("X", text, xyFeedRate)} }
+        Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("X", text, xyFeedRate)} }
+        Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("X", text, xyFeedRate)} }
+        Btn { text: "10";   bgcolor: colors.primary_90; onClicked: { jog("X", text, xyFeedRate)} }
         MyText { text: "X+" }
 
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.01"); bgcolor: colors.primary_50; onClicked: { jog("Y", -0.01, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("0.1");  bgcolor: colors.primary_60; onClicked: { jog("Y", -0.1,  xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("1");    bgcolor: colors.primary_80; onClicked: { jog("Y", -1,    xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
-        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: qsTr("10");   bgcolor: colors.primary_90; onClicked: { jog("Y", -10,   xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "0.01"; bgcolor: colors.primary_50; onClicked: { jog("Y", -text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "0.1";  bgcolor: colors.primary_60; onClicked: { jog("Y", -text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "1";    bgcolor: colors.primary_80; onClicked: { jog("Y", -text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
+        Sp {} Sp {} Sp {} Sp {} Sp {} Btn { text: "10";   bgcolor: colors.primary_90; onClicked: { jog("Y", -text, xyFeedRate)} } Sp {} Sp {} Sp {} Sp {} Sp {}
 
         Sp {} Sp {} Sp {} Sp {} Sp {} MyText { text: "Y-" }                                                                             Sp {} Sp {} Sp {} Sp {} Sp {}
     }

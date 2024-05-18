@@ -11,6 +11,8 @@ Control {
 
     background: OpWhitePanel {}
 
+    property int xyFeedRate: xyFeedRateMax * xyFeedRateSlider.value / 100
+
     component VGap4 : Item { width: 10; DebugRect {} Layout.preferredHeight: 4}
     component VGap16 : Item { width: 10; DebugRect {} Layout.preferredHeight: 16}
 
@@ -44,15 +46,23 @@ Control {
                 rowSpacing: 4
                 columnSpacing: 4
 
-                Sp {}               Btn {rotation: 90}  Sp {}
-                Btn { rotation: 0 } Sp{}                Btn{rotation: 180}
-                Sp {}               Btn {rotation: 270} Sp {}
+                Sp {}
+                Btn {rotation: 90; onClicked: jog("Y", btnGroup.checkedButton.text, xyFeedRate)}
+                Sp {}
+
+                Btn { rotation: 0; onClicked: jog("X", -btnGroup.checkedButton.text, xyFeedRate) }
+                Sp{}
+                Btn{rotation: 180; onClicked: jog("X", btnGroup.checkedButton.text, xyFeedRate)}
+
+                Sp {}
+                Btn {rotation: 270; onClicked: jog("Y", -btnGroup.checkedButton.text, xyFeedRate)}
+                Sp {}
 
             }
         }
 
 
-        OpHeader { text: qsTr("ШАГ") }
+        OpHeader { text: qsTr("Шаг") }
         VGap4 {}
         Item {
             Layout.preferredHeight: 40
@@ -71,24 +81,11 @@ Control {
                     ButtonGroup.group: btnGroup
                 }
 
-
-                StepButton {
-                    text: "0.1"
-                }
-                StepButton {
-                    text: "1"
-                }
-                StepButton {
-                    text: "5"
-                    checked: true
-                }
-                StepButton {
-                    text: "10"
-                }
-                StepButton {
-                    text: "50"
-                }
-
+                StepButton { text: "0.1" }
+                StepButton { text: "1"   }
+                StepButton { text: "5";   checked: true }
+                StepButton { text: "10"  }
+                StepButton { text: "50"  }
             }
 
         }
@@ -99,15 +96,15 @@ Control {
         VGap4 {}
 
         OpSliderMinMax {
+            id: xyFeedRateSlider
+
             Layout.preferredHeight: 36
             Layout.fillWidth: true
 
-            id: xyFeedRateSlider
-            from: 10
-            value: 1000
-            to: 5000
-            stepSize: 10
-
+            from: 1
+            value: 25
+            to: 100
+            stepSize: 1
         }
 
     }

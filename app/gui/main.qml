@@ -20,6 +20,8 @@ Item {
     property real zPos
     property real wPos
 
+    property int xyFeedRateMax: 5000
+
     width: MainWindow.width
     height: MainWindow.height
 

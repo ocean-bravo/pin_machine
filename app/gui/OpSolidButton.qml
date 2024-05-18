@@ -24,7 +24,7 @@ Button {
     }
 
     background: Rectangle {
-        color: down ? "lightgrey" : root.bgcolor
+        color: (checked || down) ? Qt.lighter(root.bgcolor) : root.bgcolor
         opacity: enabled ? 1 : 0.3
         radius: 8
     }

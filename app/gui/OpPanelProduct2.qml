@@ -2,6 +2,7 @@ import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Dialogs 1.3
 import Qt.labs.platform 1.1
 
 Control {
@@ -28,23 +29,20 @@ Control {
                     Layout.fillHeight: true
                     Layout.fillWidth: false
                     Layout.preferredWidth: implicitWidth
-                    verticalAlignment: Text.AlignBottom
+                    // verticalAlignment: Text.AlignBottom
                 }
 
-                OpText {
+                OpTextEdit {
+                    id: productName
                     text: "Не задано"
 
-                    font.weight: Font.Medium
-                    font.pixelSize: 24
-                    color: colors.error_80
+                    // font.weight: Font.Medium
+                    // font.pixelSize: 24
+                    //color: colors.error_80
 
                     Layout.fillHeight: true
-                    verticalAlignment: Text.AlignBottom
-
-                    Layout.preferredWidth: implicitWidth
-                    //Layout.fillWidth: true
+                    Layout.fillWidth: true
                 }
-                Hspacer {}
             }
         }
 
@@ -62,17 +60,25 @@ Control {
                     Layout.preferredWidth: 1
                     bgcolor: colors.primary_70
                     font.weight: Font.Medium
-                }
 
+                    onClicked: saveDialog.open()
+
+                    FileDialog {
+                        id: saveDialog
+                        folder: applicationDirPath
+                        fileMode: FileDialog.SaveFile
+                        onAccepted: Engine.save(currentFile)
+                        modality: Qt.ApplicationModal
+                         flags: Qt.Popup
+                    }
+                }
 
                 OpFrameButton {
                     text: qsTr("Открыть продукт")
-
-                    color: colors.primary_90
-
-
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
+                    color: colors.primary_90
+                    font.weight: Font.Medium
 
                     onClicked: loadDialog.open()
 
@@ -84,8 +90,6 @@ Control {
                         modality: Qt.ApplicationModal
                     }
                 }
-
-
             }
         }
     }

@@ -11,6 +11,8 @@ Control {
 
     background: OpWhitePanel {}
 
+    property int xyFeedRate: xyFeedRateMax * xyFeedRateSlider.value / 100
+
     component MyText: OpText {
         Layout.fillHeight: true
 
@@ -82,7 +84,7 @@ Control {
                                     OpFrameButton {
                                         text: qsTr("Идти")
                                         color: colors.primary_90
-                                        onClicked: write("G1 G90 F" + xyFeedRateSlider.value + " X" + moveX.text)
+                                        onClicked: write("G1 G90 F" + xyFeedRate + " X" + moveX.text)
                                     }
 
                                     Hspacer {}
@@ -101,7 +103,7 @@ Control {
                                     OpFrameButton {
                                         text: qsTr("Идти")
                                         color: colors.primary_90
-                                        onClicked: write("G1 G90 F" + xyFeedRateSlider.value + " Y" + moveY.text)
+                                        onClicked: write("G1 G90 F" + xyFeedRate + " Y" + moveY.text)
                                     }
                                 }
                             }
@@ -121,16 +123,15 @@ Control {
 
                                     VGap4 {}
 
-
                                     OpSliderMinMax {
                                         id: xyFeedRateSlider
                                         Layout.preferredHeight: 36
                                         Layout.fillWidth: true
 
-                                        from: 10
-                                        value: 1000
-                                        to: 5000
-                                        stepSize: 10
+                                        from: 1
+                                        value: 25
+                                        to: 100
+                                        stepSize: 1
                                     }
 
                                 }
@@ -143,7 +144,7 @@ Control {
             }
 
             OpJogXY {
-                xyFeedRate: xyFeedRateSlider.value
+                xyFeedRate: root.xyFeedRate
                 Layout.preferredHeight: 700
                 Layout.fillWidth: true
             }

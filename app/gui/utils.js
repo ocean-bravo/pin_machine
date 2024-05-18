@@ -10,7 +10,12 @@ String.prototype.log = function() {
 }
 
 
-function generateSteps(xMin, yMin, xMax, yMax, stepX, stepY, feed) {
+function generateSteps(x1, y1, x2, y2, stepX, stepY, feed) {
+    const xMin = Math.min(x1, x2)
+    const yMin = Math.min(y1, y2)
+    const xMax = Math.max(x1, x2)
+    const yMax = Math.max(y1, y2)
+
     var x = xMin
     var y = yMin
 
