@@ -4,11 +4,11 @@ cd /home/mint/deploy/pin_machine
 mv --force settings.ini settings2.ini
 
 
-cd /home/mint/devel/pin_machine/build
+cd /home/mint/devel/pin_machine
 
 git pull
 
-cd .. && rm -rf build &&  mkdir build && cd build
+rm -rf build &&  mkdir build && cd build
 
 /home/mint/Qt/5.15.2/gcc_64/bin/qmake .. -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 
