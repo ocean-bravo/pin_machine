@@ -199,7 +199,6 @@ void Scene::setImagePrivate(QImage img)
 
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pix, _board);
 
-    //    qd() << "pix rect " << pix.rect();
     // Сдвиг на половину размера изображения, т.к. x и y - это координаты центра изображения
     const double pixInMm = img.devicePixelRatioF();
     item->setOffset(-img.width() / (2*pixInMm), -img.height() / (2*pixInMm));
@@ -207,11 +206,6 @@ void Scene::setImagePrivate(QImage img)
     const double y = img.text("y").toDouble();
     item->setPos(x, y);
     item->setZValue(-1); // Чтобы изображения были позади блобов
-
-    //static int i = 0;
-    //qd() << "set image i x y pos offset " << i << x << y << item->pos() << item->offset();
-    //qd() << "pix rect " << pix.rect();
-    //qd() << "pix offset " << item->offset();
 }
 
 QList<QGraphicsPixmapItem*> Scene::pixmaps() const

@@ -7,8 +7,12 @@
 #include <QProcess>
 #include <QJsonObject>
 #include <QJsonDocument>
+
 #include <QApplication>
 #include <QSettings>
+
+#include <QTimer>
+#include <QEventLoop>
 
 #include <chrono>
 #include <cmath>

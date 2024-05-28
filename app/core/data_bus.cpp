@@ -23,6 +23,7 @@ DataBus::DataBus(QObject *parent)
     insert("x_coord", QString("????"));
     insert("y_coord", QString("????"));
     insert("z_coord", QString("????"));
+    insert("w_coord", QString("????"));
 
     insert("live_preview_image_raw", QImage());
     insert("live_preview_image_blob", QImage());

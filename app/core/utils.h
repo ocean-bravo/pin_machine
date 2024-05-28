@@ -5,12 +5,12 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include <chrono>
 #include <tuple>
 #include <exception>
-
-class QJsonObject;
 
 const QString csi("\033[");
 const QString up("1A");

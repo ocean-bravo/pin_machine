@@ -45,11 +45,7 @@ signals:
     void messageBoxResultChanged();
 
 protected:
-//    template <typename Derived>
-//    explicit DataBus(Derived* derived, QObject* parent = nullptr)
-//        : QQmlPropertyMap(derived, parent)
-//    {}
-    //QVariant updateValue(const QString &key, const QVariant &input) override;
+
 
 private:
     DataBus(QObject * parent  = nullptr);
