@@ -55,11 +55,11 @@ int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options) // stopEx
     double sceneX = 0.0;
     double sceneY = 0.0;
     double dia = 0.0;
-    QImage img;
+    QImage img = video().smallRegion();
 
     runAndWaitForLambda([&]()
     {
-        OpenCv::BlobsOnImage result = OpenCv::detectBlobs(video().smallRegion(), options);
+        OpenCv::BlobsOnImage result = OpenCv::detectBlobs(img, options);
 
         QVector<OpenCv::Blob> blobs = std::get<1>(result);
 
