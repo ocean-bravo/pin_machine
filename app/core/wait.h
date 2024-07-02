@@ -76,3 +76,18 @@ inline int waitForSignals(int timeout, const QObject* object1, PointerToMemberFu
 
     return exit;
 }
+
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+
+template<typename Function>
+void runAndWaitForLambda(Function function)
+{
+    auto future = QtConcurrent::run(function);
+
+    QFutureWatcher<void> futureWatcher;
+    futureWatcher.setFuture(future);
+
+    waitForSignal(&futureWatcher, &QFutureWatcher<void>::finished, 1000000);
+}

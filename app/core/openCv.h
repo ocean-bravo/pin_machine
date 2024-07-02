@@ -38,13 +38,10 @@ public:
     void appendToBlobDetectorQueue(QImage img, QVariantMap options);
     void clearQueue();
 
-    void blobDetectorUpdated(QImage img, QVariantMap options);
-    std::tuple<bool, double, double, double> smallRegionBlob() const;
+    static OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options);
 
 signals:
     void circleChanged(QImage);
-    void smallRegionBlobDetectionFinished();
-    void smallRegionBlobImage(QImage);
     void queueIsEmpty();
 
 private:
@@ -59,11 +56,7 @@ private:
     QQueue<std::tuple<QImage, QVariantMap>> _detectBlobQueue; // Опции обнаружения блобов, само изображение
 
     QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCaptured;
-    QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherCapturedSmallRegion;
     QFutureWatcher<OpenCv::BlobsOnImage> _blobWatcherLive;
-
-    QMetaObject::Connection _smallRegConn;
-    std::tuple<bool, double, double, double> _smallRegionBlob;
 
     mutable QMutex _mutex;
 
@@ -82,7 +75,6 @@ public slots:
 
 signals:
     void circleChanged(QImage);
-    void smallRegionBlobImage(QImage);
 
 private:
     QImage searchCirclesWorker(QImage img);

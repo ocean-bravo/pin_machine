@@ -51,13 +51,35 @@ int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options) // stopEx
 
     waitForNext();
 
-    opencv().blobDetectorUpdated(video().smallRegion(), options);
+    bool ok = false;
+    double sceneX = 0.0;
+    double sceneY = 0.0;
+    double dia = 0.0;
+    QImage img;
 
-    waitForSignal(&opencv(), &OpenCv::smallRegionBlobDetectionFinished, 1000);
+    runAndWaitForLambda([&]()
+    {
+        OpenCv::BlobsOnImage result = OpenCv::detectBlobs(video().smallRegion(), options);
 
-    waitForNext();
+        QVector<OpenCv::Blob> blobs = std::get<1>(result);
 
-    auto [ok, sceneX, sceneY, dia] = opencv().smallRegionBlob();
+        if (blobs.empty())
+        {
+            qd() << "blobs is empty";
+            return;
+        }
+
+        img = std::get<0>(result);
+
+        auto blob = blobs[0];
+
+        ok = true;
+        sceneX = blob.xMm;
+        sceneY = blob.yMm;
+        dia = blob.diameterMm;
+    });
+
+    db().insert("live_preview_image_small_blob_captured", img);
 
     if (ok && (dia / diaBlob > 2)) // неправильный блоб
         return 2;
@@ -78,8 +100,6 @@ int TaskBase::updateBlobPosition(BlobItem *blob, QVariantMap options) // stopEx
         scene().updateBlob(blob, sceneX, sceneY, dia);
         return 0;
     }
-
-    waitForNext();
 }
 
 void TaskBase::updateBlobPosition5x(BlobItem* blob)

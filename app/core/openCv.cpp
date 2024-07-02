@@ -184,10 +184,11 @@ cv::Mat adaptiveThreshold(const cv::Mat& in, QVariantMap options)
     return out;
 }
 
+}
 // img должно быть скопировано, при передаче в эту функцию
 // Круги рисуются прямо на переданном изображении, без копирования.
 //Найти, кто дергает эту функцию
-OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
+OpenCv::BlobsOnImage OpenCv::detectBlobs(QImage img, QVariantMap options)
 {
     static quint32 count = 0;
     ++count;
@@ -290,7 +291,7 @@ OpenCv::BlobsOnImage detectBlobs(QImage img, QVariantMap options)
     return {img, QVector<OpenCv::Blob>(), QVariantMap()};
 }
 
-}
+
 
 double OpenCv::corr(QImage cap1, QImage cap2)
 {
@@ -320,7 +321,6 @@ OpenCv::OpenCv()
     , _thread(new QThread)
 {
     connect(_impl, &OpenCvPrivate::circleChanged,   this, &OpenCv::circleChanged, Qt::QueuedConnection);
-    connect(_impl, &OpenCvPrivate::smallRegionBlobImage,   this, &OpenCv::smallRegionBlobImage, Qt::QueuedConnection);
 
     connect(_thread.data(), &QThread::finished, _impl, &QObject::deleteLater);
 
@@ -413,46 +413,6 @@ void OpenCv::clearQueue()
 {
     QMutexLocker lock(&_mutex);
     _detectBlobQueue.clear();
-}
-
-void OpenCv::blobDetectorUpdated(QImage img, QVariantMap options)
-{
-    if (!_blobWatcherCapturedSmallRegion.isFinished())
-        return;
-
-    QFuture<OpenCv::BlobsOnImage> future = QtConcurrent::run(detectBlobs, img, options);
-    _blobWatcherCapturedSmallRegion.setFuture(future);
-
-    disconnect(_smallRegConn);
-
-    _smallRegConn = connect(&_blobWatcherCapturedSmallRegion, &QFutureWatcher<OpenCv::BlobsOnImage>::resultReadyAt, this, [this](int index)
-    {
-        OpenCv::BlobsOnImage result = _blobWatcherCapturedSmallRegion.resultAt(index);
-
-        QVector<Blob> blobs = std::get<1>(result);
-
-        if (blobs.empty())
-        {
-            qd() << "blobs is empty";
-            _smallRegionBlob = {false, 0, 0, 0};
-            emit smallRegionBlobDetectionFinished();
-            return;
-        }
-
-        QImage img = std::get<0>(result);
-        emit smallRegionBlobImage(img.copy());
-
-        auto blob = blobs[0];
-
-        _smallRegionBlob = {true, blob.xMm, blob.yMm, blob.diameterMm};
-
-        emit smallRegionBlobDetectionFinished();
-    });
-}
-
-std::tuple<bool, double, double, double> OpenCv::smallRegionBlob() const
-{
-    return _smallRegionBlob;
 }
 
 OpenCvPrivate::OpenCvPrivate()

@@ -171,12 +171,6 @@ void Engine::createQmlEngine()
         db().insert("live_preview_image_circle", img);
     });
 
-    connect(&opencv(), &OpenCv::smallRegionBlobImage, this, [](QImage img)
-    {
-        db().insert("live_preview_image_small_blob_captured", img);
-    });
-
-
     qmlRegisterType<ImageItem>("ImageItem", 1, 0, "ImageItem");
     qmlRegisterType<QuickScene>("QuickScene", 1, 0, "QuickScene");
     qmlRegisterType<QmlGraphicsView>("QmlGraphicsView", 1, 0, "QmlGraphicsView");
