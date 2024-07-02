@@ -14,7 +14,6 @@
 #include <QBuffer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
-#include <QSplashScreen>
 
 #include <QJsonObject>
 
@@ -37,6 +36,7 @@
 #include "task_find_blob.h"
 
 #include "openCv.h"
+#include "product.h"
 
 
 #include "placeholder_quick_item.h"
@@ -95,41 +95,6 @@ Engine::Engine(QObject* parent)
 //    return _info;
 //}
 
-void Engine::save(const QString& url)
-{
-    QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
-    splash.setEnabled(false);
-    splash.setWindowModality(Qt::ApplicationModal);
-    splash.show();
-
-    int count = scene().images();
-
-    auto connection = connect(&scene(), &Scene::imageSaved, this, [&splash, count](int i)
-    {
-        splash.showMessage(QString("Saved %1 of %2 images").arg(i).arg(count));
-    });
-
-    auto guard = qScopeGuard([=]() { disconnect(connection); });
-
-    scene().saveScene(url);
-}
-
-void Engine::load(const QString& url)
-{
-    QSplashScreen splash(QPixmap("./splash.png"), Qt::WindowType(Qt::SplashScreen + Qt::FramelessWindowHint + Qt::WindowStaysOnTopHint));
-    splash.setEnabled(false);
-    splash.setWindowModality(Qt::ApplicationModal);
-    //splash.show();
-
-    scene().loadScene(url);
-
-    //    QList<QGraphicsView *> views = scene().views();
-
-    //    for (QGraphicsView * view : views)
-    //    {
-    //        QMetaObject::invokeMethod(view, "fit", Qt::QueuedConnection);
-    //    }
-}
 
 // void Engine::capture1()
 // {
@@ -290,6 +255,7 @@ void Engine::createQmlEngine()
     qmlEngine->rootContext()->setContextProperty("QmlEngine", qmlEngine);
     qmlEngine->rootContext()->setContextProperty("GraphicsScene", &scene());
     qmlEngine->rootContext()->setContextProperty("FileSystemWatcher", filesystemwatcher);
+    qmlEngine->rootContext()->setContextProperty("Product", &Product::instance());
     _quickWidget->setSource(QUrl::fromLocalFile(appDir() + QString("gui/main.qml")));
 
 

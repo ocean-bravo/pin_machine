@@ -34,7 +34,7 @@ Control {
 
                 OpTextEdit {
                     id: productName
-                    text: "Не задано"
+                    text: Product.product_name
 
                     // font.weight: Font.Medium
                     // font.pixelSize: 24
@@ -42,6 +42,10 @@ Control {
 
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
+                    onTextChanged: {
+                        Product.product_name = text
+                    }
                 }
             }
         }
@@ -67,7 +71,7 @@ Control {
                         id: saveDialog
                         folder: applicationDirPath
                         fileMode: FileDialog.SaveFile
-                        onAccepted: Engine.save(currentFile)
+                        onAccepted: Product.save(currentFile)
                         modality: Qt.ApplicationModal
                          flags: Qt.Popup
                     }
@@ -86,7 +90,7 @@ Control {
                         id: loadDialog
                         folder: applicationDirPath
                         fileMode: FileDialog.OpenFile
-                        onAccepted: Engine.load(currentFile)
+                        onAccepted: Product.load(currentFile)
                         modality: Qt.ApplicationModal
                     }
                 }

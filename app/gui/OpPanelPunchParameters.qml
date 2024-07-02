@@ -106,9 +106,8 @@ Control {
                                         id: zCut
                                         from: 0
                                         to: 20
-                                        value: 10
+                                        value: Product.z_cut
                                         editable: true
-
                                     }
 
                                     OpSolidButton {
@@ -121,6 +120,7 @@ Control {
                                     OpFrameButton {
                                         Layout.fillWidth: true
                                         text: qsTr("Сохранить в продукт")
+                                        onClicked: Product.z_cut = zCut.value
                                     }
                                 }
                             }
@@ -139,7 +139,7 @@ Control {
                                         id: zSet
                                         from: 0
                                         to: 20
-                                        value: 10
+                                        value: Product.z_set
                                         editable: true
                                     }
 
@@ -154,6 +154,7 @@ Control {
                                         Layout.fillWidth: true
                                         //Layout.preferredWidth: implicitWidth
                                         text: qsTr("Сохранить в продукт")
+                                        onClicked: Product.z_set = zSet.value
                                     }
                                 }
                             }
@@ -172,7 +173,7 @@ Control {
                                         id: zPark
                                         from: 0
                                         to: 20
-                                        value: 10
+                                        value: Product.z_park
                                         editable: true
                                     }
 
@@ -186,6 +187,7 @@ Control {
                                     OpFrameButton {
                                         Layout.fillWidth: true
                                         text: qsTr("Сохранить в продукт")
+                                        onClicked: Product.z_park = zPark.value
                                     }
                                 }
                             }
@@ -208,7 +210,7 @@ Control {
                                         id: wPodpor
                                         from: 0
                                         to: 20
-                                        value: 10
+                                        value: Product.w_podpor
                                         editable: true
                                     }
 
@@ -223,6 +225,7 @@ Control {
                                         Layout.fillWidth: true
                                         Layout.preferredWidth: 40
                                         text: qsTr("Сохранить в продукт")
+                                        onClicked: Product.w_podpor = wPodpor.value
                                     }
                                 }
                             }
@@ -241,7 +244,7 @@ Control {
                                         id: wPark
                                         from: 0
                                         to: 20
-                                        value: 10
+                                        value: Product.w_park
                                         editable: true
                                     }
 
@@ -255,6 +258,7 @@ Control {
                                     OpFrameButton {
                                         Layout.fillWidth: true
                                         text: qsTr("Сохранить в продукт")
+                                        onClicked: Product.w_park = wPark.value
                                     }
                                 }
                             }

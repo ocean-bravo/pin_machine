@@ -31,8 +31,6 @@ public:
     void setImage(QImage img);
 
     QList<QGraphicsPixmapItem*> pixmaps() const;
-    void saveScene(const QString &url);
-    void loadScene(const QString &url);
 
     QByteArray saveSceneToByteArray();
     void loadSceneFromByteArray(const QByteArray& ba);

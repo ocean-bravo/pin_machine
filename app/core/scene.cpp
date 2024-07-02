@@ -13,11 +13,6 @@
 #include <QMutexLocker>
 #include <QEventLoop>
 
-#include <QFile>
-#include <QUrl>
-
-#include <QBuffer>
-
 #include <QScopeGuard>
 #include <QTimer>
 #include <QJsonObject>
@@ -219,50 +214,6 @@ QList<QGraphicsPixmapItem*> Scene::pixmaps() const
     return pix;
 }
 
-void Scene::saveScene(const QString& url)
-{
-    QByteArray ba = saveSceneToByteArray();
-
-    Measure mes3("safetofile");
-
-    QFile file(QUrl(url).toLocalFile());
-
-    if (!file.open(QFile::WriteOnly))
-    {
-        qd() << "couldnt open file for save: " << QUrl(url).toLocalFile();
-        return;
-    }
-
-    file.write(ba);
-
-    mes3.stop();
-}
-
-void Scene::loadScene(const QString& url)
-{
-    clear();
-    addBoard();
-
-    QFile file(QUrl(url).toLocalFile());
-
-    if (!file.exists())
-    {
-        qd() << "file not exists: " << url << QUrl(url).toLocalFile();
-        return;
-    }
-
-    if (!file.open(QFile::ReadOnly))
-    {
-        qd() << "cant opent file: " << url << QUrl(url).toLocalFile();
-        return;
-    }
-
-    const QByteArray ba = file.readAll();
-    file.close();
-
-    loadSceneFromByteArray(ba);
-}
-
 QByteArray Scene::saveSceneToByteArray()
 {
     qd() << "save scene begin";
@@ -334,6 +285,9 @@ QByteArray Scene::saveSceneToByteArray()
 
 void Scene::loadSceneFromByteArray(const QByteArray& ba)
 {
+    clear();
+    addBoard();
+
     QVariantMap map;
     QDataStream in(ba);
     in.setVersion(QDataStream::Qt_5_15);

@@ -11,6 +11,12 @@ Control {
 
     background: OpWhitePanel {}
 
+    component MySpinBox : OpDoubleSpinbox {
+        editable: false
+        Layout.fillWidth: true
+        Layout.preferredWidth: 1
+    }
+
     contentItem: ColumnLayout {
 
         spacing: 8
@@ -47,25 +53,11 @@ Control {
                     text: "Z парковка"
                 }
 
-                OpDoubleSpinbox {
-                    editable: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
+                MySpinBox { value: Product.z_cut }
 
-                }
+                MySpinBox { value: Product.z_set }
 
-                OpDoubleSpinbox {
-                    editable: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-
-                }
-                OpDoubleSpinbox {
-                    editable: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-
-                }
+                MySpinBox { value: Product.z_park }
             }
         }
 
@@ -99,38 +91,38 @@ Control {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 10
                     Layout.preferredWidth: 1
-
                 }
 
+                MySpinBox { value: Product.w_podpor }
 
-                OpDoubleSpinbox {
-                    editable: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-
-                }
-
-                OpDoubleSpinbox {
-                    editable: true
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-
-                }
+                MySpinBox { value: Product.w_park }
 
                 Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 10
                     Layout.preferredWidth: 1
-
                 }
             }
-
-
         }
+        Item {
+            Layout.fillWidth: true
 
-
-        OpHeader {
-            text: qsTr("Артикул контакта")
+            Layout.preferredHeight: 20
+            RowLayout {
+                anchors.fill: parent
+                OpHeader {
+                    text: qsTr("Артикул контакта")
+                    Layout.preferredWidth: 1
+                }
+                OpLabel {
+                    text: Product.pin_name
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                }
+                Hspacer {
+                    Layout.preferredWidth: 1
+                }
+            }
         }
 
         CustomSwitch {
@@ -141,6 +133,5 @@ Control {
         OpFrameButton {
             text: "Автоматический поиск оптимального пути"
         }
-
     }
 }

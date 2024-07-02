@@ -54,7 +54,7 @@ Control {
                         OpLabel {
                             Layout.preferredHeight: 32
                             Layout.preferredWidth: 80
-                            text: "4.8"
+                            text: parseFloat(Product.z_cut.toFixed(3))
                             color: colors.black_30
                         }
                     }
@@ -83,7 +83,7 @@ Control {
                         OpLabel {
                             Layout.preferredHeight: 32
                             Layout.preferredWidth: 80
-                            text: "20.00"
+                            text: parseFloat(Product.z_set.toFixed(3))
                             color: colors.black_30
                         }
 
@@ -107,7 +107,7 @@ Control {
                 }
 
                 OpText {
-                    text: "01-20113"
+                    text: Product.pin_name
                     color: colors.black_80
                 }
 

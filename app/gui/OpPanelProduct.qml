@@ -22,15 +22,15 @@ Control {
             RowLayout {
                 anchors.fill: parent
 
-                OpText {
-                    text: qsTr("ИМЯ ПРОДУКТА:")
+                OpHeader {
+                    text: qsTr("Имя продукта:")
 
                     Layout.preferredHeight: 30
                     Layout.fillWidth: true
                 }
 
                 OpText {
-                    text: "1B268-1B268-1B268"
+                    text: Product.product_name
 
                     font.weight: Font.Medium
                     font.pixelSize: 24
@@ -57,7 +57,7 @@ Control {
                 id: loadDialog
                 folder: applicationDirPath
                 fileMode: FileDialog.OpenFile
-                onAccepted: Engine.load(currentFile)
+                onAccepted: Product.load(currentFile)
                 modality: Qt.ApplicationModal
             }
         }
